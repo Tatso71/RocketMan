@@ -1,0 +1,27 @@
+# release.yml
+
+changelog:
+  exclude:
+    labels:
+      - "Exclude from release nodes"
+
+  categories:
+    - title: Improvements
+      labels:
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - bug
+    - title: Refactorings
+      labels:
+        - refactoring
+    - title: Documentation
+      labels:
+        - documentation
+    - title: CI/PR Workflow
+      labels:
+        - ci
+        - pr
+    - title: Other Changes
+      labels:
+        - "*"
