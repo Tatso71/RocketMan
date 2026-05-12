@@ -24,3 +24,9 @@ Godot 4 project for a 2D exploratory platformer about an underground base, alien
 - Download tracked assets only when needed with:
 
 `git lfs pull --include="assets/**,source_assets/**"`
+
+## Technical Docs
+
+- `docs/technical/godot-project-baseline.md`
+- `docs/technical/steam-release-plan.md`
+- `docs/technical/ai-handoff.md`
