@@ -39,8 +39,8 @@ Planetary collapse and repairing an inherited rocket are no longer the primary p
 - Cell coordinates identify the top-left corner; conversion uses floor, including negative coordinates.
 - Rocket inner width: 8 cells / 8 metres.
 - Floor rows: -8, -5, -2; ceiling: -11. Each room occupies 3 metres vertically before floor thickness.
-- Initial shaft: columns -1 and 0, two metres across.
-- Initial horizontal passage: two metres high.
+- Suggested first shaft: columns -1 and 0, two metres across, excavated by the player (not pre-carved).
+- Transit passages can be two metres high; a laboratory needs a three-metre-high room excavated by the player.
 - Player collision envelope: 0.6 x 1.6 metres, anchored at the feet.
 - Ladder segment: one cell tall; interior ladder opening: one cell wide.
 - Wall/floor thickness is a deliberate sub-cell component (0.2 m floor), not a separate placement grid.
@@ -53,6 +53,10 @@ Future room, door and machine footprints must use whole-cell dimensions and decl
 ## Prototype Scope
 
 Implemented: three-floor traversal, jump, ladders, lower hatch, reachable-cell digital extraction, scanner, four equipment slots, per-tool material compatibility/beam appearance, local terrain darkness, adjustable camera, inventory and ladder placement. Full expedition prototype adds three destinations, automatic flight/landing/takeoff, shared ship cargo, repair/refuel/solar recharge, attribute upgrades and separate persistent outposts.
+
+Environment prototype: indestructible anchor formations, sealed gas/water pockets, scan warnings, finite water flow, gas spread and recoverable suit exposure. The laboratory/drone system is documented in `2026-10-24-underground-construction-and-assistant.md`.
+
+Construction update: limited-range physical support drone, backpack/drone logistics, metric laboratory, local cache, lamp crafting and placed lights are implemented. New arrivals have untouched ground, no starter tunnel or underground equipment. See the updated construction specification; full habitat sealing and relay networks remain future work.
 
 Digging removes one 1 m2 cross-section cell. It does not claim a physical cubic-metre yield until world thickness is defined. Resource amounts are inventory units.
 

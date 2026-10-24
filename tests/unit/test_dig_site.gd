@@ -2,10 +2,10 @@ extends GdUnitTestSuite
 
 const DigSite = preload("res://scripts/systems/dig_site.gd")
 
-func test_starter_shaft_and_room_are_air() -> void:
+func test_landing_ground_is_untouched_except_natural_sealed_pockets() -> void:
 	var site := DigSite.new()
-	assert_str(site.material(Vector2i(0, 0))).is_empty()
-	assert_str(site.material(Vector2i(-5, 3))).is_empty()
+	assert_str(site.material(Vector2i(0, 0))).is_not_empty()
+	assert_str(site.material(Vector2i(-5, 3))).is_not_empty()
 	assert_bool(site.contains(Vector2i(-25, 0))).is_false()
 	assert_str(site.material(Vector2i(24, 0))).is_empty()
 
@@ -27,6 +27,7 @@ func test_cannot_mine_buried_cells_or_bedrock() -> void:
 
 func test_ore_needs_multiple_hits_and_credits_only_on_completion() -> void:
 	var site := DigSite.new()
+	site.removed[Vector2i(0, 3)] = true
 	var cell := Vector2i(0, 4)
 	var kind := site.material(cell)
 	assert_str(kind).is_equal("copper")
@@ -55,3 +56,13 @@ func test_protected_rock_requires_explicit_compatible_tool() -> void:
 	assert_str(site.mine(Vector2i(0, 15), 50, true)).is_empty()
 	assert_str(site.mine(Vector2i(0, 15), 50, true)).is_equal("bedrock")
 	assert_str(site.RESOURCE_YIELDS["bedrock"]).is_equal("stone")
+
+func test_anchor_is_indestructible_even_with_plasma_and_ignores_saved_removal() -> void:
+	var site := DigSite.new()
+	var cell := Vector2i(-5, 6)
+	site.removed[Vector2i(-5, 5)] = true
+	assert_str(site.material(cell)).is_equal("anchor")
+	assert_str(site.mine(cell, 1000000, true)).is_empty()
+	assert_bool(site.damage.has(cell)).is_false()
+	site.restore([[-5, 6]])
+	assert_str(site.material(cell)).is_equal("anchor")

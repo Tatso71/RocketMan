@@ -74,6 +74,7 @@ func test_restore_rejects_overfilled_cargo_and_nonfinite_stats() -> void:
 
 func test_digital_tool_unlocks_and_four_slot_limit_survive_save() -> void:
 	var ship := Ship.new()
+	ship.lab_research_unlocked = true
 	assert_int(ship.tool_slots.size()).is_equal(4)
 	assert_bool(ship.upgrade("drill")).is_true()
 	assert_array(ship.tool_slots).contains(["resonator"])
@@ -90,3 +91,32 @@ func test_solar_recharge_prevents_empty_battery_soft_lock() -> void:
 	ship.energy = 0
 	assert_bool(ship.recharge()).is_true()
 	assert_float(ship.energy).is_equal(15.0)
+
+func test_suit_persists_and_legacy_ship_uses_full_protection() -> void:
+	var ship := Ship.new()
+	ship.suit_integrity = 42.5
+	var data := ship.snapshot()
+	var loaded := Ship.new()
+	assert_bool(loaded.restore(data)).is_true()
+	assert_float(loaded.suit_integrity).is_equal(42.5)
+	data.erase("suit_integrity")
+	assert_bool(loaded.restore(data)).is_true()
+	assert_float(loaded.suit_integrity).is_equal(100.0)
+	data.suit_integrity = -1
+	assert_bool(loaded.restore(data)).is_false()
+
+func test_lab_unlocks_drone_upgrade_and_portable_cargo_survives_save() -> void:
+	var ship := Ship.new()
+	assert_bool(ship.upgrade("drill")).is_false()
+	ship.lab_research_unlocked = true
+	ship.resources.copper = 10
+	ship.resources.crystal = 2
+	assert_bool(ship.upgrade("drone")).is_true()
+	assert_int(ship.field_cargo.drone_capacity).is_equal(16)
+	assert_float(ship.drone_range_metres()).is_equal(20.0)
+	ship.field_cargo.collect("soil", 10, true)
+	var loaded := Ship.new()
+	var data: Dictionary = JSON.parse_string(JSON.stringify(ship.snapshot()))
+	assert_bool(loaded.restore(data)).is_true()
+	assert_int(loaded.field_cargo.used(loaded.field_cargo.drone)).is_equal(2)
+	assert_bool(loaded.lab_research_unlocked).is_true()

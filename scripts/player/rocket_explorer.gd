@@ -20,14 +20,19 @@ func _physics_process(delta: float) -> void:
 		return
 	var horizontal := Input.get_axis("move_left", "move_right")
 	var vertical := Input.get_axis("climb_up", "climb_down")
+	var environment: Dictionary = world.player_environment()
+	var wet: bool = environment.wet
+	var speed_factor := 0.55 if wet else 1.0
 	climbing = world.on_ladder(position) and (absf(vertical) > 0.1 or climbing or not is_on_floor())
 	if climbing:
-		velocity = Vector2(horizontal * 145, vertical * 150)
+		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor
 		if Input.is_action_just_pressed("jump"):
 			climbing = false
 	else:
-		velocity.x = horizontal * 190
-		velocity.y = minf(velocity.y + 900 * delta, 650)
+		velocity.x = horizontal * 190 * speed_factor
+		velocity.y = minf(velocity.y + (260 if wet else 900) * delta, 140 if wet else 650)
+		if wet and vertical < -0.1:
+			velocity.y = -100
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = -330
 	if horizontal != 0:

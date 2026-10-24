@@ -10,6 +10,12 @@ Campaign progress uses `SaveManager.write_campaign_save/read_campaign_save` at `
 
 Current next work: try the dark close-camera mining loop, add powered sealed-room habitability, then physical grid-based ship expansions. Four digital-tool slots and a scanner are implemented; ship-station levels unlock additional extractors. Creatures remain a decorative placeholder; final 2.5D art and piloted flight remain later production steps.
 
+Environment update: gas/water pockets, finite water flow, gas diffusion, scan warnings, suit protection and true indestructible anchors are implemented. Keep environment state separate from terrain removal lists. Use `tests/integration/hazards_smoke.gd` for exposure/scan/persistence checks. The current laboratory/drone contract is in `docs/superpowers/specs/2026-10-24-underground-construction-and-assistant.md`.
+
+Construction update: initial ground is now untouched (no starter shaft/room/light/crate). AStar2D support drone, separate physical backpack/drone holds, laboratory placement, 32-unit local caches, lamp fabrication and placed illumination are implemented. Lab research gates advanced tool/drone upgrades, not first digging or emergency ladders. Follow the current construction spec and `tests/integration/outpost_smoke.gd`; older traversal tests explicitly create test-only tunnels. Never restore the former starter excavations into production setup.
+
+Usability update: `field_inventory_ui.gd` shows live per-material backpack/drone counts and a three-column inventory (I), inspectable anywhere but transferable only at local depots. Scarica tutto unloads accessible holds; Prepara laboratorio atomically loads missing recipe supplies from the ship workshop. Cantiere compares available/required resources, and a non-solid laboratory may overlap the explorer during placement. `drone_guide_state.gd` + `drone_guide.gd` provide prioritized comic balloons, H/manual recall and saved mute/milestone state. Campaign guide ownership is global in ShipState; do not restore per-planet copies over it. Current verification: 52 unit tests and five integration scripts, including `inventory_guide_smoke.gd` (720p/1080p captures).
+
 The remainder of this document describes the previous May baseline, retained for context.
 
 Date: 2026-05-12

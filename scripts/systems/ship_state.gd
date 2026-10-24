@@ -2,12 +2,18 @@ extends RefCounted
 
 const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 const Tools = preload("res://scripts/data/digital_tool_catalog.gd")
-const RESOURCE_IDS := ["soil", "stone", "copper", "crystal"]
-var modules: Dictionary = {"hull": 1, "engine": 1, "cargo": 1, "battery": 1, "drill": 1, "landing_gear": 1, "habitat": 1}
-var resources: Dictionary = {"soil": 12, "stone": 8, "copper": 6, "crystal": 0}
+const FieldCargo = preload("res://scripts/systems/field_cargo.gd")
+const GuideState = preload("res://scripts/systems/drone_guide_state.gd")
+const RESOURCE_IDS := FieldCargo.ITEM_IDS
+var modules: Dictionary = {"hull": 1, "engine": 1, "cargo": 1, "battery": 1, "drill": 1, "landing_gear": 1, "habitat": 1, "drone": 1}
+var resources: Dictionary = {"soil": 12, "stone": 8, "copper": 6, "crystal": 0, "lamp_kit": 0}
+var field_cargo := FieldCargo.new()
+var drone_guide := GuideState.new()
+var lab_research_unlocked := false
 var hull := 100.0
 var fuel := 80.0
 var energy := 60.0
+var suit_integrity := 100.0
 var tool_slots: Array[String] = ["pulse", "scanner", "", ""]
 var active_tool_slot := 0
 
@@ -43,6 +49,15 @@ func oxygen_reserve_minutes() -> float:
 
 func drill_power() -> int:
 	return int(modules.drill)
+
+func drone_capacity() -> int:
+	return 12 + 4 * (int(modules.drone) - 1)
+
+func drone_range_metres() -> float:
+	return 15.0 + 5.0 * (int(modules.drone) - 1)
+
+func upgrade_blocker(id: String) -> String:
+	return "Richiede un laboratorio operativo" if id in ["drill", "drone"] and not lab_research_unlocked else ""
 
 func route_cost(planet: Resource) -> float:
 	return ceilf(planet.route_fuel * (1.0 - 0.12 * (int(modules.engine) - 1)))
@@ -80,9 +95,10 @@ func upgrade_cost(id: String) -> Dictionary:
 
 func upgrade(id: String) -> bool:
 	var cost := upgrade_cost(id)
-	if cost.is_empty() or not _pay(cost):
+	if not upgrade_blocker(id).is_empty() or cost.is_empty() or not _pay(cost):
 		return false
 	modules[id] = int(modules[id]) + 1
+	field_cargo.drone_capacity = drone_capacity()
 	if id == "drill":
 		for tool: Resource in Tools.all():
 			if tool.required_level <= drill_power() and tool.tool_id not in tool_slots:
@@ -110,7 +126,7 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "hull": hull, "fuel": fuel, "energy": energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
@@ -118,7 +134,7 @@ func restore(data: Dictionary) -> bool:
 		return false
 	var next: RefCounted = get_script().new()
 	for definition: Resource in Modules.all():
-		var level = data.modules.get(definition.module_id)
+		var level = data.modules.get(definition.module_id, 1 if definition.module_id == "drone" else null)
 		if not _integer(level, 1, definition.max_level):
 			return false
 		next.modules[definition.module_id] = int(level)
@@ -128,6 +144,11 @@ func restore(data: Dictionary) -> bool:
 			return false
 		next.resources[id] = int(amount)
 	if next.cargo_used() > next.cargo_capacity():
+		return false
+	next.field_cargo.drone_capacity = next.drone_capacity()
+	if not next.field_cargo.restore(data.get("field_cargo", {"backpack": {}, "drone": {}})) or not data.get("lab_research_unlocked", false) is bool:
+		return false
+	if not next.drone_guide.restore(data.get("drone_guide", {})):
 		return false
 	var slots = data.get("tool_slots", ["pulse", "scanner", "", ""])
 	if not slots is Array or slots.size() != Tools.SLOT_COUNT:
@@ -147,19 +168,24 @@ func restore(data: Dictionary) -> bool:
 	var active := int(data.get("active_tool_slot", 0))
 	if str(slots[active]).is_empty():
 		return false
-	for stat: String in ["hull", "fuel", "energy"]:
-		var value = data.get(stat)
+	for stat: String in ["hull", "fuel", "energy", "suit_integrity"]:
+		var value = data.get(stat, 100 if stat == "suit_integrity" else null)
 		if not (value is int or value is float) or not is_finite(float(value)) or float(value) < 0:
 			return false
-		var maximum: float = next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity())
+		var maximum: float = 100 if stat == "suit_integrity" else (next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity()))
 		if float(value) > maximum:
 			return false
 	modules = next.modules.duplicate()
 	resources.clear()
 	resources.merge(next.resources)
+	field_cargo.drone_capacity = next.drone_capacity()
+	field_cargo.restore(next.field_cargo.snapshot())
+	drone_guide.restore(next.drone_guide.snapshot())
+	lab_research_unlocked = data.get("lab_research_unlocked", false)
 	hull = float(data.hull)
 	fuel = float(data.fuel)
 	energy = float(data.energy)
+	suit_integrity = float(data.get("suit_integrity", 100))
 	tool_slots.assign(slots)
 	active_tool_slot = active
 	return true

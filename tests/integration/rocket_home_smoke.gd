@@ -1,5 +1,7 @@
 extends SceneTree
 
+const Fixture = preload("res://tests/fixtures/dig_site_fixture.gd")
+
 var failures := 0
 var world: Node2D
 
@@ -37,6 +39,7 @@ func _run() -> void:
 	world = load("res://scenes/prototype/rocket_home.tscn").instantiate()
 	root.add_child(world)
 	current_scene = world
+	Fixture.starter_tunnel(world)
 	await frames(8)
 	check(absf(world.player.position.y + 80) < 2, "player rests on workshop floor")
 	await walk_to(100)

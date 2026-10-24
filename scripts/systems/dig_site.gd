@@ -1,24 +1,29 @@
 extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
+const HazardLayout = preload("res://scripts/data/hazard_layout.gd")
 const CELL := Grid.CELL_SIZE
 const LEFT := -24
 const RIGHT := 24
 const DEPTH := 24
-const COST := {"soil": 1, "stone": 2, "copper": 2, "crystal": 3, "bedrock": 99}
+const COST := {"soil": 1, "stone": 2, "copper": 2, "crystal": 3, "bedrock": 99, "anchor": 0}
 const RESOURCE_YIELDS := {"bedrock": "stone"}
+const ANCHORS := [Vector2i(-6, 6), Vector2i(-5, 6), Vector2i(-4, 6), Vector2i(7, 7), Vector2i(7, 8)]
 var removed: Dictionary = {}
 var damage: Dictionary = {}
 var terrain_seed := 0
 
 func _init(seed_value: int = 0) -> void:
 	terrain_seed = seed_value
-	for y in range(4):
-		for x in range(-1, 1):
-			removed[Vector2i(x, y)] = true
-	for x in range(-5, -1):
-		for y in range(2, 4):
-			removed[Vector2i(x, y)] = true
+	_add_pocket_cavities()
+
+func _add_pocket_cavities() -> void:
+	for pocket: Dictionary in HazardLayout.pockets(terrain_seed):
+		for cell: Vector2i in HazardLayout.cells(pocket):
+			removed[cell] = true
+
+func indestructible(cell: Vector2i) -> bool:
+	return cell in ANCHORS or cell.y == DEPTH - 1
 
 func contains(cell: Vector2i) -> bool:
 	return cell.x >= LEFT and cell.x < RIGHT and cell.y >= 0 and cell.y < DEPTH
@@ -26,6 +31,8 @@ func contains(cell: Vector2i) -> bool:
 func material(cell: Vector2i) -> String:
 	if not contains(cell) or removed.has(cell):
 		return ""
+	if indestructible(cell):
+		return "anchor"
 	if cell.y >= 15:
 		return "bedrock"
 	var sample := posmod(cell.x * 37 + cell.y * 73 + terrain_seed, 29)
@@ -44,7 +51,7 @@ func exposed(cell: Vector2i) -> bool:
 
 func mine(cell: Vector2i, power: int = 1, allow_bedrock: bool = false) -> String:
 	var kind := material(cell)
-	if kind.is_empty() or (kind == "bedrock" and not allow_bedrock) or not exposed(cell):
+	if kind.is_empty() or kind == "anchor" or power <= 0 or (kind == "bedrock" and not allow_bedrock) or not exposed(cell):
 		return ""
 	damage[cell] = int(damage.get(cell, 0)) + power
 	if int(damage[cell]) < int(COST[kind]):
@@ -64,5 +71,6 @@ func restore(cells: Array) -> void:
 	damage.clear()
 	for entry in cells:
 		var cell = Grid.decode_cell(entry)
-		if cell is Vector2i and contains(cell):
+		if cell is Vector2i and contains(cell) and not indestructible(cell):
 			removed[cell] = true
+	_add_pocket_cavities()

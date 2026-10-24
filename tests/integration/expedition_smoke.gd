@@ -1,5 +1,7 @@
 extends SceneTree
 
+const Fixture = preload("res://tests/fixtures/dig_site_fixture.gd")
+
 var failures := 0
 var campaign: Node2D
 var capture := false
@@ -76,6 +78,7 @@ func _run() -> void:
 	await frames()
 	check(campaign.model.phase == 3 and is_instance_valid(campaign.world), "landing enters playable cutaway")
 	var world: Node2D = campaign.world
+	Fixture.starter_tunnel(world)
 	world.player.set_physics_process(false)
 	world.set_hatch(true)
 	await frames()
@@ -84,10 +87,10 @@ func _run() -> void:
 	check(not campaign.request_takeoff(), "player cannot launch from underground")
 	world.target_cell = Vector2i(-6, 3)
 	world.mine_timer = 0
-	var soil: int = campaign.model.ship.resources.soil
+	var soil: int = world.field_cargo.used(world.field_cargo.backpack)
 	world._mine_target()
 	check(world.site.material(world.target_cell).is_empty(), "digital beam destroys reachable soil")
-	check(campaign.model.ship.resources.soil == soil + 1, "mined resources enter shared ship hold")
+	check(world.field_cargo.used(world.field_cargo.backpack) == soil + 1, "mined resources enter the physical backpack")
 	check(world.beam_time > 0, "successful pulse starts beam effect")
 	world.target_cell = Vector2i(-6, 2)
 	world.equip_tool(1)
@@ -97,14 +100,14 @@ func _run() -> void:
 	check(not world.site.material(world.target_cell).is_empty(), "scanner leaves terrain intact")
 	check(not world.equip_tool(3), "locked empty equipment slot cannot be selected")
 	world.equip_tool(0)
-	var cargo: Dictionary = campaign.model.ship.resources.duplicate()
-	campaign.model.ship.resources.soil += campaign.model.ship.cargo_capacity() - campaign.model.ship.cargo_used()
+	var cargo: Dictionary = world.field_cargo.snapshot()
+	world.field_cargo.backpack.soil = 8
+	world.field_cargo.drone.soil = world.field_cargo.drone_capacity
 	world.mine_timer = 0
 	world._mine_target()
-	check(world.target_blocker(world.target_cell) == "Stiva piena", "full hold marks target unavailable")
+	check(world.target_blocker(world.target_cell).contains("Carico pieno"), "full portable cargo marks target unavailable")
 	check(not world.site.material(world.target_cell).is_empty(), "full hold does not destroy or lose a block")
-	campaign.model.ship.resources.clear()
-	campaign.model.ship.resources.merge(cargo)
+	world.field_cargo.restore(cargo)
 	check(not world.target_blocker(Vector2i(20, 0)).is_empty(), "distant target has a blocking reason")
 	check(world._illumination(Vector2(700, 700)) < 0.01, "distant underground cells are dark")
 	check(world._illumination(world.player.position - Vector2(0, 32)) > 0.99, "working radius is illuminated around explorer")
@@ -145,6 +148,7 @@ func _run() -> void:
 	await frames()
 	await screenshot("expedition-dark-digging-720p")
 	world.return_home()
+	world.drone.position = Vector2(20, -140)
 	world.set_hatch(false)
 	await frames()
 	check(campaign.request_takeoff(), "closed ship can take off with astronaut aboard")
@@ -158,6 +162,7 @@ func _run() -> void:
 	check(campaign.world.site.terrain_seed == 11, "planet config drives deterministic material distribution")
 	check(campaign.model.ship.cargo_capacity() == 200, "ship upgrades persist across planets")
 	campaign.world.return_home()
+	campaign.world.drone.position = Vector2(20, -140)
 	campaign.world.set_hatch(false)
 	check(campaign.request_takeoff(), "second planet can be left")
 	step(10)

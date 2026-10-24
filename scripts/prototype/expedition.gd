@@ -6,7 +6,7 @@ const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 const Exterior = preload("res://scripts/prototype/rocket_exterior.gd")
 const Home = preload("res://scenes/prototype/rocket_home.tscn")
 const PHASE_NAMES := ["Scelta del pianeta", "Volo interplanetario", "Atterraggio verticale", "Esplorazione e scavo", "Decollo"]
-const RESOURCE_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo"}
+const RESOURCE_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile"}
 var model := State.new()
 var world: Node2D
 var exterior: Node2D
@@ -98,6 +98,9 @@ func request_takeoff() -> bool:
 		return false
 	if world.hatch_open:
 		_notify("Chiudi la botola prima del decollo")
+		return false
+	if not world.drone.aboard():
+		_notify("Attendi il drone a bordo; riapri la botola se e rimasto fuori")
 		return false
 	if model.ship.hull < 20 or model.ship.fuel < 6 or model.ship.energy < 2:
 		_notify("Ripara lo scafo, rifornisci e ricarica prima del decollo")
@@ -330,6 +333,8 @@ func _refresh_ship_menu() -> void:
 		price.append("%d %s" % [cost[id], RESOURCE_NAMES[id]])
 	module_details.text = "%s  /  Livello %d di %d\n\n%s\nIngombro: %d x %d m\nCosto: %s" % [definition.display_name, model.ship.modules[definition.module_id], definition.max_level, definition.description, definition.footprint_cells.x, definition.footprint_cells.y, ", ".join(price) if not cost.is_empty() else "livello massimo"]
 	upgrade_button.disabled = cost.is_empty() or not model.ship.can_afford(cost)
+	upgrade_button.disabled = upgrade_button.disabled or not model.ship.upgrade_blocker(definition.module_id).is_empty()
+	upgrade_button.tooltip_text = model.ship.upgrade_blocker(definition.module_id)
 	var can_service := _can_service()
 	upgrade_button.disabled = upgrade_button.disabled or not can_service
 	repair_button.disabled = not can_service or model.ship.hull >= model.ship.hull_capacity() or not model.ship.can_afford({"stone": 2, "copper": 1})
