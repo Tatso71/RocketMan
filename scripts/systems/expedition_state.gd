@@ -15,15 +15,23 @@ var active_planet := ""
 var progress := 0.0
 var outposts: Dictionary = {}
 
+func available_planets() -> Array:
+	# Preserve access for older campaigns that already visited an outer planet.
+	var explored_outer := (not active_planet.is_empty() and active_planet != "ochre") or outposts.keys().any(func(id: String): return id != "ochre")
+	return Planets.all() if ship.lab_research_unlocked or explored_outer else [Planets.find("ochre")]
+
+func planet_unlocked(id: String) -> bool:
+	return available_planets().any(func(planet: Resource): return planet.planet_id == id)
+
 func choose(planet_id: String) -> bool:
-	if phase != Phase.SELECT or Planets.find(planet_id) == null:
+	if phase != Phase.SELECT or not planet_unlocked(planet_id):
 		return false
 	selected_planet = planet_id
 	return true
 
 func depart() -> bool:
 	var destination := Planets.find(selected_planet)
-	if phase != Phase.SELECT or destination == null or not ship.flight_blocker(destination).is_empty():
+	if phase != Phase.SELECT or destination == null or not planet_unlocked(selected_planet) or not ship.flight_blocker(destination).is_empty():
 		return false
 	ship.fuel -= ship.route_cost(destination)
 	ship.energy -= 5
@@ -99,9 +107,14 @@ func restore(data: Dictionary) -> bool:
 			return false
 	if not ship.restore(data.ship):
 		return false
+	for saved: Dictionary in data.outposts.values():
+		if saved.get("buildings", []).any(func(item: Dictionary): return item.id == "laboratory" and item.get("state", "active") == "active"):
+			ship.lab_research_unlocked = true
 	phase = int(next_phase)
 	progress = float(next_progress)
 	selected_planet = data.selected_planet
 	active_planet = data.active_planet
 	outposts = data.outposts.duplicate(true)
+	if phase == Phase.SELECT and not planet_unlocked(selected_planet):
+		selected_planet = "ochre"
 	return true

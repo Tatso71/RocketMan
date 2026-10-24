@@ -52,7 +52,7 @@ func _run() -> void:
 	root.get_node("SaveManager").campaign_save_path = "res://reports/campaign-test-save.json"
 	await frames()
 	check(campaign.model.phase == 0, "campaign starts at planet selection")
-	check(campaign.planet_list.item_count == 3, "three destinations are selectable")
+	check(campaign.planet_list.item_count == 1, "only tutorial destination is initially selectable")
 	check(campaign.depart_button.get_global_rect().end.y < campaign.stats_label.get_global_rect().position.y, "navigation controls do not overlap ship statistics")
 	await screenshot("expedition-selection-1080p")
 	campaign.open_ship_menu()
@@ -78,6 +78,7 @@ func _run() -> void:
 	await frames()
 	check(campaign.model.phase == 3 and is_instance_valid(campaign.world), "landing enters playable cutaway")
 	var world: Node2D = campaign.world
+	Fixture.workshop(world)
 	Fixture.starter_tunnel(world)
 	world.player.set_physics_process(false)
 	world.set_hatch(true)
@@ -155,6 +156,9 @@ func _run() -> void:
 	step(10)
 	check(campaign.model.phase == 0, "takeoff returns to planet selection")
 	check(root.canvas_transform == Transform2D.IDENTITY, "camera resets when leaving dig site")
+	campaign.model.ship.lab_research_unlocked = true
+	campaign._refresh_interface()
+	check(campaign.planet_list.item_count == 3, "laboratory research reveals other two destinations")
 	campaign.select_planet(1)
 	campaign.depart()
 	await land()

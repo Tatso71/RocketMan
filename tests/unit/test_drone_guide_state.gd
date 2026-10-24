@@ -3,6 +3,18 @@ extends GdUnitTestSuite
 const Guide = preload("res://scripts/systems/drone_guide_state.gd")
 const Ship = preload("res://scripts/systems/ship_state.gd")
 
+func test_tutorial_insists_until_its_condition_is_completed() -> void:
+	var guide := Guide.new()
+	guide.tick(2, "tutorial_collect")
+	assert_bool(guide.offer("tutorial_collect")).is_true()
+	guide.tick(25, "tutorial_collect")
+	guide.tick(3, "tutorial_collect")
+	assert_bool(guide.offer("tutorial_collect")).is_true()
+	guide.tick(1, "tutorial_place")
+	assert_str(guide.active_id).is_empty()
+	guide.tick(3, "tutorial_place")
+	assert_bool(guide.offer("tutorial_place")).is_true()
+
 func test_once_only_and_manual_recall() -> void:
 	var guide := Guide.new()
 	guide.tick(2, "welcome")

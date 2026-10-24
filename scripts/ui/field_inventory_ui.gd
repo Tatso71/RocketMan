@@ -246,6 +246,7 @@ func _build_window() -> void:
 	deposit_button = button(actions, "Scarica tutto", deposit)
 	deposit_button.tooltip_text = "Deposita lo zaino e, se vicino, anche il drone"
 	craft_button = button(actions, "Fabbrica luce", craft)
+	craft_button.visible = false
 	craft_button.tooltip_text = "Al laboratorio: 1 terra + 1 rame, con spazio per il kit"
 	feedback = label("", 14, Color("f0d281"))
 	feedback.custom_minimum_size.y = 22
@@ -317,7 +318,7 @@ func craft() -> void:
 	refresh()
 
 func storage_capacity() -> int:
-	return (world.ship_state.cargo_capacity() if world.ship_state != null else 120) if world.aboard_workshop() else Buildings.CACHE_CAPACITY
+	return world.outpost.storage_capacity()
 
 func refresh() -> void:
 	var cargo: RefCounted = world.field_cargo
@@ -355,7 +356,8 @@ func refresh() -> void:
 	prepare_button.disabled = not prepare_blocker().is_empty()
 	prepare_button.tooltip_text = prepare_blocker() if prepare_button.disabled else "Preleva dal deposito vicino la pietra e il rame mancanti"
 	preparation_status.text = prepare_blocker() if prepare_button.disabled else "Dal deposito al carico: solo i materiali ancora mancanti."
-	craft_button.disabled = world.outpost.nearby_lab().is_empty()
+	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()
+	craft_button.tooltip_text = world.outpost.lamp_craft_blocker() if craft_button.disabled else "1 terra + 1 rame / fabbrica nel laboratorio vicino"
 	var index := 0
 	for id: String in Buildings.LAB_COST:
 		var available: int = cargo.available(id, connected, world.outpost.payment_cache())

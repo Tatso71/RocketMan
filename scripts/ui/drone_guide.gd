@@ -10,6 +10,13 @@ var heading: Label
 var speech: Label
 var auto_toggle: CheckButton
 var current_id := ""
+var last_message_id := ""
+var last_message_text := ""
+var replay_id := ""
+var replay_text := ""
+var room_cache: Variant = null
+var room_poll := 0.0
+var room_revision := -1
 
 func _ready() -> void:
 	layer = 2
@@ -69,17 +76,36 @@ func context() -> String:
 		return "water_danger"
 	if float(danger.gas) >= 0.03:
 		return "gas_danger"
-	if world.ship_state != null and world.ship_state.energy < 3:
+	if world.ship_energy() < 5:
 		return "energy_low"
+	if world.crew_energy() < 25:
+		return "bed_rest"
+	if world.rooms.available("bedroom") and "bed_rest" not in state.seen:
+		return "bed_rest"
 	if world.drone.status == "Limite segnale":
 		return "signal_limit"
 	if world.field_cargo.free_space(world.drone_help_available()) <= 0:
 		return "cargo_full" if world.drone_help_available() else "drone_unavailable"
+	if not world.outpost.laboratory_unlocked() and state.facts.get("mined", false):
+		for building: Dictionary in world.outpost.buildings.structures:
+			if building.id == "laboratory":
+				return "tutorial_fund" if building.state == "planned" else "tutorial_build"
+		if room_poll <= 0 or room_revision != world.navigation_revision:
+			room_cache = world.outpost.find_laboratory_space()
+			room_revision = world.navigation_revision
+			room_poll = 0.5
+		if room_cache is Vector2i:
+			return "tutorial_place"
+		return "tutorial_excavate" if world.field_cargo.can_pay(world.Buildings.LAB_COST, world.drone_help_available(), world.outpost.payment_cache()) else "tutorial_collect"
 	if world.outpost.build_mode:
+		if world.outpost.blueprint == "ladder":
+			return "ladder_tip"
 		if world.outpost.blueprint == "lamp":
 			return "lamp_crafted" if world.field_cargo.available("lamp_kit", world.drone_help_available()) > 0 else "lamp_plan"
+		if world.outpost.blueprint == "pump":
+			return "pump_plan"
 		return "build_resources" if not world.outpost.cargo_ui.lab_missing().is_empty() and world.outpost.blueprint == "laboratory" else "build_space"
-	for id: String in ["lamp_placed", "lamp_crafted", "lab_built", "deposited"]:
+	for id: String in ["pump_built", "lamp_placed", "lamp_crafted", "lab_built", "deposited"]:
 		if state.facts.get(id, false) and id not in state.seen:
 			return id
 	if world.outpost.has_lab():
@@ -93,10 +119,23 @@ func context() -> String:
 	return "first_dig" if world.hatch_open else "welcome"
 
 func request_help() -> void:
+	replay_id = ""
+	replay_text = ""
+	current_id = ""
 	var id := context()
 	if world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
 		id = "lab_plan" if world.field_cargo.free_space(world.drone_help_available()) > 0 else "cargo_full"
 	state.offer(id, true)
+	_update_bubble()
+
+func repeat_last() -> void:
+	if last_message_id.is_empty():
+		request_help()
+		return
+	replay_id = last_message_id
+	replay_text = last_message_text
+	current_id = ""
+	state.offer(replay_id, true)
 	_update_bubble()
 
 func event(id: String) -> void:
@@ -104,8 +143,11 @@ func event(id: String) -> void:
 		state.facts[id] = true
 	if id in ["gas_leak", "water_leak"]:
 		state.offer(id)
+	if id == "mined" and not world.outpost.laboratory_unlocked():
+		state.offer("tutorial_collect")
 
 func _process(delta: float) -> void:
+	room_poll -= delta
 	auto_toggle.set_pressed_no_signal(not state.muted)
 	if world.controls_blocked():
 		bubble.hide()
@@ -121,13 +163,20 @@ func _update_bubble() -> void:
 	tail.visible = bubble.visible
 	if not bubble.visible:
 		current_id = ""
+		replay_id = ""
+		replay_text = ""
 		return
 	if current_id != state.active_id:
 		current_id = state.active_id
-		speech.text = Guide.MESSAGES[current_id][2]
+		if not state.active_manual or replay_id != current_id:
+			replay_id = ""
+			replay_text = ""
+		speech.text = replay_text if not replay_text.is_empty() else Guide.MESSAGES[current_id][2]
 		bubble.size = Vector2(332, 0)
-	if current_id == "cargo_full":
-		speech.text = "Siamo in officina. Apri Inventario e premi Scarica tutto: svuota lo zaino e anche il mio carico se resto vicino. Poi puoi prelevare pietra e rame con Prepara laboratorio." if world.aboard_workshop() else Guide.MESSAGES[current_id][2]
+	if current_id == "cargo_full" and replay_text.is_empty():
+		speech.text = "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi lo zaino e anche il mio carico se resto vicino. Per ripartire scegli Preleva materiali o Costruisci." if world.outpost.source_available() else Guide.MESSAGES[current_id][2]
+	last_message_id = current_id
+	last_message_text = speech.text
 	var viewport := get_viewport().get_visible_rect().size
 	var point: Vector2 = world.drone.get_global_transform_with_canvas() * Vector2.ZERO
 	var actor: Vector2 = world.player.get_global_transform_with_canvas() * Vector2(0, -32)
@@ -135,7 +184,9 @@ func _update_bubble() -> void:
 	var size := bubble.size.max(bubble.get_combined_minimum_size())
 	var safe := Rect2(Vector2(16, 76), viewport - Vector2(32, 186))
 	var radio := not safe.has_point(point) or current_id == "signal_limit"
-	heading.text = "DRONE / " + ("RADIO" if radio else str(Guide.MESSAGES[current_id][1]).to_upper())
+	heading.text = "ROBBIE / " + ("RADIO" if radio else str(Guide.MESSAGES[current_id][1]).to_upper())
+	var bubble_style := bubble.get_theme_stylebox("panel") as StyleBoxFlat
+	bubble_style.border_color = Color("ef6666") if current_id == "water_danger" else Color("589d95")
 	# Try both sides of the drone, avoiding the explorer and the fixed HUD areas.
 	var candidates: Array[Vector2] = [point + Vector2(35, -size.y - 24), point - Vector2(size.x + 35, size.y + 24), point + Vector2(35, 32), point - Vector2(size.x + 35, -32)]
 	if radio:
@@ -146,7 +197,7 @@ func _update_bubble() -> void:
 		var clamped := candidate.clamp(safe.position, safe.end - size)
 		var rect := Rect2(clamped, size)
 		var score := candidate.distance_to(clamped)
-		for obstacle: Rect2 in [body, Rect2(0, 70, 360, 245), Rect2(viewport.x - 280, 70, 280, 280)]:
+		for obstacle: Rect2 in [body, Rect2(0, 70, 400, 125), Rect2(viewport.x - 280, 70, 280, 280)]:
 			var overlap := rect.intersection(obstacle)
 			score += overlap.get_area() * 10
 		if score < best_score:

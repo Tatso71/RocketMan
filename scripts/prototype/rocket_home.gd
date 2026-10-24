@@ -12,6 +12,7 @@ const Outpost = preload("res://scripts/prototype/outpost_controller.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const GuideState = preload("res://scripts/systems/drone_guide_state.gd")
 const GuideUI = preload("res://scripts/ui/drone_guide.gd")
+const ShipRooms = preload("res://scripts/ui/ship_rooms.gd")
 const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
 const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "crystal": Color("55c5c6"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
@@ -57,6 +58,29 @@ var navigation_revision := 0
 var drone_label: Label
 var guide_state := GuideState.new()
 var guide: CanvasLayer
+var rooms: Node
+var local_energy := 60.0
+var local_crew_energy := 100.0
+var power_label: Label
+
+func crew_energy() -> float:
+	return ship_state.crew_energy if ship_state != null else local_crew_energy
+
+func _set_crew_energy(value: float) -> void:
+	if ship_state != null:
+		ship_state.crew_energy = clampf(value, 0, 100)
+	else:
+		local_crew_energy = clampf(value, 0, 100)
+
+func ship_energy() -> float:
+	return ship_state.energy if ship_state != null else local_energy
+
+func _set_ship_energy(value: float) -> void:
+	var capacity: float = ship_state.energy_capacity() if ship_state != null else 60
+	if ship_state != null:
+		ship_state.energy = clampf(value, 0, capacity)
+	else:
+		local_energy = clampf(value, 0, capacity)
 
 func guide_event(id: String) -> void:
 	if is_instance_valid(guide):
@@ -84,12 +108,11 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or controls_blocked():
 		return
 	environment.advance(delta)
+	outpost.advance(delta)
 	var danger := player_environment()
 	var damage := (12.0 if danger.submerged else 0.0) + clampf((float(danger.gas) - 0.03) / 0.22, 0, 1) * 18
 	if damage > 0:
 		_set_suit(suit_integrity() - damage * delta)
-	elif player.position.y <= -78 and absf(player.position.x) < 160:
-		_set_suit(suit_integrity() + 8 * delta)
 	if suit_integrity() <= 0:
 		return_home()
 		_set_suit(25)
@@ -122,7 +145,7 @@ func configure(owner_campaign: Node, planet: Resource, ship: RefCounted) -> void
 	inventory.materials = field_cargo.backpack
 
 func controls_blocked() -> bool:
-	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(outpost) and is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible)
+	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open())))
 
 func _ready() -> void:
 	_register_input()
@@ -134,22 +157,25 @@ func _ready() -> void:
 	inventory.materials = field_cargo.backpack
 	player = Explorer.new()
 	player.world = self
-	player.position = Vector2(-60, -80)
+	player.position = Vector2(-60, -320)
 	player.z_index = 5
 	add_child(player)
 	drone = Drone.new()
 	drone.world = self
 	drone.range_metres = ship_state.drone_range_metres() if ship_state != null else 15
-	drone.position = Vector2(20, -140)
+	drone.position = Vector2(0, -365)
 	drone.z_index = 6
 	add_child(drone)
 	outpost = Outpost.new()
 	outpost.world = self
 	add_child(outpost)
 	camera = Camera2D.new()
-	camera.position = Vector2(0, -150)
-	camera.zoom = Vector2.ONE * 0.78
+	camera.position = Vector2(0, -350)
+	camera.zoom = Vector2.ONE * target_zoom
 	add_child(camera)
+	rooms = ShipRooms.new()
+	rooms.world = self
+	add_child(rooms)
 	_build_hud()
 	guide = GuideUI.new()
 	guide.world = self
@@ -248,12 +274,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if controls_blocked():
 		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not outpost.build_mode and drone.hit_test(event.position):
+		mouse_mining = false
+		guide.repeat_last()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("drone_help"):
 		guide.request_help()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("field_inventory"):
 		outpost.open_cargo()
+		get_viewport().set_input_as_handled()
+		return
+	if rooms.handle_input(event):
 		get_viewport().set_input_as_handled()
 		return
 	if is_instance_valid(outpost) and outpost.handle_input(event):
@@ -286,7 +320,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	if event.is_action_pressed("interact"):
 		if not outpost.nearby_lab().is_empty():
-			outpost.open_cargo()
+			outpost.open_station(outpost.nearby_station(), player.get_global_transform_with_canvas() * Vector2(0, -80))
 		elif player.position.distance_to(Vector2(0, -80)) < Grid.metres(2.5):
 			set_hatch(not hatch_open)
 		else:
@@ -307,7 +341,7 @@ func _process(delta: float) -> void:
 	message_time -= delta
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		mouse_mining = false
-	var desired := Vector2(player.position.x * 0.65, maxf(-150, player.position.y - 145))
+	var desired := Vector2(player.position.x * 0.65, maxf(-350, player.position.y - 145))
 	desired.x = clampf(desired.x, -450, 450)
 	desired.y = minf(desired.y, 720)
 	camera.position = camera.position.lerp(desired, 1.0 - exp(-delta * 4))
@@ -348,7 +382,7 @@ func target_blocker(cell: Vector2i) -> String:
 		return "Indistruttibile: devi aggirare questo nucleo"
 	if tool.mode == "mine" and site.material(cell) not in tool.materials:
 		return "Materiale incompatibile: serve un altro strumento"
-	if ship_state != null and ship_state.energy < tool.energy_per_pulse:
+	if ship_energy() < tool.energy_per_pulse:
 		return "Energia esaurita: ricarica in officina"
 	if tool.mode == "mine" and field_cargo.free_space(drone_help_available()) <= 0:
 		return "Carico pieno: deposita zaino e drone"
@@ -364,11 +398,11 @@ func _mine_target() -> void:
 		return
 	var tool := active_tool()
 	beam_time = 0.24
+	_set_crew_energy(crew_energy() - (1.0 if tool.mode == "mine" else 0.15))
 	beam_target = Grid.center(target_cell)
 	beam_tool = tool
 	player.facing = 1 if beam_target.x >= player.position.x else -1
-	if ship_state != null:
-		ship_state.energy = maxf(0, ship_state.energy - tool.energy_per_pulse)
+	_set_ship_energy(ship_energy() - tool.energy_per_pulse)
 	if tool.mode == "scan":
 		scanned[target_cell] = site.material(target_cell)
 		var kind := site.material(target_cell)
@@ -409,8 +443,14 @@ func set_hatch(open: bool) -> void:
 
 func place_ladder() -> bool:
 	var cell := Grid.to_cell(player.position - Vector2(0, 20))
+	return place_ladder_at(cell)
+
+func place_ladder_at(cell: Vector2i) -> bool:
 	if cell.y < 0 or not site.contains(cell) or not site.material(cell).is_empty() or ladders.has(cell):
 		_note("Qui non puoi aggiungere una scala")
+		return false
+	if Grid.center(cell).distance_to(player.position - Vector2(0, 32)) > Grid.metres(1.5):
+		_note("Scala fuori portata")
 		return false
 	if not field_cargo.pay({"soil": 2}, drone_help_available(), outpost.payment_cache()):
 		_note("Servono 2 unita di terra per una scala")
@@ -433,7 +473,7 @@ func capture_state() -> Dictionary:
 	var readings: Array = []
 	for cell: Vector2i in scanned:
 		readings.append([cell.x, cell.y])
-	return {"version": 1, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	return {"version": 1, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
 
 func save_run() -> bool:
 	if campaign != null:
@@ -471,6 +511,11 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	if restore_inventory and not next_guide.restore(data.get("drone_guide", {})):
 		_note("Dati della guida non validi")
 		return false
+	for key: String in ["crew_energy", "ship_energy"]:
+		var value = data.get(key, 100 if key == "crew_energy" else 60)
+		var maximum: float = 100 if key == "crew_energy" else (ship_state.energy_capacity() if ship_state != null else 60)
+		if restore_inventory and (not (value is float or value is int) or not is_finite(float(value)) or value < 0 or value > maximum):
+			return false
 	for child in terrain.get_children():
 		terrain.remove_child(child)
 		child.queue_free()
@@ -478,7 +523,16 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	site = next_site
 	environment = next_environment
 	outpost.buildings = next_buildings
+	outpost.selected_station = {}
+	outpost.station_menu.popup.hide()
+	outpost.station_menu.window.hide()
+	outpost.construction.picker.hide()
+	outpost.construction.window.hide()
+	outpost.construction.prompted.clear()
+	rooms.popup.hide()
+	rooms._close_bed()
 	outpost.build_mode = false
+	outpost.preview_fixed = false
 	navigation_revision += 1
 	scanned.clear()
 	if data.get("scanned", []) is Array:
@@ -498,6 +552,8 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 			_set_suit(float(saved_suit))
 		field_cargo.restore(next_cargo.snapshot())
 		guide_state.restore(next_guide.snapshot())
+		_set_crew_energy(float(data.get("crew_energy", 100)))
+		_set_ship_energy(float(data.get("ship_energy", 60)))
 		if data.get("store") is Dictionary and FieldCargo.valid_stock(data.store, 120):
 			local_store = data.store.duplicate()
 		elif not data.has("field_cargo") and FieldCargo.valid_stock(data.materials, 120):
@@ -508,6 +564,9 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 		if cell is Vector2i:
 			if cell.x >= site.LEFT and cell.x < site.RIGHT and cell.y >= -2 and cell.y < site.DEPTH and site.material(cell).is_empty():
 				ladders[cell] = true
+	for building: Dictionary in outpost.buildings.structures:
+		if building.id == "ladder" and Buildings.is_active(building):
+			ladders[building.origin] = true
 	return_home()
 	set_hatch(bool(data.get("hatch_open", false)))
 	var position_data = data.get("player", [])
@@ -585,6 +644,12 @@ func _build_hud() -> void:
 	drone_label.add_theme_color_override("font_outline_color", Color("17212a"))
 	drone_label.add_theme_constant_override("outline_size", 4)
 	root.add_child(drone_label)
+	power_label = Label.new()
+	power_label.position = Vector2(22, 132)
+	power_label.add_theme_font_size_override("font_size", 14)
+	power_label.add_theme_color_override("font_outline_color", Color("17212a"))
+	power_label.add_theme_constant_override("outline_size", 4)
+	root.add_child(power_label)
 	var title := Label.new()
 	title.text = "ROCKETMAN  /  " + (planet_def.display_name.to_upper() if planet_def != null else "AVAMPOSTO 01")
 	title.position = Vector2(22, 10)
@@ -661,7 +726,7 @@ func _button(parent: Node, text: String, tip: String, callback: Callable) -> voi
 
 func _refresh_hud() -> void:
 	resources_label.text = "Zaino %d/8   Drone %d/%d" % [field_cargo.used(field_cargo.backpack), field_cargo.used(field_cargo.drone), field_cargo.drone_capacity]
-	drone_label.text = "DRONE / %s / %.0f m" % [drone.status, drone.range_metres]
+	drone_label.text = "ROBBIE / %s / %.0f m" % [drone.status, drone.range_metres]
 	var depth := maxf(0, player.position.y / Grid.PIXELS_PER_METRE)
 	var room := "Sottosuolo" if player.position.y > 0 else ("Officina" if player.position.y > -200 else ("Zona abitativa" if player.position.y > -320 else "Cabina"))
 	location_label.text = "%s  |  Profondita %.1f m  |  Botola %s" % [room, depth, "aperta" if hatch_open else "chiusa"]
@@ -673,8 +738,12 @@ func _refresh_hud() -> void:
 		risk = "GAS / Allontanati dalla nube"
 	elif danger.wet:
 		risk = "ACQUA / Movimento rallentato"
-	hazard_label.text = "TUTA %.0f%%  |  %s" % [suit_integrity(), risk]
+	hazard_label.text = "TUTA %.0f%%  |  ENERGIA PERSONALE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk]
 	hazard_label.modulate = Color("ffd777") if danger.wet or float(danger.gas) >= 0.03 else Color("d4e9df")
+	var capacity: float = ship_state.energy_capacity() if ship_state != null else 60
+	var load: float = outpost.network_load()
+	power_label.text = "BATTERIA NAVE %.1f / %.0f kWh\nRete %.2f kWh/min%s" % [ship_energy(), capacity, load * 60, " / %.1f min" % (ship_energy() / load / 60) if load > 0 else " / nessun consumo"]
+	power_label.modulate = Color("ffb18e") if ship_energy() < 5 else Color("d4e9df")
 	var tool := active_tool()
 	metric_label.text = "1 CELLA = 1 m  |  %s / %.1f m" % [tool.display_name, tool.reach_metres]
 	var slots: Array = ship_state.tool_slots if ship_state != null else ["pulse", "scanner", "", ""]
@@ -857,6 +926,9 @@ func _draw_ship() -> void:
 	draw_circle(Vector2(-52, -94), 4, Color("7cddd1") if hatch_open else Color("f1bd5a"))
 
 func _draw_cockpit() -> void:
+	if is_instance_valid(rooms) and rooms.available("cabin"):
+		draw_rect(ShipRooms.CABIN.grow(-5), Color(0.55, 0.9, 1, 0.13))
+		draw_rect(ShipRooms.CABIN.grow(-5), Color("a6edee"), false, 2)
 	draw_circle(Vector2(-45, -370), 33, Color("e7b35a"))
 	draw_circle(Vector2(-45, -370), 27, Color("76bdc7"))
 	draw_arc(Vector2(-45, -370), 24, 3.4, 5.6, 20, Color("c7e7dc"), 3)
@@ -870,10 +942,15 @@ func _draw_cockpit() -> void:
 	draw_line(Vector2(-13, -325), Vector2(-13, -320), Color("c4cabd"), 4)
 
 func _draw_bedroom() -> void:
+	if is_instance_valid(rooms) and rooms.available("bedroom"):
+		draw_rect(ShipRooms.BEDROOM.grow(-5), Color(0.65, 1, 0.62, 0.12))
+		draw_rect(ShipRooms.BEDROOM.grow(-5), Color("b7ffb6"), false, 2)
 	draw_rect(Rect2(-138, -226, 117, 26), Color("49525b"))
 	draw_rect(Rect2(-138, -235, 117, 15), Color("e3e4cf"))
 	draw_rect(Rect2(-102, -235, 81, 19), Color("dba751"))
 	draw_rect(Rect2(-134, -236, 30, 12), Color("f4efda"))
+	if is_instance_valid(rooms) and rooms.resting:
+		draw_string(ThemeDB.fallback_font, Vector2(-84, -254), "Z z", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("c8f6db"))
 	draw_rect(Rect2(20, -244, 42, 44), Color("4a6770"))
 	for y in [-239, -220]:
 		draw_rect(Rect2(24, y, 34, 14), Color("809d9c"))
@@ -901,6 +978,11 @@ func _draw_workshop() -> void:
 		draw_line(Vector2(x, -172), Vector2(x, -148), Color("cad6cc"), 4)
 		draw_circle(Vector2(x, -171), 5, Color("cad6cc"), false, 2)
 	_crate(Vector2(49, -112), Vector2(26, 32))
+	if aboard_workshop():
+		var glow := 0.09 + sin(ambient_time * 3) * 0.015
+		draw_rect(Rect2(-150, -188, 300, 104), Color(0.65, 1, 0.62, glow))
+		draw_rect(Rect2(-148, -186, 168, 106), Color("b7ffb6"), false, 2)
+		draw_line(Vector2(-97, -127), Vector2(15, -127), Color("d2ffd0"), 4)
 
 func _ladder(top: Vector2, height: float) -> void:
 	draw_line(top + Vector2(-14, 0), top + Vector2(-14, height), Color("dfb15a"), 3)

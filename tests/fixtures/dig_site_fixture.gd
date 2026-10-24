@@ -1,5 +1,19 @@
 extends RefCounted
 
+static func workshop(world: Node2D) -> void:
+	world.return_home()
+	world.drone.position = Vector2(20, -140)
+	world.drone.velocity = Vector2.ZERO
+
+static func build(world: Node2D, id: String, cell: Vector2i) -> bool:
+	if not world.outpost.place(id, cell):
+		return false
+	var site: Dictionary = world.outpost.buildings.structures.back()
+	if not world.outpost.fund_site(site):
+		return false
+	world.outpost.advance(world.outpost.Buildings.build_seconds(id) + 0.01)
+	return site.state == "active"
+
 # Test-only excavations. Production worlds never start with these passages.
 static func carve(world: Node2D, cell: Vector2i) -> void:
 	world.site.removed[cell] = true

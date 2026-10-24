@@ -14,6 +14,7 @@ var hull := 100.0
 var fuel := 80.0
 var energy := 60.0
 var suit_integrity := 100.0
+var crew_energy := 100.0
 var tool_slots: Array[String] = ["pulse", "scanner", "", ""]
 var active_tool_slot := 0
 
@@ -126,7 +127,7 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
@@ -168,11 +169,11 @@ func restore(data: Dictionary) -> bool:
 	var active := int(data.get("active_tool_slot", 0))
 	if str(slots[active]).is_empty():
 		return false
-	for stat: String in ["hull", "fuel", "energy", "suit_integrity"]:
-		var value = data.get(stat, 100 if stat == "suit_integrity" else null)
+	for stat: String in ["hull", "fuel", "energy", "suit_integrity", "crew_energy"]:
+		var value = data.get(stat, 100 if stat in ["suit_integrity", "crew_energy"] else null)
 		if not (value is int or value is float) or not is_finite(float(value)) or float(value) < 0:
 			return false
-		var maximum: float = 100 if stat == "suit_integrity" else (next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity()))
+		var maximum: float = 100 if stat in ["suit_integrity", "crew_energy"] else (next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity()))
 		if float(value) > maximum:
 			return false
 	modules = next.modules.duplicate()
@@ -186,6 +187,7 @@ func restore(data: Dictionary) -> bool:
 	fuel = float(data.fuel)
 	energy = float(data.energy)
 	suit_integrity = float(data.get("suit_integrity", 100))
+	crew_energy = float(data.get("crew_energy", 100))
 	tool_slots.assign(slots)
 	active_tool_slot = active
 	return true

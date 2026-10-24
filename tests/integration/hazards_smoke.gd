@@ -27,6 +27,7 @@ func fresh_world() -> void:
 	world = load("res://scenes/prototype/rocket_home.tscn").instantiate()
 	root.add_child(world)
 	current_scene = world
+	Fixture.workshop(world)
 	Fixture.starter_tunnel(world)
 	world.set_process(false)
 	world.set_physics_process(false)
@@ -146,7 +147,10 @@ func _run() -> void:
 	world._physics_process(0.2)
 	check(world.player.position == Vector2(-60, -80), "failed suit triggers recoverable emergency return")
 	check(world.suit_integrity() == 25, "emergency return restores minimum protection")
-	world._physics_process(0.2)
-	check(world.suit_integrity() > 25, "safe ship interior restores suit")
+	world.player.position = Vector2(-60, -200)
+	world.rooms.open_bed()
+	world.rooms.resting = true
+	world.rooms._process(0.2)
+	check(world.suit_integrity() > 25, "resting in bedroom restores suit")
 	print("HAZARDS SMOKE: %d failures" % failures)
 	quit(0 if failures == 0 else 1)

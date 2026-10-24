@@ -23,6 +23,10 @@ func _physics_process(delta: float) -> void:
 	var environment: Dictionary = world.player_environment()
 	var wet: bool = environment.wet
 	var speed_factor := 0.55 if wet else 1.0
+	if absf(horizontal) > 0.1 or absf(vertical) > 0.1:
+		world._set_crew_energy(world.crew_energy() - delta * (0.8 if absf(vertical) > 0.1 else 0.4))
+	if world.crew_energy() <= 0:
+		speed_factor *= 0.65
 	climbing = world.on_ladder(position) and (absf(vertical) > 0.1 or climbing or not is_on_floor())
 	if climbing:
 		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor

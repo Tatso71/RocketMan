@@ -114,6 +114,31 @@ func exposure(feet: Vector2) -> Dictionary:
 	var head_cell := Grid.to_cell(head)
 	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _wet(head), "gas": float(gas.get(head_cell, 0))}
 
+func drain_water(intake: Vector2i, radius: int, amount: float) -> float:
+	if not _open(intake) or radius < 0 or not is_finite(amount) or amount <= 0:
+		return 0
+	var queue: Array[Vector2i] = [intake]
+	var visited := {intake: true}
+	var head := 0
+	var drained := 0.0
+	while head < queue.size() and drained < amount:
+		var cell := queue[head]
+		head += 1
+		var volume := float(water.get(cell, 0))
+		var take := minf(volume, amount - drained)
+		if take > 0:
+			drained += take
+			if volume - take <= EPSILON:
+				water.erase(cell)
+			else:
+				water[cell] = volume - take
+		for offset: Vector2i in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var next := cell + offset
+			if not visited.has(next) and absi(next.x - intake.x) + absi(next.y - intake.y) <= radius and _open(next):
+				visited[next] = true
+				queue.append(next)
+	return drained
+
 func _wet(point: Vector2) -> bool:
 	var cell := Grid.to_cell(point)
 	var level := float(water.get(cell, 0))

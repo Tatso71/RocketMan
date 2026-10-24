@@ -10,6 +10,8 @@ var route := PackedVector2Array()
 var route_timer := 0.0
 var clock := 0.0
 var status := "Collegato"
+var water_alarm := false
+var water_timer := 0.0
 
 func _ready() -> void:
 	collision_layer = 2
@@ -29,9 +31,13 @@ func signal_connected() -> bool:
 func aboard() -> bool:
 	return position.y < -80 and absf(position.x) < 152
 
+func hit_test(viewport_point: Vector2) -> bool:
+	var local_point := get_global_transform_with_canvas().affine_inverse() * viewport_point
+	return Rect2(-26, -20, 52, 42).has_point(local_point)
+
 func _free(cell: Vector2i) -> bool:
 	if cell.y >= 0:
-		return world.site.contains(cell) and world.site.material(cell).is_empty()
+		return world.site.contains(cell) and world.site.material(cell).is_empty() and not world.environment._wet(Grid.center(cell))
 	if cell.y >= -2:
 		return cell.x in [-1, 0]
 	return cell.y >= -11 and cell.x >= -4 and cell.x < 4
@@ -63,10 +69,23 @@ func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
 		return
 	clock += delta
+	if world.player_environment().submerged:
+		water_alarm = true
+		status = "Allarme: stai subendo danni"
+		velocity = Vector2.ZERO
+		route.clear()
+		route_timer = 0
+		queue_redraw()
+		return
+	if water_alarm:
+		water_alarm = false
+		revision = -1
+	water_timer -= delta
 	var current_range: float = world.ship_state.drone_range_metres() if world.ship_state != null else 15
-	if revision != world.navigation_revision or range_metres != current_range:
+	if revision != world.navigation_revision or range_metres != current_range or (not world.environment.water.is_empty() and water_timer <= 0):
 		range_metres = current_range
 		_rebuild()
+		water_timer = 0.5
 		route_timer = 0
 	route_timer -= delta
 	if route_timer <= 0 and graph.get_point_count() > 0:
@@ -82,6 +101,9 @@ func _physics_process(delta: float) -> void:
 		if not route.is_empty() and position.distance_to(route[0]) < 8:
 			route.remove_at(0)
 	velocity = Vector2.ZERO
+	if not route.is_empty() and world.environment._wet(route[0]):
+		route.clear()
+		revision = -1
 	if not route.is_empty():
 		if position.distance_to(route[0]) < 5:
 			route.remove_at(0)
@@ -93,9 +115,16 @@ func _physics_process(delta: float) -> void:
 func _draw() -> void:
 	var bob := sin(clock * 4) * 2
 	var ink := Color("78e4dc") if status == "Ti seguo" or status == "Collegato" else Color("edbe72")
+	var flash := water_alarm and sin(clock * 12) >= 0
+	if water_alarm:
+		ink = Color("ff454e") if flash else Color("ffb5ae")
+	if not world.controls_blocked() and hit_test(get_viewport().get_mouse_position()):
+		draw_rect(Rect2(-24, -17 + bob, 48, 36), Color("b7ffb6"), false, 1.5)
 	draw_line(Vector2(-15, 5 + bob), Vector2(-21, 9 + bob), ink, 3)
 	draw_line(Vector2(15, 5 + bob), Vector2(21, 9 + bob), ink, 3)
-	draw_rect(Rect2(-17, -9 + bob, 34, 20), Color("dae2d8"))
+	draw_rect(Rect2(-17, -9 + bob, 34, 20), Color("ff454e") if flash else Color("dae2d8"))
+	if water_alarm:
+		draw_rect(Rect2(-23, -17 + bob, 46, 38), ink, false, 2)
 	draw_rect(Rect2(-12, -5 + bob, 24, 11), Color("294b5a"))
 	draw_circle(Vector2(0, bob), 4, ink)
 	draw_line(Vector2(-22, -12 + bob), Vector2(-8, -12 + bob), Color("d9b25b"), 3)

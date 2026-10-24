@@ -4,6 +4,22 @@ const Ship = preload("res://scripts/systems/ship_state.gd")
 const Planets = preload("res://scripts/data/planet_catalog.gd")
 const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 
+func test_personal_energy_is_distinct_from_ship_battery_and_persists() -> void:
+	var ship := Ship.new()
+	ship.crew_energy = 23
+	ship.energy = 41
+	var restored := Ship.new()
+	assert_bool(restored.restore(JSON.parse_string(JSON.stringify(ship.snapshot())))).is_true()
+	assert_float(restored.crew_energy).is_equal(23.0)
+	assert_float(restored.energy).is_equal(41.0)
+	var bad := ship.snapshot()
+	bad.crew_energy = 101
+	assert_bool(restored.restore(bad)).is_false()
+	assert_float(restored.crew_energy).is_equal(23.0)
+	bad.erase("crew_energy")
+	assert_bool(restored.restore(bad)).is_true()
+	assert_float(restored.crew_energy).is_equal(100.0)
+
 func test_ship_has_three_floor_baseline_and_metric_module_footprints() -> void:
 	var ship := Ship.new()
 	assert_int(ship.cargo_capacity()).is_equal(120)

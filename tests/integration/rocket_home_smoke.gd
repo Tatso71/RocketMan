@@ -39,6 +39,8 @@ func _run() -> void:
 	world = load("res://scenes/prototype/rocket_home.tscn").instantiate()
 	root.add_child(world)
 	current_scene = world
+	check(absf(world.player.position.y + 320) < 2, "new arrival starts in cockpit")
+	Fixture.workshop(world)
 	Fixture.starter_tunnel(world)
 	await frames(8)
 	check(absf(world.player.position.y + 80) < 2, "player rests on workshop floor")
@@ -73,10 +75,12 @@ func _run() -> void:
 	check(world.inventory.get_amount("soil") == 1, "empty cell cannot duplicate resources")
 	check(not world.can_reach(Vector2i(-8, 3)), "ray blocks mining through intact cells")
 	check(not world.can_reach(Vector2i(20, 0)), "distant block is out of reach")
-	check(not world.place_ladder(), "ladder placement requires resources")
+	check(not world.place_ladder(), "instant ladder requires enough carried resources")
 	world.inventory.add_material("soil", 3)
-	check(world.place_ladder(), "one-cell ladder is placed in empty tunnel space")
+	check(world.place_ladder() and world.ladders.has(Vector2i(-5, 3)), "player builds ladder instantly without construction progress")
 	check(world.inventory.get_amount("soil") == 2, "ladder costs two soil units")
+	check(not world.place_ladder() and world.inventory.get_amount("soil") == 2, "duplicate ladder does not charge again")
+	check(world.outpost.buildings.structures.is_empty() and not world.outpost.construction.is_open(), "instant ladder creates no cube or confirmation popup")
 	# Redirect the public save API to a test-only file; never touch the player's outpost.
 	var store := root.get_node("SaveManager")
 	store.rocket_save_path = "res://reports/rocket-test-save.json"

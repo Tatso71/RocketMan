@@ -65,18 +65,18 @@ func _sync_phase() -> void:
 		add_child(world)
 		if model.outposts.has(model.active_planet):
 			world.restore_state(model.outposts[model.active_planet], false)
-	planet_list.select(_selected_index())
 	_refresh_interface()
+	planet_list.select(_selected_index())
 
 func _selected_index() -> int:
-	var planets := Planets.all()
+	var planets := model.available_planets()
 	for index in range(planets.size()):
 		if planets[index].planet_id == model.selected_planet:
 			return index
 	return 0
 
 func select_planet(index: int) -> void:
-	var planets := Planets.all()
+	var planets := model.available_planets()
 	if index >= 0 and index < planets.size() and model.choose(planets[index].planet_id):
 		planet_list.select(index)
 		feedback = ""
@@ -165,7 +165,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if ship_menu.visible:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and model.phase == State.Phase.SELECT:
-		var planets := Planets.all()
+		var planets := model.available_planets()
 		for index in range(planets.size()):
 			if get_global_mouse_position().distance_to(planets[index].map_position) < 65:
 				select_planet(index)
@@ -212,7 +212,7 @@ func _build_interface() -> void:
 	planet_list = ItemList.new()
 	planet_list.custom_minimum_size = Vector2(360, 116)
 	planet_list.add_theme_font_size_override("font_size", 19)
-	for planet: Resource in Planets.all():
+	for planet: Resource in model.available_planets():
 		planet_list.add_item(planet.display_name)
 	planet_list.item_selected.connect(select_planet)
 	selection_controls.add_child(planet_list)
@@ -253,6 +253,12 @@ func _button(parent: Node, text: String, action: Callable) -> Button:
 	return button
 
 func _refresh_interface() -> void:
+	var destinations := model.available_planets()
+	if planet_list.item_count != destinations.size():
+		planet_list.clear()
+		for destination: Resource in destinations:
+			planet_list.add_item(destination.display_name)
+		planet_list.select(_selected_index())
 	var planet := Planets.find(model.selected_planet)
 	phase_label.text = PHASE_NAMES[model.phase]
 	planet_list.visible = model.phase == State.Phase.SELECT
@@ -366,7 +372,7 @@ func _discard() -> void:
 func _can_service() -> bool:
 	if model.phase == State.Phase.SELECT:
 		return true
-	return model.phase == State.Phase.DIGGING and is_instance_valid(world) and absf(world.player.position.x) < 160 and world.player.position.y > -200 and world.player.position.y <= -78
+	return model.phase == State.Phase.DIGGING and is_instance_valid(world) and (world.aboard_workshop() or world.rooms.available("cabin"))
 
 func _draw() -> void:
 	if model.phase == State.Phase.DIGGING:
@@ -376,7 +382,7 @@ func _draw() -> void:
 		var point := Vector2(posmod(index * 173, 1280), posmod(index * 97, 720))
 		draw_rect(Rect2(point, Vector2.ONE * (1 + index % 2)), Color("809da8"))
 	if model.phase == State.Phase.SELECT:
-		for planet: Resource in Planets.all():
+		for planet: Resource in model.available_planets():
 			var selected: bool = planet.planet_id == model.selected_planet
 			draw_line(Vector2(460, 600), planet.map_position, Color("48666d"), 1)
 			_planet(planet.map_position, 49, planet.surface_color, planet.rock_color)

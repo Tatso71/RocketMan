@@ -48,7 +48,7 @@ Planetary collapse and repairing an inherited rocket are no longer the primary p
 - Save terrain and ladder locations as integer cells, never rounded screen coordinates.
 - Bevels, furniture and decoration may use finer visual detail; they do not redefine usable cell space.
 
-Future room, door and machine footprints must use whole-cell dimensions and declared connection points. Gas, temperature and power simulation are not implemented yet. Excavated does not automatically mean habitable in the eventual game.
+Future room, door and machine footprints must use whole-cell dimensions and declared connection points. Local gas/water and shared battery draw are prototyped; pressure, temperature and cable networks are not. Excavated does not automatically mean habitable in the eventual game.
 
 ## Prototype Scope
 
@@ -57,6 +57,8 @@ Implemented: three-floor traversal, jump, ladders, lower hatch, reachable-cell d
 Environment prototype: indestructible anchor formations, sealed gas/water pockets, scan warnings, finite water flow, gas spread and recoverable suit exposure. The laboratory/drone system is documented in `2026-10-24-underground-construction-and-assistant.md`.
 
 Construction update: limited-range physical support drone, backpack/drone logistics, metric laboratory, local cache, lamp crafting and placed lights are implemented. New arrivals have untouched ground, no starter tunnel or underground equipment. See the updated construction specification; full habitat sealing and relay networks remain future work.
+
+Current interaction update: arrive in the cockpit after piloting; right-click its highlighted room to manage the ship, expand battery capacity or take off. The middle bedroom highlights and provides timed rest for personal energy/suit recovery, separate from the shared ship battery. Only laboratory and light construction use creator cubes: right-click empty space, choose the footprint, place an unfunded cube, bring materials and confirm their transfer. Dashed reservations, timed opening/flashing graphics and a progress bar precede activation. The fixed construction panel is removed. Active labs/lights drain ship battery and stop when unpowered. Ladders are built instantly by the character with B for 2 soil, without cubes, confirmations, drone or electricity. Pending/building stages and paid progress survive save/load.
 
 Digging removes one 1 m2 cross-section cell. It does not claim a physical cubic-metre yield until world thickness is defined. Resource amounts are inventory units.
 

@@ -6,6 +6,7 @@ const DigSite = preload("res://scripts/systems/dig_site.gd")
 
 func test_cycle_transitions_and_one_time_costs() -> void:
 	var state := State.new()
+	state.ship.lab_research_unlocked = true
 	assert_bool(state.choose("verdant")).is_true()
 	assert_bool(state.depart()).is_true()
 	var fuel := state.ship.fuel
@@ -71,3 +72,30 @@ func test_invalid_phase_and_unknown_planet_do_not_mutate_state() -> void:
 	data = state.snapshot()
 	data.progress = NAN
 	assert_bool(state.restore(data)).is_false()
+
+func test_ocra_is_the_only_initial_destination_and_cannot_be_bypassed() -> void:
+	var state := State.new()
+	assert_int(state.available_planets().size()).is_equal(1)
+	assert_str(state.available_planets()[0].planet_id).is_equal("ochre")
+	assert_bool(state.choose("verdant")).is_false()
+	assert_bool(state.choose("frost")).is_false()
+	state.selected_planet = "frost"
+	var fuel := state.ship.fuel
+	assert_bool(state.depart()).is_false()
+	assert_float(state.ship.fuel).is_equal(fuel)
+
+func test_first_completed_lab_unlocks_both_outer_routes_and_persists() -> void:
+	var state := State.new()
+	state.ship.lab_research_unlocked = true
+	assert_int(state.available_planets().size()).is_equal(3)
+	assert_bool(state.choose("frost")).is_true()
+	var restored := State.new()
+	assert_bool(restored.restore(JSON.parse_string(JSON.stringify(state.snapshot())))).is_true()
+	assert_int(restored.available_planets().size()).is_equal(3)
+
+func test_legacy_outer_planet_campaign_keeps_access() -> void:
+	var state := State.new()
+	state.active_planet = "frost"
+	var restored := State.new()
+	assert_bool(restored.restore(state.snapshot())).is_true()
+	assert_int(restored.available_planets().size()).is_equal(3)

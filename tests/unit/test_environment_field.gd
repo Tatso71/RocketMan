@@ -9,6 +9,31 @@ func _amount(field: Dictionary) -> float:
 		result += float(value)
 	return result
 
+func test_pump_removes_finite_water_only_through_connected_open_cells() -> void:
+	var site := Site.new()
+	site.removed[Vector2i(0, 3)] = true
+	site.removed[Vector2i(1, 3)] = true
+	var field := Field.new(site)
+	field.water.clear()
+	field.water[Vector2i(1, 3)] = 1.0
+	field.water[Vector2i(3, 3)] = 1.0
+	var drained := field.drain_water(Vector2i(0, 3), 4, 5)
+	assert_float(drained).is_equal(1.0)
+	assert_float(_amount(field.water)).is_equal(1.0)
+	assert_bool(field.water.has(Vector2i(3, 3))).is_true()
+	site.removed[Vector2i(2, 3)] = true
+	assert_float(field.drain_water(Vector2i(0, 3), 4, 5)).is_equal(1.0)
+	assert_dict(field.water).is_empty()
+
+func test_pump_rate_budget_and_invalid_values_do_not_create_water() -> void:
+	var site := Site.new()
+	var field := Field.new(site)
+	var before := _amount(field.water)
+	assert_float(field.drain_water(Vector2i(3, 3), 3, 0.25)).is_equal(0.25)
+	assert_bool(is_equal_approx(_amount(field.water), before - 0.25)).is_true()
+	assert_float(field.drain_water(Vector2i(3, 3), 3, NAN)).is_equal(0.0)
+	assert_float(field.drain_water(Vector2i(2, 2), 3, 2)).is_equal(0.0)
+
 func test_sealed_pockets_stay_sealed_and_do_not_lose_volume() -> void:
 	var site := Site.new()
 	var field := Field.new(site)
