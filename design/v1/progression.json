@@ -19,7 +19,7 @@
     {
       "step": 2,
       "target_minute": 5,
-      "goal": "Scava due celle e posa la prima scala",
+      "goal": "Scava due celle e costruisci subito la prima scala con 2 terriccio",
       "systems": [
         "mining",
         "ladder"
@@ -29,7 +29,8 @@
         "res_stone",
         "res_copper"
       ],
-      "completion": "first_ladder_placed"
+      "completion": "first_ladder_placed",
+      "recipe": "recipe_cube_ladder"
     },
     {
       "step": 3,
@@ -82,6 +83,69 @@
       "completion": "first_destination_plan"
     }
   ],
+  "ocra_tutorial": {
+    "version": 1,
+    "planet": "planet_ocra",
+    "finish_when": {"fact": "lab_built"},
+    "steps": [
+      {
+        "id": "reach_workshop",
+        "title_it": "Scendi in officina",
+        "hint_it": "Volo concluso! Raggiungi la scala interna a destra e scendi fino al piano piu basso. Nel piano centrale trovi il letto; sotto c'e l'officina da cui prepareremo la spedizione.",
+        "detail_it": "Officina / piano inferiore della nave",
+        "action": "help",
+        "complete_when": {"fact": "workshop_entered"}
+      },
+      {
+        "id": "open_hatch",
+        "title_it": "Apri la botola",
+        "hint_it": "Siamo in officina. Avvicinati alla botola centrale e premi E per aprirla. Poi scendi fino al terreno: sotto la nave non abbiamo ancora scavato nulla.",
+        "detail_it": "Botola centrale / interagisci per aprire",
+        "action": "help",
+        "complete_when": {"fact": "hatch_opened"}
+      },
+      {
+        "id": "first_excavation",
+        "title_it": "Scava le prime due celle",
+        "hint_it": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Scava due celle: ogni blocco raccolto va nel tuo zaino o nel mio carico se sono vicino. La stiva della nave e separata.",
+        "detail_it": "Pulse / 2 celle da 1 metro",
+        "action": "help",
+        "complete_when": {"counter": "mined_cells", "at_least": 2}
+      },
+      {
+        "id": "return_ladder",
+        "title_it": "Prepara la risalita",
+        "hint_it": "Scendi nel primo spazio scavato con S, poi monta la scala con B. Costa 2 terra e compare subito: la costruisci tu, senza cubi, officina o batteria. Non scendiamo senza una via di ritorno.",
+        "detail_it": "Scendi nello scavo / B / 2 terra",
+        "action": "help",
+        "complete_when": {"fact": "ladder"}
+      },
+      {
+        "id": "laboratory_cube",
+        "title_it": "Fabbrica il cubo laboratorio",
+        "hint_it": "Per il laboratorio servono 6 pietra e 4 rame. Puoi raccoglierli o usare le scorte iniziali in officina. Rientra al banco, clic destro e Costruisci: fabbrica il cubo, che occupa 4 posti. Portalo con te; non devi trasportare anche gli ingredienti gia usati.",
+        "detail_it": "Officina / 6 pietra + 4 rame / cubo da 4 posti",
+        "action": "fabricate_lab",
+        "complete_when": {"fact": "lab_cube_crafted"}
+      },
+      {
+        "id": "laboratory_room",
+        "title_it": "Scava la stanza del laboratorio",
+        "hint_it": "Il cubo e pronto. Libera uno spazio largo 4 celle e alto 3, con terra o roccia sotto tutte le colonne. Puoi stare nella stanza mentre il laboratorio si apre. Se il carico e pieno, torna al banco e deposita il materiale.",
+        "detail_it": "Stanza 4 x 3 m / pavimento continuo",
+        "action": "help",
+        "complete_when": {"fact": "lab_room_ready"}
+      },
+      {
+        "id": "deploy_laboratory",
+        "title_it": "Apri il cubo nella stanza",
+        "hint_it": "Qui entra il laboratorio! Clic destro nell'area, scegli Laboratorio e Posiziona cubo. Fai entrare tutto il tratteggio nello scavo e clicca. Il cubo si apre senza chiedere altri materiali; attendi la barra e vedrai il banco illuminarsi.",
+        "detail_it": "Posa il cubo / nessun secondo pagamento",
+        "action": "place_lab",
+        "complete_when": {"fact": "lab_built"}
+      }
+    ]
+  },
   "stages": [
     {
       "stage": 0,

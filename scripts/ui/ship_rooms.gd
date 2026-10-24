@@ -78,6 +78,7 @@ func open_bed() -> void:
 		return
 	world.mouse_mining = false
 	resting = false
+	world.guide_event("bed_inspected")
 	bed_window.popup_centered(Vector2i(440, 300))
 	_refresh()
 

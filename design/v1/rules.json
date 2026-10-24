@@ -9,6 +9,7 @@
     "Massimo 3 compagni, sbloccati uno per volta",
     "Cristalli da scoperte e giacimenti finiti, nessun commercio necessario",
     "Cubi trasportabili che si dispiegano nel volume scavato dal giocatore",
+    "Scale costruite istantaneamente sul posto dal personaggio per 2 terriccio, senza cubo, postazione o energia",
     "Sopravvivenza intermedia e recupero del carico",
     "Robbie trasporta automaticamente solo su percorsi esplorati",
     "Livelli del personaggio con passive e specializzazioni",
@@ -105,6 +106,9 @@
     }
   },
   "cubes": {
+    "excluded_modules": [
+      "mod_ladder"
+    ],
     "packed_visual_metres": [
       0.5,
       0.5,
@@ -158,6 +162,29 @@
     "pack_rules": "offload_cache_evacuate_creatures_disconnect_then_return_one_cube; damage_and_level_persist; no_currency_refund_from_packing",
     "upgrades": "no_automatic_footprint_change; explicit_extension_cube_requires_new_preview",
     "initial_lab_migration": "legacy_placed_labs_remain; future_new_builds_use_6_stone_4_copper_cube_recipe; never_charge_legacy_structure_again"
+  },
+  "manual_ladders": {
+    "module": "mod_ladder",
+    "recipe": "recipe_cube_ladder",
+    "recipe_id_policy": "legacy_stable_id_not_a_cube",
+    "inputs": {
+      "res_soil": 2
+    },
+    "seconds": 0,
+    "energy_kwh": 0,
+    "station": null,
+    "requires_cube": false,
+    "requires_laboratory": false,
+    "requires_robbie": false,
+    "requires_signal": false,
+    "requires_battery": false,
+    "transaction": "validate_empty_reachable_cell_then_atomic_local_payment_and_immediate_world_placement",
+    "inventory_output": false,
+    "failed_placement": "no_payment_no_structure",
+    "input": {
+      "keyboard": "B",
+      "controller": "Y"
+    }
   },
   "logistics": {
     "payment_sources_order": [
@@ -249,7 +276,7 @@
       "energy_can_block_recharge": false,
       "tow_to_ocra": "always_available_after_2_failed_launch_checks; 120s_simulation_only; no_currency_or_unique_item_cost",
       "departure_reserve": "show_route_plus_takeoff_plus_25_percent; never_spend_reserved_fuel_on_optional_services",
-      "emergency_ladders": "always_craft_2_soil; starter_tool_can_recover_soil",
+      "emergency_ladders": "instant_manual_field_placement_2_soil_no_cube_station_energy_drone_or_signal; starter_tool_can_recover_soil",
       "rescue_button": "hold_3s_with_exact_cargo_consequence_preview"
     }
   },

@@ -40,6 +40,7 @@ La prima zona didattica di Ocra sospende i consumi pericolosi. Gli altri ambient
 | --- | --- |
 | Griglia | Celle da 1 m; chunk 32 × 32; geometria e collisione derivano dalle stesse coordinate |
 | Avvio | Terreno integro sotto il portello; pozzo di 2 m scavato dal giocatore |
+| Scale | Costruzione manuale immediata sul posto con 2 terriccio; niente cubo, officina, laboratorio, Robbie o energia |
 | Strati | 0–12, 13–40, 41–90, 91–160 e 161–240 m |
 | Sostegni | Avviso sopra 6 m senza supporto, rischio oltre 9 m; 10 secondi di segnale; primo strato di Ocra protetto |
 | Crolli | Detriti rimuovibili con lo strumento iniziale; nessuna cancellazione di moduli o oggetti obbligatori |

@@ -30,6 +30,15 @@ run("state.search='rame';state.category='resources';render();");assert.match(mai
 run("state.search='';state.stage='0';render();");assert.doesNotMatch(main(),/class="badge">Fase 7/);states++;
 const ids=run('entities.map(e=>e.id)');
 for(const id of ids){run(`detail(${JSON.stringify(id)});`);assert.ok(element('#details').open);assert.ok(element('#detail-content').innerHTML.includes(id));states++;}
+run("detail('mod_ladder');");
+assert.match(element('#detail-content').innerHTML,/Costruzione manuale immediata/);
+assert.doesNotMatch(element('#detail-content').innerHTML,/Cubo chiuso/);
+run("detail('recipe_cube_ladder');");
+assert.match(element('#detail-content').innerHTML,/Sul campo/);
+assert.match(element('#detail-content').innerHTML,/0 s · 0 kWh · Nessun cubo/);
+run("detail('mod_workshop');");
+assert.doesNotMatch(element('#detail-content').innerHTML,/recipe_cube_ladder/);
+states+=3;
 const broken=[];
 for(const file of ['docs/design/README.md','docs/design/ai-implementation-contract.md','docs/design/care-and-caves.md']){
   const source=fs.readFileSync(file,'utf8');
@@ -41,6 +50,6 @@ for(const file of ['docs/design/README.md','docs/design/ai-implementation-contra
   }
 }
 assert.deepEqual(broken,[]);
-const report={ok:true,rendered_states_and_entity_details:states,categories:categories.length,checked:['build_state_transitions','blocked_placement','all_flow_render_functions','category_filters','search','stage_filter','all_entity_detail_dialogs','entry_document_links'],method:'isolated_Node_VM_with_minimal_DOM_test_double',browser_visual_verified:false,browser_limitation:'local_file_protocol_blocked_by_browser_policy'};
+const report={ok:true,rendered_states_and_entity_details:states,categories:categories.length,checked:['build_state_transitions','blocked_placement','all_flow_render_functions','category_filters','search','stage_filter','all_entity_detail_dialogs','instant_manual_ladder_without_cube_or_workstation','entry_document_links'],method:'isolated_Node_VM_with_minimal_DOM_test_double',browser_visual_verified:false,browser_limitation:'local_file_protocol_blocked_by_browser_policy'};
 fs.writeFileSync('docs/design/preview-check-report.json',JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

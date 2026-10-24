@@ -90,7 +90,10 @@
             "minLength": 1
           },
           "station": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 3
           },
           "research": {
@@ -119,7 +122,7 @@
           },
           "seconds": {
             "type": "number",
-            "exclusiveMinimum": 0
+            "minimum": 0
           },
           "energy_kwh": {
             "type": "number",

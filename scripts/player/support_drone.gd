@@ -2,6 +2,9 @@ extends CharacterBody2D
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const BASE := Vector2(0, -80)
+const PERSONAL_SPACE := 70.0
+const FOLLOW_DISTANCE := 96.0
+const MIN_CLEARANCE := 42.0
 var world: Node2D
 var graph := AStar2D.new()
 var revision := -1
@@ -65,6 +68,23 @@ func _rebuild() -> void:
 					graph.connect_points(_id(cell), _id(neighbor))
 	revision = world.navigation_revision
 
+func follow_goal() -> Vector2:
+	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	var desired := torso + Vector2(-world.player.facing * FOLLOW_DISTANCE, -40)
+	var best := desired
+	var score := INF
+	# Prefer a clear resting place beside the player, not the nearest occupied cell.
+	for id in graph.get_point_ids():
+		var point := graph.get_point_position(id)
+		var distance := point.distance_to(torso)
+		if distance < PERSONAL_SPACE or distance > Grid.metres(2.8) or not _clear(torso, point):
+			continue
+		var candidate := point.distance_to(desired)
+		if candidate < score:
+			score = candidate
+			best = point
+	return best
+
 func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
 		return
@@ -90,11 +110,16 @@ func _physics_process(delta: float) -> void:
 	route_timer -= delta
 	if route_timer <= 0 and graph.get_point_count() > 0:
 		route_timer = 0.3
-		var goal: Vector2 = world.player.position + Vector2(-world.player.facing * 48, -48)
+		for id in graph.get_point_ids():
+			graph.set_point_disabled(id, false)
+		var start := graph.get_closest_point(position)
+		var actor := Rect2(world.player.position - Vector2(12, 64), Vector2(24, 64)).grow(24)
+		for id in graph.get_point_ids():
+			graph.set_point_disabled(id, id != start and actor.has_point(graph.get_point_position(id)))
+		var goal := follow_goal()
 		var outside: bool = goal.distance_to(BASE) > Grid.metres(range_metres)
 		if outside:
 			goal = BASE + (goal - BASE).normalized() * Grid.metres(range_metres - 0.5)
-		var start := graph.get_closest_point(position)
 		var end := graph.get_closest_point(goal)
 		route = graph.get_point_path(start, end)
 		status = "Limite segnale" if outside else ("Percorso ostruito" if route.is_empty() else "Ti seguo")
@@ -108,7 +133,18 @@ func _physics_process(delta: float) -> void:
 		if position.distance_to(route[0]) < 5:
 			route.remove_at(0)
 		else:
-			velocity = (route[0] - position).normalized() * minf(165, position.distance_to(route[0]) / delta)
+			velocity = (route[0] - position).normalized() * minf(125, position.distance_to(route[0]) / maxf(delta, 0.001))
+	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	var distance := position.distance_to(torso)
+	if distance < MIN_CLEARANCE:
+		var away := (position - torso).normalized()
+		if away.is_zero_approx():
+			away = Vector2(-world.player.facing, -1).normalized()
+		var escape := position + away * minf(MIN_CLEARANCE - distance + 4, 24)
+		if _free(Grid.to_cell(escape)) and _clear(position, escape):
+			velocity = away * minf(100, (MIN_CLEARANCE - distance + 4) / maxf(delta, 0.001))
+		else:
+			velocity = Vector2.ZERO
 	move_and_slide()
 	queue_redraw()
 

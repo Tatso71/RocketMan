@@ -94,7 +94,7 @@ func _run() -> void:
 	await screenshot("workstation-construction", construction.picker)
 	construction._cancel_picker()
 	ui.open_inventory()
-	ui.prepare_button.pressed.emit()
+	ui.prepare_lab()
 	check(world.field_cargo.available("stone", true) == 6 and world.field_cargo.available("copper", true) == 4, "construction menu prepares exact laboratory supplies")
 	ui.window.hide()
 	campaign.model.ship.hull = 50

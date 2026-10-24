@@ -14,7 +14,7 @@ const quantities=(obj,where)=>{check(obj&&typeof obj==='object'&&!Array.isArray(
 function schemaCheck(value,s,where){
   if(s.const!==undefined)check(value===s.const,`Schema const ${where}`);
   if(s.enum)check(s.enum.includes(value),`Schema enum ${where}`);
-  if(s.type){const ok=s.type==='array'?Array.isArray(value):s.type==='object'?value!==null&&typeof value==='object'&&!Array.isArray(value):s.type==='integer'?Number.isInteger(value):typeof value===s.type;check(ok,`Schema type ${where}: ${s.type}`);if(!ok)return;}
+  if(s.type){const matches=t=>t==='null'?value===null:t==='array'?Array.isArray(value):t==='object'?value!==null&&typeof value==='object'&&!Array.isArray(value):t==='integer'?Number.isInteger(value):typeof value===t;const ok=(Array.isArray(s.type)?s.type:[s.type]).some(matches);check(ok,`Schema type ${where}: ${s.type}`);if(!ok)return;}
   if(typeof value==='number'){if(s.minimum!==undefined)check(value>=s.minimum,`Schema minimum ${where}`);if(s.exclusiveMinimum!==undefined)check(value>s.exclusiveMinimum,`Schema exclusiveMinimum ${where}`);if(s.maximum!==undefined)check(value<=s.maximum,`Schema maximum ${where}`);}
   if(typeof value==='string'){if(s.minLength)check(value.length>=s.minLength,`Schema minLength ${where}`);if(s.pattern)check(new RegExp(s.pattern).test(value),`Schema pattern ${where}`);}
   if(Array.isArray(value)){if(s.minItems!==undefined)check(value.length>=s.minItems,`Schema minItems ${where}`);if(s.maxItems!==undefined)check(value.length<=s.maxItems,`Schema maxItems ${where}`);if(s.uniqueItems)check(new Set(value.map(x=>JSON.stringify(x))).size===value.length,`Schema uniqueItems ${where}`);if(s.items)value.forEach((v,i)=>schemaCheck(v,s.items,`${where}[${i}]`));}
@@ -32,7 +32,25 @@ if(fs.existsSync('design/catalog.schema.json'))schemaCheck(D,JSON.parse(fs.readF
 else warnings.push('Run build.mjs to produce schema and assets before final verification.');
 check(D.planets.length===12,'Expected 12 planets');check(D.creatures.length===36,'Expected 36 species');
 for(const r of D.resources){refs(r.primary_planets,r.id);if(r.required_tool)ref(r.required_tool,r.id);check(r.inventory_units===1,`Unexpected resource unit ${r.id}`);}
-for(const r of D.recipes){ref(r.station,r.id);ref(r.research,r.id);quantities(r.inputs,r.id+'.inputs');quantities(r.outputs,r.id+'.outputs');check(r.seconds>0&&r.energy_kwh>=0,`Invalid process timing ${r.id}`);check(!Object.keys(r.outputs).some(x=>x.startsWith('cur_')),`Currency crafting exploit ${r.id}`);check(byId.get(r.station)?.crafting_recipes.includes(r.id),`Station missing recipe ${r.id}`);}
+for(const r of D.recipes){
+  const manual=r.category==='manual_construction';
+  if(manual){
+    check(r.station===null&&r.seconds===0&&r.energy_kwh===0,`Manual construction requires no station, time or energy ${r.id}`);
+    check(r.output_mode==='immediate_world_placement'&&Object.keys(r.outputs).every(id=>byId.get(id)?.kind==='manual_infrastructure'),`Manual construction must place infrastructure directly ${r.id}`);
+    check(!D.modules.some(m=>m.crafting_recipes.includes(r.id)),`Manual recipe must not require a workstation ${r.id}`);
+  }else{
+    ref(r.station,r.id);
+    check(r.seconds>0,`Invalid process timing ${r.id}`);
+    check(byId.get(r.station)?.crafting_recipes.includes(r.id),`Station missing recipe ${r.id}`);
+  }
+  ref(r.research,r.id);quantities(r.inputs,r.id+'.inputs');quantities(r.outputs,r.id+'.outputs');
+  check(Number.isFinite(r.seconds)&&r.seconds>=0&&Number.isFinite(r.energy_kwh)&&r.energy_kwh>=0,`Invalid process timing ${r.id}`);
+  check(!Object.keys(r.outputs).some(x=>x.startsWith('cur_')),`Currency crafting exploit ${r.id}`);
+}
+const ladderRecipe=byId.get('recipe_cube_ladder'),ladder=byId.get('mod_ladder'),ladderRule=D.rules.manual_ladders;
+check(ladderRecipe?.category==='manual_construction'&&ladderRecipe.research==='tech_start'&&ladderRecipe.batch_limit===1&&Object.keys(ladderRecipe.inputs).length===1&&ladderRecipe.inputs.res_soil===2&&Object.keys(ladderRecipe.outputs).length===1&&ladderRecipe.outputs.mod_ladder===1,'Emergency ladder must immediately consume only 2 soil per placed cell');
+check(ladder?.kind==='manual_infrastructure'&&ladder.fabricated_at===null&&ladder.packed_inventory_units===0&&ladder.deployment_seconds===0&&ladder.power_kw===0,'Emergency ladder must not use a cube, station, timer or energy');
+check(ladderRule?.module==='mod_ladder'&&ladderRule.recipe==='recipe_cube_ladder'&&ladderRule.station===null&&ladderRule.seconds===0&&ladderRule.energy_kwh===0&&ladderRule.inputs.res_soil===2&&ladderRule.inventory_output===false&&['requires_cube','requires_laboratory','requires_robbie','requires_signal','requires_battery'].every(key=>ladderRule[key]===false)&&D.rules.cubes.excluded_modules.includes('mod_ladder'),'Emergency ladder rules must preserve instant independent field construction');
 for(const m of D.modules){ref(m.research,m.id);if(m.fabricated_at)ref(m.fabricated_at,m.id);refs(m.crafting_recipes,m.id);refs(m.services,m.id);if(m.upgrade_track)ref(m.upgrade_track,m.id);check(m.footprint_m.length===2&&m.footprint_m.every(x=>Number.isInteger(x)&&x>0),`Invalid footprint ${m.id}`);check(m.packed_inventory_units>=0&&m.packed_inventory_units<=8,`Uncarryable cube ${m.id}`);for(const p of m.ports)check(p.cell.every((x,i)=>Number.isInteger(x)&&x>=0&&x<m.footprint_m[i]),`Port outside ${m.id}`);}
 for(const t of D.research){refs(t.requires_all,t.id);refs(t.requires_any,t.id);refs(t.requires_planet_visits,t.id);refs(t.requires_surveys,t.id);if(t.requires_functional_module)ref(t.requires_functional_module,t.id);quantities(t.cost_items,t.id);quantities(t.cost_currency,t.id);}
 for(const p of D.planets){ref(p.required_research,p.id);refs(p.primary_resources,p.id);refs(p.secondary_resources,p.id);refs(p.hazards,p.id);refs(p.ecology_species,p.id);quantities(p.currency_budget,p.id);check(p.ecology_species.length===3,`Expected three species ${p.id}`);for(const o of p.planet_survey_objectives){refs(o.requires_modules,o.id);quantities(o.requires_items,o.id);ref(o.required_research,o.id);}const lumen=p.reward_sources.reduce((n,s)=>n+s.count*s.lumen_each,0);check(lumen===p.currency_budget.cur_lumen,`Lumen source total mismatch ${p.id}`);const core=Object.keys(p.currency_budget).find(x=>x!=='cur_lumen');if(core)check(p.core_sources.reduce((n,s)=>n+s.count*s.cores_each,0)===p.currency_budget[core],`Core source mismatch ${p.id}`);}
@@ -49,6 +67,16 @@ for(const c of D.creatures)check(Object.hasOwn(D.rules.creature_system.effect_op
 for(const t of D.tools)ref(t.research,t.id);
 for(const s of D.services){if(s.station)ref(s.station,s.id);ref(s.research,s.id);quantities(s.inputs,s.id);}
 for(const route of D.progression.explicit_dependency_paths)refs(route,'progression.explicit_dependency_paths');
+const tutorial=D.progression.ocra_tutorial;
+const validCondition=c=>c&&typeof c==='object'&&!Array.isArray(c)&&((Object.keys(c).length===1&&typeof c.fact==='string'&&c.fact.length>0)||(Object.keys(c).length===2&&typeof c.counter==='string'&&c.counter.length>0&&Number.isSafeInteger(c.at_least)&&c.at_least>0));
+check(tutorial?.version===1&&tutorial.planet==='planet_ocra'&&Array.isArray(tutorial.steps)&&tutorial.steps.length>0&&validCondition(tutorial.finish_when),'Invalid Ocra tutorial definition');
+const taskIds=new Set();
+for(const step of tutorial?.steps||[]){
+  check(typeof step.id==='string'&&/^[a-z][a-z0-9_]*$/.test(step.id)&&!taskIds.has(step.id),`Invalid or duplicate Robbie task ${step.id}`);
+  taskIds.add(step.id);
+  check(['title_it','hint_it','detail_it'].every(key=>typeof step[key]==='string'&&step[key].length>0),`Missing Robbie task copy ${step.id}`);
+  check(['help','fabricate_lab','place_lab','inventory'].includes(step.action)&&validCondition(step.complete_when),`Invalid Robbie task action or condition ${step.id}`);
+}
 
 // Research prerequisite graph must be acyclic even before material reachability.
 const visiting=new Set(),done=new Set();
@@ -71,7 +99,7 @@ while(changed&&iterations++<200){
     add(visited,p.id,'visit');
     for(const id of [...p.primary_resources,...p.secondary_resources]){const r=byId.get(id);if(r&&unlockedTools().has(r.required_tool))add(items,id,'gather');}
   }
-  for(const r of D.recipes)if(knownTech.has(r.research)&&modules.has(r.station)&&hasCost(r.inputs))for(const id of Object.keys(r.outputs))add(id.startsWith('mod_')?modules:items,id,'craft');
+  for(const r of D.recipes)if(knownTech.has(r.research)&&(r.category==='manual_construction'||modules.has(r.station))&&hasCost(r.inputs))for(const id of Object.keys(r.outputs))add(id.startsWith('mod_')?modules:items,id,'craft');
   if(modules.has('mod_lab'))add(milestones,'first_lab','milestone');
   for(const p of D.planets)if(visited.has(p.id)&&p.planet_survey_objectives.every(o=>knownTech.has(o.required_research)&&o.requires_modules.every(m=>modules.has(m))&&hasCost(o.requires_items)))add(surveyed,p.id,'survey');
   for(const t of D.research)if(t.requires_all.every(x=>knownTech.has(x))&&(!t.requires_any.length||t.requires_any.some(x=>knownTech.has(x)))&&t.requires_planet_visits.every(x=>visited.has(x))&&t.requires_surveys.every(x=>surveyed.has(x))&&(!t.requires_functional_module||modules.has(t.requires_functional_module))&&t.requires_milestones.every(x=>milestones.has(x))&&hasCost(t.cost_items))add(knownTech,t.id,'research');

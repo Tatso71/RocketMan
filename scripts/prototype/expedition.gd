@@ -6,7 +6,7 @@ const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 const Exterior = preload("res://scripts/prototype/rocket_exterior.gd")
 const Home = preload("res://scenes/prototype/rocket_home.tscn")
 const PHASE_NAMES := ["Scelta del pianeta", "Volo interplanetario", "Atterraggio verticale", "Esplorazione e scavo", "Decollo"]
-const RESOURCE_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile"}
+const RESOURCE_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
 var model := State.new()
 var world: Node2D
 var exterior: Node2D

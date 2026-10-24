@@ -68,7 +68,7 @@ func _run() -> void:
 	check(world.field_cargo.available("stone", true) == 6 and world.field_cargo.available("copper", true) == 4, "prepare laboratory loads exact stone and copper")
 	check(world.field_cargo.used(world.field_cargo.backpack) == 8 and world.field_cargo.used(world.field_cargo.drone) == 2, "recipe is physically split across backpack and drone")
 	check(world.local_store.stone == 2 and world.local_store.copper == 2, "preparation subtracts materials from local ship stock")
-	check(ui.prepare_button.disabled, "preparation cannot duplicate an already carried recipe")
+	check(not ui.prepare_blocker().is_empty(), "legacy recipe preparation cannot duplicate already carried materials")
 	await frames()
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(ui.window, ui.window.get_visible_rect()), "all inventory controls fit inside the window")

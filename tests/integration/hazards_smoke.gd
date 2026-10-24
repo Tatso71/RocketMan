@@ -97,7 +97,10 @@ func _run() -> void:
 	var saved: Dictionary = world.capture_state()
 	var expected: Dictionary = world.environment.snapshot()
 	world.environment.gas.clear()
-	check(world.restore_state(saved), "outpost restores breached pocket state")
+	var restored: bool = world.restore_state(saved)
+	if not restored:
+		print("RESTORE BLOCKER: " + world.status_label.text)
+	check(restored, "outpost restores breached pocket state")
 	check(world.environment.snapshot() == expected, "loading does not refill or duplicate leaked gas")
 	var before: Dictionary = world.capture_state()
 	var broken: Dictionary = before.duplicate(true)

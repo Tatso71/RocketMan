@@ -71,7 +71,7 @@ func activate(id: int) -> void:
 	elif id == 2:
 		var world: Node2D = outpost.world
 		var anchor: Vector2i = world.Grid.to_cell(world.player.position - Vector2(0, 1))
-		outpost.construction.open_picker(anchor, world.player.get_global_transform_with_canvas() * Vector2(0, -60))
+		outpost.construction.open_picker(anchor, world.player.get_global_transform_with_canvas() * Vector2(0, -60), true)
 	elif id == 5:
 		outpost.selected_station.building.enabled = not outpost.selected_station.building.get("enabled", true)
 		outpost.world._note("Laboratorio acceso" if outpost.selected_station.building.enabled else "Laboratorio spento: consumo interrotto")

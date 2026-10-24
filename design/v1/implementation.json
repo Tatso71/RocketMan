@@ -47,7 +47,8 @@
         "first_lab_without_lab",
         "no_auto_dig",
         "no_double_payment",
-        "save_mid_deploy"
+        "save_mid_deploy",
+        "manual_ladder_instant_no_station_no_energy_no_cube"
       ]
     },
     {

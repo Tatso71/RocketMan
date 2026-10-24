@@ -743,9 +743,9 @@
   {
     "id": "recipe_cube_ladder",
     "name_it": "Scala di emergenza",
-    "category": "module_cube",
+    "category": "manual_construction",
     "stage": 0,
-    "station": "mod_workshop",
+    "station": null,
     "research": "tech_start",
     "inputs": {
       "res_soil": 2
@@ -753,12 +753,13 @@
     "outputs": {
       "mod_ladder": 1
     },
-    "seconds": 5,
-    "energy_kwh": 0.01,
-    "batch_limit": 5,
+    "seconds": 0,
+    "energy_kwh": 0,
+    "batch_limit": 1,
+    "output_mode": "immediate_world_placement",
     "currency_output": false,
     "byproducts": {},
-    "cancellation": "before_completion_returns_reserved_inputs"
+    "cancellation": "invalid_placement_consumes_nothing"
   },
   {
     "id": "recipe_cube_lab",

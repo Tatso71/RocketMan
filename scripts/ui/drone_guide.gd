@@ -71,6 +71,11 @@ func _ready() -> void:
 	tail.hide()
 
 func context() -> String:
+	if room_poll <= 0 or room_revision != world.navigation_revision:
+		room_cache = world.outpost.find_laboratory_space()
+		room_revision = world.navigation_revision
+		room_poll = 0.5
+	world.observe_tutorial(room_cache is Vector2i)
 	var danger: Dictionary = world.player_environment()
 	if danger.submerged:
 		return "water_danger"
@@ -80,6 +85,13 @@ func context() -> String:
 		return "energy_low"
 	if world.crew_energy() < 25:
 		return "bed_rest"
+	var step: Dictionary = state.ocra.current()
+	if world.is_ocra() and not step.is_empty() and not state.ocra.complete():
+		if world.field_cargo.free_space(world.drone_help_available()) <= 0:
+			return "cargo_full" if world.drone_help_available() else "drone_unavailable"
+		if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory" and item.get("state") == "planned"):
+			return "tutorial_fund"
+		return "ocra/" + step.id
 	if world.rooms.available("bedroom") and "bed_rest" not in state.seen:
 		return "bed_rest"
 	if world.drone.status == "Limite segnale":
@@ -123,7 +135,7 @@ func request_help() -> void:
 	replay_text = ""
 	current_id = ""
 	var id := context()
-	if world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
+	if not world.is_ocra() and world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
 		id = "lab_plan" if world.field_cargo.free_space(world.drone_help_available()) > 0 else "cargo_full"
 	state.offer(id, true)
 	_update_bubble()
@@ -139,11 +151,12 @@ func repeat_last() -> void:
 	_update_bubble()
 
 func event(id: String) -> void:
+	state.ocra.record(id)
 	if id in Guide.FACTS:
 		state.facts[id] = true
 	if id in ["gas_leak", "water_leak"]:
 		state.offer(id)
-	if id == "mined" and not world.outpost.laboratory_unlocked():
+	if id == "mined" and not world.is_ocra() and not world.outpost.laboratory_unlocked():
 		state.offer("tutorial_collect")
 
 func _process(delta: float) -> void:
@@ -171,7 +184,7 @@ func _update_bubble() -> void:
 		if not state.active_manual or replay_id != current_id:
 			replay_id = ""
 			replay_text = ""
-		speech.text = replay_text if not replay_text.is_empty() else Guide.MESSAGES[current_id][2]
+		speech.text = replay_text if not replay_text.is_empty() else state.message(current_id)[2]
 		bubble.size = Vector2(332, 0)
 	if current_id == "cargo_full" and replay_text.is_empty():
 		speech.text = "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi lo zaino e anche il mio carico se resto vicino. Per ripartire scegli Preleva materiali o Costruisci." if world.outpost.source_available() else Guide.MESSAGES[current_id][2]
@@ -184,7 +197,7 @@ func _update_bubble() -> void:
 	var size := bubble.size.max(bubble.get_combined_minimum_size())
 	var safe := Rect2(Vector2(16, 76), viewport - Vector2(32, 186))
 	var radio := not safe.has_point(point) or current_id == "signal_limit"
-	heading.text = "ROBBIE / " + ("RADIO" if radio else str(Guide.MESSAGES[current_id][1]).to_upper())
+	heading.text = "ROBBIE / " + ("RADIO" if radio else str(state.message(current_id)[1]).to_upper())
 	var bubble_style := bubble.get_theme_stylebox("panel") as StyleBoxFlat
 	bubble_style.border_color = Color("ef6666") if current_id == "water_danger" else Color("589d95")
 	# Try both sides of the drone, avoiding the explorer and the fixed HUD areas.
@@ -197,7 +210,10 @@ func _update_bubble() -> void:
 		var clamped := candidate.clamp(safe.position, safe.end - size)
 		var rect := Rect2(clamped, size)
 		var score := candidate.distance_to(clamped)
-		for obstacle: Rect2 in [body, Rect2(0, 70, 400, 125), Rect2(viewport.x - 280, 70, 280, 280)]:
+		var obstacles: Array[Rect2] = [body, Rect2(0, 70, 400, 105), Rect2(viewport.x - 304, 70, 304, 300)]
+		if is_instance_valid(world.tutorial_ui) and world.tutorial_ui.panel.visible:
+			obstacles.append(world.tutorial_ui.panel.get_global_rect())
+		for obstacle: Rect2 in obstacles:
 			var overlap := rect.intersection(obstacle)
 			score += overlap.get_area() * 10
 		if score < best_score:

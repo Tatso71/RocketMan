@@ -1,5 +1,6 @@
 extends RefCounted
 
+const Tutorial = preload("res://scripts/systems/ocra_tutorial.gd")
 const MESSAGES := {
 	"welcome": [10, "Atterraggio completato", "Siamo arrivati! Sei ancora in cabina: clic destro per gestire la nave. Scendi con la scala al letto, poi al laboratorio. Ogni stanza si illumina quando puoi usarla."],
 	"bed_rest": [35, "Una pausa nel letto", "La stanza centrale e il nostro rifugio. Clic destro sul letto e Riposa: recuperi energia personale e integrita della tuta. La batteria della nave invece alimenta i laboratori e va gestita a parte."],
@@ -44,20 +45,28 @@ var context_id := ""
 var active_manual := false
 var last_shown: Dictionary = {}
 var latched: Array[String] = []
+var ocra := Tutorial.new()
+
+func message(id: String) -> Array:
+	return MESSAGES[id] if MESSAGES.has(id) else ocra.message(id)
+
+func recurring(id: String) -> bool:
+	return id in REPEATING or PERSISTENT.has(id) or id.begins_with("ocra/")
 
 func offer(id: String, manual: bool = false) -> bool:
-	if not MESSAGES.has(id):
+	var entry := message(id)
+	if entry.is_empty():
 		return false
 	if not manual:
-		if muted or (gap > 0 and int(MESSAGES[id][0]) < 80) or (id in seen and id not in REPEATING and not PERSISTENT.has(id)) or id in latched:
+		if muted or (gap > 0 and int(entry[0]) < 80) or (id in seen and not recurring(id)) or id in latched:
 			return false
-		if elapsed - float(last_shown.get(id, -100)) < float(PERSISTENT.get(id, 35)):
+		if elapsed - float(last_shown.get(id, -100)) < (25.0 if id.begins_with("ocra/") else float(PERSISTENT.get(id, 35))):
 			return false
-		if not active_id.is_empty() and int(MESSAGES[id][0]) <= int(MESSAGES[active_id][0]):
+		if not active_id.is_empty() and int(entry[0]) <= int(message(active_id)[0]):
 			return false
 	active_id = id
 	active_manual = manual
-	remaining = clampf(float(str(MESSAGES[id][2]).length()) / 15.0, 9, 18)
+	remaining = clampf(float(str(entry[2]).length()) / 17.0, 8, 18)
 	if id not in seen:
 		seen.append(id)
 	if id in REPEATING and not PERSISTENT.has(id) and id not in latched:
@@ -72,7 +81,7 @@ func tick(delta: float, current_context: String) -> void:
 	for id: String in latched.duplicate():
 		if id != current_context and id not in ["gas_leak", "water_leak"]:
 			latched.erase(id)
-	if (active_id in REPEATING or PERSISTENT.has(active_id)) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak"]:
+	if recurring(active_id) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak"]:
 		dismiss()
 	context_id = current_context
 	remaining = maxf(0, remaining - delta)
@@ -91,19 +100,23 @@ func set_muted(value: bool) -> void:
 		dismiss()
 
 func snapshot() -> Dictionary:
-	return {"seen": seen.duplicate(), "facts": facts.duplicate(), "muted": muted}
+	return {"seen": seen.duplicate(), "facts": facts.duplicate(), "muted": muted, "ocra": ocra.snapshot()}
 
 func restore(data: Variant) -> bool:
 	if not data is Dictionary or not data.get("seen", []) is Array or not data.get("facts", {}) is Dictionary or not data.get("muted", false) is bool:
 		return false
+	var next_tutorial := Tutorial.new()
+	if not next_tutorial.restore(data.get("ocra", {})):
+		return false
 	for id in data.get("seen", []):
-		if not id is String or not MESSAGES.has(id):
+		if not id is String or message(id).is_empty():
 			return false
 	for fact in data.get("facts", {}):
 		if fact not in FACTS or not data.facts[fact] is bool:
 			return false
 	seen.assign(data.get("seen", []))
 	facts = data.get("facts", {}).duplicate()
+	ocra.restore(next_tutorial.snapshot())
 	muted = data.get("muted", false)
 	active_id = ""
 	remaining = 0

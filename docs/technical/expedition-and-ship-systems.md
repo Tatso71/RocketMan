@@ -3,6 +3,14 @@
 Date: 2026-10-24
 Status: Playable foundation, not final simulation or balance
 
+## Ocra Onboarding Update
+
+The initial runtime migration is intentionally limited to the Ocra tutorial and laboratory cube. `ocra_catalog.gd` reads/validates `progression.ocra_tutorial` and the lab recipe/footprint from the v1 JSONs. `ocra_tutorial.gd` is a pure event/condition model; `drone_guide_state.gd` owns its saved facts/counters. `ocra_tutorial_ui.gd` provides a compact current-goal panel and contextual actions. See `robbie-tutorial-authoring.md` for adding tasks and available semantic events; new task copy/order/conditions do not require guide or UI branches.
+
+Lab fabrication consumes local ingredients atomically only at successful completion, then creates one indivisible four-unit `lab_cube`. UI cancellation before that point is free; an unfinished unpaid fabrication is not a persistent job. A valid deployment consumes only that cube and starts the existing saved timed unfolding. Old unfunded lab plans retain their original funding transaction; light/pump sites remain unchanged. Carried/store/cache accounting is weighted, and no stock becomes accessible remotely. The existing three-planet routes and prototype kWh/s draw remain until their dedicated migrations. There is no new Ocra cutoff layer.
+
+Robbie's preferred resting distance is about 2 m, with a 70 px personal-space goal and temporary AStar exclusion around the explorer's body. It can pass through tight real geometry, remain within the 3 m assistance radius where space permits, and return through the hatch without teleporting. Water/signal rules remain in force. `ocra_onboarding_smoke.gd` exercises a fresh, physically traversed/mined tutorial, cancellation, single payment, weighted cargo, spacing, native/JSON save/load and 720p/1080p layout.
+
 ## Ownership
 
 - `scripts/systems/expedition_state.gd`: pure expedition state and legal phase transitions.

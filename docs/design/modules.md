@@ -2,10 +2,12 @@
 
 Catalogo generato da [modules.json](../../design/v1/modules.json). Modificare il JSON e rieseguire `node tools/design/build.mjs`. Numeri di bilanciamento iniziali, da provare nel gioco.
 
+Le scale sono costruzione manuale immediata sul posto: 2 Terriccio, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
+
 | ID | Modulo | Fase | Aperto X per Y m | Carico chiuso | kW | Deposito | Aggancio |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | mod_workshop | Officina di bordo | 0 | 4 × 3 | 0 | 0 | 0 | ship_internal |
-| mod_ladder | Scala di emergenza | 0 | 1 × 1 | 1 | 0 | 0 | floor_or_vertical_chain |
+| mod_ladder | Scala di emergenza | 0 | 1 × 1 | 0 | 0 | 0 | floor_or_vertical_chain |
 | mod_lab | Laboratorio da campo | 0 | 4 × 3 | 4 | 0.2 | 32 | floor |
 | mod_light | Luce da galleria | 0 | 1 × 1 | 1 | 0.02 | 0 | floor |
 | mod_crate | Deposito locale | 1 | 2 × 2 | 2 | 0 | 48 | floor |
@@ -49,7 +51,7 @@ Catalogo generato da [modules.json](../../design/v1/modules.json). Modificare il
 
 - ID: `mod_workshop`. Ricerca: Dotazione iniziale.
 - Funzioni: assembly, repair, upgrade, craft.
-- Costruisce: Filo di rame; Vetro; Filtro a carbone; Mangime vegetale; Scala di emergenza; Laboratorio da campo; Deposito locale; Fabbricatore; Propellente elettrolitico; Toppa per tuta; Sciogli ghiaccio; Luce da galleria.
+- Costruisce: Filo di rame; Vetro; Filtro a carbone; Mangime vegetale; Laboratorio da campo; Deposito locale; Fabbricatore; Propellente elettrolitico; Toppa per tuta; Sciogli ghiaccio; Luce da galleria.
 - Cura e servizi: Rifornisci 20 carburante; Rifornisci 50 carburante; Ripara scafo; Cura e ripristino a bordo; Cura Robbie a bordo; Servizio propulsori.
 - Upgrade: nessun livello locale; ingombro invariato.
 

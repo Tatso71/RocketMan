@@ -1,6 +1,7 @@
 extends RefCounted
 
-const ITEM_IDS := ["soil", "stone", "copper", "crystal", "lamp_kit"]
+const ITEM_IDS := ["soil", "stone", "copper", "crystal", "lamp_kit", "lab_cube"]
+const ITEM_UNITS := {"lab_cube": 4}
 const PACK_CAPACITY := 8
 var drone_capacity := 12
 var backpack: Dictionary = {}
@@ -9,16 +10,22 @@ var drone: Dictionary = {}
 func used(stock: Dictionary) -> int:
 	var total := 0
 	for id: String in ITEM_IDS:
-		total += int(stock.get(id, 0))
+		total += int(stock.get(id, 0)) * item_units(id)
 	return total
+
+static func item_units(id: String) -> int:
+	return ITEM_UNITS.get(id, 1)
+
+func collectible(id: String, with_drone: bool) -> int:
+	return (PACK_CAPACITY - used(backpack)) / item_units(id) + ((drone_capacity - used(drone)) / item_units(id) if with_drone else 0)
 
 func free_space(with_drone: bool) -> int:
 	return PACK_CAPACITY - used(backpack) + (drone_capacity - used(drone) if with_drone else 0)
 
 func collect(id: String, amount: int = 1, with_drone: bool = false) -> bool:
-	if id not in ITEM_IDS or amount <= 0 or free_space(with_drone) < amount:
+	if id not in ITEM_IDS or amount <= 0 or collectible(id, with_drone) < amount:
 		return false
-	var pack_amount := mini(amount, PACK_CAPACITY - used(backpack))
+	var pack_amount := mini(amount, (PACK_CAPACITY - used(backpack)) / item_units(id))
 	backpack[id] = int(backpack.get(id, 0)) + pack_amount
 	if amount > pack_amount:
 		drone[id] = int(drone.get(id, 0)) + amount - pack_amount
@@ -58,12 +65,12 @@ func deposit(stock: Dictionary, capacity: int, with_drone: bool) -> int:
 	var sources: Array = [backpack, drone] if with_drone else [backpack]
 	for source: Dictionary in sources:
 		for id: String in ITEM_IDS:
-			var amount := mini(remaining, int(source.get(id, 0)))
+			var amount := mini(remaining / item_units(id), int(source.get(id, 0)))
 			if amount > 0:
 				stock[id] = int(stock.get(id, 0)) + amount
 				source[id] = int(source[id]) - amount
-				remaining -= amount
-				transferred += amount
+				remaining -= amount * item_units(id)
+				transferred += amount * item_units(id)
 	return transferred
 
 func snapshot() -> Dictionary:
@@ -88,5 +95,5 @@ static func valid_stock(stock: Dictionary, capacity: int) -> bool:
 		var value = stock[id]
 		if id not in ITEM_IDS or not (value is int or value is float) or not is_finite(float(value)) or float(value) != floorf(float(value)) or float(value) < 0 or float(value) > capacity:
 			return false
-		total += int(value)
+		total += int(value) * item_units(id)
 	return total <= capacity

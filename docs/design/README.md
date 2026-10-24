@@ -21,6 +21,7 @@ node tools/design/validate.mjs
 | --- | --- |
 | Universo | 12 pianeti persistenti, con difficoltà progressiva e rami che si incontrano |
 | Moduli | Cubi trasportabili che si aprono in uno spazio X per Y già scavato |
+| Scale | Eccezione ai cubi: costruzione immediata sul posto con 2 terriccio, senza officina, laboratorio, Robbie o energia |
 | Personaggio | 30 livelli, esperienza da scoperte e capacità passive; cura e tuta distinte |
 | Astronave | 10 livelli di sviluppo, tre piani iniziali, upgrade interni e moduli esterni visibili |
 | Robbie | Cura, batterie, segnale, accessori e trasporti automatici su percorsi esplorati |
@@ -61,6 +62,8 @@ node tools/design/validate.mjs
 - [Controllo materiali Godot](material-check-report.json): importazione e caricamento dei 76 materiali e delle relative texture con Godot 4.6.3 in un progetto temporaneo isolato.
 
 Le icone e le superfici sono asset originali utilizzabili nel prototipo. I materiali Godot collegano le superfici SVG e i parametri metallicità e ruvidità. La tavola 3D è una reference: modelli animati, rig e mappe PBR definitive restano attività di produzione.
+
+Prima integrazione runtime: il tutorial fino al laboratorio su Ocra legge `progression.json:ocra_tutorial`. Per aggiungere compiti di Robbie, messaggi e condizioni vedere [la guida di authoring](../technical/robbie-tutorial-authoring.md). La fabbricazione e il trasporto del cubo laboratorio sono attivi; questo non implica l'implementazione degli altri moduli o dei 12 pianeti.
 
 ## Risultati di verifica e limiti
 

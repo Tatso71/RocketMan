@@ -46,3 +46,28 @@ func test_nearby_lab_cache_can_fund_recipe_without_remote_ship_access() -> void:
 	assert_bool(cargo.collect("lamp_kit")).is_true()
 	assert_int(cache.soil).is_equal(1)
 	assert_int(cargo.backpack.lamp_kit).is_equal(1)
+
+func test_laboratory_cube_occupies_four_units_and_cannot_be_split() -> void:
+	var cargo := Cargo.new()
+	cargo.collect("soil", 6)
+	cargo.collect("copper", 10, true)
+	assert_int(cargo.free_space(true)).is_equal(4)
+	assert_bool(cargo.collect("lab_cube", 1, true)).is_true()
+	assert_int(cargo.used(cargo.drone)).is_equal(12)
+	assert_int(cargo.drone.lab_cube).is_equal(1)
+	var fragmented := Cargo.new()
+	fragmented.restore({"backpack": {"soil": 6}, "drone": {"copper": 10}})
+	assert_int(fragmented.free_space(true)).is_equal(4)
+	assert_bool(fragmented.collect("lab_cube", 1, true)).is_false()
+
+func test_cube_deposit_and_json_capacity_use_weighted_units() -> void:
+	var cargo := Cargo.new()
+	cargo.collect("lab_cube")
+	var storage := {"soil": 7}
+	assert_int(cargo.deposit(storage, 10, false)).is_equal(0)
+	assert_int(cargo.backpack.lab_cube).is_equal(1)
+	assert_int(cargo.deposit(storage, 11, false)).is_equal(4)
+	assert_int(storage.lab_cube).is_equal(1)
+	assert_bool(cargo.restore({"backpack": {"lab_cube": 3.0}, "drone": {}})).is_false()
+	assert_bool(cargo.restore({"backpack": {"lab_cube": 2.0}, "drone": {}})).is_true()
+	assert_int(cargo.used(cargo.backpack)).is_equal(8)

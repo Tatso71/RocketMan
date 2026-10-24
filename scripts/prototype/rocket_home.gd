@@ -13,6 +13,7 @@ const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const GuideState = preload("res://scripts/systems/drone_guide_state.gd")
 const GuideUI = preload("res://scripts/ui/drone_guide.gd")
 const ShipRooms = preload("res://scripts/ui/ship_rooms.gd")
+const TutorialUI = preload("res://scripts/ui/ocra_tutorial_ui.gd")
 const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
 const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "crystal": Color("55c5c6"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
@@ -62,6 +63,33 @@ var rooms: Node
 var local_energy := 60.0
 var local_crew_energy := 100.0
 var power_label: Label
+var tutorial_ui: CanvasLayer
+
+func is_ocra() -> bool:
+	return planet_def == null or planet_def.planet_id == "ochre"
+
+func observe_tutorial(room_ready: bool = false) -> void:
+	if not is_ocra():
+		return
+	var tutorial: RefCounted = guide_state.ocra
+	if aboard_workshop():
+		tutorial.mark("workshop_entered")
+	if hatch_open:
+		tutorial.mark("hatch_opened")
+	if guide_state.facts.get("ladder", false) or ladders.keys().any(func(cell: Vector2i): return cell.y >= 0):
+		tutorial.mark("ladder")
+	if outpost.lab_cube_count() > 0:
+		tutorial.mark("lab_cube_crafted")
+	if room_ready:
+		tutorial.mark("lab_room_ready")
+	for building: Dictionary in outpost.buildings.structures:
+		if building.id == "laboratory":
+			tutorial.mark("lab_cube_crafted")
+			tutorial.mark("lab_room_ready")
+			if Buildings.is_active(building):
+				tutorial.mark("lab_built")
+	if guide_state.facts.get("lab_built", false) or (ship_state != null and ship_state.lab_research_unlocked):
+		tutorial.mark("lab_built")
 
 func crew_energy() -> float:
 	return ship_state.crew_energy if ship_state != null else local_crew_energy
@@ -163,7 +191,7 @@ func _ready() -> void:
 	drone = Drone.new()
 	drone.world = self
 	drone.range_metres = ship_state.drone_range_metres() if ship_state != null else 15
-	drone.position = Vector2(0, -365)
+	drone.position = Vector2(-140, -380)
 	drone.z_index = 6
 	add_child(drone)
 	outpost = Outpost.new()
@@ -181,6 +209,9 @@ func _ready() -> void:
 	guide.world = self
 	guide.state = guide_state
 	add_child(guide)
+	tutorial_ui = TutorialUI.new()
+	tutorial_ui.world = self
+	add_child(tutorial_ui)
 	_refresh_hud()
 	queue_redraw()
 
@@ -432,11 +463,14 @@ func _mine_target() -> void:
 			_note("Allarme: infiltrazione d'acqua! Mantieni una via di risalita")
 	queue_redraw()
 
-func set_hatch(open: bool) -> void:
+func set_hatch(open: bool, notify: bool = true) -> void:
 	if not open and player.position.x > -52 and player.position.x < 52 and player.position.y > -80 and player.position.y < -8:
 		_note("Passaggio occupato")
 		return
+	var changed := hatch_open != open
 	hatch_open = open
+	if open and changed and notify:
+		guide_event("hatch_opened")
 	hatch.get_child(0).set_deferred("disabled", open)
 	navigation_revision += 1
 	_note("Botola aperta" if open else "Botola chiusa")
@@ -568,7 +602,7 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 		if building.id == "ladder" and Buildings.is_active(building):
 			ladders[building.origin] = true
 	return_home()
-	set_hatch(bool(data.get("hatch_open", false)))
+	set_hatch(bool(data.get("hatch_open", false)), false)
 	var position_data = data.get("player", [])
 	if position_data is Array and position_data.size() == 2 and (position_data[0] is float or position_data[0] is int) and (position_data[1] is float or position_data[1] is int):
 		var candidate := Vector2(float(position_data[0]), float(position_data[1]))
@@ -587,6 +621,12 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 			guide_state.facts.lab_built = true
 		if outpost.buildings.structures.any(func(building: Dictionary): return building.id == "lamp"):
 			guide_state.facts.lamp_placed = true
+	if guide_state.facts.get("mined", false) and int(guide_state.ocra.counters.get("mined_cells", 0)) == 0:
+		guide_state.ocra.counters["mined_cells"] = maxi(1, site.removed.size() - DigSite.new(site.terrain_seed).removed.size())
+		guide_state.ocra.counters["mined"] = guide_state.ocra.counters["mined_cells"]
+		guide_state.ocra.mark("workshop_entered")
+		guide_state.ocra.mark("hatch_opened")
+	observe_tutorial()
 	_note("Avamposto caricato")
 	return true
 
@@ -725,7 +765,7 @@ func _button(parent: Node, text: String, tip: String, callback: Callable) -> voi
 	parent.add_child(button)
 
 func _refresh_hud() -> void:
-	resources_label.text = "Zaino %d/8   Drone %d/%d" % [field_cargo.used(field_cargo.backpack), field_cargo.used(field_cargo.drone), field_cargo.drone_capacity]
+	resources_label.text = "Zaino %d/8   Robbie %d/%d" % [field_cargo.used(field_cargo.backpack), field_cargo.used(field_cargo.drone), field_cargo.drone_capacity]
 	drone_label.text = "ROBBIE / %s / %.0f m" % [drone.status, drone.range_metres]
 	var depth := maxf(0, player.position.y / Grid.PIXELS_PER_METRE)
 	var room := "Sottosuolo" if player.position.y > 0 else ("Officina" if player.position.y > -200 else ("Zona abitativa" if player.position.y > -320 else "Cabina"))

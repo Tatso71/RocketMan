@@ -31,10 +31,7 @@ func cargo_capacity() -> int:
 	return 120 + 80 * (int(modules.cargo) - 1)
 
 func cargo_used() -> int:
-	var amount := 0
-	for id: String in RESOURCE_IDS:
-		amount += int(resources.get(id, 0))
-	return amount
+	return field_cargo.used(resources)
 
 func dry_mass_kg() -> float:
 	var mass := 8000.0

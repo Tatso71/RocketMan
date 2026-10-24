@@ -28,7 +28,7 @@ Catalogo generato da [research.json](../../design/v1/research.json). Modificare 
 | Passo | Minuto obiettivo | Azione | Verifica |
 | --- | --- | --- | --- |
 | 1 | 2 | Scendi nell’officina e apri il portello | hatch_open |
-| 2 | 5 | Scava due celle e posa la prima scala | first_ladder_placed |
+| 2 | 5 | Scava due celle e costruisci subito la prima scala con 2 terriccio | first_ladder_placed |
 | 3 | 10 | Prepara e trasporta il cubo laboratorio | lab_cube_carried |
 | 4 | 18 | Libera 4 per 3 metri e dispiega il laboratorio | first_lab |
 | 5 | 23 | Fabbrica e posa una luce | first_light |
@@ -46,3 +46,17 @@ Catalogo generato da [research.json](../../design/v1/research.json). Modificare 
 | 5 | Prismara, Nimbo | resonance, wind, specialist_habitats, third_companion | multiple_hazards_with_known_counters |
 | 6 | Nox | deep_caves, radiation, atlas | long_return_routes_and_forward_safe_rooms |
 | 7 | Concordia | combined_networks, multispecies_sanctuary, completion_projects | apply_existing_systems_no_new_survival_meter |
+
+## Compiti Robbie / Ocra
+
+Questa sequenza fino al primo laboratorio e letta dal runtime da progression.ocra_tutorial. I tempi sopra sono obiettivi di bilanciamento, non attese o blocchi.
+
+| ID | Obiettivo | Completamento | Azione |
+| --- | --- | --- | --- |
+| reach_workshop | Scendi in officina | {"fact":"workshop_entered"} | help |
+| open_hatch | Apri la botola | {"fact":"hatch_opened"} | help |
+| first_excavation | Scava le prime due celle | {"counter":"mined_cells","at_least":2} | help |
+| return_ladder | Prepara la risalita | {"fact":"ladder"} | help |
+| laboratory_cube | Fabbrica il cubo laboratorio | {"fact":"lab_cube_crafted"} | fabricate_lab |
+| laboratory_room | Scava la stanza del laboratorio | {"fact":"lab_room_ready"} | help |
+| deploy_laboratory | Apri il cubo nella stanza | {"fact":"lab_built"} | place_lab |

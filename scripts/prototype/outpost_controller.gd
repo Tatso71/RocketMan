@@ -6,8 +6,9 @@ const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const InventoryUI = preload("res://scripts/ui/field_inventory_ui.gd")
 const StationMenu = preload("res://scripts/ui/workstation_menu.gd")
 const ConstructionUI = preload("res://scripts/ui/construction_ui.gd")
+const OcraCatalog = preload("res://scripts/data/ocra_catalog.gd")
 const SHIP_LAB_RECT := Rect2(-156, -194, 312, 114)
-const ITEM_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile"}
+const ITEM_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
 var world: Node2D
 var buildings := Buildings.new()
 var build_mode := false
@@ -94,6 +95,7 @@ func open_station(station: Dictionary, viewport_point: Vector2) -> bool:
 	if not station_available(station):
 		return false
 	selected_station = station
+	world.guide_event("workshop_interacted" if station.get("kind") == "ship" else "laboratory_interacted")
 	world.mouse_mining = false
 	station_menu.open(viewport_point)
 	return true
@@ -160,6 +162,75 @@ func source_stock() -> Dictionary:
 func source_available() -> bool:
 	return world.aboard_workshop() or not nearby_lab().is_empty()
 
+func lab_definition() -> Dictionary:
+	return OcraCatalog.load_data().get("laboratory", {})
+
+func lab_cube_count() -> int:
+	return world.field_cargo.available("lab_cube", world.drone_help_available())
+
+func fabrication_blocker() -> String:
+	var definition := lab_definition()
+	if definition.is_empty():
+		return "Catalogo del laboratorio non disponibile"
+	if not world.aboard_workshop():
+		return "Raggiungi l'officina della nave per fabbricare il cubo"
+	if world.ship_energy() < float(definition.energy):
+		return "Ricarica la batteria della nave"
+	var trial := Cargo.new()
+	trial.drone_capacity = world.field_cargo.drone_capacity
+	trial.restore(world.field_cargo.snapshot())
+	if not trial.pay(definition.cost, world.drone_help_available(), source_stock().duplicate()):
+		var missing: Array[String] = []
+		for id: String in definition.cost:
+			var deficit: int = int(definition.cost[id]) - world.field_cargo.available(id, world.drone_help_available(), source_stock())
+			if deficit > 0:
+				missing.append("%d %s" % [deficit, ITEM_NAMES[id].to_lower()])
+		return "Mancano nell'officina o nel carico: " + ", ".join(missing)
+	if not trial.collect("lab_cube", 1, world.drone_help_available()):
+		return "Libera 4 posti nello stesso zaino: tuo o di Robbie"
+	return ""
+
+func fabricate_lab_cube() -> bool:
+	var reason := fabrication_blocker()
+	if not reason.is_empty():
+		world._note(reason)
+		return false
+	var definition := lab_definition()
+	world.field_cargo.pay(definition.cost, world.drone_help_available(), source_stock())
+	world.field_cargo.collect("lab_cube", 1, world.drone_help_available())
+	world._set_ship_energy(world.ship_energy() - float(definition.energy))
+	world.guide_event("lab_cube_crafted")
+	world._note("Cubo laboratorio nel carico: 4 posti, materiali gia pagati")
+	return true
+
+func preview_blocker(id: String, cell: Vector2i) -> String:
+	var reason := placement_blocker(id, cell)
+	if not reason.is_empty():
+		return reason
+	if id == "laboratory" and lab_cube_count() <= 0:
+		return "Cubo laboratorio assente: fabbricalo nell'officina"
+	return ""
+
+func deploy_lab_cube(cell: Vector2i) -> bool:
+	var reason := preview_blocker("laboratory", cell)
+	if not reason.is_empty():
+		world._note(reason)
+		return false
+	if not world.field_cargo.pay({"lab_cube": 1}, world.drone_help_available()):
+		return false
+	buildings.plan("laboratory", cell)
+	var building: Dictionary = buildings.structures.back()
+	building.state = "building"
+	building.progress = 0.0
+	world.guide_event("lab_cube_deployed")
+	world._note("Il cubo si apre: nessun altro materiale da trasferire")
+	build_mode = false
+	queue_redraw()
+	return true
+
+func place_blueprint(cell: Vector2i) -> bool:
+	return deploy_lab_cube(cell) if blueprint == "laboratory" else place(blueprint, cell)
+
 func placement_blocker(id: String, cell: Vector2i) -> String:
 	if id in ["lamp", "pump"] and not recipe_visible(id):
 		return "Costruisci e attiva il primo laboratorio"
@@ -175,8 +246,6 @@ func placement_blocker(id: String, cell: Vector2i) -> String:
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
 	if torso.distance_to(rect.get_center()) > Grid.metres(3):
 		return "Cantiere fuori portata"
-	if id != "ladder" and not world.drone_help_available():
-		return "Serve il drone collegato vicino al cantiere"
 	if id == "laboratory" and rect.get_center().distance_to(Vector2(0, -80)) > Grid.metres(signal_range()):
 		return "Laboratorio fuori dal segnale della nave"
 	if id == "ladder" and world.ladders.has(cell):
@@ -216,8 +285,6 @@ func funding_blocker(building: Dictionary) -> String:
 		return reason
 	if building.id != "ladder" and not safe_link(building):
 		return "Cantiere fuori dal collegamento della nave o area non sicura"
-	if building.id != "ladder" and not world.drone_help_available():
-		return "Aspetta il drone vicino al cantiere"
 	if building.id in ["lamp", "pump"] and not has_lab():
 		return "Serve un laboratorio operativo per costruire questa struttura"
 	var missing: Array[String] = []
@@ -266,7 +333,8 @@ func advance(delta: float) -> void:
 	for building: Dictionary in buildings.structures:
 		if building.get("state") != "building" or (building.id != "ladder" and not safe_link(building)):
 			continue
-		building.progress = 1.0 if building.id == "ladder" else minf(1, float(building.progress) + duration / Buildings.build_seconds(building.id))
+		var seconds: float = float(lab_definition().get("deployment_seconds", Buildings.build_seconds(building.id))) if building.id == "laboratory" else Buildings.build_seconds(building.id)
+		building.progress = 1.0 if building.id == "ladder" else minf(1, float(building.progress) + duration / seconds)
 		if building.progress >= 1:
 			building.state = "active"
 			completed.append(building)
@@ -416,10 +484,10 @@ func handle_input(event: InputEvent) -> bool:
 			return true
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			var point: Vector2 = world.get_global_transform_with_canvas().affine_inverse() * event.position
-			place(blueprint, placement_origin(blueprint, Grid.to_cell(point)))
+			place_blueprint(placement_origin(blueprint, Grid.to_cell(point)))
 			return true
 	if build_mode and event.is_action_pressed("interact"):
-		place(blueprint, origin)
+		place_blueprint(origin)
 		return true
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		var point: Vector2 = world.get_global_transform_with_canvas().affine_inverse() * event.position
@@ -508,7 +576,7 @@ func _draw() -> void:
 		draw_set_transform(Vector2.ZERO)
 	if build_mode:
 		var rect := Rect2(Grid.to_world(origin), Grid.to_world(buildings.size_for(blueprint)))
-		var valid := placement_blocker(blueprint, origin).is_empty()
+		var valid := preview_blocker(blueprint, origin).is_empty()
 		var color := Color("87e4c0") if valid else Color("f16d72")
 		draw_rect(rect, Color(color, 0.14))
 		_dashed_rect(rect, color)

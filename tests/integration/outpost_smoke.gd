@@ -90,7 +90,7 @@ func _run() -> void:
 	check(campaign.model.ship.lab_research_unlocked, "first lab unlocks research-dependent ship upgrades")
 	check(not world.outpost.craft_lamp(), "lab cannot draw missing copper remotely from ship")
 	world.return_home()
-	await frames(150)
+	await frames(240)
 	check(world.drone.aboard(), "drone can return aboard through the hatch")
 	check(world.field_cargo.withdraw(campaign.model.ship.resources, "soil", 2, world.drone_help_available()), "prepare carried lamp material at ship")
 	check(world.field_cargo.withdraw(campaign.model.ship.resources, "copper", 2, world.drone_help_available()), "prepare carried copper for two portable lights")

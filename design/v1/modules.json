@@ -47,7 +47,6 @@
       "recipe_glass",
       "recipe_filter",
       "recipe_feed",
-      "recipe_cube_ladder",
       "recipe_cube_lab",
       "recipe_cube_crate",
       "recipe_cube_fabricator",
@@ -116,7 +115,7 @@
     "id": "mod_ladder",
     "name_it": "Scala di emergenza",
     "stage": 0,
-    "kind": "infrastructure_kit",
+    "kind": "manual_infrastructure",
     "footprint_m": [
       1,
       1
@@ -125,9 +124,9 @@
       1,
       1
     ],
-    "packed_inventory_units": 1,
+    "packed_inventory_units": 0,
     "research": "tech_start",
-    "fabricated_at": "mod_workshop",
+    "fabricated_at": null,
     "mount": "floor_or_vertical_chain",
     "requires_floor": false,
     "ports": [
@@ -137,18 +136,11 @@
           0,
           0
         ]
-      },
-      {
-        "kind": "power_data",
-        "cell": [
-          0,
-          0
-        ]
       }
     ],
     "power_kw": 0,
     "cache_units": 0,
-    "deployment_seconds": 5,
+    "deployment_seconds": 0,
     "functions": [
       "traverse_vertical"
     ],
@@ -168,7 +160,7 @@
     "generation_kw": 0,
     "energy_storage_kwh": 0,
     "fluid_capacity_litres": 0,
-    "runtime_status": "baseline_exists_cube_flow_and_extended_effects_proposed",
+    "runtime_status": "instant_manual_construction_implemented",
     "stats_by_installation_level": {},
     "collision_rects_m": [],
     "walk_port_clearance_m": [

@@ -2,8 +2,8 @@ extends CanvasLayer
 
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile"}
-const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "crystal": Color("7be1da"), "lamp_kit": Color("fff3b2")}
+const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
+const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "crystal": Color("7be1da"), "lamp_kit": Color("fff3b2"), "lab_cube": Color("a7e5b4")}
 const ICONS := [preload("res://assets/ui/backpack.svg"), preload("res://assets/ui/drone.svg"), preload("res://assets/ui/storage.svg")]
 var world: Node2D
 var window: Window
@@ -26,6 +26,7 @@ var feedback: Label
 var availability: Label
 var cost_labels: Array[Label] = []
 var preparation_status: Label
+var compact_rows: Dictionary = {}
 
 func _ready() -> void:
 	_build_compact()
@@ -87,7 +88,7 @@ func _build_compact() -> void:
 	add_child(root)
 	compact = PanelContainer.new()
 	compact.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	compact.offset_left = -264
+	compact.offset_left = -296
 	compact.offset_right = -16
 	compact.offset_top = 76
 	compact.add_theme_stylebox_override("panel", panel_style())
@@ -113,7 +114,7 @@ func _build_compact() -> void:
 		var row := HBoxContainer.new()
 		hold.add_child(row)
 		_icon(row, ICONS[index], 22)
-		var title_label := label("Zaino" if index == 0 else "Drone", 14)
+		var title_label := label("Zaino" if index == 0 else "Robbie", 16)
 		row.add_child(title_label)
 		var count := label("", 14)
 		hold.add_child(count)
@@ -126,17 +127,19 @@ func _build_compact() -> void:
 	column.add_child(grid)
 	grid.add_child(label("", 11))
 	grid.add_child(label("Zaino", 11, Color("a7e5b4")))
-	grid.add_child(label("Drone", 11, Color("8edce1")))
+	grid.add_child(label("Robbie", 13, Color("8edce1")))
 	for id: String in Cargo.ITEM_IDS:
-		var name_label := label(NAMES[id], 13, COLORS[id])
-		name_label.custom_minimum_size.x = 110
+		var name_label := label(NAMES[id], 15, COLORS[id])
+		name_label.custom_minimum_size.x = 128
 		grid.add_child(name_label)
+		compact_rows[id] = [name_label]
 		for index in range(2):
 			var count := label("0", 13)
 			count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 			count.custom_minimum_size.x = 34
 			grid.add_child(count)
 			compact_counts.append(count)
+			compact_rows[id].append(count)
 	compact_link = label("", 12)
 	column.add_child(compact_link)
 
@@ -185,7 +188,7 @@ func _build_window() -> void:
 		header.add_theme_constant_override("separation", 10)
 		hold.add_child(header)
 		_icon(header, ICONS[index], 32)
-		header.add_child(label(["ZAINO", "DRONE", "DEPOSITO"][index], 18))
+		header.add_child(label(["ZAINO", "ROBBIE", "DEPOSITO"][index], 18))
 		var subtitle := label("", 13, Color("b4c5c6"))
 		hold.add_child(subtitle)
 		subtitles.append(subtitle)
@@ -196,14 +199,14 @@ func _build_window() -> void:
 		var item_counts: Array[Label] = []
 		for id: String in Cargo.ITEM_IDS:
 			var row := HBoxContainer.new()
-			row.custom_minimum_size.y = 24
+			row.custom_minimum_size.y = 28
 			hold.add_child(row)
 			var swatch := ColorRect.new()
 			swatch.color = COLORS[id]
 			swatch.custom_minimum_size = Vector2(9, 9)
 			swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			row.add_child(swatch)
-			var name_label := label(NAMES[id], 14)
+			var name_label := label(NAMES[id] + (" (4 posti)" if id == "lab_cube" else ""), 14)
 			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.add_child(name_label)
 			var count := label("0", 16)
@@ -224,8 +227,8 @@ func _build_window() -> void:
 	var recipe_spacer := Control.new()
 	recipe_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	recipe.add_child(recipe_spacer)
-	prepare_button = button(recipe, "Prepara laboratorio", prepare_lab)
-	prepare_button.tooltip_text = "Preleva dal deposito vicino solo la pietra e il rame mancanti nel carico"
+	prepare_button = button(recipe, "Fabbrica cubo", open_fabrication)
+	prepare_button.tooltip_text = "Officina: trasforma 6 pietra + 4 rame in un cubo da 4 posti"
 	preparation_status = label("", 13, Color("b4c5c6"))
 	column.add_child(preparation_status)
 	var actions := HBoxContainer.new()
@@ -255,8 +258,9 @@ func _build_window() -> void:
 
 func open_inventory() -> void:
 	world.mouse_mining = false
+	world.guide_event("inventory_opened")
 	feedback.text = ""
-	window.popup_centered(Vector2i(920, 620))
+	window.popup_centered(Vector2i(960, 660))
 	refresh()
 
 func lab_missing() -> Dictionary:
@@ -266,6 +270,12 @@ func lab_missing() -> Dictionary:
 		if count < int(Buildings.LAB_COST[id]):
 			missing[id] = int(Buildings.LAB_COST[id]) - count
 	return missing
+
+func open_fabrication() -> void:
+	if not world.aboard_workshop():
+		return
+	window.hide()
+	world.outpost.construction.open_picker(world.Grid.to_cell(world.player.position), Vector2(340, 150), true)
 
 func prepare_blocker() -> String:
 	if not world.aboard_workshop():
@@ -325,6 +335,10 @@ func refresh() -> void:
 	var connected: bool = world.drone_help_available()
 	var stocks: Array = [cargo.backpack, cargo.drone, world.outpost.source_stock()]
 	var limits: Array = [Cargo.PACK_CAPACITY, cargo.drone_capacity, storage_capacity()]
+	for id: String in compact_rows:
+		var visible_row := int(cargo.backpack.get(id, 0)) + int(cargo.drone.get(id, 0)) > 0 or id in ["soil", "stone", "copper"]
+		for widget: Control in compact_rows[id]:
+			widget.visible = visible_row
 	for index in range(2):
 		var used: int = cargo.used(stocks[index])
 		compact_titles[index].text = "%d / %d%s" % [used, limits[index], " PIENO" if used == limits[index] else ""]
@@ -334,7 +348,7 @@ func refresh() -> void:
 		for item in range(Cargo.ITEM_IDS.size()):
 			compact_counts[item * 2 + index].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0))
 			compact_counts[item * 2 + index].modulate = Color("829396") if index == 1 and not connected else Color.WHITE
-	compact_link.text = "Drone vicino / carico utilizzabile" if connected else "Drone lontano / carico escluso"
+	compact_link.text = "Robbie vicino / carico utilizzabile" if connected else "Robbie lontano / carico escluso"
 	compact_link.modulate = Color("a7e5b4") if connected else Color("f0d281")
 	if not window.visible:
 		return
@@ -351,16 +365,16 @@ func refresh() -> void:
 	subtitles[1].text = "Vicino e collegato" if connected else "Lontano: non utilizzabile"
 	subtitles[2].text = ("Officina della nave" if world.aboard_workshop() else "Laboratorio vicino") if source else "Nessun deposito vicino"
 	availability.text = "Trasferimenti disponibili / " + subtitles[2].text if source else "Solo consultazione: raggiungi l'officina o un laboratorio per trasferire."
-	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.free_space(connected) < int(amount.value)
+	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(Cargo.ITEM_IDS[picker.selected], connected) < int(amount.value)
 	deposit_button.disabled = not source or cargo.used(stocks[2]) >= storage_capacity() or cargo.used(cargo.backpack) + (cargo.used(cargo.drone) if connected else 0) == 0
-	prepare_button.disabled = not prepare_blocker().is_empty()
-	prepare_button.tooltip_text = prepare_blocker() if prepare_button.disabled else "Preleva dal deposito vicino la pietra e il rame mancanti"
-	preparation_status.text = prepare_blocker() if prepare_button.disabled else "Dal deposito al carico: solo i materiali ancora mancanti."
+	prepare_button.disabled = not world.aboard_workshop()
+	prepare_button.tooltip_text = "Officina: costo unico di 6 pietra + 4 rame" if not prepare_button.disabled else "Fabbrica il cubo nell'officina della nave"
+	preparation_status.text = "Il cubo usa 4 posti nel carico. I materiali si pagano in officina, non una seconda volta nello scavo."
 	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()
 	craft_button.tooltip_text = world.outpost.lamp_craft_blocker() if craft_button.disabled else "1 terra + 1 rame / fabbrica nel laboratorio vicino"
 	var index := 0
 	for id: String in Buildings.LAB_COST:
-		var available: int = cargo.available(id, connected, world.outpost.payment_cache())
+		var available: int = cargo.available(id, connected, stocks[2] if source else {})
 		cost_labels[index].text = "%s %d / %d" % [NAMES[id], available, Buildings.LAB_COST[id]]
 		cost_labels[index].modulate = Color("a7e5b4") if available >= int(Buildings.LAB_COST[id]) else Color("ffb18e")
 		index += 1

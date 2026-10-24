@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "rendered_states_and_entity_details": 401,
+  "rendered_states_and_entity_details": 404,
   "categories": 12,
   "checked": [
     "build_state_transitions",
@@ -10,6 +10,7 @@
     "search",
     "stage_filter",
     "all_entity_detail_dialogs",
+    "instant_manual_ladder_without_cube_or_workstation",
     "entry_document_links"
   ],
   "method": "isolated_Node_VM_with_minimal_DOM_test_double",

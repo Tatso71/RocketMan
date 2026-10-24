@@ -23,6 +23,8 @@ ingredienti locali → fabbricazione atomica → item cubo
 → consumo di un cubo → montaggio → collegamento → modulo attivo
 ```
 
+Le scale sono l'eccezione esplicita: il personaggio le costruisce sul posto, istantaneamente, con 2 terriccio (B / Y). Nessun cubo da fabbricare o trasportare, popup, postazione, laboratorio, Robbie, segnale o batteria; nessun timer. Prima si verifica la cella libera e raggiungibile, poi pagamento locale e scala attiva si confermano atomicamente. Un tentativo non valido non consuma nulla. L'ID storico `recipe_cube_ladder` rimane stabile, ma la categoria è `manual_construction`, la postazione è `null`, tempo ed energia sono zero e l'output è direttamente nel mondo, non nello zaino. Queste regole prevalgono sul protocollo generale dei cubi.
+
 | Condizione | Comportamento richiesto |
 | --- | --- |
 | Manca spazio per il cubo prodotto | Non consumare ingredienti |
@@ -35,7 +37,7 @@ ingredienti locali → fabbricazione atomica → item cubo
 | Upgrade | Nessun cambio di ingombro senza un nuovo progetto di espansione |
 | Primo laboratorio | Ricetta nell’officina già presente: 6 pietra + 4 rame; non richiede un laboratorio |
 
-Ogni modulo dichiara porte locali, aggancio, ingombro, spazio del cubo chiuso e statistiche per livello. La maggior parte degli arredi è sul piano di fondo e non blocca il personaggio; porte e camere di compensazione usano i rettangoli metrici dichiarati. Lo spazio resta riservato contro sovrapposizioni di costruzione.
+Ogni modulo dichiara porte locali, aggancio, ingombro e statistiche per livello; solo i moduli a cubo hanno carico chiuso e montaggio. La scala occupa 1 x 1 m nel mondo e zero unità di cubo trasportato. La maggior parte degli arredi è sul piano di fondo e non blocca il personaggio; porte e camere di compensazione usano i rettangoli metrici dichiarati. Lo spazio resta riservato contro sovrapposizioni di costruzione.
 
 ## Proprietà dello stato e transazioni
 
