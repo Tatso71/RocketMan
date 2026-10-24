@@ -1,0 +1,455 @@
+{
+  "language": "it",
+  "reference_resolution": [
+    1280,
+    720
+  ],
+  "supported_resolutions": [
+    [
+      1280,
+      720
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "accessibility": {
+    "body_font_px": 18,
+    "smallest_label_px": 16,
+    "target_min_px": 44,
+    "controller_focus": true,
+    "remappable_inputs": true,
+    "hold_toggle": true,
+    "subtitle_scale": [
+      1,
+      1.25,
+      1.5
+    ],
+    "reduced_motion": true,
+    "color_plus_shape": true,
+    "high_contrast": true,
+    "no_color_only_errors": true,
+    "ui_scale": [
+      0.9,
+      1,
+      1.15,
+      1.3
+    ],
+    "pause_single_player_in_modal": true,
+    "screen_reader_semantics": "named_controls_and_state_descriptions"
+  },
+  "hud": {
+    "always": [
+      "health",
+      "suit_oxygen_return_budget",
+      "four_tool_slots",
+      "backpack_and_robbie_capacity",
+      "one_pinned_goal"
+    ],
+    "conditional": [
+      "temperature",
+      "radiation",
+      "gas",
+      "water_pressure",
+      "robbie_signal",
+      "building_network"
+    ],
+    "max_simultaneous_warning_cards": 2,
+    "details_on_demand": true,
+    "crystal_wallet": "in_upgrade_and_plan_views_not_permanent_large_hud"
+  },
+  "screens": [
+    {
+      "id": "ui_hud",
+      "name_it": "Esplorazione",
+      "panels": [
+        "minimal_stats",
+        "tools",
+        "goal",
+        "context_action"
+      ],
+      "primary": "context_action",
+      "secondary": "open_radial",
+      "focus_order": [
+        "context_action",
+        "tools",
+        "goal"
+      ],
+      "world_paused": false
+    },
+    {
+      "id": "ui_inventory",
+      "name_it": "Inventario",
+      "panels": [
+        "backpack",
+        "robbie",
+        "selected_local_station"
+      ],
+      "primary": "transfer_selected",
+      "secondary": "prepare_pinned_recipe",
+      "focus_order": [
+        "backpack",
+        "robbie",
+        "selected_local_station",
+        "transfer_selected"
+      ],
+      "world_paused": true,
+      "rules": [
+        "three_columns_keep_location_clear",
+        "inaccessible_ship_stock_read_only_with_reason",
+        "transfer_all_only_valid_local_items",
+        "preview_post_transfer_capacity"
+      ]
+    },
+    {
+      "id": "ui_build",
+      "name_it": "Cubi e costruzione",
+      "panels": [
+        "stage_filtered_catalog",
+        "recipe_and_folded_cube",
+        "world_footprint_preview"
+      ],
+      "primary": "craft_or_place_cube",
+      "secondary": "pin_recipe",
+      "focus_order": [
+        "category",
+        "catalog",
+        "recipe",
+        "primary"
+      ],
+      "world_paused": "menu_only",
+      "rules": [
+        "show_folded_inventory_cost_and_unfolded_width_height",
+        "ghost_cells_plus_obstruction_reason",
+        "show_ports_floor_and_return_path",
+        "no_green_preview_until_all_checks_pass",
+        "craft_is_separate_from_deploy"
+      ]
+    },
+    {
+      "id": "ui_station",
+      "name_it": "Postazione",
+      "panels": [
+        "station_identity_level_power_cache",
+        "five_actions"
+      ],
+      "primary": "selected_action",
+      "secondary": "close",
+      "focus_order": [
+        "deposit",
+        "withdraw",
+        "construct",
+        "repair",
+        "upgrade"
+      ],
+      "world_paused": true,
+      "rules": [
+        "bind_specific_station_id",
+        "physical_reach_highlight",
+        "no_click_through_to_mining"
+      ]
+    },
+    {
+      "id": "ui_research",
+      "name_it": "Ricerca",
+      "panels": [
+        "current_tier",
+        "next_two_unlocks",
+        "materials",
+        "lumen_reserve"
+      ],
+      "primary": "research",
+      "secondary": "pin_missing_items",
+      "focus_order": [
+        "tier",
+        "node",
+        "ingredients",
+        "research"
+      ],
+      "world_paused": true,
+      "rules": [
+        "show_why_needed_and_next_planet",
+        "future_tiers_collapsed",
+        "no_huge_unreadable_full_tree"
+      ]
+    },
+    {
+      "id": "ui_upgrades",
+      "name_it": "Potenziamenti",
+      "panels": [
+        "player_ship_robbie_station_tabs",
+        "current_next_comparison",
+        "physical_cost",
+        "wallet_cost"
+      ],
+      "primary": "upgrade",
+      "secondary": "refund_upgrade",
+      "focus_order": [
+        "owner_tab",
+        "track",
+        "comparison",
+        "upgrade"
+      ],
+      "world_paused": true,
+      "rules": [
+        "one_primary_currency_plus_optional_one_core",
+        "show_full_capacities_without_refilling",
+        "show_visual_ship_change_when_applicable"
+      ]
+    },
+    {
+      "id": "ui_navigation",
+      "name_it": "Atlante stellare",
+      "panels": [
+        "12_planets",
+        "known_resources_and_hazards",
+        "pinned_need",
+        "route_check"
+      ],
+      "primary": "prepare_departure",
+      "secondary": "set_resource_destination",
+      "focus_order": [
+        "planet",
+        "resources",
+        "hazards",
+        "route_check",
+        "prepare_departure"
+      ],
+      "world_paused": true,
+      "rules": [
+        "show_known_vs_unknown",
+        "highlight_nearest_known_source_of_pinned_material",
+        "fuel_outbound_takeoff_return_reserve",
+        "character_robbie_creatures_must_be_aboard",
+        "do_not_reveal_unscanned_deep_veins"
+      ]
+    },
+    {
+      "id": "ui_cave_map",
+      "name_it": "Mappa della caverna",
+      "panels": [
+        "visited_geometry",
+        "layer_toggles",
+        "route_and_module_reservations"
+      ],
+      "primary": "place_marker",
+      "secondary": "plan_robbie_route",
+      "focus_order": [
+        "layers",
+        "map",
+        "marker_type",
+        "route"
+      ],
+      "world_paused": true,
+      "rules": [
+        "fog_preserves_unexplored_areas",
+        "show_upward_return_time",
+        "one_click_mark_module_footprint",
+        "gas_water_support_signal_layers"
+      ]
+    },
+    {
+      "id": "ui_creatures",
+      "name_it": "Creature e habitat",
+      "panels": [
+        "species_codex",
+        "habitats_and_welfare",
+        "three_companion_slots"
+      ],
+      "primary": "care_or_assign",
+      "secondary": "show_missing_habitat",
+      "focus_order": [
+        "species",
+        "habitat",
+        "companion_slot",
+        "care"
+      ],
+      "world_paused": true,
+      "rules": [
+        "no_combat_stats",
+        "food_buffer_minutes_visible",
+        "compatibility_before_transport",
+        "batch_feed_from_local_cache"
+      ]
+    },
+    {
+      "id": "ui_maintenance",
+      "name_it": "Cura e manutenzione",
+      "panels": [
+        "character_conditions",
+        "ship_subsystems",
+        "robbie_state"
+      ],
+      "primary": "repair_selected",
+      "secondary": "pin_supplies",
+      "focus_order": [
+        "owner",
+        "condition",
+        "remedy",
+        "repair_selected"
+      ],
+      "world_paused": true,
+      "rules": [
+        "cause_consequence_and_exact_remedy",
+        "free_ship_care_visible",
+        "no_random_failure_meter",
+        "rescue_cache_marker_persists"
+      ]
+    },
+    {
+      "id": "ui_robbie_routes",
+      "name_it": "Trasporti Robbie",
+      "panels": [
+        "known_docks",
+        "route_preview",
+        "cargo_reservation",
+        "battery_and_signal"
+      ],
+      "primary": "start_single_job",
+      "secondary": "return_to_ship",
+      "focus_order": [
+        "origin",
+        "destination",
+        "cargo",
+        "route",
+        "start"
+      ],
+      "world_paused": true,
+      "rules": [
+        "visited_routes_only",
+        "show_unreachable_segment",
+        "no_inventory_teleport",
+        "one_running_job_cancel_returns_cargo_to_safe_dock"
+      ]
+    }
+  ],
+  "notifications": {
+    "priority": [
+      "immediate_survival",
+      "return_route",
+      "robbie_blocked",
+      "construction_error",
+      "discovery"
+    ],
+    "robbie_speech": "contextual_once_latched_mutable_manual_recall",
+    "same_condition_repeat_seconds": 90,
+    "modal_timer_frozen": true
+  },
+  "error_codes": [
+    {
+      "id": "E_SPACE_SOLID",
+      "text_it": "Scava ancora {cells} celle nello spazio del modulo."
+    },
+    {
+      "id": "E_SUPPORT",
+      "text_it": "Manca il sostegno sotto {cells} celle."
+    },
+    {
+      "id": "E_HAZARD",
+      "text_it": "Bonifica {hazard} prima del montaggio."
+    },
+    {
+      "id": "E_LOCAL_STOCK",
+      "text_it": "Qui mancano {quantity} {item}. {ship_quantity} sono nella stiva della nave."
+    },
+    {
+      "id": "E_OUTPUT_FULL",
+      "text_it": "Libera {units} unità per il cubo prodotto."
+    },
+    {
+      "id": "E_NO_ROUTE",
+      "text_it": "Il tratto {from} → {to} non è esplorato o percorribile."
+    },
+    {
+      "id": "E_SIGNAL",
+      "text_it": "Robbie non è connesso: posa un ripetitore o torna nel raggio."
+    },
+    {
+      "id": "E_RETURN_RESERVE",
+      "text_it": "La rotta richiede {required} carburante inclusa la riserva."
+    },
+    {
+      "id": "E_CREATURE_HOME",
+      "text_it": "Prepara un habitat {habitat} prima del trasporto."
+    },
+    {
+      "id": "E_POWER",
+      "text_it": "Servono {kw} kW disponibili sulla rete locale."
+    },
+    {
+      "id": "E_OCCUPIED",
+      "text_it": "Libera lo spazio di montaggio: {actor} è nella zona."
+    },
+    {
+      "id": "E_RESEARCH",
+      "text_it": "Completa {research} per sbloccare questo progetto."
+    }
+  ],
+  "recipe_planner": {
+    "depth": "expand_one_dependency_at_a_time",
+    "group_shared_ingredients": true,
+    "show_sources": "known_planets_only",
+    "unknown_sources": "ricerca_un_campione_non_ancora_localizzato",
+    "counts": "needed_owned_locally_owned_ship_reserved",
+    "next_action": "one_actionable_step",
+    "bulk_plan": "list_of_cubes_and_trip_cargo_with_capacity_check"
+  },
+  "input": {
+    "keyboard_mouse": "existing_A_D_W_S_Space_E_F_1_4_Q_B_G_C_H_preserved_until_remap",
+    "controller": "left_stick_move_A_jump_X_context_RB_tool_dpad_slots_Y_radial_B_back",
+    "no_new_shortcut_collision": true
+  },
+  "visual_tokens": {
+    "background": "#101e2c",
+    "panel": "#192c3b",
+    "surface": "#233b4a",
+    "text": "#eef4ed",
+    "muted": "#adc1c4",
+    "accent": "#8bd6cf",
+    "warning": "#edc57b",
+    "danger": "#e99c8b",
+    "font": "system-ui, sans-serif",
+    "radius_px": 14
+  },
+  "state_models": {
+    "build": [
+      "locked",
+      "missing_items",
+      "can_craft",
+      "packed",
+      "placing",
+      "blocked",
+      "deploying",
+      "offline",
+      "active"
+    ],
+    "recipe": [
+      "unknown",
+      "scanned",
+      "research_locked",
+      "ready",
+      "queued",
+      "output_blocked"
+    ],
+    "route": [
+      "unexplored",
+      "no_signal",
+      "hazardous",
+      "valid",
+      "running",
+      "blocked",
+      "returning"
+    ],
+    "creature": [
+      "unseen",
+      "observed",
+      "bonding",
+      "bonded",
+      "carrier",
+      "habitat",
+      "companion",
+      "resting"
+    ]
+  }
+}

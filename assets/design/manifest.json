@@ -1,0 +1,1376 @@
+{
+  "version": "1.0.0",
+  "reference": "refs/Space_Digger.png",
+  "style": "friendly_alien_faceted_3d_target; vector_inventory_prototypes",
+  "icon_viewbox": [
+    64,
+    64
+  ],
+  "entries": [
+    {
+      "id": "res_soil",
+      "icon": "assets/design/icons/res_soil.svg",
+      "tile": "assets/design/tiles/res_soil.svg",
+      "material": "assets/design/materials/res_soil.tres"
+    },
+    {
+      "id": "res_stone",
+      "icon": "assets/design/icons/res_stone.svg",
+      "tile": "assets/design/tiles/res_stone.svg",
+      "material": "assets/design/materials/res_stone.tres"
+    },
+    {
+      "id": "res_copper",
+      "icon": "assets/design/icons/res_copper.svg",
+      "tile": "assets/design/tiles/res_copper.svg",
+      "material": "assets/design/materials/res_copper.tres"
+    },
+    {
+      "id": "res_silica",
+      "icon": "assets/design/icons/res_silica.svg",
+      "tile": "assets/design/tiles/res_silica.svg",
+      "material": "assets/design/materials/res_silica.tres"
+    },
+    {
+      "id": "res_water",
+      "icon": "assets/design/icons/res_water.svg",
+      "tile": "assets/design/tiles/res_water.svg",
+      "material": "assets/design/materials/res_water.tres"
+    },
+    {
+      "id": "res_biomass",
+      "icon": "assets/design/icons/res_biomass.svg",
+      "tile": "assets/design/tiles/res_biomass.svg",
+      "material": "assets/design/materials/res_biomass.tres"
+    },
+    {
+      "id": "res_iron",
+      "icon": "assets/design/icons/res_iron.svg",
+      "tile": "assets/design/tiles/res_iron.svg",
+      "material": "assets/design/materials/res_iron.tres"
+    },
+    {
+      "id": "res_carbon",
+      "icon": "assets/design/icons/res_carbon.svg",
+      "tile": "assets/design/tiles/res_carbon.svg",
+      "material": "assets/design/materials/res_carbon.tres"
+    },
+    {
+      "id": "res_clay",
+      "icon": "assets/design/icons/res_clay.svg",
+      "tile": "assets/design/tiles/res_clay.svg",
+      "material": "assets/design/materials/res_clay.tres"
+    },
+    {
+      "id": "res_ice",
+      "icon": "assets/design/icons/res_ice.svg",
+      "tile": "assets/design/tiles/res_ice.svg",
+      "material": "assets/design/materials/res_ice.tres"
+    },
+    {
+      "id": "res_lithium",
+      "icon": "assets/design/icons/res_lithium.svg",
+      "tile": "assets/design/tiles/res_lithium.svg",
+      "material": "assets/design/materials/res_lithium.tres"
+    },
+    {
+      "id": "res_cobalt",
+      "icon": "assets/design/icons/res_cobalt.svg",
+      "tile": "assets/design/tiles/res_cobalt.svg",
+      "material": "assets/design/materials/res_cobalt.tres"
+    },
+    {
+      "id": "res_salt",
+      "icon": "assets/design/icons/res_salt.svg",
+      "tile": "assets/design/tiles/res_salt.svg",
+      "material": "assets/design/materials/res_salt.tres"
+    },
+    {
+      "id": "res_algae",
+      "icon": "assets/design/icons/res_algae.svg",
+      "tile": "assets/design/tiles/res_algae.svg",
+      "material": "assets/design/materials/res_algae.tres"
+    },
+    {
+      "id": "res_calcium",
+      "icon": "assets/design/icons/res_calcium.svg",
+      "tile": "assets/design/tiles/res_calcium.svg",
+      "material": "assets/design/materials/res_calcium.tres"
+    },
+    {
+      "id": "res_resin",
+      "icon": "assets/design/icons/res_resin.svg",
+      "tile": "assets/design/tiles/res_resin.svg",
+      "material": "assets/design/materials/res_resin.tres"
+    },
+    {
+      "id": "res_spores",
+      "icon": "assets/design/icons/res_spores.svg",
+      "tile": "assets/design/tiles/res_spores.svg",
+      "material": "assets/design/materials/res_spores.tres"
+    },
+    {
+      "id": "res_enzymes",
+      "icon": "assets/design/icons/res_enzymes.svg",
+      "tile": "assets/design/tiles/res_enzymes.svg",
+      "material": "assets/design/materials/res_enzymes.tres"
+    },
+    {
+      "id": "res_magnetite",
+      "icon": "assets/design/icons/res_magnetite.svg",
+      "tile": "assets/design/tiles/res_magnetite.svg",
+      "material": "assets/design/materials/res_magnetite.tres"
+    },
+    {
+      "id": "res_graphite",
+      "icon": "assets/design/icons/res_graphite.svg",
+      "tile": "assets/design/tiles/res_graphite.svg",
+      "material": "assets/design/materials/res_graphite.tres"
+    },
+    {
+      "id": "res_vanadium",
+      "icon": "assets/design/icons/res_vanadium.svg",
+      "tile": "assets/design/tiles/res_vanadium.svg",
+      "material": "assets/design/materials/res_vanadium.tres"
+    },
+    {
+      "id": "res_titanium",
+      "icon": "assets/design/icons/res_titanium.svg",
+      "tile": "assets/design/tiles/res_titanium.svg",
+      "material": "assets/design/materials/res_titanium.tres"
+    },
+    {
+      "id": "res_nickel",
+      "icon": "assets/design/icons/res_nickel.svg",
+      "tile": "assets/design/tiles/res_nickel.svg",
+      "material": "assets/design/materials/res_nickel.tres"
+    },
+    {
+      "id": "res_sulfur",
+      "icon": "assets/design/icons/res_sulfur.svg",
+      "tile": "assets/design/tiles/res_sulfur.svg",
+      "material": "assets/design/materials/res_sulfur.tres"
+    },
+    {
+      "id": "res_basalt",
+      "icon": "assets/design/icons/res_basalt.svg",
+      "tile": "assets/design/tiles/res_basalt.svg",
+      "material": "assets/design/materials/res_basalt.tres"
+    },
+    {
+      "id": "res_alumina",
+      "icon": "assets/design/icons/res_alumina.svg",
+      "tile": "assets/design/tiles/res_alumina.svg",
+      "material": "assets/design/materials/res_alumina.tres"
+    },
+    {
+      "id": "res_gold",
+      "icon": "assets/design/icons/res_gold.svg",
+      "tile": "assets/design/tiles/res_gold.svg",
+      "material": "assets/design/materials/res_gold.tres"
+    },
+    {
+      "id": "res_phosphate",
+      "icon": "assets/design/icons/res_phosphate.svg",
+      "tile": "assets/design/tiles/res_phosphate.svg",
+      "material": "assets/design/materials/res_phosphate.tres"
+    },
+    {
+      "id": "res_prism_quartz",
+      "icon": "assets/design/icons/res_prism_quartz.svg",
+      "tile": "assets/design/tiles/res_prism_quartz.svg",
+      "material": "assets/design/materials/res_prism_quartz.tres"
+    },
+    {
+      "id": "res_boron",
+      "icon": "assets/design/icons/res_boron.svg",
+      "tile": "assets/design/tiles/res_boron.svg",
+      "material": "assets/design/materials/res_boron.tres"
+    },
+    {
+      "id": "res_geode_seed",
+      "icon": "assets/design/icons/res_geode_seed.svg",
+      "tile": "assets/design/tiles/res_geode_seed.svg",
+      "material": "assets/design/materials/res_geode_seed.tres"
+    },
+    {
+      "id": "res_helium3",
+      "icon": "assets/design/icons/res_helium3.svg",
+      "tile": "assets/design/tiles/res_helium3.svg",
+      "material": "assets/design/materials/res_helium3.tres"
+    },
+    {
+      "id": "res_aerospore",
+      "icon": "assets/design/icons/res_aerospore.svg",
+      "tile": "assets/design/tiles/res_aerospore.svg",
+      "material": "assets/design/materials/res_aerospore.tres"
+    },
+    {
+      "id": "res_xenon",
+      "icon": "assets/design/icons/res_xenon.svg",
+      "tile": "assets/design/tiles/res_xenon.svg",
+      "material": "assets/design/materials/res_xenon.tres"
+    },
+    {
+      "id": "res_iridium",
+      "icon": "assets/design/icons/res_iridium.svg",
+      "tile": "assets/design/tiles/res_iridium.svg",
+      "material": "assets/design/materials/res_iridium.tres"
+    },
+    {
+      "id": "res_dark_silicate",
+      "icon": "assets/design/icons/res_dark_silicate.svg",
+      "tile": "assets/design/tiles/res_dark_silicate.svg",
+      "material": "assets/design/materials/res_dark_silicate.tres"
+    },
+    {
+      "id": "res_memory_pearl",
+      "icon": "assets/design/icons/res_memory_pearl.svg",
+      "tile": "assets/design/tiles/res_memory_pearl.svg",
+      "material": "assets/design/materials/res_memory_pearl.tres"
+    },
+    {
+      "id": "res_aether_lattice",
+      "icon": "assets/design/icons/res_aether_lattice.svg",
+      "tile": "assets/design/tiles/res_aether_lattice.svg",
+      "material": "assets/design/materials/res_aether_lattice.tres"
+    },
+    {
+      "id": "res_wire",
+      "icon": "assets/design/icons/res_wire.svg",
+      "tile": "assets/design/tiles/res_wire.svg",
+      "material": "assets/design/materials/res_wire.tres"
+    },
+    {
+      "id": "res_glass",
+      "icon": "assets/design/icons/res_glass.svg",
+      "tile": "assets/design/tiles/res_glass.svg",
+      "material": "assets/design/materials/res_glass.tres"
+    },
+    {
+      "id": "res_plate",
+      "icon": "assets/design/icons/res_plate.svg",
+      "tile": "assets/design/tiles/res_plate.svg",
+      "material": "assets/design/materials/res_plate.tres"
+    },
+    {
+      "id": "res_steel",
+      "icon": "assets/design/icons/res_steel.svg",
+      "tile": "assets/design/tiles/res_steel.svg",
+      "material": "assets/design/materials/res_steel.tres"
+    },
+    {
+      "id": "res_ceramic",
+      "icon": "assets/design/icons/res_ceramic.svg",
+      "tile": "assets/design/tiles/res_ceramic.svg",
+      "material": "assets/design/materials/res_ceramic.tres"
+    },
+    {
+      "id": "res_filter",
+      "icon": "assets/design/icons/res_filter.svg",
+      "tile": "assets/design/tiles/res_filter.svg",
+      "material": "assets/design/materials/res_filter.tres"
+    },
+    {
+      "id": "res_circuit",
+      "icon": "assets/design/icons/res_circuit.svg",
+      "tile": "assets/design/tiles/res_circuit.svg",
+      "material": "assets/design/materials/res_circuit.tres"
+    },
+    {
+      "id": "res_insulation",
+      "icon": "assets/design/icons/res_insulation.svg",
+      "tile": "assets/design/tiles/res_insulation.svg",
+      "material": "assets/design/materials/res_insulation.tres"
+    },
+    {
+      "id": "res_battery",
+      "icon": "assets/design/icons/res_battery.svg",
+      "tile": "assets/design/tiles/res_battery.svg",
+      "material": "assets/design/materials/res_battery.tres"
+    },
+    {
+      "id": "res_coolant",
+      "icon": "assets/design/icons/res_coolant.svg",
+      "tile": "assets/design/tiles/res_coolant.svg",
+      "material": "assets/design/materials/res_coolant.tres"
+    },
+    {
+      "id": "res_feed",
+      "icon": "assets/design/icons/res_feed.svg",
+      "tile": "assets/design/tiles/res_feed.svg",
+      "material": "assets/design/materials/res_feed.tres"
+    },
+    {
+      "id": "res_polymer",
+      "icon": "assets/design/icons/res_polymer.svg",
+      "tile": "assets/design/tiles/res_polymer.svg",
+      "material": "assets/design/materials/res_polymer.tres"
+    },
+    {
+      "id": "res_sealant",
+      "icon": "assets/design/icons/res_sealant.svg",
+      "tile": "assets/design/tiles/res_sealant.svg",
+      "material": "assets/design/materials/res_sealant.tres"
+    },
+    {
+      "id": "res_bio_gel",
+      "icon": "assets/design/icons/res_bio_gel.svg",
+      "tile": "assets/design/tiles/res_bio_gel.svg",
+      "material": "assets/design/materials/res_bio_gel.tres"
+    },
+    {
+      "id": "res_membrane",
+      "icon": "assets/design/icons/res_membrane.svg",
+      "tile": "assets/design/tiles/res_membrane.svg",
+      "material": "assets/design/materials/res_membrane.tres"
+    },
+    {
+      "id": "res_medgel",
+      "icon": "assets/design/icons/res_medgel.svg",
+      "tile": "assets/design/tiles/res_medgel.svg",
+      "material": "assets/design/materials/res_medgel.tres"
+    },
+    {
+      "id": "res_pressure_frame",
+      "icon": "assets/design/icons/res_pressure_frame.svg",
+      "tile": "assets/design/tiles/res_pressure_frame.svg",
+      "material": "assets/design/materials/res_pressure_frame.tres"
+    },
+    {
+      "id": "res_magnetic_coil",
+      "icon": "assets/design/icons/res_magnetic_coil.svg",
+      "tile": "assets/design/tiles/res_magnetic_coil.svg",
+      "material": "assets/design/materials/res_magnetic_coil.tres"
+    },
+    {
+      "id": "res_advanced_battery",
+      "icon": "assets/design/icons/res_advanced_battery.svg",
+      "tile": "assets/design/tiles/res_advanced_battery.svg",
+      "material": "assets/design/materials/res_advanced_battery.tres"
+    },
+    {
+      "id": "res_heat_shield",
+      "icon": "assets/design/icons/res_heat_shield.svg",
+      "tile": "assets/design/tiles/res_heat_shield.svg",
+      "material": "assets/design/materials/res_heat_shield.tres"
+    },
+    {
+      "id": "res_titanium_alloy",
+      "icon": "assets/design/icons/res_titanium_alloy.svg",
+      "tile": "assets/design/tiles/res_titanium_alloy.svg",
+      "material": "assets/design/materials/res_titanium_alloy.tres"
+    },
+    {
+      "id": "res_lubricant",
+      "icon": "assets/design/icons/res_lubricant.svg",
+      "tile": "assets/design/tiles/res_lubricant.svg",
+      "material": "assets/design/materials/res_lubricant.tres"
+    },
+    {
+      "id": "res_gold_circuit",
+      "icon": "assets/design/icons/res_gold_circuit.svg",
+      "tile": "assets/design/tiles/res_gold_circuit.svg",
+      "material": "assets/design/materials/res_gold_circuit.tres"
+    },
+    {
+      "id": "res_nutrient",
+      "icon": "assets/design/icons/res_nutrient.svg",
+      "tile": "assets/design/tiles/res_nutrient.svg",
+      "material": "assets/design/materials/res_nutrient.tres"
+    },
+    {
+      "id": "res_advanced_ceramic",
+      "icon": "assets/design/icons/res_advanced_ceramic.svg",
+      "tile": "assets/design/tiles/res_advanced_ceramic.svg",
+      "material": "assets/design/materials/res_advanced_ceramic.tres"
+    },
+    {
+      "id": "res_prism_lens",
+      "icon": "assets/design/icons/res_prism_lens.svg",
+      "tile": "assets/design/tiles/res_prism_lens.svg",
+      "material": "assets/design/materials/res_prism_lens.tres"
+    },
+    {
+      "id": "res_superconductor",
+      "icon": "assets/design/icons/res_superconductor.svg",
+      "tile": "assets/design/tiles/res_superconductor.svg",
+      "material": "assets/design/materials/res_superconductor.tres"
+    },
+    {
+      "id": "res_resonant_core",
+      "icon": "assets/design/icons/res_resonant_core.svg",
+      "tile": "assets/design/tiles/res_resonant_core.svg",
+      "material": "assets/design/materials/res_resonant_core.tres"
+    },
+    {
+      "id": "res_aerogel",
+      "icon": "assets/design/icons/res_aerogel.svg",
+      "tile": "assets/design/tiles/res_aerogel.svg",
+      "material": "assets/design/materials/res_aerogel.tres"
+    },
+    {
+      "id": "res_cryo_fluid",
+      "icon": "assets/design/icons/res_cryo_fluid.svg",
+      "tile": "assets/design/tiles/res_cryo_fluid.svg",
+      "material": "assets/design/materials/res_cryo_fluid.tres"
+    },
+    {
+      "id": "res_helium_fuel",
+      "icon": "assets/design/icons/res_helium_fuel.svg",
+      "tile": "assets/design/tiles/res_helium_fuel.svg",
+      "material": "assets/design/materials/res_helium_fuel.tres"
+    },
+    {
+      "id": "res_iridium_frame",
+      "icon": "assets/design/icons/res_iridium_frame.svg",
+      "tile": "assets/design/tiles/res_iridium_frame.svg",
+      "material": "assets/design/materials/res_iridium_frame.tres"
+    },
+    {
+      "id": "res_dark_lens",
+      "icon": "assets/design/icons/res_dark_lens.svg",
+      "tile": "assets/design/tiles/res_dark_lens.svg",
+      "material": "assets/design/materials/res_dark_lens.tres"
+    },
+    {
+      "id": "res_atlas_chip",
+      "icon": "assets/design/icons/res_atlas_chip.svg",
+      "tile": "assets/design/tiles/res_atlas_chip.svg",
+      "material": "assets/design/materials/res_atlas_chip.tres"
+    },
+    {
+      "id": "res_concord_matrix",
+      "icon": "assets/design/icons/res_concord_matrix.svg",
+      "tile": "assets/design/tiles/res_concord_matrix.svg",
+      "material": "assets/design/materials/res_concord_matrix.tres"
+    },
+    {
+      "id": "res_hydrogen_fuel",
+      "icon": "assets/design/icons/res_hydrogen_fuel.svg",
+      "tile": "assets/design/tiles/res_hydrogen_fuel.svg",
+      "material": "assets/design/materials/res_hydrogen_fuel.tres"
+    },
+    {
+      "id": "res_repair_patch",
+      "icon": "assets/design/icons/res_repair_patch.svg",
+      "tile": "assets/design/tiles/res_repair_patch.svg",
+      "material": "assets/design/materials/res_repair_patch.tres"
+    },
+    {
+      "id": "res_pressure_cuff",
+      "icon": "assets/design/icons/res_pressure_cuff.svg",
+      "tile": "assets/design/tiles/res_pressure_cuff.svg",
+      "material": "assets/design/materials/res_pressure_cuff.tres"
+    },
+    {
+      "id": "mod_workshop",
+      "icon": "assets/design/icons/mod_workshop.svg"
+    },
+    {
+      "id": "mod_ladder",
+      "icon": "assets/design/icons/mod_ladder.svg"
+    },
+    {
+      "id": "mod_lab",
+      "icon": "assets/design/icons/mod_lab.svg"
+    },
+    {
+      "id": "mod_light",
+      "icon": "assets/design/icons/mod_light.svg"
+    },
+    {
+      "id": "mod_crate",
+      "icon": "assets/design/icons/mod_crate.svg"
+    },
+    {
+      "id": "mod_fabricator",
+      "icon": "assets/design/icons/mod_fabricator.svg"
+    },
+    {
+      "id": "mod_support",
+      "icon": "assets/design/icons/mod_support.svg"
+    },
+    {
+      "id": "mod_door",
+      "icon": "assets/design/icons/mod_door.svg"
+    },
+    {
+      "id": "mod_airlock",
+      "icon": "assets/design/icons/mod_airlock.svg"
+    },
+    {
+      "id": "mod_life_support",
+      "icon": "assets/design/icons/mod_life_support.svg"
+    },
+    {
+      "id": "mod_solar",
+      "icon": "assets/design/icons/mod_solar.svg"
+    },
+    {
+      "id": "mod_battery_bank",
+      "icon": "assets/design/icons/mod_battery_bank.svg"
+    },
+    {
+      "id": "mod_heater",
+      "icon": "assets/design/icons/mod_heater.svg"
+    },
+    {
+      "id": "mod_pump",
+      "icon": "assets/design/icons/mod_pump.svg"
+    },
+    {
+      "id": "mod_tank",
+      "icon": "assets/design/icons/mod_tank.svg"
+    },
+    {
+      "id": "mod_relay",
+      "icon": "assets/design/icons/mod_relay.svg"
+    },
+    {
+      "id": "mod_greenhouse",
+      "icon": "assets/design/icons/mod_greenhouse.svg"
+    },
+    {
+      "id": "mod_habitat",
+      "icon": "assets/design/icons/mod_habitat.svg"
+    },
+    {
+      "id": "mod_infirmary",
+      "icon": "assets/design/icons/mod_infirmary.svg"
+    },
+    {
+      "id": "mod_bioprocessor",
+      "icon": "assets/design/icons/mod_bioprocessor.svg"
+    },
+    {
+      "id": "mod_gas_filter",
+      "icon": "assets/design/icons/mod_gas_filter.svg"
+    },
+    {
+      "id": "mod_route_dock",
+      "icon": "assets/design/icons/mod_route_dock.svg"
+    },
+    {
+      "id": "mod_fuel_plant",
+      "icon": "assets/design/icons/mod_fuel_plant.svg"
+    },
+    {
+      "id": "mod_magnetic_shield",
+      "icon": "assets/design/icons/mod_magnetic_shield.svg"
+    },
+    {
+      "id": "mod_geothermal",
+      "icon": "assets/design/icons/mod_geothermal.svg"
+    },
+    {
+      "id": "mod_habitat_aquatic",
+      "icon": "assets/design/icons/mod_habitat_aquatic.svg"
+    },
+    {
+      "id": "mod_habitat_climate",
+      "icon": "assets/design/icons/mod_habitat_climate.svg"
+    },
+    {
+      "id": "mod_photonics",
+      "icon": "assets/design/icons/mod_photonics.svg"
+    },
+    {
+      "id": "mod_observatory",
+      "icon": "assets/design/icons/mod_observatory.svg"
+    },
+    {
+      "id": "mod_habitat_aviary",
+      "icon": "assets/design/icons/mod_habitat_aviary.svg"
+    },
+    {
+      "id": "mod_sanctuary",
+      "icon": "assets/design/icons/mod_sanctuary.svg"
+    },
+    {
+      "id": "mod_beacon",
+      "icon": "assets/design/icons/mod_beacon.svg"
+    },
+    {
+      "id": "mod_drain",
+      "icon": "assets/design/icons/mod_drain.svg"
+    },
+    {
+      "id": "mod_pipe",
+      "icon": "assets/design/icons/mod_pipe.svg"
+    },
+    {
+      "id": "mod_cable",
+      "icon": "assets/design/icons/mod_cable.svg"
+    },
+    {
+      "id": "mod_concord_archive",
+      "icon": "assets/design/icons/mod_concord_archive.svg"
+    },
+    {
+      "id": "mod_ship_cargo_pod",
+      "icon": "assets/design/icons/mod_ship_cargo_pod.svg"
+    },
+    {
+      "id": "mod_ship_engine_pod",
+      "icon": "assets/design/icons/mod_ship_engine_pod.svg"
+    },
+    {
+      "id": "mod_ship_radar_pod",
+      "icon": "assets/design/icons/mod_ship_radar_pod.svg"
+    },
+    {
+      "id": "mod_ship_battery_pod",
+      "icon": "assets/design/icons/mod_ship_battery_pod.svg"
+    },
+    {
+      "id": "tech_start",
+      "icon": "assets/design/icons/tech_start.svg"
+    },
+    {
+      "id": "tech_field_science",
+      "icon": "assets/design/icons/tech_field_science.svg"
+    },
+    {
+      "id": "tech_metallurgy",
+      "icon": "assets/design/icons/tech_metallurgy.svg"
+    },
+    {
+      "id": "tech_sealing",
+      "icon": "assets/design/icons/tech_sealing.svg"
+    },
+    {
+      "id": "tech_cold",
+      "icon": "assets/design/icons/tech_cold.svg"
+    },
+    {
+      "id": "tech_hydraulics",
+      "icon": "assets/design/icons/tech_hydraulics.svg"
+    },
+    {
+      "id": "tech_bond",
+      "icon": "assets/design/icons/tech_bond.svg"
+    },
+    {
+      "id": "tech_biology",
+      "icon": "assets/design/icons/tech_biology.svg"
+    },
+    {
+      "id": "tech_electrics",
+      "icon": "assets/design/icons/tech_electrics.svg"
+    },
+    {
+      "id": "tech_logistics",
+      "icon": "assets/design/icons/tech_logistics.svg"
+    },
+    {
+      "id": "tech_ecology",
+      "icon": "assets/design/icons/tech_ecology.svg"
+    },
+    {
+      "id": "tech_heat",
+      "icon": "assets/design/icons/tech_heat.svg"
+    },
+    {
+      "id": "tech_desert",
+      "icon": "assets/design/icons/tech_desert.svg"
+    },
+    {
+      "id": "tech_resonance",
+      "icon": "assets/design/icons/tech_resonance.svg"
+    },
+    {
+      "id": "tech_sky",
+      "icon": "assets/design/icons/tech_sky.svg"
+    },
+    {
+      "id": "tech_symbiosis",
+      "icon": "assets/design/icons/tech_symbiosis.svg"
+    },
+    {
+      "id": "tech_void",
+      "icon": "assets/design/icons/tech_void.svg"
+    },
+    {
+      "id": "tech_concord",
+      "icon": "assets/design/icons/tech_concord.svg"
+    },
+    {
+      "id": "cur_lumen",
+      "icon": "assets/design/icons/cur_lumen.svg"
+    },
+    {
+      "id": "cur_forge",
+      "icon": "assets/design/icons/cur_forge.svg"
+    },
+    {
+      "id": "cur_thermal",
+      "icon": "assets/design/icons/cur_thermal.svg"
+    },
+    {
+      "id": "cur_tidal",
+      "icon": "assets/design/icons/cur_tidal.svg"
+    },
+    {
+      "id": "cur_bio",
+      "icon": "assets/design/icons/cur_bio.svg"
+    },
+    {
+      "id": "cur_storm",
+      "icon": "assets/design/icons/cur_storm.svg"
+    },
+    {
+      "id": "cur_magma",
+      "icon": "assets/design/icons/cur_magma.svg"
+    },
+    {
+      "id": "cur_dune",
+      "icon": "assets/design/icons/cur_dune.svg"
+    },
+    {
+      "id": "cur_prism",
+      "icon": "assets/design/icons/cur_prism.svg"
+    },
+    {
+      "id": "cur_sky",
+      "icon": "assets/design/icons/cur_sky.svg"
+    },
+    {
+      "id": "cur_void",
+      "icon": "assets/design/icons/cur_void.svg"
+    },
+    {
+      "id": "cur_concord",
+      "icon": "assets/design/icons/cur_concord.svg"
+    },
+    {
+      "id": "planet_ocra",
+      "icon": "assets/design/icons/planet_ocra.svg"
+    },
+    {
+      "id": "planet_ferrum",
+      "icon": "assets/design/icons/planet_ferrum.svg"
+    },
+    {
+      "id": "planet_brina",
+      "icon": "assets/design/icons/planet_brina.svg"
+    },
+    {
+      "id": "planet_pelagia",
+      "icon": "assets/design/icons/planet_pelagia.svg"
+    },
+    {
+      "id": "planet_viridia",
+      "icon": "assets/design/icons/planet_viridia.svg"
+    },
+    {
+      "id": "planet_fulmen",
+      "icon": "assets/design/icons/planet_fulmen.svg"
+    },
+    {
+      "id": "planet_vulcania",
+      "icon": "assets/design/icons/planet_vulcania.svg"
+    },
+    {
+      "id": "planet_duna",
+      "icon": "assets/design/icons/planet_duna.svg"
+    },
+    {
+      "id": "planet_prismara",
+      "icon": "assets/design/icons/planet_prismara.svg"
+    },
+    {
+      "id": "planet_nimbo",
+      "icon": "assets/design/icons/planet_nimbo.svg"
+    },
+    {
+      "id": "planet_nox",
+      "icon": "assets/design/icons/planet_nox.svg"
+    },
+    {
+      "id": "planet_concordia",
+      "icon": "assets/design/icons/planet_concordia.svg"
+    },
+    {
+      "id": "tool_pulse",
+      "icon": "assets/design/icons/tool_pulse.svg"
+    },
+    {
+      "id": "tool_scanner",
+      "icon": "assets/design/icons/tool_scanner.svg"
+    },
+    {
+      "id": "tool_collector",
+      "icon": "assets/design/icons/tool_collector.svg"
+    },
+    {
+      "id": "tool_resonator",
+      "icon": "assets/design/icons/tool_resonator.svg"
+    },
+    {
+      "id": "tool_plasma",
+      "icon": "assets/design/icons/tool_plasma.svg"
+    },
+    {
+      "id": "svc_refuel_basic",
+      "icon": "assets/design/icons/svc_refuel_basic.svg"
+    },
+    {
+      "id": "svc_refuel_advanced",
+      "icon": "assets/design/icons/svc_refuel_advanced.svg"
+    },
+    {
+      "id": "svc_hull_repair",
+      "icon": "assets/design/icons/svc_hull_repair.svg"
+    },
+    {
+      "id": "svc_suit_ship",
+      "icon": "assets/design/icons/svc_suit_ship.svg"
+    },
+    {
+      "id": "svc_suit_field",
+      "icon": "assets/design/icons/svc_suit_field.svg"
+    },
+    {
+      "id": "svc_medgel",
+      "icon": "assets/design/icons/svc_medgel.svg"
+    },
+    {
+      "id": "svc_patch",
+      "icon": "assets/design/icons/svc_patch.svg"
+    },
+    {
+      "id": "svc_clinic",
+      "icon": "assets/design/icons/svc_clinic.svg"
+    },
+    {
+      "id": "svc_robbie_repair",
+      "icon": "assets/design/icons/svc_robbie_repair.svg"
+    },
+    {
+      "id": "svc_ship_robbie",
+      "icon": "assets/design/icons/svc_ship_robbie.svg"
+    },
+    {
+      "id": "svc_engine",
+      "icon": "assets/design/icons/svc_engine.svg"
+    },
+    {
+      "id": "haz_darkness",
+      "icon": "assets/design/icons/haz_darkness.svg"
+    },
+    {
+      "id": "haz_rubble",
+      "icon": "assets/design/icons/haz_rubble.svg"
+    },
+    {
+      "id": "haz_unstable_ceiling",
+      "icon": "assets/design/icons/haz_unstable_ceiling.svg"
+    },
+    {
+      "id": "haz_cold",
+      "icon": "assets/design/icons/haz_cold.svg"
+    },
+    {
+      "id": "haz_ice_slip",
+      "icon": "assets/design/icons/haz_ice_slip.svg"
+    },
+    {
+      "id": "haz_water",
+      "icon": "assets/design/icons/haz_water.svg"
+    },
+    {
+      "id": "haz_drowning",
+      "icon": "assets/design/icons/haz_drowning.svg"
+    },
+    {
+      "id": "haz_pressure",
+      "icon": "assets/design/icons/haz_pressure.svg"
+    },
+    {
+      "id": "haz_spores",
+      "icon": "assets/design/icons/haz_spores.svg"
+    },
+    {
+      "id": "haz_toxic_gas",
+      "icon": "assets/design/icons/haz_toxic_gas.svg"
+    },
+    {
+      "id": "haz_territorial",
+      "icon": "assets/design/icons/haz_territorial.svg"
+    },
+    {
+      "id": "haz_electric",
+      "icon": "assets/design/icons/haz_electric.svg"
+    },
+    {
+      "id": "haz_magnetic_storm",
+      "icon": "assets/design/icons/haz_magnetic_storm.svg"
+    },
+    {
+      "id": "haz_heat",
+      "icon": "assets/design/icons/haz_heat.svg"
+    },
+    {
+      "id": "haz_lava",
+      "icon": "assets/design/icons/haz_lava.svg"
+    },
+    {
+      "id": "haz_vent",
+      "icon": "assets/design/icons/haz_vent.svg"
+    },
+    {
+      "id": "haz_sandstorm",
+      "icon": "assets/design/icons/haz_sandstorm.svg"
+    },
+    {
+      "id": "haz_abrasion",
+      "icon": "assets/design/icons/haz_abrasion.svg"
+    },
+    {
+      "id": "haz_dehydration",
+      "icon": "assets/design/icons/haz_dehydration.svg"
+    },
+    {
+      "id": "haz_resonance",
+      "icon": "assets/design/icons/haz_resonance.svg"
+    },
+    {
+      "id": "haz_shards",
+      "icon": "assets/design/icons/haz_shards.svg"
+    },
+    {
+      "id": "haz_wind",
+      "icon": "assets/design/icons/haz_wind.svg"
+    },
+    {
+      "id": "haz_thin_air",
+      "icon": "assets/design/icons/haz_thin_air.svg"
+    },
+    {
+      "id": "haz_radiation",
+      "icon": "assets/design/icons/haz_radiation.svg"
+    },
+    {
+      "id": "haz_silence",
+      "icon": "assets/design/icons/haz_silence.svg"
+    },
+    {
+      "id": "haz_mixed_fields",
+      "icon": "assets/design/icons/haz_mixed_fields.svg"
+    },
+    {
+      "id": "species_luccivola",
+      "icon": "assets/design/icons/species_luccivola.svg"
+    },
+    {
+      "id": "species_mossback",
+      "icon": "assets/design/icons/species_mossback.svg"
+    },
+    {
+      "id": "species_echofin",
+      "icon": "assets/design/icons/species_echofin.svg"
+    },
+    {
+      "id": "species_ferriccio",
+      "icon": "assets/design/icons/species_ferriccio.svg"
+    },
+    {
+      "id": "species_carbonello",
+      "icon": "assets/design/icons/species_carbonello.svg"
+    },
+    {
+      "id": "species_argillotto",
+      "icon": "assets/design/icons/species_argillotto.svg"
+    },
+    {
+      "id": "species_brinotto",
+      "icon": "assets/design/icons/species_brinotto.svg"
+    },
+    {
+      "id": "species_cobalina",
+      "icon": "assets/design/icons/species_cobalina.svg"
+    },
+    {
+      "id": "species_nevaglio",
+      "icon": "assets/design/icons/species_nevaglio.svg"
+    },
+    {
+      "id": "species_algolino",
+      "icon": "assets/design/icons/species_algolino.svg"
+    },
+    {
+      "id": "species_calciopode",
+      "icon": "assets/design/icons/species_calciopode.svg"
+    },
+    {
+      "id": "species_salifin",
+      "icon": "assets/design/icons/species_salifin.svg"
+    },
+    {
+      "id": "species_sporello",
+      "icon": "assets/design/icons/species_sporello.svg"
+    },
+    {
+      "id": "species_resinella",
+      "icon": "assets/design/icons/species_resinella.svg"
+    },
+    {
+      "id": "species_micorino",
+      "icon": "assets/design/icons/species_micorino.svg"
+    },
+    {
+      "id": "species_scintillo",
+      "icon": "assets/design/icons/species_scintillo.svg"
+    },
+    {
+      "id": "species_grafotto",
+      "icon": "assets/design/icons/species_grafotto.svg"
+    },
+    {
+      "id": "species_voltala",
+      "icon": "assets/design/icons/species_voltala.svg"
+    },
+    {
+      "id": "species_lavillo",
+      "icon": "assets/design/icons/species_lavillo.svg"
+    },
+    {
+      "id": "species_titanello",
+      "icon": "assets/design/icons/species_titanello.svg"
+    },
+    {
+      "id": "species_sulfina",
+      "icon": "assets/design/icons/species_sulfina.svg"
+    },
+    {
+      "id": "species_sabbuffo",
+      "icon": "assets/design/icons/species_sabbuffo.svg"
+    },
+    {
+      "id": "species_dorimio",
+      "icon": "assets/design/icons/species_dorimio.svg"
+    },
+    {
+      "id": "species_fosfolino",
+      "icon": "assets/design/icons/species_fosfolino.svg"
+    },
+    {
+      "id": "species_prismella",
+      "icon": "assets/design/icons/species_prismella.svg"
+    },
+    {
+      "id": "species_borotto",
+      "icon": "assets/design/icons/species_borotto.svg"
+    },
+    {
+      "id": "species_geodino",
+      "icon": "assets/design/icons/species_geodino.svg"
+    },
+    {
+      "id": "species_nembolo",
+      "icon": "assets/design/icons/species_nembolo.svg"
+    },
+    {
+      "id": "species_eliopuff",
+      "icon": "assets/design/icons/species_eliopuff.svg"
+    },
+    {
+      "id": "species_xenella",
+      "icon": "assets/design/icons/species_xenella.svg"
+    },
+    {
+      "id": "species_iridonte",
+      "icon": "assets/design/icons/species_iridonte.svg"
+    },
+    {
+      "id": "species_ombrolino",
+      "icon": "assets/design/icons/species_ombrolino.svg"
+    },
+    {
+      "id": "species_mnemonide",
+      "icon": "assets/design/icons/species_mnemonide.svg"
+    },
+    {
+      "id": "species_accordino",
+      "icon": "assets/design/icons/species_accordino.svg"
+    },
+    {
+      "id": "species_reticolino",
+      "icon": "assets/design/icons/species_reticolino.svg"
+    },
+    {
+      "id": "species_astralume",
+      "icon": "assets/design/icons/species_astralume.svg"
+    },
+    {
+      "id": "upg_player_oxygen",
+      "icon": "assets/design/icons/upg_player_oxygen.svg"
+    },
+    {
+      "id": "upg_player_pack",
+      "icon": "assets/design/icons/upg_player_pack.svg"
+    },
+    {
+      "id": "upg_player_suit",
+      "icon": "assets/design/icons/upg_player_suit.svg"
+    },
+    {
+      "id": "upg_player_thermal",
+      "icon": "assets/design/icons/upg_player_thermal.svg"
+    },
+    {
+      "id": "upg_player_filter",
+      "icon": "assets/design/icons/upg_player_filter.svg"
+    },
+    {
+      "id": "upg_player_pressure",
+      "icon": "assets/design/icons/upg_player_pressure.svg"
+    },
+    {
+      "id": "upg_player_traction",
+      "icon": "assets/design/icons/upg_player_traction.svg"
+    },
+    {
+      "id": "upg_player_scanner",
+      "icon": "assets/design/icons/upg_player_scanner.svg"
+    },
+    {
+      "id": "upg_player_tool_efficiency",
+      "icon": "assets/design/icons/upg_player_tool_efficiency.svg"
+    },
+    {
+      "id": "upg_player_radiation",
+      "icon": "assets/design/icons/upg_player_radiation.svg"
+    },
+    {
+      "id": "upg_ship_hull",
+      "icon": "assets/design/icons/upg_ship_hull.svg"
+    },
+    {
+      "id": "upg_ship_cargo",
+      "icon": "assets/design/icons/upg_ship_cargo.svg"
+    },
+    {
+      "id": "upg_ship_battery",
+      "icon": "assets/design/icons/upg_ship_battery.svg"
+    },
+    {
+      "id": "upg_ship_engine",
+      "icon": "assets/design/icons/upg_ship_engine.svg"
+    },
+    {
+      "id": "upg_ship_landing",
+      "icon": "assets/design/icons/upg_ship_landing.svg"
+    },
+    {
+      "id": "upg_ship_oxygen",
+      "icon": "assets/design/icons/upg_ship_oxygen.svg"
+    },
+    {
+      "id": "upg_ship_radar",
+      "icon": "assets/design/icons/upg_ship_radar.svg"
+    },
+    {
+      "id": "upg_ship_workbench",
+      "icon": "assets/design/icons/upg_ship_workbench.svg"
+    },
+    {
+      "id": "upg_ship_climate",
+      "icon": "assets/design/icons/upg_ship_climate.svg"
+    },
+    {
+      "id": "upg_ship_stasis",
+      "icon": "assets/design/icons/upg_ship_stasis.svg"
+    },
+    {
+      "id": "upg_ship_archive",
+      "icon": "assets/design/icons/upg_ship_archive.svg"
+    },
+    {
+      "id": "upg_robbie_cargo",
+      "icon": "assets/design/icons/upg_robbie_cargo.svg"
+    },
+    {
+      "id": "upg_robbie_signal",
+      "icon": "assets/design/icons/upg_robbie_signal.svg"
+    },
+    {
+      "id": "upg_robbie_battery",
+      "icon": "assets/design/icons/upg_robbie_battery.svg"
+    },
+    {
+      "id": "upg_robbie_sensors",
+      "icon": "assets/design/icons/upg_robbie_sensors.svg"
+    },
+    {
+      "id": "upg_robbie_light",
+      "icon": "assets/design/icons/upg_robbie_light.svg"
+    },
+    {
+      "id": "upg_robbie_hull",
+      "icon": "assets/design/icons/upg_robbie_hull.svg"
+    },
+    {
+      "id": "upg_robbie_thermal",
+      "icon": "assets/design/icons/upg_robbie_thermal.svg"
+    },
+    {
+      "id": "upg_robbie_seal",
+      "icon": "assets/design/icons/upg_robbie_seal.svg"
+    },
+    {
+      "id": "upg_robbie_attachments",
+      "icon": "assets/design/icons/upg_robbie_attachments.svg"
+    },
+    {
+      "id": "upg_robbie_route",
+      "icon": "assets/design/icons/upg_robbie_route.svg"
+    },
+    {
+      "id": "upg_robbie_medic",
+      "icon": "assets/design/icons/upg_robbie_medic.svg"
+    },
+    {
+      "id": "upg_robbie_manipulator",
+      "icon": "assets/design/icons/upg_robbie_manipulator.svg"
+    },
+    {
+      "id": "upg_module_lab",
+      "icon": "assets/design/icons/upg_module_lab.svg"
+    },
+    {
+      "id": "upg_module_light",
+      "icon": "assets/design/icons/upg_module_light.svg"
+    },
+    {
+      "id": "upg_module_crate",
+      "icon": "assets/design/icons/upg_module_crate.svg"
+    },
+    {
+      "id": "upg_module_fabricator",
+      "icon": "assets/design/icons/upg_module_fabricator.svg"
+    },
+    {
+      "id": "upg_module_life_support",
+      "icon": "assets/design/icons/upg_module_life_support.svg"
+    },
+    {
+      "id": "upg_module_solar",
+      "icon": "assets/design/icons/upg_module_solar.svg"
+    },
+    {
+      "id": "upg_module_battery_bank",
+      "icon": "assets/design/icons/upg_module_battery_bank.svg"
+    },
+    {
+      "id": "upg_module_pump",
+      "icon": "assets/design/icons/upg_module_pump.svg"
+    },
+    {
+      "id": "upg_module_relay",
+      "icon": "assets/design/icons/upg_module_relay.svg"
+    },
+    {
+      "id": "upg_module_greenhouse",
+      "icon": "assets/design/icons/upg_module_greenhouse.svg"
+    },
+    {
+      "id": "upg_module_habitat",
+      "icon": "assets/design/icons/upg_module_habitat.svg"
+    },
+    {
+      "id": "upg_module_infirmary",
+      "icon": "assets/design/icons/upg_module_infirmary.svg"
+    },
+    {
+      "id": "upg_module_gas_filter",
+      "icon": "assets/design/icons/upg_module_gas_filter.svg"
+    },
+    {
+      "id": "upg_module_route_dock",
+      "icon": "assets/design/icons/upg_module_route_dock.svg"
+    },
+    {
+      "id": "upg_module_habitat_aquatic",
+      "icon": "assets/design/icons/upg_module_habitat_aquatic.svg"
+    },
+    {
+      "id": "upg_module_habitat_climate",
+      "icon": "assets/design/icons/upg_module_habitat_climate.svg"
+    },
+    {
+      "id": "upg_module_photonics",
+      "icon": "assets/design/icons/upg_module_photonics.svg"
+    },
+    {
+      "id": "upg_module_habitat_aviary",
+      "icon": "assets/design/icons/upg_module_habitat_aviary.svg"
+    },
+    {
+      "id": "upg_module_sanctuary",
+      "icon": "assets/design/icons/upg_module_sanctuary.svg"
+    },
+    {
+      "id": "item_stasis_carrier",
+      "icon": "assets/design/icons/item_stasis_carrier.svg"
+    }
+  ],
+  "concepts": [
+    {
+      "path": "assets/design/concepts/creatures-36-alien.png",
+      "role": "preferred_3d_creature_direction",
+      "order": [
+        "species_luccivola",
+        "species_mossback",
+        "species_echofin",
+        "species_ferriccio",
+        "species_carbonello",
+        "species_argillotto",
+        "species_brinotto",
+        "species_cobalina",
+        "species_nevaglio",
+        "species_algolino",
+        "species_calciopode",
+        "species_salifin",
+        "species_sporello",
+        "species_resinella",
+        "species_micorino",
+        "species_scintillo",
+        "species_grafotto",
+        "species_voltala",
+        "species_lavillo",
+        "species_titanello",
+        "species_sulfina",
+        "species_sabbuffo",
+        "species_dorimio",
+        "species_fosfolino",
+        "species_prismella",
+        "species_borotto",
+        "species_geodino",
+        "species_nembolo",
+        "species_eliopuff",
+        "species_xenella",
+        "species_iridonte",
+        "species_ombrolino",
+        "species_mnemonide",
+        "species_accordino",
+        "species_reticolino",
+        "species_astralume"
+      ],
+      "grid": [
+        6,
+        6
+      ]
+    },
+    {
+      "path": "assets/design/concepts/creatures-36.png",
+      "role": "earlier_reference_retained"
+    }
+  ],
+  "not_included": [
+    "animated_sprites",
+    "rigged_3d_models",
+    "final_PBR_normal_roughness_maps"
+  ]
+}

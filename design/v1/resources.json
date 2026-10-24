@@ -1,0 +1,1931 @@
+[
+  {
+    "id": "res_soil",
+    "name_it": "Terriccio",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 1,
+    "supply": "renewable_surface",
+    "use": "scale, kit luce, riparazioni di campo",
+    "icon": "assets/design/icons/res_soil.svg",
+    "visual": {
+      "color": "#9b795b",
+      "shape": "soil",
+      "tile": "assets/design/tiles/res_soil.svg",
+      "material": "assets/design/materials/res_soil.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_stone",
+    "name_it": "Pietra",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 2,
+    "supply": "finite_ore",
+    "use": "primo laboratorio e strutture",
+    "icon": "assets/design/icons/res_stone.svg",
+    "visual": {
+      "color": "#8996a1",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_stone.svg",
+      "material": "assets/design/materials/res_stone.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_copper",
+    "name_it": "Rame",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 2,
+    "supply": "finite_ore",
+    "use": "conduttori e circuiti",
+    "icon": "assets/design/icons/res_copper.svg",
+    "visual": {
+      "color": "#da8c57",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_copper.svg",
+      "material": "assets/design/materials/res_copper.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_silica",
+    "name_it": "Silice",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 1,
+    "supply": "finite_ore",
+    "use": "vetro e ceramiche",
+    "icon": "assets/design/icons/res_silica.svg",
+    "visual": {
+      "color": "#e7d9b2",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_silica.svg",
+      "material": "assets/design/materials/res_silica.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_water",
+    "name_it": "Acqua",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_aquifer",
+    "use": "raffreddamento, serre e propellente",
+    "icon": "assets/design/icons/res_water.svg",
+    "visual": {
+      "color": "#55bde4",
+      "shape": "droplet",
+      "tile": "assets/design/tiles/res_water.svg",
+      "material": "assets/design/materials/res_water.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_biomass",
+    "name_it": "Biomassa vegetale",
+    "kind": "raw",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ocra"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "cibo e filtri senza abbattere creature",
+    "icon": "assets/design/icons/res_biomass.svg",
+    "visual": {
+      "color": "#8abd72",
+      "shape": "leaf",
+      "tile": "assets/design/tiles/res_biomass.svg",
+      "material": "assets/design/materials/res_biomass.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_iron",
+    "name_it": "Ferro",
+    "kind": "raw",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ferrum"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 3,
+    "supply": "finite_ore",
+    "use": "piastre e acciaio",
+    "icon": "assets/design/icons/res_iron.svg",
+    "visual": {
+      "color": "#b37862",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_iron.svg",
+      "material": "assets/design/materials/res_iron.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_carbon",
+    "name_it": "Carbone",
+    "kind": "raw",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ferrum"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 2,
+    "supply": "finite_ore",
+    "use": "acciaio e filtri",
+    "icon": "assets/design/icons/res_carbon.svg",
+    "visual": {
+      "color": "#495765",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_carbon.svg",
+      "material": "assets/design/materials/res_carbon.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_clay",
+    "name_it": "Argilla",
+    "kind": "raw",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_ferrum"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 1,
+    "supply": "finite_ore",
+    "use": "ceramica isolante",
+    "icon": "assets/design/icons/res_clay.svg",
+    "visual": {
+      "color": "#cd9a7e",
+      "shape": "soil",
+      "tile": "assets/design/tiles/res_clay.svg",
+      "material": "assets/design/materials/res_clay.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": [
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox",
+      "planet_concordia"
+    ]
+  },
+  {
+    "id": "res_ice",
+    "name_it": "Ghiaccio",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_brina"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 2,
+    "supply": "finite_ore",
+    "use": "acqua trasportabile",
+    "icon": "assets/design/icons/res_ice.svg",
+    "visual": {
+      "color": "#a9e4ee",
+      "shape": "crystal",
+      "tile": "assets/design/tiles/res_ice.svg",
+      "material": "assets/design/materials/res_ice.tres",
+      "metallic": 0,
+      "roughness": 0.22
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_lithium",
+    "name_it": "Litio",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_brina"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 3,
+    "supply": "finite_ore",
+    "use": "celle energetiche",
+    "icon": "assets/design/icons/res_lithium.svg",
+    "visual": {
+      "color": "#c3a9d9",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_lithium.svg",
+      "material": "assets/design/materials/res_lithium.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_cobalt",
+    "name_it": "Cobalto",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_brina"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 3,
+    "supply": "finite_ore",
+    "use": "batterie",
+    "icon": "assets/design/icons/res_cobalt.svg",
+    "visual": {
+      "color": "#638bd4",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_cobalt.svg",
+      "material": "assets/design/materials/res_cobalt.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_salt",
+    "name_it": "Sale",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_pelagia"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_ore",
+    "use": "refrigerante e osmoregolazione",
+    "icon": "assets/design/icons/res_salt.svg",
+    "visual": {
+      "color": "#e6eee7",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_salt.svg",
+      "material": "assets/design/materials/res_salt.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_algae",
+    "name_it": "Alghe",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_pelagia"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "biogel e membrane",
+    "icon": "assets/design/icons/res_algae.svg",
+    "visual": {
+      "color": "#39a68a",
+      "shape": "leaf",
+      "tile": "assets/design/tiles/res_algae.svg",
+      "material": "assets/design/materials/res_algae.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_calcium",
+    "name_it": "Calcite",
+    "kind": "raw",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_pelagia"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 2,
+    "supply": "finite_ore",
+    "use": "filtri e gusci habitat",
+    "icon": "assets/design/icons/res_calcium.svg",
+    "visual": {
+      "color": "#e2d6c6",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_calcium.svg",
+      "material": "assets/design/materials/res_calcium.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_resin",
+    "name_it": "Resina",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_viridia"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "polimeri e sigillanti",
+    "icon": "assets/design/icons/res_resin.svg",
+    "visual": {
+      "color": "#e7ad4b",
+      "shape": "droplet",
+      "tile": "assets/design/tiles/res_resin.svg",
+      "material": "assets/design/materials/res_resin.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_spores",
+    "name_it": "Spore dormienti",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_viridia"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "ricerca e colture",
+    "icon": "assets/design/icons/res_spores.svg",
+    "visual": {
+      "color": "#c4a5d9",
+      "shape": "vial",
+      "tile": "assets/design/tiles/res_spores.svg",
+      "material": "assets/design/materials/res_spores.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_enzymes",
+    "name_it": "Enzimi",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_viridia"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "membrane e cure",
+    "icon": "assets/design/icons/res_enzymes.svg",
+    "visual": {
+      "color": "#82d5a6",
+      "shape": "vial",
+      "tile": "assets/design/tiles/res_enzymes.svg",
+      "material": "assets/design/materials/res_enzymes.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_magnetite",
+    "name_it": "Magnetite",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_fulmen"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "bobine e schermatura",
+    "icon": "assets/design/icons/res_magnetite.svg",
+    "visual": {
+      "color": "#64718f",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_magnetite.svg",
+      "material": "assets/design/materials/res_magnetite.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_graphite",
+    "name_it": "Grafite",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_fulmen"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 3,
+    "supply": "finite_ore",
+    "use": "batterie avanzate",
+    "icon": "assets/design/icons/res_graphite.svg",
+    "visual": {
+      "color": "#455260",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_graphite.svg",
+      "material": "assets/design/materials/res_graphite.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_vanadium",
+    "name_it": "Vanadio",
+    "kind": "raw",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_fulmen"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "superconduttori",
+    "icon": "assets/design/icons/res_vanadium.svg",
+    "visual": {
+      "color": "#80aaa5",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_vanadium.svg",
+      "material": "assets/design/materials/res_vanadium.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_titanium",
+    "name_it": "Titanio",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_vulcania"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_plasma",
+    "hardness": 5,
+    "supply": "finite_ore",
+    "use": "scafi e telai leggeri",
+    "icon": "assets/design/icons/res_titanium.svg",
+    "visual": {
+      "color": "#acb8c9",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_titanium.svg",
+      "material": "assets/design/materials/res_titanium.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_nickel",
+    "name_it": "Nichel",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_vulcania"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_plasma",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "leghe e attuatori",
+    "icon": "assets/design/icons/res_nickel.svg",
+    "visual": {
+      "color": "#b2b08a",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_nickel.svg",
+      "material": "assets/design/materials/res_nickel.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_sulfur",
+    "name_it": "Zolfo",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_vulcania"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_ore",
+    "use": "lubrificanti e processi termici",
+    "icon": "assets/design/icons/res_sulfur.svg",
+    "visual": {
+      "color": "#ddcb54",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_sulfur.svg",
+      "material": "assets/design/materials/res_sulfur.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_basalt",
+    "name_it": "Basalto",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_vulcania"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_plasma",
+    "hardness": 5,
+    "supply": "finite_ore",
+    "use": "rivestimenti geotermici",
+    "icon": "assets/design/icons/res_basalt.svg",
+    "visual": {
+      "color": "#665b68",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_basalt.svg",
+      "material": "assets/design/materials/res_basalt.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_alumina",
+    "name_it": "Allumina",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_duna"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "ceramica avanzata",
+    "icon": "assets/design/icons/res_alumina.svg",
+    "visual": {
+      "color": "#d8b99e",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_alumina.svg",
+      "material": "assets/design/materials/res_alumina.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_gold",
+    "name_it": "Oro",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_duna"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "elettronica precisa",
+    "icon": "assets/design/icons/res_gold.svg",
+    "visual": {
+      "color": "#e6bd57",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_gold.svg",
+      "material": "assets/design/materials/res_gold.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_phosphate",
+    "name_it": "Fosfati",
+    "kind": "raw",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_duna"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_pulse",
+    "hardness": 3,
+    "supply": "finite_ore",
+    "use": "nutrienti",
+    "icon": "assets/design/icons/res_phosphate.svg",
+    "visual": {
+      "color": "#a8c4a5",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_phosphate.svg",
+      "material": "assets/design/materials/res_phosphate.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_prism_quartz",
+    "name_it": "Quarzo prismatico",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_prismara"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_resonator",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "ottiche e fotonica",
+    "icon": "assets/design/icons/res_prism_quartz.svg",
+    "visual": {
+      "color": "#a3cbed",
+      "shape": "crystal",
+      "tile": "assets/design/tiles/res_prism_quartz.svg",
+      "material": "assets/design/materials/res_prism_quartz.tres",
+      "metallic": 0,
+      "roughness": 0.22
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_boron",
+    "name_it": "Borati",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_prismara"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_resonator",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "superconduttori",
+    "icon": "assets/design/icons/res_boron.svg",
+    "visual": {
+      "color": "#c5baeb",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_boron.svg",
+      "material": "assets/design/materials/res_boron.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_geode_seed",
+    "name_it": "Seme geodico",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_prismara"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_resonator",
+    "hardness": 4,
+    "supply": "finite_ore",
+    "use": "risonatori non valuta",
+    "icon": "assets/design/icons/res_geode_seed.svg",
+    "visual": {
+      "color": "#c7a5ec",
+      "shape": "crystal",
+      "tile": "assets/design/tiles/res_geode_seed.svg",
+      "material": "assets/design/materials/res_geode_seed.tres",
+      "metallic": 0,
+      "roughness": 0.22
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_helium3",
+    "name_it": "Elio 3",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nimbo"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_pocket",
+    "use": "propellente avanzato",
+    "icon": "assets/design/icons/res_helium3.svg",
+    "visual": {
+      "color": "#eee0b7",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_helium3.svg",
+      "material": "assets/design/materials/res_helium3.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_aerospore",
+    "name_it": "Aerospore",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nimbo"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "cultivable",
+    "use": "aerogel",
+    "icon": "assets/design/icons/res_aerospore.svg",
+    "visual": {
+      "color": "#d8e9cb",
+      "shape": "leaf",
+      "tile": "assets/design/tiles/res_aerospore.svg",
+      "material": "assets/design/materials/res_aerospore.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_xenon",
+    "name_it": "Xeno",
+    "kind": "raw",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nimbo"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_pocket",
+    "use": "refrigerante criogenico",
+    "icon": "assets/design/icons/res_xenon.svg",
+    "visual": {
+      "color": "#a2c5e6",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_xenon.svg",
+      "material": "assets/design/materials/res_xenon.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_iridium",
+    "name_it": "Iridio",
+    "kind": "raw",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nox"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_plasma",
+    "hardness": 6,
+    "supply": "finite_ore",
+    "use": "strutture profonde",
+    "icon": "assets/design/icons/res_iridium.svg",
+    "visual": {
+      "color": "#c1d1dc",
+      "shape": "ore",
+      "tile": "assets/design/tiles/res_iridium.svg",
+      "material": "assets/design/materials/res_iridium.tres",
+      "metallic": 0.65,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_dark_silicate",
+    "name_it": "Silicato oscuro",
+    "kind": "raw",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nox"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_resonator",
+    "hardness": 6,
+    "supply": "finite_ore",
+    "use": "ottiche a bassa luce",
+    "icon": "assets/design/icons/res_dark_silicate.svg",
+    "visual": {
+      "color": "#716690",
+      "shape": "rock",
+      "tile": "assets/design/tiles/res_dark_silicate.svg",
+      "material": "assets/design/materials/res_dark_silicate.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_memory_pearl",
+    "name_it": "Perla mnemonica",
+    "kind": "raw",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_nox"
+    ],
+    "acquisition": "collect_scanned_plant_or_finite_pocket",
+    "required_tool": "tool_collector",
+    "hardness": 1,
+    "supply": "finite_ore",
+    "use": "cartografia e archivio",
+    "icon": "assets/design/icons/res_memory_pearl.svg",
+    "visual": {
+      "color": "#b6badb",
+      "shape": "pearl",
+      "tile": "assets/design/tiles/res_memory_pearl.svg",
+      "material": "assets/design/materials/res_memory_pearl.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_aether_lattice",
+    "name_it": "Reticolo concorde",
+    "kind": "raw",
+    "stage": 7,
+    "inventory_units": 1,
+    "primary_planets": [
+      "planet_concordia"
+    ],
+    "acquisition": "mine_cell",
+    "required_tool": "tool_resonator",
+    "hardness": 6,
+    "supply": "finite_ore",
+    "use": "progetti finali e personalizzazione",
+    "icon": "assets/design/icons/res_aether_lattice.svg",
+    "visual": {
+      "color": "#bfe8d8",
+      "shape": "crystal",
+      "tile": "assets/design/tiles/res_aether_lattice.svg",
+      "material": "assets/design/materials/res_aether_lattice.tres",
+      "metallic": 0,
+      "roughness": 0.82
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_wire",
+    "name_it": "Filo di rame",
+    "kind": "processed",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_wire.svg",
+    "visual": {
+      "color": "#e4995b",
+      "shape": "coil",
+      "tile": "assets/design/tiles/res_wire.svg",
+      "material": "assets/design/materials/res_wire.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_glass",
+    "name_it": "Vetro",
+    "kind": "processed",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_glass.svg",
+    "visual": {
+      "color": "#a9d6df",
+      "shape": "plate",
+      "tile": "assets/design/tiles/res_glass.svg",
+      "material": "assets/design/materials/res_glass.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_plate",
+    "name_it": "Piastra di ferro",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_plate.svg",
+    "visual": {
+      "color": "#adb4be",
+      "shape": "plate",
+      "tile": "assets/design/tiles/res_plate.svg",
+      "material": "assets/design/materials/res_plate.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_steel",
+    "name_it": "Acciaio",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_steel.svg",
+    "visual": {
+      "color": "#90a1b3",
+      "shape": "ingot",
+      "tile": "assets/design/tiles/res_steel.svg",
+      "material": "assets/design/materials/res_steel.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_ceramic",
+    "name_it": "Ceramica",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_ceramic.svg",
+    "visual": {
+      "color": "#e4ceb2",
+      "shape": "plate",
+      "tile": "assets/design/tiles/res_ceramic.svg",
+      "material": "assets/design/materials/res_ceramic.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_filter",
+    "name_it": "Filtro a carbone",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_filter.svg",
+    "visual": {
+      "color": "#788c75",
+      "shape": "filter",
+      "tile": "assets/design/tiles/res_filter.svg",
+      "material": "assets/design/materials/res_filter.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_circuit",
+    "name_it": "Circuito",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_circuit.svg",
+    "visual": {
+      "color": "#62a78f",
+      "shape": "chip",
+      "tile": "assets/design/tiles/res_circuit.svg",
+      "material": "assets/design/materials/res_circuit.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_insulation",
+    "name_it": "Isolante",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_insulation.svg",
+    "visual": {
+      "color": "#e7b47e",
+      "shape": "roll",
+      "tile": "assets/design/tiles/res_insulation.svg",
+      "material": "assets/design/materials/res_insulation.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_battery",
+    "name_it": "Cella energetica",
+    "kind": "processed",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_battery.svg",
+    "visual": {
+      "color": "#a1c96a",
+      "shape": "battery",
+      "tile": "assets/design/tiles/res_battery.svg",
+      "material": "assets/design/materials/res_battery.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_coolant",
+    "name_it": "Refrigerante salino",
+    "kind": "processed",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_coolant.svg",
+    "visual": {
+      "color": "#74c3d3",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_coolant.svg",
+      "material": "assets/design/materials/res_coolant.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_feed",
+    "name_it": "Mangime vegetale",
+    "kind": "processed",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_feed.svg",
+    "visual": {
+      "color": "#b7c983",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_feed.svg",
+      "material": "assets/design/materials/res_feed.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_polymer",
+    "name_it": "Polimero vegetale",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_polymer.svg",
+    "visual": {
+      "color": "#d1b27a",
+      "shape": "roll",
+      "tile": "assets/design/tiles/res_polymer.svg",
+      "material": "assets/design/materials/res_polymer.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_sealant",
+    "name_it": "Sigillante",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_sealant.svg",
+    "visual": {
+      "color": "#c6d1ac",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_sealant.svg",
+      "material": "assets/design/materials/res_sealant.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_bio_gel",
+    "name_it": "Biogel",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_bio_gel.svg",
+    "visual": {
+      "color": "#73ca9b",
+      "shape": "vial",
+      "tile": "assets/design/tiles/res_bio_gel.svg",
+      "material": "assets/design/materials/res_bio_gel.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_membrane",
+    "name_it": "Membrana selettiva",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_membrane.svg",
+    "visual": {
+      "color": "#add6a7",
+      "shape": "filter",
+      "tile": "assets/design/tiles/res_membrane.svg",
+      "material": "assets/design/materials/res_membrane.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_medgel",
+    "name_it": "Gel curativo",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_medgel.svg",
+    "visual": {
+      "color": "#df95a3",
+      "shape": "med",
+      "tile": "assets/design/tiles/res_medgel.svg",
+      "material": "assets/design/materials/res_medgel.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_pressure_frame",
+    "name_it": "Telaio pressurizzato",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_pressure_frame.svg",
+    "visual": {
+      "color": "#8cadb3",
+      "shape": "frame",
+      "tile": "assets/design/tiles/res_pressure_frame.svg",
+      "material": "assets/design/materials/res_pressure_frame.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_magnetic_coil",
+    "name_it": "Bobina magnetica",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_magnetic_coil.svg",
+    "visual": {
+      "color": "#ba935f",
+      "shape": "coil",
+      "tile": "assets/design/tiles/res_magnetic_coil.svg",
+      "material": "assets/design/materials/res_magnetic_coil.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_advanced_battery",
+    "name_it": "Cella ad alta densità",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_advanced_battery.svg",
+    "visual": {
+      "color": "#81d2a6",
+      "shape": "battery",
+      "tile": "assets/design/tiles/res_advanced_battery.svg",
+      "material": "assets/design/materials/res_advanced_battery.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_heat_shield",
+    "name_it": "Scudo termico",
+    "kind": "processed",
+    "stage": 3,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_heat_shield.svg",
+    "visual": {
+      "color": "#dc906c",
+      "shape": "shield",
+      "tile": "assets/design/tiles/res_heat_shield.svg",
+      "material": "assets/design/materials/res_heat_shield.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_titanium_alloy",
+    "name_it": "Lega di titanio",
+    "kind": "processed",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_titanium_alloy.svg",
+    "visual": {
+      "color": "#b5c2cf",
+      "shape": "ingot",
+      "tile": "assets/design/tiles/res_titanium_alloy.svg",
+      "material": "assets/design/materials/res_titanium_alloy.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_lubricant",
+    "name_it": "Lubrificante",
+    "kind": "processed",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_lubricant.svg",
+    "visual": {
+      "color": "#c7b873",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_lubricant.svg",
+      "material": "assets/design/materials/res_lubricant.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_gold_circuit",
+    "name_it": "Circuito di precisione",
+    "kind": "processed",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_gold_circuit.svg",
+    "visual": {
+      "color": "#dac479",
+      "shape": "chip",
+      "tile": "assets/design/tiles/res_gold_circuit.svg",
+      "material": "assets/design/materials/res_gold_circuit.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_nutrient",
+    "name_it": "Nutrienti",
+    "kind": "processed",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_nutrient.svg",
+    "visual": {
+      "color": "#98bf77",
+      "shape": "grain",
+      "tile": "assets/design/tiles/res_nutrient.svg",
+      "material": "assets/design/materials/res_nutrient.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_advanced_ceramic",
+    "name_it": "Ceramica tecnica",
+    "kind": "processed",
+    "stage": 4,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_advanced_ceramic.svg",
+    "visual": {
+      "color": "#d8b9c3",
+      "shape": "plate",
+      "tile": "assets/design/tiles/res_advanced_ceramic.svg",
+      "material": "assets/design/materials/res_advanced_ceramic.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_prism_lens",
+    "name_it": "Lente prismatica",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_prism_lens.svg",
+    "visual": {
+      "color": "#bbd6ed",
+      "shape": "lens",
+      "tile": "assets/design/tiles/res_prism_lens.svg",
+      "material": "assets/design/materials/res_prism_lens.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_superconductor",
+    "name_it": "Superconduttore",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_superconductor.svg",
+    "visual": {
+      "color": "#9bbedb",
+      "shape": "coil",
+      "tile": "assets/design/tiles/res_superconductor.svg",
+      "material": "assets/design/materials/res_superconductor.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_resonant_core",
+    "name_it": "Nucleo risonante tecnico",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_resonant_core.svg",
+    "visual": {
+      "color": "#c7a4eb",
+      "shape": "crystal",
+      "tile": "assets/design/tiles/res_resonant_core.svg",
+      "material": "assets/design/materials/res_resonant_core.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_aerogel",
+    "name_it": "Aerogel",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_aerogel.svg",
+    "visual": {
+      "color": "#d5e5de",
+      "shape": "foam",
+      "tile": "assets/design/tiles/res_aerogel.svg",
+      "material": "assets/design/materials/res_aerogel.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_cryo_fluid",
+    "name_it": "Fluido criogenico",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_cryo_fluid.svg",
+    "visual": {
+      "color": "#a3d7ef",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_cryo_fluid.svg",
+      "material": "assets/design/materials/res_cryo_fluid.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_helium_fuel",
+    "name_it": "Propellente a elio",
+    "kind": "processed",
+    "stage": 5,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_helium_fuel.svg",
+    "visual": {
+      "color": "#e6dca2",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_helium_fuel.svg",
+      "material": "assets/design/materials/res_helium_fuel.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_iridium_frame",
+    "name_it": "Telaio all'iridio",
+    "kind": "processed",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_iridium_frame.svg",
+    "visual": {
+      "color": "#c4ccdc",
+      "shape": "frame",
+      "tile": "assets/design/tiles/res_iridium_frame.svg",
+      "material": "assets/design/materials/res_iridium_frame.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_dark_lens",
+    "name_it": "Lente notturna",
+    "kind": "processed",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_dark_lens.svg",
+    "visual": {
+      "color": "#9d91c4",
+      "shape": "lens",
+      "tile": "assets/design/tiles/res_dark_lens.svg",
+      "material": "assets/design/materials/res_dark_lens.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_atlas_chip",
+    "name_it": "Matrice cartografica",
+    "kind": "processed",
+    "stage": 6,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_atlas_chip.svg",
+    "visual": {
+      "color": "#a9b4e0",
+      "shape": "chip",
+      "tile": "assets/design/tiles/res_atlas_chip.svg",
+      "material": "assets/design/materials/res_atlas_chip.tres",
+      "metallic": 0.65,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_concord_matrix",
+    "name_it": "Matrice concorde",
+    "kind": "processed",
+    "stage": 7,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "see_recipe_consumers",
+    "icon": "assets/design/icons/res_concord_matrix.svg",
+    "visual": {
+      "color": "#bee5ce",
+      "shape": "chip",
+      "tile": "assets/design/tiles/res_concord_matrix.svg",
+      "material": "assets/design/materials/res_concord_matrix.tres",
+      "metallic": 0.05,
+      "roughness": 0.55
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_hydrogen_fuel",
+    "name_it": "Propellente elettrolitico",
+    "kind": "processed",
+    "stage": 0,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "service_or_entry_equipment",
+    "icon": "assets/design/icons/res_hydrogen_fuel.svg",
+    "visual": {
+      "color": "#94cdd9",
+      "shape": "canister",
+      "tile": "assets/design/tiles/res_hydrogen_fuel.svg",
+      "material": "assets/design/materials/res_hydrogen_fuel.tres",
+      "metallic": 0.1,
+      "roughness": 0.6
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_repair_patch",
+    "name_it": "Toppa per tuta",
+    "kind": "processed",
+    "stage": 1,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "service_or_entry_equipment",
+    "icon": "assets/design/icons/res_repair_patch.svg",
+    "visual": {
+      "color": "#dca887",
+      "shape": "patch",
+      "tile": "assets/design/tiles/res_repair_patch.svg",
+      "material": "assets/design/materials/res_repair_patch.tres",
+      "metallic": 0.1,
+      "roughness": 0.6
+    },
+    "secondary_planets": []
+  },
+  {
+    "id": "res_pressure_cuff",
+    "name_it": "Bracciale pressorio",
+    "kind": "processed",
+    "stage": 2,
+    "inventory_units": 1,
+    "primary_planets": [],
+    "acquisition": "recipe",
+    "required_tool": null,
+    "hardness": 0,
+    "supply": "crafted",
+    "use": "service_or_entry_equipment",
+    "icon": "assets/design/icons/res_pressure_cuff.svg",
+    "visual": {
+      "color": "#8bc3ca",
+      "shape": "ring",
+      "tile": "assets/design/tiles/res_pressure_cuff.svg",
+      "material": "assets/design/materials/res_pressure_cuff.tres",
+      "metallic": 0.1,
+      "roughness": 0.6
+    },
+    "secondary_planets": []
+  }
+]

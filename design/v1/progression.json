@@ -1,0 +1,350 @@
+{
+  "campaign_target_hours": {
+    "main": 32,
+    "completionist": 50
+  },
+  "resetting_planets_required": false,
+  "onboarding": [
+    {
+      "step": 1,
+      "target_minute": 2,
+      "goal": "Scendi nell’officina e apri il portello",
+      "systems": [
+        "movement",
+        "hatch"
+      ],
+      "new_resources": [],
+      "completion": "hatch_open"
+    },
+    {
+      "step": 2,
+      "target_minute": 5,
+      "goal": "Scava due celle e posa la prima scala",
+      "systems": [
+        "mining",
+        "ladder"
+      ],
+      "new_resources": [
+        "res_soil",
+        "res_stone",
+        "res_copper"
+      ],
+      "completion": "first_ladder_placed"
+    },
+    {
+      "step": 3,
+      "target_minute": 10,
+      "goal": "Prepara e trasporta il cubo laboratorio",
+      "systems": [
+        "inventory",
+        "cube"
+      ],
+      "new_resources": [],
+      "completion": "lab_cube_carried",
+      "recipe": "recipe_cube_lab"
+    },
+    {
+      "step": 4,
+      "target_minute": 18,
+      "goal": "Libera 4 per 3 metri e dispiega il laboratorio",
+      "systems": [
+        "preview",
+        "deployment"
+      ],
+      "new_resources": [],
+      "completion": "first_lab",
+      "research": "tech_field_science"
+    },
+    {
+      "step": 5,
+      "target_minute": 23,
+      "goal": "Fabbrica e posa una luce",
+      "systems": [
+        "craft",
+        "local_power"
+      ],
+      "new_resources": [],
+      "completion": "first_light",
+      "recipe": "recipe_cube_light"
+    },
+    {
+      "step": 6,
+      "target_minute": 30,
+      "goal": "Scansiona un punto di interesse e prepara Ferrum",
+      "systems": [
+        "survey",
+        "navigation",
+        "crystals"
+      ],
+      "new_resources": [
+        "res_silica"
+      ],
+      "completion": "first_destination_plan"
+    }
+  ],
+  "stages": [
+    {
+      "stage": 0,
+      "planets": [
+        "planet_ocra"
+      ],
+      "systems": [
+        "dig",
+        "cube",
+        "light",
+        "local_inventory"
+      ],
+      "new_mandatory_materials_max": 3,
+      "critical_output": "mod_lab",
+      "next_research": [
+        "tech_field_science"
+      ],
+      "care": "free_ship_healing_no_oxygen_loss_training_pocket"
+    },
+    {
+      "stage": 1,
+      "planets": [
+        "planet_ferrum"
+      ],
+      "systems": [
+        "fabricator",
+        "alloys",
+        "support",
+        "sealing"
+      ],
+      "new_mandatory_materials_max": 3,
+      "critical_output": "res_insulation",
+      "next_research": [
+        "tech_cold",
+        "tech_hydraulics"
+      ],
+      "care": "ship_hull_and_suit_repair_introduced_separately"
+    },
+    {
+      "stage": 2,
+      "planets": [
+        "planet_brina",
+        "planet_pelagia"
+      ],
+      "systems": [
+        "temperature",
+        "pump",
+        "battery",
+        "first_companion"
+      ],
+      "new_mandatory_materials_max": 3,
+      "critical_output": "res_battery",
+      "next_research": [
+        "tech_biology",
+        "tech_electrics",
+        "tech_logistics"
+      ],
+      "care": "oxygen_return_estimate_and_recoverable_cache"
+    },
+    {
+      "stage": 3,
+      "planets": [
+        "planet_viridia",
+        "planet_fulmen"
+      ],
+      "systems": [
+        "filters",
+        "bioprocessing",
+        "power_network",
+        "robbie_routes"
+      ],
+      "new_mandatory_materials_max": 4,
+      "critical_output": "res_membrane",
+      "next_research": [
+        "tech_heat",
+        "tech_desert",
+        "tech_ecology"
+      ],
+      "care": "creature_habitat_automation_and_robbie_service"
+    },
+    {
+      "stage": 4,
+      "planets": [
+        "planet_vulcania",
+        "planet_duna"
+      ],
+      "systems": [
+        "heat",
+        "advanced_alloys",
+        "ship_external_pods"
+      ],
+      "new_mandatory_materials_max": 4,
+      "critical_output": "res_gold_circuit",
+      "next_research": [
+        "tech_resonance",
+        "tech_sky"
+      ],
+      "care": "preventive_ship_maintenance_and_rescue_beacons"
+    },
+    {
+      "stage": 5,
+      "planets": [
+        "planet_prismara",
+        "planet_nimbo"
+      ],
+      "systems": [
+        "resonance",
+        "wind",
+        "specialist_habitats",
+        "third_companion"
+      ],
+      "new_mandatory_materials_max": 5,
+      "critical_output": "res_cryo_fluid",
+      "next_research": [
+        "tech_void",
+        "tech_symbiosis"
+      ],
+      "care": "multiple_hazards_with_known_counters"
+    },
+    {
+      "stage": 6,
+      "planets": [
+        "planet_nox"
+      ],
+      "systems": [
+        "deep_caves",
+        "radiation",
+        "atlas"
+      ],
+      "new_mandatory_materials_max": 5,
+      "critical_output": "res_atlas_chip",
+      "next_research": [
+        "tech_concord"
+      ],
+      "care": "long_return_routes_and_forward_safe_rooms"
+    },
+    {
+      "stage": 7,
+      "planets": [
+        "planet_concordia"
+      ],
+      "systems": [
+        "combined_networks",
+        "multispecies_sanctuary",
+        "completion_projects"
+      ],
+      "new_mandatory_materials_max": 5,
+      "critical_output": "mod_concord_archive",
+      "next_research": [],
+      "care": "apply_existing_systems_no_new_survival_meter"
+    }
+  ],
+  "explicit_dependency_paths": [
+    [
+      "planet_ocra",
+      "mod_lab",
+      "tech_field_science",
+      "planet_ferrum",
+      "tech_metallurgy",
+      "tech_sealing"
+    ],
+    [
+      "tech_sealing",
+      "tech_cold",
+      "planet_brina",
+      "res_lithium",
+      "tech_electrics",
+      "planet_fulmen"
+    ],
+    [
+      "tech_sealing",
+      "tech_hydraulics",
+      "planet_pelagia",
+      "res_algae",
+      "tech_biology",
+      "planet_viridia"
+    ],
+    [
+      "planet_viridia",
+      "planet_fulmen",
+      "tech_heat",
+      "planet_vulcania",
+      "res_titanium_alloy"
+    ],
+    [
+      "planet_viridia",
+      "tech_desert",
+      "planet_duna",
+      "res_gold",
+      "tech_resonance",
+      "planet_prismara"
+    ],
+    [
+      "planet_vulcania",
+      "planet_fulmen",
+      "tech_sky",
+      "planet_nimbo",
+      "res_xenon"
+    ],
+    [
+      "planet_prismara",
+      "planet_nimbo",
+      "tech_void",
+      "planet_nox",
+      "res_atlas_chip",
+      "tech_concord",
+      "planet_concordia"
+    ]
+  ],
+  "return_visits": [
+    {
+      "planet": "planet_ocra",
+      "after": "tech_bond",
+      "reason": "primi legami e vivaio sicuro"
+    },
+    {
+      "planet": "planet_ferrum",
+      "after": "tech_heat",
+      "reason": "filoni profondi di metalli comuni più concentrati"
+    },
+    {
+      "planet": "planet_brina",
+      "after": "tech_ecology",
+      "reason": "habitat freddo e legame con le specie locali"
+    },
+    {
+      "planet": "planet_pelagia",
+      "after": "tech_ecology",
+      "reason": "habitat acquatico e caverna sommersa facoltativa"
+    },
+    {
+      "planet": "planet_fulmen",
+      "after": "tech_sky",
+      "reason": "Voltala e voliera"
+    },
+    {
+      "planet": "planet_viridia",
+      "after": "tech_symbiosis",
+      "reason": "simbiosi per santuario finale"
+    }
+  ],
+  "grind_limits": {
+    "mandatory_revisits_per_planet": 1,
+    "optional_revisits_unlimited": true,
+    "mandatory_recipe_depth_target": 4,
+    "late_recipe_depth_max": 7,
+    "same_ore_vein_mining_minutes_target_max": 3,
+    "one_trip_plan": "pin_bundle_aggregate_ingredients_respect_cargo_and_return_fuel"
+  },
+  "completion": {
+    "required": [
+      "survey_all_12_planets",
+      "activate_mod_concord_archive",
+      "one_compatible_multispecies_sanctuary",
+      "ship_launch_capable"
+    ],
+    "optional": [
+      "bond_all_36_species",
+      "all_30_player_levels",
+      "all_10_ship_levels",
+      "all_upgrade_tracks",
+      "all_optional_cave_landmarks"
+    ],
+    "postgame": "persistent_universe_and_outposts_continue"
+  }
+}

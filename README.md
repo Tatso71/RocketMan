@@ -19,6 +19,7 @@ Godot 4 exploration game about landing on unknown planets and building a home be
 - Contextual drone speech balloons with manual recall and saved automatic-help preference
 
 Current design: `docs/superpowers/specs/2026-10-24-rocket-home-and-digging.md`.
+Complete content and systems design for AI implementation: [docs/design/README.md](docs/design/README.md) (versioned JSON catalogs, dependencies, recipes, GUI and visual assets; proposed systems are not all implemented).
 Visual reference: `refs/rocket-concepts/03-landed-cutaway.png`.
 
 ## Run

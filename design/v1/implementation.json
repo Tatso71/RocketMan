@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.0.0",
+  "runtime_mutated": false,
+  "prototype_aliases": {
+    "resources": {
+      "soil": "res_soil",
+      "stone": "res_stone",
+      "copper": "res_copper",
+      "crystal": "cur_lumen"
+    },
+    "planets": {
+      "ochre": "planet_ocra",
+      "verdant": "planet_viridia",
+      "frost": "planet_brina"
+    },
+    "modules": {
+      "drill": "upg_ship_workbench",
+      "drone": "upg_robbie_cargo"
+    }
+  },
+  "migration_guards": [
+    "do_not_silently_move_existing_crystal_stock_to_wallet; explicit_one_time_validated_ledger_conversion",
+    "legacy_outposts_keep_seed_and_cells_under_legacy_planet_variant",
+    "old_free_terrain_or_starter_items_never_injected_into_new_planets",
+    "legacy_lab_level_and_cache_preserved",
+    "rollback_on_invalid_ids_before_world_mutation",
+    "manual_save_paths_remain_until_versioned_migration_implemented"
+  ],
+  "feature_order": [
+    {
+      "id": "impl_01",
+      "scope": "typed_catalog_loader_and_ids",
+      "depends": [],
+      "checks": [
+        "reject_unknown_reference",
+        "positive_integer_quantities",
+        "catalog_version_guard"
+      ]
+    },
+    {
+      "id": "impl_02",
+      "scope": "cube_crafting_and_deployment",
+      "depends": [
+        "impl_01"
+      ],
+      "checks": [
+        "first_lab_without_lab",
+        "no_auto_dig",
+        "no_double_payment",
+        "save_mid_deploy"
+      ]
+    },
+    {
+      "id": "impl_03",
+      "scope": "research_planets_recipes_wallet",
+      "depends": [
+        "impl_02"
+      ],
+      "checks": [
+        "guaranteed_route_reachable",
+        "reward_once",
+        "upgrade_refund_no_duplication"
+      ]
+    },
+    {
+      "id": "impl_04",
+      "scope": "character_care_levels_rescue",
+      "depends": [
+        "impl_03"
+      ],
+      "checks": [
+        "no_repeated_crafting_xp",
+        "safe_persistent_cargo_cache",
+        "no_xp_currency_loss"
+      ]
+    },
+    {
+      "id": "impl_05",
+      "scope": "cave_support_fluid_power_air",
+      "depends": [
+        "impl_04"
+      ],
+      "checks": [
+        "finite_water_conservation",
+        "no_unwarned_collapse",
+        "habitat_not_equal_furniture"
+      ]
+    },
+    {
+      "id": "impl_06",
+      "scope": "robbie_care_and_transport",
+      "depends": [
+        "impl_05"
+      ],
+      "checks": [
+        "no_unexplored_edges",
+        "capacity_reserved",
+        "blocked_route_cargo_retained"
+      ]
+    },
+    {
+      "id": "impl_07",
+      "scope": "creature_bond_habitats_companions",
+      "depends": [
+        "impl_05"
+      ],
+      "checks": [
+        "no_capture_without_home",
+        "no_ore_currency_creation",
+        "no_offline_death"
+      ]
+    },
+    {
+      "id": "impl_08",
+      "scope": "ship_visual_pods_and_maintenance",
+      "depends": [
+        "impl_06"
+      ],
+      "checks": [
+        "socket_occupancy",
+        "clear_hatch_and_feet",
+        "capacity_does_not_refill"
+      ]
+    },
+    {
+      "id": "impl_09",
+      "scope": "remaining_planets_and_final_atlas",
+      "depends": [
+        "impl_07",
+        "impl_08"
+      ],
+      "checks": [
+        "all_12_surveys_feasible",
+        "no_same_planet_entry_material_cycle",
+        "completion_without_creature_power"
+      ]
+    },
+    {
+      "id": "impl_10",
+      "scope": "full_gui_and_accessibility",
+      "depends": [
+        "impl_09"
+      ],
+      "checks": [
+        "1280x720_and_1920x1080",
+        "controller_focus_all_modals",
+        "no_world_click_through",
+        "missing_requirement_specific_reason"
+      ]
+    }
+  ],
+  "balance_required_playtests": [
+    "first_lab_18min_target",
+    "one_new_hazard_per_early_planet",
+    "common_currency_sufficient_per_stage",
+    "trip_cargo_budget",
+    "oxygen_return_time",
+    "36_species_welfare_without_click_spam",
+    "full_main_path_duration"
+  ],
+  "asset_status": {
+    "icons": "deterministic_original_svg_prototype_ready",
+    "tiles": "deterministic_original_seamless_svg_palette_prototypes",
+    "materials": "Godot_StandardMaterial3D_swatch_resources_not_final_PBR_maps",
+    "creatures": "icons_and_concept_board_not_animated_3D_models",
+    "gui": "interactive_local_design_preview_not_Godot_scene"
+  },
+  "save_ownership": {
+    "campaign": [
+      "wallet",
+      "reward_ledger",
+      "player_xp_perks_care",
+      "ship_modules_care",
+      "robbie_tracks_cargo_routes",
+      "carried_resources",
+      "creature_carriers"
+    ],
+    "outpost": [
+      "terrain",
+      "finite_resources",
+      "fluids_gas",
+      "modules_levels_caches",
+      "networks",
+      "creature_habitats",
+      "rescue_caches"
+    ],
+    "rule": "one_owner_per_stock_no_copy_between_campaign_and_outpost"
+  },
+  "acceptance": [
+    "no_recipe_or_research_deadlock",
+    "all_entities_have_icons",
+    "all_resource_visuals_have_tile_and_material",
+    "each_station_lists_every_recipe_it_constructs",
+    "currency_sources_cover_catalog_cost",
+    "player_ship_caves_each_have_level_care_or_management_rules",
+    "all_36_species_original_noncombat",
+    "packed_cube_volume_distinct_from_deployed_footprint",
+    "all_modules_have_ports_and_floor_rules",
+    "manual_verification_required_before_runtime_claim"
+  ]
+}

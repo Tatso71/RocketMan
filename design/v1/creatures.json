@@ -1,0 +1,4395 @@
+[
+  {
+    "id": "species_luccivola",
+    "name_it": "Luccivola",
+    "planet": "planet_ocra",
+    "stage": 0,
+    "biome": "flying",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "luminescent_three_winged_seed",
+    "icon": "assets/design/icons/species_luccivola.svg",
+    "visual": {
+      "color": "#c88b67",
+      "shape": "creature",
+      "variant": 0
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_light",
+      "mode": "passive_near_player",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "emit_light",
+        "radius_m": 4,
+        "intensity": 1,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_biomass",
+      "input_units": 2,
+      "output": "res_biomass",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_mossback",
+    "name_it": "Mossback",
+    "planet": "planet_ocra",
+    "stage": 0,
+    "biome": "ground",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "six_legged_moss_shell",
+    "icon": "assets/design/icons/species_mossback.svg",
+    "visual": {
+      "color": "#c88b67",
+      "shape": "creature",
+      "variant": 1
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_support_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "unsupported_span_m",
+        "threshold": 5,
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_soil",
+      "input_units": 2,
+      "output": "res_soil",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_echofin",
+    "name_it": "Echofin",
+    "planet": "planet_ocra",
+    "stage": 0,
+    "biome": "amphibious",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "round_whiskered_echo_fins",
+    "icon": "assets/design/icons/species_echofin.svg",
+    "visual": {
+      "color": "#c88b67",
+      "shape": "creature",
+      "variant": 2
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_nearby_cavity_echo",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "scanned_adjacent_cavities",
+        "radius_m": 4,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_water",
+      "input_units": 2,
+      "output": "res_water",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_ferriccio",
+    "name_it": "Ferriccio",
+    "planet": "planet_ferrum",
+    "stage": 1,
+    "biome": "ground",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "magnetic_nose_iron_spines",
+    "icon": "assets/design/icons/species_ferriccio.svg",
+    "visual": {
+      "color": "#ac6f56",
+      "shape": "creature",
+      "variant": 3
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_ore_direction",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "scanned_iron_veins",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_iron",
+      "input_units": 2,
+      "output": "res_iron",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_carbonello",
+    "name_it": "Carbonello",
+    "planet": "planet_ferrum",
+    "stage": 1,
+    "biome": "ground",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "soot_puff_soft_branch_antlers",
+    "icon": "assets/design/icons/species_carbonello.svg",
+    "visual": {
+      "color": "#ac6f56",
+      "shape": "creature",
+      "variant": 4
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_air_quality_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "gas_concentration",
+        "threshold": 0.03,
+        "radius_m": 4,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_carbon",
+      "input_units": 2,
+      "output": "res_carbon",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_argillotto",
+    "name_it": "Argillotto",
+    "planet": "planet_ferrum",
+    "stage": 1,
+    "biome": "ground",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "clay_shelled_triple_foot",
+    "icon": "assets/design/icons/species_argillotto.svg",
+    "visual": {
+      "color": "#ac6f56",
+      "shape": "creature",
+      "variant": 5
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_seal_small_leak",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "repair_condition",
+        "condition": "suit_leak",
+        "integrity_add": 10,
+        "cooldown_seconds": 60,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_clay",
+      "input_units": 2,
+      "output": "res_clay",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_brinotto",
+    "name_it": "Brinotto",
+    "planet": "planet_brina",
+    "stage": 2,
+    "biome": "cold",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "round_insulated_icy_whiskers",
+    "icon": "assets/design/icons/species_brinotto.svg",
+    "visual": {
+      "color": "#9bccdf",
+      "shape": "creature",
+      "variant": 6
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_warm_bubble",
+      "mode": "passive_near_player",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "reduce_exposure",
+        "hazard": "haz_cold",
+        "percent": 15,
+        "radius_m": 3,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_ice",
+      "input_units": 2,
+      "output": "res_water",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "hot"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_cobalina",
+    "name_it": "Cobalina",
+    "planet": "planet_brina",
+    "stage": 2,
+    "biome": "cold",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "blue_crystal_ear_discs",
+    "icon": "assets/design/icons/species_cobalina.svg",
+    "visual": {
+      "color": "#9bccdf",
+      "shape": "creature",
+      "variant": 7
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_battery_health_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "battery_percent_below",
+        "threshold": 25,
+        "radius_m": 4,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_cobalt",
+      "input_units": 2,
+      "output": "res_cobalt",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "hot"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_nevaglio",
+    "name_it": "Nevaglio",
+    "planet": "planet_brina",
+    "stage": 2,
+    "biome": "cold",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "snow_fan_tail_four_legs",
+    "icon": "assets/design/icons/species_nevaglio.svg",
+    "visual": {
+      "color": "#9bccdf",
+      "shape": "creature",
+      "variant": 8
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_safe_ice_route",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight_path",
+        "target": "visited_non_slippery_cells",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_ice",
+      "input_units": 2,
+      "output": "res_water",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "hot"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_algolino",
+    "name_it": "Algolino",
+    "planet": "planet_pelagia",
+    "stage": 2,
+    "biome": "aquatic",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "leaf_fins_translucent_belly",
+    "icon": "assets/design/icons/species_algolino.svg",
+    "visual": {
+      "color": "#4daea9",
+      "shape": "creature",
+      "variant": 9
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_algae",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aquatic",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_algae",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_algae_growth_bonus",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "station_speed",
+        "station": "mod_greenhouse",
+        "recipe": "recipe_grow_algae",
+        "percent": 15,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_algae",
+      "input_units": 2,
+      "output": "res_algae",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_calciopode",
+    "name_it": "Calciopode",
+    "planet": "planet_pelagia",
+    "stage": 2,
+    "biome": "aquatic",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "spiral_chalk_shell_six_feet",
+    "icon": "assets/design/icons/species_calciopode.svg",
+    "visual": {
+      "color": "#4daea9",
+      "shape": "creature",
+      "variant": 10
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aquatic",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_water_filter_bonus",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "station_stat",
+        "station": "mod_pump",
+        "stat": "litres_per_second",
+        "percent": 10,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_calcium",
+      "input_units": 2,
+      "output": "res_calcium",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_salifin",
+    "name_it": "Salifin",
+    "planet": "planet_pelagia",
+    "stage": 2,
+    "biome": "aquatic",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "salt_crystal_tail_double_fins",
+    "icon": "assets/design/icons/species_salifin.svg",
+    "visual": {
+      "color": "#4daea9",
+      "shape": "creature",
+      "variant": 11
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_algae",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aquatic",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_algae",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_pressure_pocket_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "pressure_depth_exceeds_suit",
+        "threshold": 0,
+        "radius_m": 4,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_salt",
+      "input_units": 2,
+      "output": "res_salt",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_sporello",
+    "name_it": "Sporello",
+    "planet": "planet_viridia",
+    "stage": 3,
+    "biome": "spore",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "mushroom_cap_four_stalk_legs",
+    "icon": "assets/design/icons/species_sporello.svg",
+    "visual": {
+      "color": "#87b06d",
+      "shape": "creature",
+      "variant": 12
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_spore_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "spore_concentration",
+        "threshold": 0.03,
+        "radius_m": 5,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_spores",
+      "input_units": 2,
+      "output": "res_spores",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_resinella",
+    "name_it": "Resinella",
+    "planet": "planet_viridia",
+    "stage": 3,
+    "biome": "spore",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "amber_belly_ribbon_tendrils",
+    "icon": "assets/design/icons/species_resinella.svg",
+    "visual": {
+      "color": "#87b06d",
+      "shape": "creature",
+      "variant": 13
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_sealant_efficiency",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "recipe_energy_reduction",
+        "recipe": "recipe_sealant",
+        "percent": 10,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_resin",
+      "input_units": 2,
+      "output": "res_resin",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_micorino",
+    "name_it": "Micorino",
+    "planet": "planet_viridia",
+    "stage": 3,
+    "biome": "spore",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "root_horns_soft_fungal_body",
+    "icon": "assets/design/icons/species_micorino.svg",
+    "visual": {
+      "color": "#87b06d",
+      "shape": "creature",
+      "variant": 14
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_plant_growth_bonus",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "station_speed",
+        "station": "mod_greenhouse",
+        "percent": 10,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_enzymes",
+      "input_units": 2,
+      "output": "res_enzymes",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_scintillo",
+    "name_it": "Scintillo",
+    "planet": "planet_fulmen",
+    "stage": 3,
+    "biome": "electric",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "coiled_tail_ceramic_paws",
+    "icon": "assets/design/icons/species_scintillo.svg",
+    "visual": {
+      "color": "#8797ca",
+      "shape": "creature",
+      "variant": 15
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_ground_small_discharge",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "reduce_exposure",
+        "hazard": "haz_electric",
+        "percent": 15,
+        "radius_m": 3,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_magnetite",
+      "input_units": 2,
+      "output": "res_magnetite",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "aquatic"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_grafotto",
+    "name_it": "Grafotto",
+    "planet": "planet_fulmen",
+    "stage": 3,
+    "biome": "electric",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "graphite_plates_round_beak",
+    "icon": "assets/design/icons/species_grafotto.svg",
+    "visual": {
+      "color": "#8797ca",
+      "shape": "creature",
+      "variant": 16
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_network_diagnostic",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "known_unpowered_or_damaged_network_nodes",
+        "radius_m": 8,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_graphite",
+      "input_units": 2,
+      "output": "res_graphite",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "aquatic"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_voltala",
+    "name_it": "Voltala",
+    "planet": "planet_fulmen",
+    "stage": 3,
+    "biome": "flying",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "kite_membranes_forked_antennae",
+    "icon": "assets/design/icons/species_voltala.svg",
+    "visual": {
+      "color": "#8797ca",
+      "shape": "creature",
+      "variant": 17
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aviary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_storm_forecast",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "advance_warning",
+        "hazard": "haz_magnetic_storm",
+        "seconds": 45,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_vanadium",
+      "input_units": 2,
+      "output": "res_vanadium",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_lavillo",
+    "name_it": "Lavillo",
+    "planet": "planet_vulcania",
+    "stage": 4,
+    "biome": "hot",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "basalt_shell_glowing_seams",
+    "icon": "assets/design/icons/species_lavillo.svg",
+    "visual": {
+      "color": "#d77b62",
+      "shape": "creature",
+      "variant": 18
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_heat_route_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "temperature_c_above",
+        "threshold": 45,
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_basalt",
+      "input_units": 2,
+      "output": "res_basalt",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "cold",
+        "aquatic"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_titanello",
+    "name_it": "Titanello",
+    "planet": "planet_vulcania",
+    "stage": 4,
+    "biome": "hot",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "silver_plate_arms_wide_feet",
+    "icon": "assets/design/icons/species_titanello.svg",
+    "visual": {
+      "color": "#d77b62",
+      "shape": "creature",
+      "variant": 19
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_reinforcement_health_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "support_integrity_percent_below",
+        "threshold": 25,
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_titanium",
+      "input_units": 2,
+      "output": "res_titanium",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "cold",
+        "aquatic"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_sulfina",
+    "name_it": "Sulfina",
+    "planet": "planet_vulcania",
+    "stage": 4,
+    "biome": "hot",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "yellow_frills_long_snout",
+    "icon": "assets/design/icons/species_sulfina.svg",
+    "visual": {
+      "color": "#d77b62",
+      "shape": "creature",
+      "variant": 20
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_gas_direction_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight_path",
+        "target": "visited_low_gas_cells",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_sulfur",
+      "input_units": 2,
+      "output": "res_sulfur",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [
+        "cold",
+        "aquatic"
+      ],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_sabbuffo",
+    "name_it": "Sabbuffo",
+    "planet": "planet_duna",
+    "stage": 4,
+    "biome": "arid",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "sandy_ball_sail_ears",
+    "icon": "assets/design/icons/species_sabbuffo.svg",
+    "visual": {
+      "color": "#d4b278",
+      "shape": "creature",
+      "variant": 21
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_sandstorm_forecast",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "advance_warning",
+        "hazard": "haz_sandstorm",
+        "seconds": 45,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_silica",
+      "input_units": 2,
+      "output": "res_silica",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_dorimio",
+    "name_it": "Dorimio",
+    "planet": "planet_duna",
+    "stage": 4,
+    "biome": "arid",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "golden_eye_ring_spade_tail",
+    "icon": "assets/design/icons/species_dorimio.svg",
+    "visual": {
+      "color": "#d4b278",
+      "shape": "creature",
+      "variant": 22
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_precision_ore_marking",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "scanned_gold_veins",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_gold",
+      "input_units": 2,
+      "output": "res_gold",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_fosfolino",
+    "name_it": "Fosfolino",
+    "planet": "planet_duna",
+    "stage": 4,
+    "biome": "arid",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "succulent_hump_root_feet",
+    "icon": "assets/design/icons/species_fosfolino.svg",
+    "visual": {
+      "color": "#d4b278",
+      "shape": "creature",
+      "variant": 23
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_climate",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_soil_fertility_bonus",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "station_speed",
+        "station": "mod_greenhouse",
+        "recipe": "recipe_grow_biomass",
+        "percent": 15,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_phosphate",
+      "input_units": 2,
+      "output": "res_phosphate",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_prismella",
+    "name_it": "Prismella",
+    "planet": "planet_prismara",
+    "stage": 5,
+    "biome": "resonant",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "prism_petals_floating_body",
+    "icon": "assets/design/icons/species_prismella.svg",
+    "visual": {
+      "color": "#baa3d9",
+      "shape": "creature",
+      "variant": 24
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_hidden_fracture_marking",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "scanned_fractures",
+        "radius_m": 5,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_prism_quartz",
+      "input_units": 2,
+      "output": "res_prism_quartz",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_borotto",
+    "name_it": "Borotto",
+    "planet": "planet_prismara",
+    "stage": 5,
+    "biome": "resonant",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "hexagonal_armor_three_eyes",
+    "icon": "assets/design/icons/species_borotto.svg",
+    "visual": {
+      "color": "#baa3d9",
+      "shape": "creature",
+      "variant": 25
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_resonance_dampening",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "reduce_exposure",
+        "hazard": "haz_resonance",
+        "percent": 15,
+        "radius_m": 3,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_boron",
+      "input_units": 2,
+      "output": "res_boron",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_geodino",
+    "name_it": "Geodino",
+    "planet": "planet_prismara",
+    "stage": 5,
+    "biome": "resonant",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "hollow_geode_body_soft_feet",
+    "icon": "assets/design/icons/species_geodino.svg",
+    "visual": {
+      "color": "#baa3d9",
+      "shape": "creature",
+      "variant": 26
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_crystal_room_acoustic_hint",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "scanned_geode_room_entrances",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_geode_seed",
+      "input_units": 2,
+      "output": "res_geode_seed",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_nembolo",
+    "name_it": "Nembolo",
+    "planet": "planet_nimbo",
+    "stage": 5,
+    "biome": "flying",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "cloud_jelly_six_trailing_fins",
+    "icon": "assets/design/icons/species_nembolo.svg",
+    "visual": {
+      "color": "#bdd9d2",
+      "shape": "creature",
+      "variant": 27
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aviary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_wind_window_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "advance_warning",
+        "hazard": "haz_wind",
+        "seconds": 15,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_aerospore",
+      "input_units": 2,
+      "output": "res_aerospore",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_eliopuff",
+    "name_it": "Eliopuff",
+    "planet": "planet_nimbo",
+    "stage": 5,
+    "biome": "flying",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "inflated_sail_belly_tiny_legs",
+    "icon": "assets/design/icons/species_eliopuff.svg",
+    "visual": {
+      "color": "#bdd9d2",
+      "shape": "creature",
+      "variant": 28
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aviary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_local_buoyancy_hint",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "reduce_fall_speed",
+        "percent": 15,
+        "radius_m": 3,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_helium3",
+      "input_units": 2,
+      "output": "res_helium3",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_xenella",
+    "name_it": "Xenella",
+    "planet": "planet_nimbo",
+    "stage": 5,
+    "biome": "flying",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "translucent_rings_luminous_core",
+    "icon": "assets/design/icons/species_xenella.svg",
+    "visual": {
+      "color": "#bdd9d2",
+      "shape": "creature",
+      "variant": 29
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_habitat_aviary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_pressure_leak_warning",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "warn",
+        "condition": "suit_integrity_percent_below",
+        "threshold": 60,
+        "radius_m": 4,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_xenon",
+      "input_units": 2,
+      "output": "res_xenon",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_iridonte",
+    "name_it": "Iridonte",
+    "planet": "planet_nox",
+    "stage": 6,
+    "biome": "nocturnal",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "iridescent_shield_back_long_ears",
+    "icon": "assets/design/icons/species_iridonte.svg",
+    "visual": {
+      "color": "#777692",
+      "shape": "creature",
+      "variant": 30
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_radiation_safe_route",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight_path",
+        "target": "visited_low_radiation_cells",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_iridium",
+      "input_units": 2,
+      "output": "res_iridium",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_ombrolino",
+    "name_it": "Ombrolino",
+    "planet": "planet_nox",
+    "stage": 6,
+    "biome": "nocturnal",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "violet_veil_large_sensor_eyes",
+    "icon": "assets/design/icons/species_ombrolino.svg",
+    "visual": {
+      "color": "#777692",
+      "shape": "creature",
+      "variant": 31
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_low_light_vision",
+      "mode": "passive_near_player",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "emit_light",
+        "radius_m": 3,
+        "intensity": 0.6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_dark_silicate",
+      "input_units": 2,
+      "output": "res_dark_silicate",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_mnemonide",
+    "name_it": "Mnemonide",
+    "planet": "planet_nox",
+    "stage": 6,
+    "biome": "nocturnal",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "pearl_crown_fan_tail",
+    "icon": "assets/design/icons/species_mnemonide.svg",
+    "visual": {
+      "color": "#777692",
+      "shape": "creature",
+      "variant": 32
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_map_landmark_memory",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "auto_mark",
+        "target": "visited_landmarks",
+        "radius_m": 6,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_memory_pearl",
+      "input_units": 2,
+      "output": "res_memory_pearl",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_accordino",
+    "name_it": "Accordino",
+    "planet": "planet_concordia",
+    "stage": 7,
+    "biome": "concord",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "interlocking_petal_antlers",
+    "icon": "assets/design/icons/species_accordino.svg",
+    "visual": {
+      "color": "#a3c9ab",
+      "shape": "creature",
+      "variant": 33
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_habitat_compatibility_bonus",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "habitat_welfare",
+        "amount": 5,
+        "never_overrides_incompatible_biomes": true,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_aether_lattice",
+      "input_units": 2,
+      "output": "res_aether_lattice",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_reticolino",
+    "name_it": "Reticolino",
+    "planet": "planet_concordia",
+    "stage": 7,
+    "biome": "concord",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "lattice_shell_gentle_three_eyes",
+    "icon": "assets/design/icons/species_reticolino.svg",
+    "visual": {
+      "color": "#a3c9ab",
+      "shape": "creature",
+      "variant": 34
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_biomass",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_biomass",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_network_efficiency_hint",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "network_power_reduction",
+        "percent": 5,
+        "excludes": [
+          "life_support",
+          "creature_habitats"
+        ],
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_aether_lattice",
+      "input_units": 2,
+      "output": "res_aether_lattice",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  },
+  {
+    "id": "species_astralume",
+    "name_it": "Astralume",
+    "planet": "planet_concordia",
+    "stage": 7,
+    "biome": "concord",
+    "body_size_m": [
+      0.6,
+      0.5
+    ],
+    "original_silhouette": "star_ray_fins_soft_round_core",
+    "icon": "assets/design/icons/species_astralume.svg",
+    "visual": {
+      "color": "#a3c9ab",
+      "shape": "creature",
+      "variant": 35
+    },
+    "observation": {
+      "seconds": 10,
+      "safe_distance_m": 3,
+      "scan_required": true,
+      "first_observation_xp": 60
+    },
+    "bond": {
+      "research": "tech_bond",
+      "trust_required": 60,
+      "actions": [
+        {
+          "id": "observe",
+          "gain": 10,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "offer_food",
+          "item": "res_feed",
+          "quantity": 1,
+          "gain": 15,
+          "repeat_limit_per_day": 2
+        },
+        {
+          "id": "restore_local_habitat",
+          "gain": 30,
+          "repeat_limit_per_site": 1
+        }
+      ],
+      "minimum_encounters": 2,
+      "never_required_for_route_unlock": true
+    },
+    "transport": {
+      "item": "item_stasis_carrier",
+      "capacity_units": 2,
+      "one_creature_each": true,
+      "requires_research": "tech_bond",
+      "capture": "voluntary_after_trust_and_suitable_destination_reserved",
+      "release": "return_to_original_or_compatible_biome_no_xp_farm",
+      "no_trading_or_consumption": true
+    },
+    "habitat": {
+      "preferred": "mod_sanctuary",
+      "alternatives": [
+        "mod_sanctuary"
+      ],
+      "minimum_volume_cells": 4,
+      "food": "res_feed",
+      "food_units_per_30_active_minutes": 1,
+      "water_units_per_30_active_minutes": 1,
+      "welfare_min_for_help": 70,
+      "states": [
+        "comfortable",
+        "hungry",
+        "stressed",
+        "resting"
+      ],
+      "unsafe_behavior": "stop_work_and_enter_reusable_safe_transport_rest; never_die_offline"
+    },
+    "ability": {
+      "id": "ability_survey_landmark_glow",
+      "mode": "contextual_hint_or_station_bonus",
+      "radius_m": 4,
+      "bonus_cap_percent": 15,
+      "cooldown_seconds": 45,
+      "optional_alternative": "tools_and_modules_provide_equivalent_mandatory_function",
+      "no_unscanned_remote_ore_reveal": true,
+      "effect": {
+        "op": "highlight",
+        "target": "visited_survey_landmarks",
+        "radius_m": 5,
+        "requires_player_or_assigned_station_proximity": true,
+        "unknown_terrain_reveal": false
+      }
+    },
+    "renewable_output": {
+      "mode": "concentrate_supplied_feedstock_not_create_ore",
+      "input": "res_aether_lattice",
+      "input_units": 2,
+      "output": "res_aether_lattice",
+      "output_units": 2,
+      "seconds": 180,
+      "bonus": "station_processing_time_reduction_10percent_while_comfortable_no_quality_item",
+      "limit_per_30_active_minutes": 3,
+      "requires_welfare": 80
+    },
+    "compatibility": {
+      "same_biome": true,
+      "forbidden_pair_tags": [],
+      "sanctuary_separate_compartments_allow_mixed": true
+    },
+    "progression": {
+      "levels": 3,
+      "xp_source": "care_and_unique_shared_discoveries",
+      "benefit": "bond_speed_and_hint_cooldown_only_no_mandatory_stats",
+      "xp_to_next_level": [
+        100,
+        180
+      ],
+      "xp_care_per_active_day": 10,
+      "xp_new_shared_landmark": 25
+    },
+    "combat": false,
+    "evolution": "cosmetic_maturation_at_bond_3_no_extra_species"
+  }
+]

@@ -1,0 +1,219 @@
+[
+  {
+    "id": "cur_lumen",
+    "name_it": "Cristalli Lumen",
+    "kind": "common_upgrade_currency",
+    "icon": "assets/design/icons/cur_lumen.svg",
+    "visual": {
+      "color": "#79d9e3",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "first_landing",
+      "survey_objective",
+      "authored_geode",
+      "ecological_discovery"
+    ],
+    "lost_on_rescue": false
+  },
+  {
+    "id": "cur_forge",
+    "name_it": "Nucleo Ferrum",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_forge.svg",
+    "visual": {
+      "color": "#ac6f56",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_thermal",
+    "name_it": "Nucleo Brina",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_thermal.svg",
+    "visual": {
+      "color": "#9bccdf",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_tidal",
+    "name_it": "Nucleo Pelagia",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_tidal.svg",
+    "visual": {
+      "color": "#4daea9",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_bio",
+    "name_it": "Nucleo Viridia",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_bio.svg",
+    "visual": {
+      "color": "#87b06d",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_storm",
+    "name_it": "Nucleo Fulmen",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_storm.svg",
+    "visual": {
+      "color": "#8797ca",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_magma",
+    "name_it": "Nucleo Vulcania",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_magma.svg",
+    "visual": {
+      "color": "#d77b62",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_dune",
+    "name_it": "Nucleo Duna",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_dune.svg",
+    "visual": {
+      "color": "#d4b278",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_prism",
+    "name_it": "Nucleo Prismara",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_prism.svg",
+    "visual": {
+      "color": "#baa3d9",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_sky",
+    "name_it": "Nucleo Nimbo",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_sky.svg",
+    "visual": {
+      "color": "#bdd9d2",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_void",
+    "name_it": "Nucleo Nox",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_void.svg",
+    "visual": {
+      "color": "#777692",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  },
+  {
+    "id": "cur_concord",
+    "name_it": "Nucleo Concordia",
+    "kind": "attuned_upgrade_core",
+    "icon": "assets/design/icons/cur_concord.svg",
+    "visual": {
+      "color": "#a3c9ab",
+      "shape": "crystal"
+    },
+    "physical_inventory": false,
+    "repeatable": false,
+    "source_types": [
+      "authored_geode",
+      "survey_objective"
+    ],
+    "lost_on_rescue": false,
+    "never_required_for_own_planet_entry": true
+  }
+]

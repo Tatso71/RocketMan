@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "language": "it",
+  "status": "complete_design_proposal_pending_playtest",
+  "entrypoint": "docs/design/README.md",
+  "confirmed_decisions_file": "rules.json",
+  "catalogs": {
+    "rules": "rules.json",
+    "resources": "resources.json",
+    "recipes": "recipes.json",
+    "modules": "modules.json",
+    "research": "research.json",
+    "currencies": "currencies.json",
+    "planets": "planets.json",
+    "tools": "tools.json",
+    "services": "services.json",
+    "hazards": "hazards.json",
+    "creatures": "creatures.json",
+    "upgrades": "upgrades.json",
+    "progression": "progression.json",
+    "gui": "gui.json",
+    "implementation": "implementation.json",
+    "items": "items.json",
+    "balance": "balance.json"
+  },
+  "validation_command": "node tools/design/validate.mjs",
+  "asset_generation_command": "node tools/design/build.mjs",
+  "runtime_implemented": false
+}

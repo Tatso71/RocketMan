@@ -1,0 +1,738 @@
+{
+  "version": "1.0.0",
+  "status": "design_proposal_not_runtime_implementation",
+  "language": "it",
+  "date": "2026-10-24",
+  "confirmed_decisions": [
+    "12 pianeti principali persistenti",
+    "36 specie originali senza combattimenti",
+    "Massimo 3 compagni, sbloccati uno per volta",
+    "Cristalli da scoperte e giacimenti finiti, nessun commercio necessario",
+    "Cubi trasportabili che si dispiegano nel volume scavato dal giocatore",
+    "Sopravvivenza intermedia e recupero del carico",
+    "Robbie trasporta automaticamente solo su percorsi esplorati",
+    "Livelli del personaggio con passive e specializzazioni",
+    "Tre piani iniziali della nave, upgrade interni e moduli esterni visibili"
+  ],
+  "units": {
+    "cell_metres": 1,
+    "prototype_pixels_per_metre": 40,
+    "footprint_axes": [
+      "width_x",
+      "height_y"
+    ],
+    "positive_y": "depth",
+    "cell_origin": "top_left_floor_for_negative_coordinates",
+    "stock": "inventory_units_not_kg_or_cubic_metres",
+    "currency": "integer_wallet_units",
+    "power": "kW",
+    "energy": "kWh",
+    "time": "simulation_seconds",
+    "liquid": "litres",
+    "gas": "concentration_0_to_1"
+  },
+  "references": [
+    "docs/superpowers/specs/2026-10-24-rocket-home-and-digging.md",
+    "docs/superpowers/specs/2026-10-24-underground-construction-and-assistant.md",
+    "docs/technical/expedition-and-ship-systems.md"
+  ],
+  "authority": {
+    "data": "design/v1/*.json",
+    "rules": "design/v1/rules.json",
+    "display_tables": "generated_from_json_do_not_edit",
+    "runtime": "existing_Godot_code_until_individual_features_are_implemented",
+    "balance": "initial_targets_requiring_playtest"
+  },
+  "starting_state": {
+    "planet": "planet_ocra",
+    "unlocked_research": [
+      "tech_start"
+    ],
+    "player_level": 1,
+    "ship_level": 1,
+    "player": {
+      "health": 100,
+      "suit_integrity": 100,
+      "oxygen_minutes": 12,
+      "backpack_units": 8,
+      "tool_slots": 4,
+      "companion_slots": 0
+    },
+    "robbie": {
+      "cargo_units": 12,
+      "radio_metres": 15,
+      "assist_metres": 3,
+      "battery_minutes": 15,
+      "attachments": 1,
+      "autonomous_mining": false
+    },
+    "ship": {
+      "hull": 100,
+      "fuel": 80,
+      "battery_kwh": 60,
+      "cargo_units": 120,
+      "rooms": [
+        "cockpit",
+        "living",
+        "workshop"
+      ],
+      "installed_modules": [
+        "mod_workshop"
+      ],
+      "external_sockets": 2
+    },
+    "ship_stock": {
+      "res_soil": 12,
+      "res_stone": 12,
+      "res_copper": 12,
+      "res_water": 6,
+      "res_biomass": 6,
+      "res_silica": 4
+    },
+    "carried_stock": {},
+    "wallet": {
+      "cur_lumen": 0
+    },
+    "tools": [
+      "tool_pulse",
+      "tool_scanner"
+    ],
+    "world": {
+      "predug_cells": 0,
+      "placed_underground_modules": 0,
+      "placed_underground_ladders": 0,
+      "placed_underground_lights": 0
+    }
+  },
+  "cubes": {
+    "packed_visual_metres": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "packed_grid_occupation": 0,
+    "packed_capacity_rule": "use_packed_inventory_units_per_module",
+    "states": [
+      "packed",
+      "preview",
+      "reserved",
+      "deploying",
+      "offline",
+      "active",
+      "fault",
+      "packing"
+    ],
+    "transaction": [
+      "validate_research_and_station",
+      "consume_local_ingredients_atomically_create_cube",
+      "carry_cube_to_site",
+      "preview_full_footprint_and_ports",
+      "validate_empty_excavated_supported_safe_space",
+      "reserve_cells_and_consume_exact_cube",
+      "deploy_without_digging",
+      "connect_and_activate"
+    ],
+    "required_checks": [
+      "all_cells_excavated",
+      "full_floor_support_or_declared_mount",
+      "no_fluid_or_hazard_above_module_tolerance",
+      "no_structure_overlap",
+      "ports_accessible",
+      "egress_not_blocked",
+      "deployment_operator_in_reach",
+      "radio_or_local_manual_controller"
+    ],
+    "deployment_seconds_by_stage": [
+      5,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "occupied_actor_rule": "pause_if_future_solid_cell_occupied_never_crush_or_teleport_actor",
+    "cancel_before_deployment": "return_same_cube",
+    "cancel_during_deployment": "pack_same_cube_no_ingredient_duplication",
+    "pack_rules": "offload_cache_evacuate_creatures_disconnect_then_return_one_cube; damage_and_level_persist; no_currency_refund_from_packing",
+    "upgrades": "no_automatic_footprint_change; explicit_extension_cube_requires_new_preview",
+    "initial_lab_migration": "legacy_placed_labs_remain; future_new_builds_use_6_stone_4_copper_cube_recipe; never_charge_legacy_structure_again"
+  },
+  "logistics": {
+    "payment_sources_order": [
+      "backpack",
+      "connected_robbie_within_3m_clear_segment",
+      "selected_station_cache_within_reach"
+    ],
+    "ship_stock_remote_access": false,
+    "cache_access_through_walls": false,
+    "infinite_stacking": false,
+    "crafting_output_rule": "reserve_output_capacity_before_consuming_inputs; cube_mass_is_abstract_stock_units",
+    "robbie_routes": {
+      "node_type": "visited_station_or_player_waypoint",
+      "edge_requires": [
+        "explored_cells",
+        "physical_clearance",
+        "radio_or_unlocked_battery_budget",
+        "no_unmitigated_known_hazard"
+      ],
+      "max_jobs": 1,
+      "max_roundtrip_metres": 120,
+      "transfer": "atomic_with_capacity_reservation",
+      "obstruction": "wait_at_last_safe_node_and_notify_once",
+      "partial_path": "reject_with_missing_segment",
+      "colony_teleport": false,
+      "offscreen": "same_simulation_time_and_hazard_rules",
+      "save": [
+        "route_nodes",
+        "cargo",
+        "job_state",
+        "battery",
+        "last_safe_node"
+      ],
+      "abandon": "cargo_in_recoverable_physical_cache"
+    }
+  },
+  "survival": {
+    "difficulty": "intermediate",
+    "opening_grace_minutes": 20,
+    "opening_grace_scope": "ocra_shallow_training_pocket_only",
+    "oxygen": {
+      "baseline_minutes": 12,
+      "suit_refill": "free_at_powered_ship_or_life_support",
+      "oxygen_drain": "only_unsafe_or_unbreathable_areas",
+      "warning_percent": [
+        50,
+        25,
+        10
+      ],
+      "reserve_return_warning": "estimated_route_time_times_1_5",
+      "no_offline_drain": true
+    },
+    "health": {
+      "max": 100,
+      "zero": "rescue_at_last_safe_ship_or_infirmary",
+      "rescue_health": 40,
+      "rescue_suit": 25,
+      "cargo_kept_percent": 50,
+      "cargo_cache_percent": 50,
+      "cache_expiry": null,
+      "currency_loss": 0,
+      "xp_loss": 0,
+      "creatures_lost": 0,
+      "robbie_lost": false,
+      "critical_key_items_kept": true,
+      "cache_placement": "nearest_previously_reached_safe_cell_never_inside_lava_or_solid_rock",
+      "split_rule": "per_item_floor_half_to_cache_remainder_kept",
+      "repeat_rescue": "independent_persistent_cache_per_incident"
+    },
+    "care": {
+      "conditions": [
+        "injury",
+        "contamination",
+        "thermal_strain",
+        "suit_leak",
+        "fatigue"
+      ],
+      "hunger": "one_optional_meal_buff_per_expedition_no_starvation_timer",
+      "sleep": "60s_at_ship_bed_or_bunk_restores_fatigue_and_minor_injury",
+      "field_heal": "consumable_medgel_30health_20s_cooldown",
+      "aboard_heal": "free_30s_at_powered_ship_first_aid",
+      "advanced_wound": "medical_module_60s_or_basic_ship_care_180s",
+      "feeding_creatures": "local_habitat_buffer_no_real_world_timer",
+      "no_offline_penalties": true
+    },
+    "emergency": {
+      "solar_recharge_kwh": 15,
+      "solar_recharge_seconds": 60,
+      "energy_can_block_recharge": false,
+      "tow_to_ocra": "always_available_after_2_failed_launch_checks; 120s_simulation_only; no_currency_or_unique_item_cost",
+      "departure_reserve": "show_route_plus_takeoff_plus_25_percent; never_spend_reserved_fuel_on_optional_services",
+      "emergency_ladders": "always_craft_2_soil; starter_tool_can_recover_soil",
+      "rescue_button": "hold_3s_with_exact_cargo_consequence_preview"
+    }
+  },
+  "power_and_habitat": {
+    "early": "ship_radio_power_for_lab_and_lamps_only; do_not_require_cables_for_first_lab",
+    "networks_unlock": "tech_sealing",
+    "consumption": "kw_times_seconds_divided_by_3600",
+    "priorities": [
+      "life_support",
+      "creature_habitats",
+      "doors_and_rescue",
+      "lights",
+      "logistics",
+      "production"
+    ],
+    "unpowered": "production_pauses_doors_fail_safe_creatures_enter_safe_transport_rest",
+    "room_breathability": "closed_boundary_plus_airlock_plus_powered_life_support_plus_gas_and_pressure_thresholds",
+    "furniture_does_not_seal_room": true,
+    "simulation_scope": "active_outpost_only_other_outposts_snapshot_no_unbounded_offline_production",
+    "fluids": "finite_volume_no_infinite_sources; pumps_reserve_target_capacity_before_transfer",
+    "waste": "closed_design_catalog_no_new_waste_item_types; processes_have_abstract_loss_unless_byproduct_explicit",
+    "parameters": {
+      "breathable_gas_max": 0.05,
+      "oxygen_refill_room_pressure_min": 0.8,
+      "room_pressure_target": 1,
+      "room_pressure_normalized_not_pascals": true,
+      "early_atmosphere": "do_not_use_oxygen_rules_before_tech_sealing_except_advanced_planets",
+      "filter_effect": "remove_gas_concentration_in_declared_local_cells_with_max_zero_and_no_negative_amounts",
+      "thermal_comfort_c": [
+        10,
+        35
+      ],
+      "first_cold_zone_c": -10,
+      "first_hot_zone_c": 50
+    }
+  },
+  "player_progression": {
+    "max_level": 30,
+    "xp_to_next_level": [
+      100,
+      125,
+      150,
+      175,
+      200,
+      225,
+      250,
+      275,
+      300,
+      325,
+      350,
+      375,
+      400,
+      425,
+      450,
+      475,
+      500,
+      525,
+      550,
+      575,
+      600,
+      625,
+      650,
+      675,
+      700,
+      725,
+      750,
+      775,
+      800
+    ],
+    "xp_sources": {
+      "first_module_type": 100,
+      "first_resource_type": 40,
+      "first_species_observation": 60,
+      "species_bond": 100,
+      "first_hazard_mitigation": 80,
+      "planet_survey": 250,
+      "unique_cave_landmark": 75,
+      "first_safe_logistics_route": 100
+    },
+    "repeat_xp": {
+      "mining_same_resource": 0,
+      "repeated_crafting": 0,
+      "release_recapture": 0,
+      "same_landmark": 0
+    },
+    "level_stats": {
+      "every_level_health": 2,
+      "every_5_levels_suit_resistance_percent": 2,
+      "max_health_from_levels": 158
+    },
+    "perk_levels": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30
+    ],
+    "perk_points_each": 1,
+    "specializations": [
+      "explorer",
+      "engineer",
+      "naturalist"
+    ],
+    "specializations_max_points": 10,
+    "perks": [
+      {
+        "id": "perk_explorer",
+        "ranks": 5,
+        "per_rank": {
+          "oxygen_consumption_reduction_percent": 3,
+          "map_marker_capacity": 4
+        }
+      },
+      {
+        "id": "perk_engineer",
+        "ranks": 5,
+        "per_rank": {
+          "deployment_speed_percent": 5,
+          "repair_effectiveness_percent": 4
+        }
+      },
+      {
+        "id": "perk_naturalist",
+        "ranks": 5,
+        "per_rank": {
+          "trust_gain_percent": 5,
+          "habitat_resource_cost_reduction_percent": 3
+        }
+      }
+    ],
+    "perk_guard": "passives_never_required_for_routes_or_mandatory_recipes; resource_discount_applies_habitat_upkeep_only_not_cube_costs",
+    "respec": "free_aboard; refund_all_points; no_repeated_xp",
+    "active_combat_skills": false,
+    "companion_unlocks": [
+      {
+        "slots": 1,
+        "research": "tech_bond"
+      },
+      {
+        "slots": 2,
+        "research": "tech_ecology"
+      },
+      {
+        "slots": 3,
+        "research": "tech_symbiosis"
+      }
+    ]
+  },
+  "ship_progression": {
+    "max_level": 10,
+    "level_source": "unique_ship_commissioning_milestones",
+    "milestones_per_level": [
+      0,
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      18
+    ],
+    "distinct_milestones": [
+      "first_lab",
+      "first_return_flight",
+      "first_sealed_room",
+      "first_thermal_landing",
+      "first_water_outpost",
+      "first_habitat",
+      "first_robbie_route",
+      "first_external_pod",
+      "first_advanced_battery",
+      "first_hot_landing",
+      "first_dune_landing",
+      "first_resonant_scan",
+      "first_sky_landing",
+      "first_sanctuary",
+      "first_void_landing",
+      "eleven_surveys",
+      "concordia_survey",
+      "atlas_complete"
+    ],
+    "sockets_by_level": [
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6
+    ],
+    "socket_positions": [
+      "left_lower",
+      "right_lower",
+      "left_middle",
+      "right_middle",
+      "rear_engine",
+      "upper_radar"
+    ],
+    "installation_rule": "module_mount_tags_must_match_socket; engines_use_rear_engine_or_side_engine; radar_uses_upper_radar; cargo_uses_side_sockets; occupied_socket_preview_required",
+    "internal_upgrades": "retain_cockpit_living_workshop_geometry",
+    "maintenance": {
+      "wear_sources": [
+        "landing",
+        "unshielded_environment",
+        "emergency_rescue"
+      ],
+      "free_basic_diagnostics": true,
+      "preventive_service_interval_flights": 5,
+      "interval_effect": "warning_only_no_arbitrary_breakage",
+      "hull_repair": "2_stone_1_copper_for_25_at_ship",
+      "engine_service": "1_lubricant_for_5_flights_efficiency_buff_optional",
+      "subsystem_failure": "degraded_output_and_clear_repair_cost_no_random_irreversible_loss",
+      "over_mass": "launch_block_with_warehouse_or_pod_solution",
+      "mass_model": "future_explicit_item_kg_catalog_required_before_physics_enforcement"
+    }
+  },
+  "caves": {
+    "chunk_cells": [
+      32,
+      32
+    ],
+    "seed": "planet_seed_plus_chunk_coords",
+    "layers_depth_m": [
+      [
+        0,
+        12
+      ],
+      [
+        13,
+        40
+      ],
+      [
+        41,
+        90
+      ],
+      [
+        91,
+        160
+      ],
+      [
+        161,
+        240
+      ]
+    ],
+    "first_shaft_width": 2,
+    "transit_clearance_m": [
+      1,
+      2
+    ],
+    "comfortable_corridor_m": [
+      2,
+      2
+    ],
+    "lab_clearance_m": [
+      4,
+      3
+    ],
+    "generation_guarantees": [
+      "solid_ground_under_hatch",
+      "first_12m_solvable_with_starter_tool",
+      "all_mandatory_sample_deposits_reachable_without_their_own_output_upgrade",
+      "minimum_two_routes_around_anchor_formations",
+      "first_hazard_is_visible_scannable_and_optional",
+      "guaranteed_authored_crystal_rooms_not_hidden_behind_same_tier_purchase",
+      "rescue_cache_safe_reachable",
+      "spawn_no_creature_in_sealed_solid_cell"
+    ],
+    "geological_regions": [
+      "loose_soil",
+      "sedimentary",
+      "compact",
+      "cavern",
+      "anchor"
+    ],
+    "support": {
+      "unlock": "tech_sealing",
+      "opening_rule": "no_collapse_in_first_12m_on_ocra",
+      "unsupported_span_warning_m": 6,
+      "failure_span_m": 9,
+      "warning_seconds": 10,
+      "reinforcement_span_m": 8,
+      "collapse_behavior": "rubble_fills_precomputed_unoccupied_cells_blocks_tunnel_never_deletes_module_or_mandatory_item",
+      "bypass": "starter_tool_can_remove_rubble",
+      "no_unseen_chain_collapse": true
+    },
+    "map_layers": [
+      "visited_geometry",
+      "scanned_resources",
+      "gas_and_water",
+      "support",
+      "power_and_signal",
+      "creatures",
+      "robbie_routes",
+      "return_path"
+    ],
+    "player_actions": [
+      "scan_through_one_adjacent_wall_face",
+      "mark_ore",
+      "mark_no_dig",
+      "reserve_module_volume",
+      "place_ladder",
+      "place_support",
+      "isolate_gas",
+      "pump_to_tank",
+      "make_airlock",
+      "assign_route"
+    ],
+    "terrain_states": [
+      "solid",
+      "damaged",
+      "excavated",
+      "reinforced",
+      "reserved",
+      "rubble"
+    ],
+    "resource_yield": "one_inventory_unit_per_removed_resource_cell_unless_deposit_record_declares_finite_charge_count; no_camera_based_extra_discovery",
+    "persistence": [
+      "removed_integer_cells",
+      "ore_remaining",
+      "support",
+      "finite_fluids",
+      "gas",
+      "structures",
+      "networks",
+      "scans",
+      "creatures",
+      "rescue_caches",
+      "robbie_route_nodes"
+    ],
+    "survey_complete": "three_authored_objectives_per_planet; not_percent_of_infinite_generated_terrain"
+  },
+  "creature_system": {
+    "max_companions": 3,
+    "starting_companions": 0,
+    "expedition_selection": "aboard_only_creatures_physically_in_ship_carriers",
+    "carrier_recipe": "recipe_stasis_carrier",
+    "capacity_rule": "one_creature_one_reserved_habitat_slot; every_habitat_has_two_slots_except_sanctuary_four",
+    "first_capture": "only_ocra_small_species_in_mod_habitat; other_species_can_be_observed_immediately_and_bonded_when_suitable_habitat_exists",
+    "care_ui": "one_daily_plan_per_habitat_auto_feeding_from_local_cache; no_click_each_creature",
+    "station_bonus_stack": "same_ability_max_one_source; distinct_bonuses_combined_cap_25_percent",
+    "no_material_creation": "all_species_output_recipes_preserve_or_consume_feedstock; no_rare_ore_or_currency_farm",
+    "containment": "scan_then_trust_then_voluntary_stasis_then_deploy_in_valid_habitat; no_ball_throw_or_combat_capture",
+    "visual_direction": "original_alien_species_collectible_ecological_roles; no_existing_franchise_character_copies",
+    "effect_operations": {
+      "emit_light": "local_visibility_field",
+      "warn": "once_latched_condition_warning",
+      "highlight": "mark_only_existing_scans",
+      "highlight_path": "path_through_visited_matching_cells",
+      "repair_condition": "clamped_integrity_without_repairing_max_capacity",
+      "reduce_exposure": "multiply_hazard_damage_by_one_minus_percent",
+      "station_speed": "divide_processing_seconds_by_one_plus_percent",
+      "station_stat": "multiply_named_stat_by_one_plus_percent",
+      "recipe_energy_reduction": "reduce_kwh_only_never_ingredients_or_currency",
+      "advance_warning": "warning_time_before_known_local_cycle",
+      "reduce_fall_speed": "cap_fall_velocity_locally_no_flight",
+      "auto_mark": "map_marker_no_repeat_discovery_xp",
+      "habitat_welfare": "bounded_welfare_addition_requires_valid_habitat",
+      "network_power_reduction": "bounded_power_multiplier_excluding_critical_consumers"
+    }
+  },
+  "robbie_care": {
+    "integrity_zero": "safe_shutdown_at_last_valid_cell_recoverable_by_player; never_destroy_unique_drone",
+    "battery_zero": "wait_beacon_then_player_or_ship_recovery; retain_cargo",
+    "charge": "free_aboard_from_ship_energy_or_route_dock; reserve_return_energy_before_job",
+    "maintenance": "damage_has_visible_cause; station_repair_and_part_preview; no_hunger_or_emotional_punishment",
+    "attachments": [
+      "cargo_clamp",
+      "scanner_array",
+      "lamp",
+      "medical_tray",
+      "assembly_arm",
+      "environment_seal"
+    ],
+    "attachment_rule": "unlocked_track_may_require_attachment_slot; cargo_signal_battery_hull_are_passive; choose_scanner_lamp_medical_assembly_environment_accessories_at_ship",
+    "route_ranks": {
+      "1": "one_job_two_visited_docks_with_signal",
+      "2": "one_job_up_to_four_visited_docks_with_signal",
+      "3": "one_job_short_disconnected_segment_with_150percent_return_battery_reserve"
+    },
+    "route_state_machine": [
+      "idle",
+      "validate",
+      "load",
+      "outbound",
+      "unload",
+      "return",
+      "charge",
+      "blocked",
+      "rescue"
+    ],
+    "forbidden": [
+      "autonomous_mining",
+      "unvisited_route_travel",
+      "perfect_hazard_prediction",
+      "remote_material_payment",
+      "cross_planet_teleport"
+    ],
+    "physics": {
+      "movement": "flying",
+      "body_metres": [
+        0.6,
+        0.6
+      ],
+      "speed_metres_second": 1.8,
+      "collision": "physical_body_no_terrain_or_closed_hatch_passage",
+      "navigation": "excavated_cell_graph_with_clearance_rays",
+      "no_teleport_when_stuck": true
+    }
+  },
+  "currency_economy": {
+    "common": "cur_lumen",
+    "cores": [
+      "cur_forge",
+      "cur_thermal",
+      "cur_tidal",
+      "cur_bio",
+      "cur_storm",
+      "cur_magma",
+      "cur_dune",
+      "cur_prism",
+      "cur_sky",
+      "cur_void",
+      "cur_concord"
+    ],
+    "credit": "once_per_stable_source_id_in_campaign_ledger_after_scan_or_objective_commit",
+    "geodes": "4_guaranteed_accessible_authored_geodes_per_planet; one_time_reward; visual_distinct_from_res_geode_seed",
+    "anti_softlock": "mandatory_research_cost_shown_as_reserve; optional_upgrades_reversible_100percent_currency; no_unique_core_spent_to_enter_its_own_source_planet",
+    "purchase": "station_local_items_plus_global_wallet_atomic_payment; currency_never_inventory_item",
+    "no_conversion": [
+      "ordinary_ore_to_currency",
+      "creature_output_to_currency",
+      "craft_dismantle_to_currency",
+      "real_money_to_currency"
+    ],
+    "guaranteed_common_total": 7120,
+    "costs_total_all_research_and_upgrades": 3840,
+    "tuning_target": "at_least_125percent_of_full_catalog_currency_cost_guaranteed; route_mandatory_research_below_20percent_total",
+    "reward_replay": "load_and_revisit_never_repay_same_source_id"
+  },
+  "asset_style": {
+    "confirmed": "friendly_funny_more_alien_faceted_3d_as_user_reference",
+    "icons": "faceted_svg_inventory_prototypes; final_creature_models_use_3d_reference",
+    "palette": "warm_rocket_amber_cool_mint_deep_blue_panels",
+    "species_reference_board": "assets/design/concepts/creatures-36-alien.png",
+    "species_board_order": "row_major_same_order_as_creatures_json_six_columns_six_rows",
+    "board_usage": "concept_reference_not_sprite_sheet_or_animation",
+    "reference": "refs/Space_Digger.png",
+    "anatomy": "one_to_three_eyes_antennae_unusual_limbs_avoid_recognizable_earth_animals"
+  },
+  "travel": {
+    "phases": [
+      "SELECT",
+      "FLIGHT",
+      "LANDING",
+      "DIGGING",
+      "TAKEOFF",
+      "SELECT"
+    ],
+    "initial_controls": "automatic_flight_and_vertical_landing",
+    "landing": "feet_and_side_engines_keep_lower_hatch_clear",
+    "manual_piloting": "future_optional_not_required_by_this_catalog",
+    "charges": "fuel_once_at_departure_hull_wear_once_at_landing",
+    "departure_requires": [
+      "player_aboard",
+      "robbie_aboard",
+      "all_selected_creatures_in_carriers",
+      "hatch_closed",
+      "launch_hull_threshold",
+      "fuel_with_return_reserve",
+      "battery"
+    ],
+    "outposts": "capture_before_leaving_restore_by_stable_planet_id",
+    "min_hull_to_launch": 20,
+    "min_battery_to_launch_kwh": 8
+  }
+}

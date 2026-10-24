@@ -1,0 +1,3183 @@
+[
+  {
+    "id": "planet_ocra",
+    "name_it": "Ocra",
+    "index": 1,
+    "stage": 0,
+    "required_research": "tech_start",
+    "landing_biome": "Collina calma",
+    "seed": 7300,
+    "palette": {
+      "sky": "#c88b67",
+      "terrain": "#c88b67"
+    },
+    "icon": "assets/design/icons/planet_ocra.svg",
+    "map_position": [
+      120,
+      100
+    ],
+    "primary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_silica",
+      "res_water",
+      "res_biomass"
+    ],
+    "secondary_resources": [],
+    "hazards": [
+      "haz_darkness"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      12
+    ],
+    "route_fuel": 10,
+    "landing_hull_wear": 3,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": false,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_ocra_1",
+        "name_it": "Primo laboratorio",
+        "required_research": "tech_start",
+        "critical_resource_cache": "res_soil",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_lab"
+        ],
+        "requires_items": {
+          "res_soil": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_ocra_2",
+        "name_it": "primo tunnel illuminato",
+        "required_research": "tech_start",
+        "critical_resource_cache": "res_stone",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_light"
+        ],
+        "requires_items": {
+          "res_stone": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_ocra_3",
+        "name_it": "primo campione analizzato",
+        "required_research": "tech_start",
+        "critical_resource_cache": "res_copper",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_lab"
+        ],
+        "requires_items": {
+          "res_copper": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 180
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 18
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 18
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 18
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 18
+      }
+    ],
+    "core_sources": [],
+    "guaranteed_resource_units": {
+      "res_soil": 100,
+      "res_stone": 100,
+      "res_copper": 100,
+      "res_silica": 100,
+      "res_water": 100,
+      "res_biomass": 100
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_luccivola",
+      "species_mossback",
+      "species_echofin"
+    ],
+    "route_energy_kwh": 2,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_soil",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 100,
+        "vein_count": 9,
+        "max_units_per_vein": 12,
+        "last_vein_units": 4,
+        "min_depth_m": 0,
+        "max_depth_m": 12,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      }
+    ]
+  },
+  {
+    "id": "planet_ferrum",
+    "name_it": "Ferrum",
+    "index": 2,
+    "stage": 1,
+    "required_research": "tech_field_science",
+    "landing_biome": "Canyon ferroso",
+    "seed": 7437,
+    "palette": {
+      "sky": "#ac6f56",
+      "terrain": "#ac6f56"
+    },
+    "icon": "assets/design/icons/planet_ferrum.svg",
+    "map_position": [
+      370,
+      100
+    ],
+    "primary_resources": [
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass"
+    ],
+    "hazards": [
+      "haz_rubble",
+      "haz_unstable_ceiling"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      30
+    ],
+    "route_fuel": 12,
+    "landing_hull_wear": 4,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": false,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_ferrum_1",
+        "name_it": "Campione di ferro",
+        "required_research": "tech_field_science",
+        "critical_resource_cache": "res_iron",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_iron": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_ferrum_2",
+        "name_it": "fabbricatore",
+        "required_research": "tech_field_science",
+        "critical_resource_cache": "res_carbon",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_fabricator"
+        ],
+        "requires_items": {
+          "res_carbon": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_ferrum_3",
+        "name_it": "camera con sostegni",
+        "required_research": "tech_field_science",
+        "critical_resource_cache": "res_clay",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_support"
+        ],
+        "requires_items": {
+          "res_clay": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 260,
+      "cur_forge": 12
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 26
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 26
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 26
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 26
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 4
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_iron": 125,
+      "res_carbon": 125,
+      "res_clay": 125,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_ferriccio",
+      "species_carbonello",
+      "species_argillotto"
+    ],
+    "route_energy_kwh": 4,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_iron",
+        "reserved_units": 125,
+        "vein_count": 11,
+        "max_units_per_vein": 12,
+        "last_vein_units": 5,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 125,
+        "vein_count": 11,
+        "max_units_per_vein": 12,
+        "last_vein_units": 5,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 125,
+        "vein_count": 11,
+        "max_units_per_vein": 12,
+        "last_vein_units": 5,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 30,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      }
+    ]
+  },
+  {
+    "id": "planet_brina",
+    "name_it": "Brina",
+    "index": 3,
+    "stage": 2,
+    "required_research": "tech_cold",
+    "landing_biome": "Pianura di brina",
+    "seed": 7574,
+    "palette": {
+      "sky": "#9bccdf",
+      "terrain": "#9bccdf"
+    },
+    "icon": "assets/design/icons/planet_brina.svg",
+    "map_position": [
+      620,
+      100
+    ],
+    "primary_resources": [
+      "res_ice",
+      "res_lithium",
+      "res_cobalt"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_cold",
+      "haz_ice_slip"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      45
+    ],
+    "route_fuel": 16,
+    "landing_hull_wear": 5,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_brina_1",
+        "name_it": "Vena di litio",
+        "required_research": "tech_cold",
+        "critical_resource_cache": "res_ice",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_ice": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_brina_2",
+        "name_it": "rifugio riscaldato",
+        "required_research": "tech_cold",
+        "critical_resource_cache": "res_lithium",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_heater"
+        ],
+        "requires_items": {
+          "res_lithium": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_brina_3",
+        "name_it": "sacca glaciale osservata",
+        "required_research": "tech_cold",
+        "critical_resource_cache": "res_cobalt",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_cobalt": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 360,
+      "cur_thermal": 10
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 36
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 36
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 36
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 36
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 3
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_ice": 150,
+      "res_lithium": 150,
+      "res_cobalt": 150,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_brinotto",
+      "species_cobalina",
+      "species_nevaglio"
+    ],
+    "route_energy_kwh": 6,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_ice",
+        "reserved_units": 150,
+        "vein_count": 13,
+        "max_units_per_vein": 12,
+        "last_vein_units": 6,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_lithium",
+        "reserved_units": 150,
+        "vein_count": 13,
+        "max_units_per_vein": 12,
+        "last_vein_units": 6,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_cobalt",
+        "reserved_units": 150,
+        "vein_count": 13,
+        "max_units_per_vein": 12,
+        "last_vein_units": 6,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_pelagia",
+    "name_it": "Pelagia",
+    "index": 4,
+    "stage": 2,
+    "required_research": "tech_hydraulics",
+    "landing_biome": "Atollo cavo",
+    "seed": 7711,
+    "palette": {
+      "sky": "#4daea9",
+      "terrain": "#4daea9"
+    },
+    "icon": "assets/design/icons/planet_pelagia.svg",
+    "map_position": [
+      870,
+      100
+    ],
+    "primary_resources": [
+      "res_salt",
+      "res_algae",
+      "res_calcium"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_water",
+      "haz_drowning",
+      "haz_pressure"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      45
+    ],
+    "route_fuel": 16,
+    "landing_hull_wear": 5,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_pelagia_1",
+        "name_it": "Campione di alghe",
+        "required_research": "tech_hydraulics",
+        "critical_resource_cache": "res_salt",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_salt": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_pelagia_2",
+        "name_it": "drenaggio finito",
+        "required_research": "tech_hydraulics",
+        "critical_resource_cache": "res_algae",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_pump"
+        ],
+        "requires_items": {
+          "res_algae": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_pelagia_3",
+        "name_it": "serra irrigata",
+        "required_research": "tech_hydraulics",
+        "critical_resource_cache": "res_calcium",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_greenhouse"
+        ],
+        "requires_items": {
+          "res_calcium": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 360,
+      "cur_tidal": 8
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 36
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 36
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 36
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 36
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 2
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_salt": 175,
+      "res_algae": 175,
+      "res_calcium": 175,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_algolino",
+      "species_calciopode",
+      "species_salifin"
+    ],
+    "route_energy_kwh": 6,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_salt",
+        "reserved_units": 175,
+        "vein_count": 15,
+        "max_units_per_vein": 12,
+        "last_vein_units": 7,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_algae",
+        "reserved_units": 175,
+        "vein_count": 15,
+        "max_units_per_vein": 12,
+        "last_vein_units": 7,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_calcium",
+        "reserved_units": 175,
+        "vein_count": 15,
+        "max_units_per_vein": 12,
+        "last_vein_units": 7,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 45,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_viridia",
+    "name_it": "Viridia",
+    "index": 5,
+    "stage": 3,
+    "required_research": "tech_biology",
+    "landing_biome": "Foresta di micelio",
+    "seed": 7848,
+    "palette": {
+      "sky": "#87b06d",
+      "terrain": "#87b06d"
+    },
+    "icon": "assets/design/icons/planet_viridia.svg",
+    "map_position": [
+      120,
+      340
+    ],
+    "primary_resources": [
+      "res_resin",
+      "res_spores",
+      "res_enzymes"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_spores",
+      "haz_toxic_gas",
+      "haz_territorial"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      65
+    ],
+    "route_fuel": 20,
+    "landing_hull_wear": 6,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_viridia_1",
+        "name_it": "Resina",
+        "required_research": "tech_biology",
+        "critical_resource_cache": "res_resin",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_resin": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_viridia_2",
+        "name_it": "filtraggio locale",
+        "required_research": "tech_biology",
+        "critical_resource_cache": "res_spores",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_gas_filter"
+        ],
+        "requires_items": {
+          "res_spores": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_viridia_3",
+        "name_it": "habitat salubre",
+        "required_research": "tech_biology",
+        "critical_resource_cache": "res_enzymes",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_habitat"
+        ],
+        "requires_items": {
+          "res_enzymes": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 480,
+      "cur_bio": 12
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 48
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 48
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 48
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 48
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 4
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_resin": 200,
+      "res_spores": 200,
+      "res_enzymes": 200,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_sporello",
+      "species_resinella",
+      "species_micorino"
+    ],
+    "route_energy_kwh": 8,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_resin",
+        "reserved_units": 200,
+        "vein_count": 17,
+        "max_units_per_vein": 12,
+        "last_vein_units": 8,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_spores",
+        "reserved_units": 200,
+        "vein_count": 17,
+        "max_units_per_vein": 12,
+        "last_vein_units": 8,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_enzymes",
+        "reserved_units": 200,
+        "vein_count": 17,
+        "max_units_per_vein": 12,
+        "last_vein_units": 8,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_fulmen",
+    "name_it": "Fulmen",
+    "index": 6,
+    "stage": 3,
+    "required_research": "tech_electrics",
+    "landing_biome": "Valle schermata",
+    "seed": 7985,
+    "palette": {
+      "sky": "#8797ca",
+      "terrain": "#8797ca"
+    },
+    "icon": "assets/design/icons/planet_fulmen.svg",
+    "map_position": [
+      370,
+      340
+    ],
+    "primary_resources": [
+      "res_magnetite",
+      "res_graphite",
+      "res_vanadium"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_electric",
+      "haz_magnetic_storm"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      65
+    ],
+    "route_fuel": 20,
+    "landing_hull_wear": 6,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_fulmen_1",
+        "name_it": "Magnetite",
+        "required_research": "tech_electrics",
+        "critical_resource_cache": "res_magnetite",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_magnetite": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_fulmen_2",
+        "name_it": "rete protetta",
+        "required_research": "tech_electrics",
+        "critical_resource_cache": "res_graphite",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_magnetic_shield"
+        ],
+        "requires_items": {
+          "res_graphite": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_fulmen_3",
+        "name_it": "finestra atmosferica registrata",
+        "required_research": "tech_electrics",
+        "critical_resource_cache": "res_vanadium",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_vanadium": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 480,
+      "cur_storm": 8
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 48
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 48
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 48
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 48
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 2
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_magnetite": 225,
+      "res_graphite": 225,
+      "res_vanadium": 225,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_scintillo",
+      "species_grafotto",
+      "species_voltala"
+    ],
+    "route_energy_kwh": 8,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_magnetite",
+        "reserved_units": 225,
+        "vein_count": 19,
+        "max_units_per_vein": 12,
+        "last_vein_units": 9,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_graphite",
+        "reserved_units": 225,
+        "vein_count": 19,
+        "max_units_per_vein": 12,
+        "last_vein_units": 9,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_vanadium",
+        "reserved_units": 225,
+        "vein_count": 19,
+        "max_units_per_vein": 12,
+        "last_vein_units": 9,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 65,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_vulcania",
+    "name_it": "Vulcania",
+    "index": 7,
+    "stage": 4,
+    "required_research": "tech_heat",
+    "landing_biome": "Caldera tiepida",
+    "seed": 8122,
+    "palette": {
+      "sky": "#d77b62",
+      "terrain": "#d77b62"
+    },
+    "icon": "assets/design/icons/planet_vulcania.svg",
+    "map_position": [
+      620,
+      340
+    ],
+    "primary_resources": [
+      "res_titanium",
+      "res_nickel",
+      "res_sulfur",
+      "res_basalt"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_heat",
+      "haz_lava",
+      "haz_vent"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      90
+    ],
+    "route_fuel": 24,
+    "landing_hull_wear": 8,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_vulcania_1",
+        "name_it": "Titanio in crosta fredda",
+        "required_research": "tech_heat",
+        "critical_resource_cache": "res_titanium",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_titanium": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_vulcania_2",
+        "name_it": "condotta isolata",
+        "required_research": "tech_heat",
+        "critical_resource_cache": "res_nickel",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_pipe"
+        ],
+        "requires_items": {
+          "res_nickel": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_vulcania_3",
+        "name_it": "fonte geotermica",
+        "required_research": "tech_heat",
+        "critical_resource_cache": "res_sulfur",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_geothermal"
+        ],
+        "requires_items": {
+          "res_sulfur": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 600,
+      "cur_magma": 14
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 60
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 60
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 60
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 60
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 5
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_titanium": 250,
+      "res_nickel": 250,
+      "res_sulfur": 250,
+      "res_basalt": 250,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_lavillo",
+      "species_titanello",
+      "species_sulfina"
+    ],
+    "route_energy_kwh": 10,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_titanium",
+        "reserved_units": 250,
+        "vein_count": 21,
+        "max_units_per_vein": 12,
+        "last_vein_units": 10,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_nickel",
+        "reserved_units": 250,
+        "vein_count": 21,
+        "max_units_per_vein": 12,
+        "last_vein_units": 10,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_sulfur",
+        "reserved_units": 250,
+        "vein_count": 21,
+        "max_units_per_vein": 12,
+        "last_vein_units": 10,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_basalt",
+        "reserved_units": 250,
+        "vein_count": 21,
+        "max_units_per_vein": 12,
+        "last_vein_units": 10,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_duna",
+    "name_it": "Duna",
+    "index": 8,
+    "stage": 4,
+    "required_research": "tech_desert",
+    "landing_biome": "Conca rocciosa",
+    "seed": 8259,
+    "palette": {
+      "sky": "#d4b278",
+      "terrain": "#d4b278"
+    },
+    "icon": "assets/design/icons/planet_duna.svg",
+    "map_position": [
+      870,
+      340
+    ],
+    "primary_resources": [
+      "res_alumina",
+      "res_gold",
+      "res_phosphate"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_sandstorm",
+      "haz_abrasion",
+      "haz_dehydration"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      90
+    ],
+    "route_fuel": 24,
+    "landing_hull_wear": 7,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_duna_1",
+        "name_it": "Oro",
+        "required_research": "tech_desert",
+        "critical_resource_cache": "res_alumina",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_alumina": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_duna_2",
+        "name_it": "riserva idrica",
+        "required_research": "tech_desert",
+        "critical_resource_cache": "res_gold",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_tank"
+        ],
+        "requires_items": {
+          "res_gold": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_duna_3",
+        "name_it": "riparo dalla sabbia",
+        "required_research": "tech_desert",
+        "critical_resource_cache": "res_phosphate",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_door"
+        ],
+        "requires_items": {
+          "res_phosphate": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 600,
+      "cur_dune": 8
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 60
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 60
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 60
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 60
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 2
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_alumina": 275,
+      "res_gold": 275,
+      "res_phosphate": 275,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_sabbuffo",
+      "species_dorimio",
+      "species_fosfolino"
+    ],
+    "route_energy_kwh": 10,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_alumina",
+        "reserved_units": 275,
+        "vein_count": 23,
+        "max_units_per_vein": 12,
+        "last_vein_units": 11,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_gold",
+        "reserved_units": 275,
+        "vein_count": 23,
+        "max_units_per_vein": 12,
+        "last_vein_units": 11,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_phosphate",
+        "reserved_units": 275,
+        "vein_count": 23,
+        "max_units_per_vein": 12,
+        "last_vein_units": 11,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 90,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_prismara",
+    "name_it": "Prismara",
+    "index": 9,
+    "stage": 5,
+    "required_research": "tech_resonance",
+    "landing_biome": "Bosco minerale",
+    "seed": 8396,
+    "palette": {
+      "sky": "#baa3d9",
+      "terrain": "#baa3d9"
+    },
+    "icon": "assets/design/icons/planet_prismara.svg",
+    "map_position": [
+      120,
+      580
+    ],
+    "primary_resources": [
+      "res_prism_quartz",
+      "res_boron",
+      "res_geode_seed"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_resonance",
+      "haz_shards"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      120
+    ],
+    "route_fuel": 28,
+    "landing_hull_wear": 8,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_prismara_1",
+        "name_it": "Quarzo",
+        "required_research": "tech_resonance",
+        "critical_resource_cache": "res_prism_quartz",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_prism_quartz": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_prismara_2",
+        "name_it": "riflesso calibrato",
+        "required_research": "tech_resonance",
+        "critical_resource_cache": "res_boron",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_photonics"
+        ],
+        "requires_items": {
+          "res_boron": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_prismara_3",
+        "name_it": "geode risonante",
+        "required_research": "tech_resonance",
+        "critical_resource_cache": "res_geode_seed",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_geode_seed": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 800,
+      "cur_prism": 12
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 80
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 80
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 80
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 80
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 4
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_prism_quartz": 300,
+      "res_boron": 300,
+      "res_geode_seed": 300,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_prismella",
+      "species_borotto",
+      "species_geodino"
+    ],
+    "route_energy_kwh": 12,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_prism_quartz",
+        "reserved_units": 300,
+        "vein_count": 25,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_boron",
+        "reserved_units": 300,
+        "vein_count": 25,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_geode_seed",
+        "reserved_units": 300,
+        "vein_count": 25,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_nimbo",
+    "name_it": "Nimbo",
+    "index": 10,
+    "stage": 5,
+    "required_research": "tech_sky",
+    "landing_biome": "Isola di roccia sospesa",
+    "seed": 8533,
+    "palette": {
+      "sky": "#bdd9d2",
+      "terrain": "#bdd9d2"
+    },
+    "icon": "assets/design/icons/planet_nimbo.svg",
+    "map_position": [
+      370,
+      580
+    ],
+    "primary_resources": [
+      "res_helium3",
+      "res_aerospore",
+      "res_xenon"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_wind",
+      "haz_thin_air",
+      "haz_pressure"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      120
+    ],
+    "route_fuel": 28,
+    "landing_hull_wear": 8,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_nimbo_1",
+        "name_it": "Sacca di xeno",
+        "required_research": "tech_sky",
+        "critical_resource_cache": "res_helium3",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_helium3": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_nimbo_2",
+        "name_it": "voliera sicura",
+        "required_research": "tech_sky",
+        "critical_resource_cache": "res_aerospore",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_habitat_aviary"
+        ],
+        "requires_items": {
+          "res_aerospore": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_nimbo_3",
+        "name_it": "corridoio di vento mappato",
+        "required_research": "tech_sky",
+        "critical_resource_cache": "res_xenon",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_xenon": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 800,
+      "cur_sky": 14
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 80
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 80
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 80
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 80
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 5
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_helium3": 325,
+      "res_aerospore": 325,
+      "res_xenon": 325,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_nembolo",
+      "species_eliopuff",
+      "species_xenella"
+    ],
+    "route_energy_kwh": 12,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_helium3",
+        "reserved_units": 325,
+        "vein_count": 28,
+        "max_units_per_vein": 12,
+        "last_vein_units": 1,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_aerospore",
+        "reserved_units": 325,
+        "vein_count": 28,
+        "max_units_per_vein": 12,
+        "last_vein_units": 1,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_xenon",
+        "reserved_units": 325,
+        "vein_count": 28,
+        "max_units_per_vein": 12,
+        "last_vein_units": 1,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 120,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_nox",
+    "name_it": "Nox",
+    "index": 11,
+    "stage": 6,
+    "required_research": "tech_void",
+    "landing_biome": "Cratere d'ombra",
+    "seed": 8670,
+    "palette": {
+      "sky": "#777692",
+      "terrain": "#777692"
+    },
+    "icon": "assets/design/icons/planet_nox.svg",
+    "map_position": [
+      620,
+      580
+    ],
+    "primary_resources": [
+      "res_iridium",
+      "res_dark_silicate",
+      "res_memory_pearl"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_darkness",
+      "haz_radiation",
+      "haz_silence"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      160
+    ],
+    "route_fuel": 34,
+    "landing_hull_wear": 10,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_nox_1",
+        "name_it": "Iridio",
+        "required_research": "tech_void",
+        "critical_resource_cache": "res_iridium",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [],
+        "requires_items": {
+          "res_iridium": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_nox_2",
+        "name_it": "archivio mnemonico",
+        "required_research": "tech_void",
+        "critical_resource_cache": "res_dark_silicate",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_photonics"
+        ],
+        "requires_items": {
+          "res_dark_silicate": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_nox_3",
+        "name_it": "percorso profondo illuminato",
+        "required_research": "tech_void",
+        "critical_resource_cache": "res_memory_pearl",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_light"
+        ],
+        "requires_items": {
+          "res_memory_pearl": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 1000,
+      "cur_void": 8
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 100
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 100
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 100
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 100
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 2
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_iridium": 350,
+      "res_dark_silicate": 350,
+      "res_memory_pearl": 350,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "new_tool_opens_optional_deeper_resource_and_species_pocket",
+    "ecology_species": [
+      "species_iridonte",
+      "species_ombrolino",
+      "species_mnemonide"
+    ],
+    "route_energy_kwh": 14,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_iridium",
+        "reserved_units": 350,
+        "vein_count": 30,
+        "max_units_per_vein": 12,
+        "last_vein_units": 2,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_dark_silicate",
+        "reserved_units": 350,
+        "vein_count": 30,
+        "max_units_per_vein": 12,
+        "last_vein_units": 2,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_memory_pearl",
+        "reserved_units": 350,
+        "vein_count": 30,
+        "max_units_per_vein": 12,
+        "last_vein_units": 2,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 160,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  },
+  {
+    "id": "planet_concordia",
+    "name_it": "Concordia",
+    "index": 12,
+    "stage": 7,
+    "required_research": "tech_concord",
+    "landing_biome": "Bacino concorde",
+    "seed": 8807,
+    "palette": {
+      "sky": "#a3c9ab",
+      "terrain": "#a3c9ab"
+    },
+    "icon": "assets/design/icons/planet_concordia.svg",
+    "map_position": [
+      870,
+      580
+    ],
+    "primary_resources": [
+      "res_aether_lattice"
+    ],
+    "secondary_resources": [
+      "res_soil",
+      "res_stone",
+      "res_copper",
+      "res_water",
+      "res_silica",
+      "res_biomass",
+      "res_iron",
+      "res_carbon",
+      "res_clay"
+    ],
+    "hazards": [
+      "haz_mixed_fields",
+      "haz_pressure",
+      "haz_resonance"
+    ],
+    "safe_landing": true,
+    "safe_landing_radius_m": 12,
+    "mandatory_sample_depth_m": [
+      0,
+      200
+    ],
+    "route_fuel": 38,
+    "landing_hull_wear": 10,
+    "takeoff_fuel": 6,
+    "return_fuel_guarantee": "reserve_or_free_tow",
+    "required_entry_items": [],
+    "surface_life_support_required": true,
+    "planet_survey_objectives": [
+      {
+        "id": "objective_concordia_1",
+        "name_it": "Tre reti integrate",
+        "required_research": "tech_concord",
+        "critical_resource_cache": "res_aether_lattice",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_life_support"
+        ],
+        "requires_items": {
+          "res_aether_lattice": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_concordia_2",
+        "name_it": "santuario compatibile",
+        "required_research": "tech_concord",
+        "critical_resource_cache": "res_aether_lattice",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_sanctuary"
+        ],
+        "requires_items": {
+          "res_aether_lattice": 1
+        },
+        "requires_observed_species": 0
+      },
+      {
+        "id": "objective_concordia_3",
+        "name_it": "archivio concorde attivo",
+        "required_research": "tech_concord",
+        "critical_resource_cache": "res_aether_lattice",
+        "hazard_rule": "reachable_with_entry_tier_equipment_and_local_building",
+        "requires_modules": [
+          "mod_concord_archive"
+        ],
+        "requires_items": {
+          "res_aether_lattice": 1
+        },
+        "requires_observed_species": 0
+      }
+    ],
+    "currency_budget": {
+      "cur_lumen": 1200,
+      "cur_concord": 8
+    },
+    "reward_sources": [
+      {
+        "type": "first_landing",
+        "count": 1,
+        "lumen_each": 120
+      },
+      {
+        "type": "survey_objective",
+        "count": 3,
+        "lumen_each": 120
+      },
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "lumen_each": 120
+      },
+      {
+        "type": "ecological_discovery",
+        "count": 2,
+        "lumen_each": 120
+      }
+    ],
+    "core_sources": [
+      {
+        "type": "authored_geode",
+        "count": 4,
+        "cores_each": 1
+      },
+      {
+        "type": "survey_objective",
+        "count": 2,
+        "cores_each": 2
+      }
+    ],
+    "guaranteed_resource_units": {
+      "res_aether_lattice": 375,
+      "res_soil": 60,
+      "res_stone": 60,
+      "res_copper": 60,
+      "res_water": 60,
+      "res_silica": 60,
+      "res_biomass": 60,
+      "res_iron": 60,
+      "res_carbon": 60,
+      "res_clay": 60
+    },
+    "generation_rule": "guaranteed_budget_is_reserved_in_authored_accessible_sites_before_optional_random_generation",
+    "backtrack_reason": "endgame_projects",
+    "ecology_species": [
+      "species_accordino",
+      "species_reticolino",
+      "species_astralume"
+    ],
+    "route_energy_kwh": 16,
+    "landing_energy_kwh": 3,
+    "takeoff_energy_kwh": 4,
+    "deposit_layout": [
+      {
+        "resource": "res_aether_lattice",
+        "reserved_units": 375,
+        "vein_count": 32,
+        "max_units_per_vein": 12,
+        "last_vein_units": 3,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_soil",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_stone",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_copper",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_water",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_silica",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_biomass",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "finite_pocket_or_cultivable_patch"
+      },
+      {
+        "resource": "res_iron",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_carbon",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      },
+      {
+        "resource": "res_clay",
+        "reserved_units": 60,
+        "vein_count": 5,
+        "max_units_per_vein": 12,
+        "last_vein_units": 12,
+        "min_depth_m": 0,
+        "max_depth_m": 200,
+        "distribution": "small_visible_and_scannable_veins"
+      }
+    ]
+  }
+]

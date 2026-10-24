@@ -1,0 +1,618 @@
+[
+  {
+    "id": "haz_darkness",
+    "name_it": "Oscurità",
+    "stage": 0,
+    "telegraph": "visor_contrast",
+    "damage_health_per_10s": 0,
+    "warning_seconds": 2,
+    "counter_tags": [
+      "light",
+      "scanner"
+    ],
+    "counter_module": "mod_light",
+    "condition": "visibility",
+    "recovery": "none",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_darkness.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_rubble",
+    "name_it": "Detriti",
+    "stage": 1,
+    "telegraph": "loose_fragments",
+    "damage_health_per_10s": 2,
+    "warning_seconds": 5,
+    "counter_tags": [
+      "pulse",
+      "support"
+    ],
+    "counter_module": "mod_support",
+    "condition": "injury",
+    "recovery": "dig_starter_tool",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_rubble.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_unstable_ceiling",
+    "name_it": "Soffitto instabile",
+    "stage": 1,
+    "telegraph": "cracks_dust_10s",
+    "damage_health_per_10s": 8,
+    "warning_seconds": 10,
+    "counter_tags": [
+      "support",
+      "alternate_route"
+    ],
+    "counter_module": "mod_support",
+    "condition": "injury",
+    "recovery": "rubble_never_item_deletion",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_unstable_ceiling.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_cold",
+    "name_it": "Gelo",
+    "stage": 2,
+    "telegraph": "frost_and_temperature_meter",
+    "damage_health_per_10s": 3,
+    "warning_seconds": 15,
+    "counter_tags": [
+      "heater",
+      "insulation",
+      "thermal_suit"
+    ],
+    "counter_module": "mod_heater",
+    "condition": "thermal_strain",
+    "recovery": "warm_safe_room",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_cold.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "snow"
+    }
+  },
+  {
+    "id": "haz_ice_slip",
+    "name_it": "Ghiaccio scivoloso",
+    "stage": 2,
+    "telegraph": "striped_surface",
+    "damage_health_per_10s": 1,
+    "warning_seconds": 3,
+    "counter_tags": [
+      "traction",
+      "ladder"
+    ],
+    "counter_module": "mod_ladder",
+    "condition": "injury",
+    "recovery": "return_path",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_ice_slip.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_water",
+    "name_it": "Allagamento",
+    "stage": 2,
+    "telegraph": "scan_blue_pocket_volume",
+    "damage_health_per_10s": 0,
+    "warning_seconds": 8,
+    "counter_tags": [
+      "pump",
+      "tank",
+      "drain",
+      "airlock"
+    ],
+    "counter_module": "mod_pump",
+    "condition": "movement",
+    "recovery": "finite_volume_pump",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_water.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "droplet"
+    }
+  },
+  {
+    "id": "haz_drowning",
+    "name_it": "Immersione",
+    "stage": 2,
+    "telegraph": "head_under_actual_water_height",
+    "damage_health_per_10s": 8,
+    "warning_seconds": 8,
+    "counter_tags": [
+      "oxygen",
+      "swim_up",
+      "air_pocket"
+    ],
+    "counter_module": "mod_life_support",
+    "condition": "oxygen",
+    "recovery": "safe_rescue_cache",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_drowning.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "droplet"
+    }
+  },
+  {
+    "id": "haz_pressure",
+    "name_it": "Pressione",
+    "stage": 2,
+    "telegraph": "depth_gauge_scan",
+    "damage_health_per_10s": 5,
+    "warning_seconds": 12,
+    "counter_tags": [
+      "pressure_cuff",
+      "pressure_suit",
+      "airlock"
+    ],
+    "counter_module": "mod_airlock",
+    "condition": "injury",
+    "recovery": "withdraw_to_lower_depth",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_pressure.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_spores",
+    "name_it": "Spore irritanti",
+    "stage": 3,
+    "telegraph": "purple_motes_scan",
+    "damage_health_per_10s": 3,
+    "warning_seconds": 12,
+    "counter_tags": [
+      "filter",
+      "gas_filter",
+      "habitat"
+    ],
+    "counter_module": "mod_gas_filter",
+    "condition": "contamination",
+    "recovery": "filter_and_wash",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_spores.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "gas"
+    }
+  },
+  {
+    "id": "haz_toxic_gas",
+    "name_it": "Gas tossico",
+    "stage": 3,
+    "telegraph": "scan_yellow_pocket",
+    "damage_health_per_10s": 5,
+    "warning_seconds": 10,
+    "counter_tags": [
+      "filter",
+      "gas_filter",
+      "door"
+    ],
+    "counter_module": "mod_gas_filter",
+    "condition": "contamination",
+    "recovery": "isolate_and_filter_finite_gas",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_toxic_gas.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "gas"
+    }
+  },
+  {
+    "id": "haz_territorial",
+    "name_it": "Stress territoriale",
+    "stage": 3,
+    "telegraph": "creature_retreat_posture",
+    "damage_health_per_10s": 0,
+    "warning_seconds": 6,
+    "counter_tags": [
+      "distance",
+      "observation",
+      "quiet"
+    ],
+    "counter_module": "mod_habitat",
+    "condition": "blocked_route",
+    "recovery": "withdraw_no_combat",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_territorial.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_electric",
+    "name_it": "Scariche",
+    "stage": 3,
+    "telegraph": "arcs_audio_and_ground_marker",
+    "damage_health_per_10s": 6,
+    "warning_seconds": 6,
+    "counter_tags": [
+      "magnetic_shield",
+      "grounded_cable"
+    ],
+    "counter_module": "mod_magnetic_shield",
+    "condition": "suit_leak",
+    "recovery": "safe_grounded_route",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_electric.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "bolt"
+    }
+  },
+  {
+    "id": "haz_magnetic_storm",
+    "name_it": "Tempesta magnetica",
+    "stage": 3,
+    "telegraph": "sky_warning_30s",
+    "damage_health_per_10s": 4,
+    "warning_seconds": 30,
+    "counter_tags": [
+      "magnetic_shield",
+      "ship_shelter"
+    ],
+    "counter_module": "mod_magnetic_shield",
+    "condition": "signal_loss",
+    "recovery": "wait_in_shelter",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_magnetic_storm.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_heat",
+    "name_it": "Calore",
+    "stage": 4,
+    "telegraph": "heat_haze_temperature_meter",
+    "damage_health_per_10s": 5,
+    "warning_seconds": 15,
+    "counter_tags": [
+      "heat_shield",
+      "coolant",
+      "heater"
+    ],
+    "counter_module": "mod_heater",
+    "condition": "thermal_strain",
+    "recovery": "cooled_room",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_heat.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_lava",
+    "name_it": "Magma",
+    "stage": 4,
+    "telegraph": "visible_glow_scan_solid_margin",
+    "damage_health_per_10s": 25,
+    "warning_seconds": 5,
+    "counter_tags": [
+      "bypass",
+      "bridge",
+      "support"
+    ],
+    "counter_module": "mod_support",
+    "condition": "injury",
+    "recovery": "no_required_ore_inside_magma",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_lava.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_vent",
+    "name_it": "Sfiato ciclico",
+    "stage": 4,
+    "telegraph": "rising_bubbles_hiss_cycle",
+    "damage_health_per_10s": 12,
+    "warning_seconds": 8,
+    "counter_tags": [
+      "time_window",
+      "heat_shield"
+    ],
+    "counter_module": "mod_geothermal",
+    "condition": "injury",
+    "recovery": "timed_crossing_safe_alcove",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_vent.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_sandstorm",
+    "name_it": "Tempesta di sabbia",
+    "stage": 4,
+    "telegraph": "horizon_warning_30s",
+    "damage_health_per_10s": 3,
+    "warning_seconds": 30,
+    "counter_tags": [
+      "shelter",
+      "filter",
+      "ship"
+    ],
+    "counter_module": "mod_door",
+    "condition": "abrasion",
+    "recovery": "wait_in_shelter",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_sandstorm.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_abrasion",
+    "name_it": "Abrasione",
+    "stage": 4,
+    "telegraph": "dust_wear_meter",
+    "damage_health_per_10s": 2,
+    "warning_seconds": 15,
+    "counter_tags": [
+      "sealed_suit",
+      "patch",
+      "airlock"
+    ],
+    "counter_module": "mod_airlock",
+    "condition": "suit_leak",
+    "recovery": "repair_at_station",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_abrasion.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_dehydration",
+    "name_it": "Stress da aridità",
+    "stage": 4,
+    "telegraph": "thermal_route_budget_warning",
+    "damage_health_per_10s": 2,
+    "warning_seconds": 30,
+    "counter_tags": [
+      "coolant",
+      "water",
+      "rest"
+    ],
+    "counter_module": "mod_heater",
+    "condition": "fatigue",
+    "recovery": "single_expedition_ration_not_thirst_spam",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_dehydration.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_resonance",
+    "name_it": "Risonanza instabile",
+    "stage": 5,
+    "telegraph": "pulsing_wave_8s",
+    "damage_health_per_10s": 8,
+    "warning_seconds": 8,
+    "counter_tags": [
+      "resonator",
+      "damping",
+      "alternate_route"
+    ],
+    "counter_module": "mod_photonics",
+    "condition": "suit_leak",
+    "recovery": "calibrate_from_safe_edge",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_resonance.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_shards",
+    "name_it": "Schegge minerali",
+    "stage": 5,
+    "telegraph": "crystal_rattle_5s",
+    "damage_health_per_10s": 10,
+    "warning_seconds": 5,
+    "counter_tags": [
+      "shield",
+      "support",
+      "distance"
+    ],
+    "counter_module": "mod_support",
+    "condition": "injury",
+    "recovery": "collect_after_settling",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_shards.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_wind",
+    "name_it": "Corrente ascensionale",
+    "stage": 5,
+    "telegraph": "ribbons_and_direction_arrows",
+    "damage_health_per_10s": 3,
+    "warning_seconds": 10,
+    "counter_tags": [
+      "stabilizer",
+      "anchor",
+      "alternate_route"
+    ],
+    "counter_module": "mod_beacon",
+    "condition": "movement",
+    "recovery": "safety_tether_prevents_void_fall",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_wind.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_thin_air",
+    "name_it": "Atmosfera rarefatta",
+    "stage": 5,
+    "telegraph": "oxygen_density_scan",
+    "damage_health_per_10s": 0,
+    "warning_seconds": 20,
+    "counter_tags": [
+      "oxygen",
+      "life_support",
+      "pressure_frame"
+    ],
+    "counter_module": "mod_life_support",
+    "condition": "oxygen",
+    "recovery": "portable_oxygen_budget",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_thin_air.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_radiation",
+    "name_it": "Radiazioni",
+    "stage": 6,
+    "telegraph": "geiger_visual_and_dose",
+    "damage_health_per_10s": 4,
+    "warning_seconds": 20,
+    "counter_tags": [
+      "iridium_frame",
+      "radiation_suit",
+      "shield"
+    ],
+    "counter_module": "mod_magnetic_shield",
+    "condition": "contamination",
+    "recovery": "dose_recovers_at_infirmary",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_radiation.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_silence",
+    "name_it": "Disturbo di segnale",
+    "stage": 6,
+    "telegraph": "radio_fade_and_map_quality",
+    "damage_health_per_10s": 0,
+    "warning_seconds": 15,
+    "counter_tags": [
+      "beacon",
+      "relay",
+      "optical_link"
+    ],
+    "counter_module": "mod_beacon",
+    "condition": "signal_loss",
+    "recovery": "robbie_waits_at_safe_node_with_cargo",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_silence.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  },
+  {
+    "id": "haz_mixed_fields",
+    "name_it": "Campi combinati",
+    "stage": 7,
+    "telegraph": "scanner_three_separate_channels",
+    "damage_health_per_10s": 6,
+    "warning_seconds": 20,
+    "counter_tags": [
+      "three_previously_learned_counters"
+    ],
+    "counter_module": "mod_concord_archive",
+    "condition": "mixed",
+    "recovery": "never_more_than_two_active_damage_sources",
+    "first_contact_rule": "warning_and_optional_demonstration_before_mandatory_exposure",
+    "stacks": "at_most_two_damage_hazards; apply_max_per_condition_not_sum_same_condition",
+    "offline_damage": false,
+    "icon": "assets/design/icons/haz_mixed_fields.svg",
+    "visual": {
+      "color": "#df9b75",
+      "shape": "hazard"
+    }
+  }
+]

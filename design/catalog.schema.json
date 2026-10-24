@@ -1,0 +1,512 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rocketman:design:v1",
+  "title": "RocketMan aggregate design catalogs",
+  "type": "object",
+  "required": [
+    "rules",
+    "resources",
+    "recipes",
+    "modules",
+    "research",
+    "currencies",
+    "planets",
+    "tools",
+    "services",
+    "hazards",
+    "creatures",
+    "upgrades",
+    "progression",
+    "gui",
+    "implementation",
+    "items",
+    "balance"
+  ],
+  "properties": {
+    "rules": {
+      "type": "object"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "kind",
+          "stage",
+          "inventory_units",
+          "icon",
+          "visual"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "raw",
+              "processed"
+            ]
+          },
+          "stage": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7
+          },
+          "inventory_units": {
+            "const": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "station",
+          "research",
+          "inputs",
+          "outputs",
+          "seconds",
+          "energy_kwh"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "station": {
+            "type": "string",
+            "minLength": 3
+          },
+          "research": {
+            "type": "string",
+            "minLength": 3
+          },
+          "inputs": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "outputs": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "energy_kwh": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "footprint_m",
+          "packed_inventory_units",
+          "research",
+          "ports",
+          "crafting_recipes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "footprint_m": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "packed_inventory_units": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "crafting_recipes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 3
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "research": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "requires_all",
+          "requires_any",
+          "requires_planet_visits",
+          "requires_surveys",
+          "cost_items",
+          "cost_currency"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requires_all": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 3
+            },
+            "uniqueItems": true
+          },
+          "requires_any": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 3
+            },
+            "uniqueItems": true
+          },
+          "cost_items": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "cost_currency": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "currencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "kind",
+          "physical_inventory",
+          "repeatable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "physical_inventory": {
+            "const": false
+          },
+          "repeatable": {
+            "const": false
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "planets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "required_research",
+          "primary_resources",
+          "currency_budget",
+          "planet_survey_objectives"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "primary_resources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 3
+            },
+            "uniqueItems": true
+          },
+          "currency_budget": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "research",
+          "mode",
+          "icon"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "station",
+          "research",
+          "inputs",
+          "effects"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inputs": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^(res_|mod_|cur_|item_)"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "hazards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "stage",
+          "telegraph",
+          "counter_module",
+          "damage_health_per_10s"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "counter_module": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "creatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "planet",
+          "habitat",
+          "bond",
+          "ability",
+          "combat"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "planet": {
+            "type": "string",
+            "minLength": 3
+          },
+          "combat": {
+            "const": false
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "upgrades": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "owner",
+          "stat",
+          "baseline",
+          "levels"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "enum": [
+              "player",
+              "ship",
+              "robbie",
+              "module"
+            ]
+          },
+          "levels": {
+            "type": "array",
+            "minItems": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "progression": {
+      "type": "object"
+    },
+    "gui": {
+      "type": "object"
+    },
+    "implementation": {
+      "type": "object"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_it",
+          "kind",
+          "stage",
+          "inventory_units",
+          "icon"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+_[a-z0-9_]+$"
+          },
+          "name_it": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "balance": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

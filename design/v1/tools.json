@@ -1,0 +1,103 @@
+[
+  {
+    "id": "tool_pulse",
+    "name_it": "Estrattore Pulse",
+    "research": "tech_start",
+    "stage": 0,
+    "mode": "mine",
+    "range_m": 3,
+    "energy_per_pulse_kwh": 0.2,
+    "hardness_max": 4,
+    "never_mines": [
+      "terrain_anchor"
+    ],
+    "color": "#68d6cc",
+    "icon": "assets/design/icons/tool_pulse.svg",
+    "visual": {
+      "color": "#68d6cc",
+      "shape": "tool"
+    },
+    "ownership": "permanent_research_unlock",
+    "loadout_slots": 1
+  },
+  {
+    "id": "tool_scanner",
+    "name_it": "Scanner",
+    "research": "tech_start",
+    "stage": 0,
+    "mode": "scan",
+    "range_m": 4,
+    "energy_per_pulse_kwh": 0.05,
+    "wall_penetration_cells": 1,
+    "never_awards_mining_items": true,
+    "color": "#f2d27b",
+    "icon": "assets/design/icons/tool_scanner.svg",
+    "visual": {
+      "color": "#f2d27b",
+      "shape": "scan"
+    },
+    "ownership": "permanent_research_unlock",
+    "loadout_slots": 1
+  },
+  {
+    "id": "tool_collector",
+    "name_it": "Raccoglitore sigillato",
+    "research": "tech_start",
+    "stage": 0,
+    "mode": "collect",
+    "range_m": 2,
+    "energy_per_pulse_kwh": 0.05,
+    "requires_container_for_gas": true,
+    "free_empty_containers_at_ship": true,
+    "color": "#8ec6a9",
+    "icon": "assets/design/icons/tool_collector.svg",
+    "visual": {
+      "color": "#8ec6a9",
+      "shape": "canister"
+    },
+    "ownership": "permanent_research_unlock",
+    "loadout_slots": 1
+  },
+  {
+    "id": "tool_resonator",
+    "name_it": "Risonatore",
+    "research": "tech_resonance",
+    "stage": 5,
+    "mode": "mine",
+    "range_m": 3,
+    "energy_per_pulse_kwh": 0.3,
+    "hardness_max": 6,
+    "never_mines": [
+      "terrain_anchor"
+    ],
+    "color": "#c4a2e6",
+    "icon": "assets/design/icons/tool_resonator.svg",
+    "visual": {
+      "color": "#c4a2e6",
+      "shape": "tool"
+    },
+    "ownership": "permanent_research_unlock",
+    "loadout_slots": 1
+  },
+  {
+    "id": "tool_plasma",
+    "name_it": "Plasma",
+    "research": "tech_heat",
+    "stage": 4,
+    "mode": "mine",
+    "range_m": 2.5,
+    "energy_per_pulse_kwh": 0.6,
+    "hardness_max": 6,
+    "never_mines": [
+      "terrain_anchor"
+    ],
+    "color": "#eb997c",
+    "icon": "assets/design/icons/tool_plasma.svg",
+    "visual": {
+      "color": "#eb997c",
+      "shape": "tool"
+    },
+    "ownership": "permanent_research_unlock",
+    "loadout_slots": 1
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "engine": "Godot_v4.6.3-stable_win64_console.exe",
+  "scope": "76 StandardMaterial3D resources and their SVG albedo textures in an isolated temporary Godot project",
+  "output": "Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org\r\n\r\nDESIGN_MATERIALS_CHECK checked=76 failures=0\r\n",
+  "errors": null,
+  "runtime_project_modified": false
+}

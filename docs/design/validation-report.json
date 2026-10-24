@@ -1,0 +1,824 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "counts": {
+    "planets": 12,
+    "resources": 76,
+    "recipes": 85,
+    "modules": 40,
+    "research": 18,
+    "upgrades": 52,
+    "upgrade_levels": 137,
+    "creatures": 36,
+    "hazards": 26,
+    "icons": 289
+  },
+  "reachability": {
+    "iterations": 12,
+    "planets": 12,
+    "surveys": 12,
+    "research": 18,
+    "resources": 76,
+    "portable_equipment": 1,
+    "modules": 40,
+    "scope": "qualitative_reference_and_unlock_feasibility_not_runtime_simulation"
+  },
+  "raw_budget": {
+    "reference_build": "one_of_every_module_plus_habitats_for_36_species_three_carriers_all_research_all_upgrade_ranks_once",
+    "sufficient": true,
+    "excludes": "repeat_fuel_food_medicine_and_extra_construction"
+  },
+  "currency": {
+    "income": {
+      "cur_lumen": 7120,
+      "cur_forge": 12,
+      "cur_thermal": 10,
+      "cur_tidal": 8,
+      "cur_bio": 12,
+      "cur_storm": 8,
+      "cur_magma": 14,
+      "cur_dune": 8,
+      "cur_prism": 12,
+      "cur_sky": 14,
+      "cur_void": 8,
+      "cur_concord": 8
+    },
+    "cost": {
+      "cur_lumen": 3840,
+      "cur_tidal": 4,
+      "cur_sky": 11,
+      "cur_bio": 10,
+      "cur_magma": 12,
+      "cur_void": 5,
+      "cur_thermal": 8,
+      "cur_prism": 10,
+      "cur_dune": 1,
+      "cur_storm": 6,
+      "cur_forge": 10,
+      "cur_concord": 3
+    }
+  },
+  "trace": [
+    {
+      "iteration": 1,
+      "type": "visit",
+      "id": "planet_ocra"
+    },
+    {
+      "iteration": 1,
+      "type": "craft",
+      "id": "res_wire"
+    },
+    {
+      "iteration": 1,
+      "type": "craft",
+      "id": "res_feed"
+    },
+    {
+      "iteration": 1,
+      "type": "craft",
+      "id": "mod_ladder"
+    },
+    {
+      "iteration": 1,
+      "type": "craft",
+      "id": "mod_lab"
+    },
+    {
+      "iteration": 1,
+      "type": "craft",
+      "id": "res_hydrogen_fuel"
+    },
+    {
+      "iteration": 1,
+      "type": "milestone",
+      "id": "first_lab"
+    },
+    {
+      "iteration": 1,
+      "type": "research",
+      "id": "tech_field_science"
+    },
+    {
+      "iteration": 2,
+      "type": "visit",
+      "id": "planet_ferrum"
+    },
+    {
+      "iteration": 2,
+      "type": "gather",
+      "id": "res_iron"
+    },
+    {
+      "iteration": 2,
+      "type": "gather",
+      "id": "res_carbon"
+    },
+    {
+      "iteration": 2,
+      "type": "gather",
+      "id": "res_clay"
+    },
+    {
+      "iteration": 2,
+      "type": "craft",
+      "id": "res_glass"
+    },
+    {
+      "iteration": 2,
+      "type": "craft",
+      "id": "mod_light"
+    },
+    {
+      "iteration": 2,
+      "type": "craft",
+      "id": "mod_crate"
+    },
+    {
+      "iteration": 2,
+      "type": "craft",
+      "id": "mod_fabricator"
+    },
+    {
+      "iteration": 2,
+      "type": "craft",
+      "id": "res_repair_patch"
+    },
+    {
+      "iteration": 2,
+      "type": "survey",
+      "id": "planet_ocra"
+    },
+    {
+      "iteration": 2,
+      "type": "research",
+      "id": "tech_metallurgy"
+    },
+    {
+      "iteration": 3,
+      "type": "craft",
+      "id": "res_plate"
+    },
+    {
+      "iteration": 3,
+      "type": "craft",
+      "id": "res_steel"
+    },
+    {
+      "iteration": 3,
+      "type": "craft",
+      "id": "res_ceramic"
+    },
+    {
+      "iteration": 3,
+      "type": "craft",
+      "id": "res_circuit"
+    },
+    {
+      "iteration": 3,
+      "type": "craft",
+      "id": "mod_solar"
+    },
+    {
+      "iteration": 3,
+      "type": "research",
+      "id": "tech_sealing"
+    },
+    {
+      "iteration": 3,
+      "type": "research",
+      "id": "tech_hydraulics"
+    },
+    {
+      "iteration": 3,
+      "type": "research",
+      "id": "tech_bond"
+    },
+    {
+      "iteration": 4,
+      "type": "visit",
+      "id": "planet_pelagia"
+    },
+    {
+      "iteration": 4,
+      "type": "gather",
+      "id": "res_salt"
+    },
+    {
+      "iteration": 4,
+      "type": "gather",
+      "id": "res_algae"
+    },
+    {
+      "iteration": 4,
+      "type": "gather",
+      "id": "res_calcium"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "res_filter"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "res_insulation"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "res_coolant"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_support"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_door"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_airlock"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_life_support"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_pump"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_tank"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_greenhouse"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_habitat"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_fuel_plant"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_drain"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_pipe"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "mod_cable"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "res_pressure_cuff"
+    },
+    {
+      "iteration": 4,
+      "type": "craft",
+      "id": "item_stasis_carrier"
+    },
+    {
+      "iteration": 4,
+      "type": "survey",
+      "id": "planet_ferrum"
+    },
+    {
+      "iteration": 4,
+      "type": "survey",
+      "id": "planet_pelagia"
+    },
+    {
+      "iteration": 4,
+      "type": "research",
+      "id": "tech_cold"
+    },
+    {
+      "iteration": 4,
+      "type": "research",
+      "id": "tech_biology"
+    },
+    {
+      "iteration": 5,
+      "type": "visit",
+      "id": "planet_brina"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_ice"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_lithium"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_cobalt"
+    },
+    {
+      "iteration": 5,
+      "type": "visit",
+      "id": "planet_viridia"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_resin"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_spores"
+    },
+    {
+      "iteration": 5,
+      "type": "gather",
+      "id": "res_enzymes"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "res_battery"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_battery_bank"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_heater"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_relay"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_infirmary"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_bioprocessor"
+    },
+    {
+      "iteration": 5,
+      "type": "craft",
+      "id": "mod_ship_cargo_pod"
+    },
+    {
+      "iteration": 5,
+      "type": "survey",
+      "id": "planet_brina"
+    },
+    {
+      "iteration": 5,
+      "type": "research",
+      "id": "tech_electrics"
+    },
+    {
+      "iteration": 5,
+      "type": "research",
+      "id": "tech_logistics"
+    },
+    {
+      "iteration": 6,
+      "type": "visit",
+      "id": "planet_fulmen"
+    },
+    {
+      "iteration": 6,
+      "type": "gather",
+      "id": "res_magnetite"
+    },
+    {
+      "iteration": 6,
+      "type": "gather",
+      "id": "res_graphite"
+    },
+    {
+      "iteration": 6,
+      "type": "gather",
+      "id": "res_vanadium"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_polymer"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_sealant"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_bio_gel"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_membrane"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_medgel"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_pressure_frame"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_magnetic_coil"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "res_advanced_battery"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "mod_gas_filter"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "mod_route_dock"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "mod_magnetic_shield"
+    },
+    {
+      "iteration": 6,
+      "type": "craft",
+      "id": "mod_ship_battery_pod"
+    },
+    {
+      "iteration": 6,
+      "type": "survey",
+      "id": "planet_viridia"
+    },
+    {
+      "iteration": 6,
+      "type": "survey",
+      "id": "planet_fulmen"
+    },
+    {
+      "iteration": 6,
+      "type": "research",
+      "id": "tech_ecology"
+    },
+    {
+      "iteration": 6,
+      "type": "research",
+      "id": "tech_heat"
+    },
+    {
+      "iteration": 6,
+      "type": "research",
+      "id": "tech_desert"
+    },
+    {
+      "iteration": 7,
+      "type": "visit",
+      "id": "planet_vulcania"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_titanium"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_nickel"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_sulfur"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_basalt"
+    },
+    {
+      "iteration": 7,
+      "type": "visit",
+      "id": "planet_duna"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_alumina"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_gold"
+    },
+    {
+      "iteration": 7,
+      "type": "gather",
+      "id": "res_phosphate"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_heat_shield"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_titanium_alloy"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_lubricant"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_gold_circuit"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_nutrient"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "res_advanced_ceramic"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "mod_geothermal"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "mod_habitat_aquatic"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "mod_habitat_climate"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "mod_beacon"
+    },
+    {
+      "iteration": 7,
+      "type": "craft",
+      "id": "mod_ship_engine_pod"
+    },
+    {
+      "iteration": 7,
+      "type": "survey",
+      "id": "planet_vulcania"
+    },
+    {
+      "iteration": 7,
+      "type": "survey",
+      "id": "planet_duna"
+    },
+    {
+      "iteration": 7,
+      "type": "research",
+      "id": "tech_resonance"
+    },
+    {
+      "iteration": 7,
+      "type": "research",
+      "id": "tech_sky"
+    },
+    {
+      "iteration": 8,
+      "type": "visit",
+      "id": "planet_prismara"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_prism_quartz"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_boron"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_geode_seed"
+    },
+    {
+      "iteration": 8,
+      "type": "visit",
+      "id": "planet_nimbo"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_helium3"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_aerospore"
+    },
+    {
+      "iteration": 8,
+      "type": "gather",
+      "id": "res_xenon"
+    },
+    {
+      "iteration": 8,
+      "type": "craft",
+      "id": "res_aerogel"
+    },
+    {
+      "iteration": 8,
+      "type": "craft",
+      "id": "res_helium_fuel"
+    },
+    {
+      "iteration": 8,
+      "type": "craft",
+      "id": "mod_photonics"
+    },
+    {
+      "iteration": 8,
+      "type": "craft",
+      "id": "mod_habitat_aviary"
+    },
+    {
+      "iteration": 8,
+      "type": "survey",
+      "id": "planet_prismara"
+    },
+    {
+      "iteration": 8,
+      "type": "survey",
+      "id": "planet_nimbo"
+    },
+    {
+      "iteration": 8,
+      "type": "research",
+      "id": "tech_symbiosis"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "res_prism_lens"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "res_superconductor"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "res_resonant_core"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "res_cryo_fluid"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "mod_observatory"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "mod_sanctuary"
+    },
+    {
+      "iteration": 9,
+      "type": "craft",
+      "id": "mod_ship_radar_pod"
+    },
+    {
+      "iteration": 9,
+      "type": "research",
+      "id": "tech_void"
+    },
+    {
+      "iteration": 10,
+      "type": "visit",
+      "id": "planet_nox"
+    },
+    {
+      "iteration": 10,
+      "type": "gather",
+      "id": "res_iridium"
+    },
+    {
+      "iteration": 10,
+      "type": "gather",
+      "id": "res_dark_silicate"
+    },
+    {
+      "iteration": 10,
+      "type": "gather",
+      "id": "res_memory_pearl"
+    },
+    {
+      "iteration": 10,
+      "type": "craft",
+      "id": "res_iridium_frame"
+    },
+    {
+      "iteration": 10,
+      "type": "craft",
+      "id": "res_dark_lens"
+    },
+    {
+      "iteration": 10,
+      "type": "craft",
+      "id": "res_atlas_chip"
+    },
+    {
+      "iteration": 10,
+      "type": "survey",
+      "id": "planet_nox"
+    },
+    {
+      "iteration": 10,
+      "type": "research",
+      "id": "tech_concord"
+    },
+    {
+      "iteration": 11,
+      "type": "visit",
+      "id": "planet_concordia"
+    },
+    {
+      "iteration": 11,
+      "type": "gather",
+      "id": "res_aether_lattice"
+    },
+    {
+      "iteration": 11,
+      "type": "craft",
+      "id": "res_concord_matrix"
+    },
+    {
+      "iteration": 11,
+      "type": "craft",
+      "id": "mod_concord_archive"
+    },
+    {
+      "iteration": 11,
+      "type": "survey",
+      "id": "planet_concordia"
+    }
+  ]
+}

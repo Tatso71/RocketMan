@@ -1,0 +1,237 @@
+[
+  {
+    "id": "svc_refuel_basic",
+    "name_it": "Rifornisci 20 carburante",
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_hydrogen_fuel": 1
+    },
+    "seconds": 5,
+    "effects": {
+      "ship_fuel_add": 20
+    },
+    "failure": "capacity_before_payment",
+    "icon": "assets/design/icons/svc_refuel_basic.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_refuel_advanced",
+    "name_it": "Rifornisci 50 carburante",
+    "station": "mod_workshop",
+    "research": "tech_sky",
+    "inputs": {
+      "res_helium_fuel": 1
+    },
+    "seconds": 5,
+    "effects": {
+      "ship_fuel_add": 50
+    },
+    "failure": "capacity_before_payment",
+    "icon": "assets/design/icons/svc_refuel_advanced.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_hull_repair",
+    "name_it": "Ripara scafo",
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_stone": 2,
+      "res_copper": 1
+    },
+    "seconds": 10,
+    "effects": {
+      "ship_hull_add": 25
+    },
+    "failure": "no_payment_at_full_health",
+    "icon": "assets/design/icons/svc_hull_repair.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_suit_ship",
+    "name_it": "Cura e ripristino a bordo",
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {},
+    "seconds": 30,
+    "effects": {
+      "player_health_set": "max",
+      "suit_integrity_set": "max",
+      "oxygen_refill": true
+    },
+    "failure": "requires_ship_power_or_emergency_solar",
+    "icon": "assets/design/icons/svc_suit_ship.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_suit_field",
+    "name_it": "Ripristino tuta sul campo",
+    "station": "mod_lab",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_soil": 2,
+      "res_copper": 1
+    },
+    "seconds": 15,
+    "effects": {
+      "suit_integrity_set": "max"
+    },
+    "failure": "local_supplies_and_power",
+    "icon": "assets/design/icons/svc_suit_field.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_medgel",
+    "name_it": "Usa gel curativo",
+    "station": null,
+    "research": "tech_biology",
+    "inputs": {
+      "res_medgel": 1
+    },
+    "seconds": 2,
+    "effects": {
+      "player_health_add": 30,
+      "cooldown_seconds": 20
+    },
+    "failure": "no_payment_at_full_health",
+    "icon": "assets/design/icons/svc_medgel.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_patch",
+    "name_it": "Ripara perdita tuta",
+    "station": null,
+    "research": "tech_field_science",
+    "inputs": {
+      "res_repair_patch": 1
+    },
+    "seconds": 5,
+    "effects": {
+      "suit_integrity_add": 25,
+      "remove_condition": "suit_leak"
+    },
+    "failure": "pause_if_hands_busy",
+    "icon": "assets/design/icons/svc_patch.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_clinic",
+    "name_it": "Trattamento completo",
+    "station": "mod_infirmary",
+    "research": "tech_cold",
+    "inputs": {
+      "res_water": 1,
+      "res_filter": 1
+    },
+    "seconds": 60,
+    "effects": {
+      "player_health_set": "max",
+      "remove_conditions": [
+        "injury",
+        "contamination",
+        "thermal_strain"
+      ]
+    },
+    "failure": "local_supplies_and_power",
+    "icon": "assets/design/icons/svc_clinic.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true,
+    "duration_stat": "treatment_seconds"
+  },
+  {
+    "id": "svc_robbie_repair",
+    "name_it": "Manutenzione Robbie",
+    "station": "mod_route_dock",
+    "research": "tech_logistics",
+    "inputs": {
+      "res_wire": 1,
+      "res_plate": 1
+    },
+    "seconds": 20,
+    "effects": {
+      "robbie_integrity_set": "max",
+      "robbie_battery_refill": true
+    },
+    "failure": "requires_robbie_physically_docked",
+    "icon": "assets/design/icons/svc_robbie_repair.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_ship_robbie",
+    "name_it": "Cura Robbie a bordo",
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_copper": 1
+    },
+    "seconds": 20,
+    "effects": {
+      "robbie_integrity_set": "max",
+      "robbie_battery_refill": true
+    },
+    "failure": "free_emergency_recovery_if_copper_unavailable",
+    "icon": "assets/design/icons/svc_ship_robbie.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  },
+  {
+    "id": "svc_engine",
+    "name_it": "Servizio propulsori",
+    "station": "mod_workshop",
+    "research": "tech_heat",
+    "inputs": {
+      "res_lubricant": 1
+    },
+    "seconds": 30,
+    "effects": {
+      "efficient_flights": 5,
+      "fuel_cost_reduction_percent": 5
+    },
+    "failure": "optional_bonus_never_entry_gate",
+    "icon": "assets/design/icons/svc_engine.svg",
+    "visual": {
+      "color": "#a9c9ae",
+      "shape": "med"
+    },
+    "effects_clamp_to_capacity": true
+  }
+]
