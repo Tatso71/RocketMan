@@ -5,8 +5,10 @@ const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const InventoryUI = preload("res://scripts/ui/field_inventory_ui.gd")
 const StationMenu = preload("res://scripts/ui/workstation_menu.gd")
-const ConstructionUI = preload("res://scripts/ui/construction_ui.gd")
+const ConstructionUI = preload("res://scripts/ui/fabrication_ui.gd")
 const OcraCatalog = preload("res://scripts/data/ocra_catalog.gd")
+const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
+const CubeView = preload("res://scripts/ui/physical_cube_view.gd")
 const SHIP_LAB_RECT := Rect2(-156, -194, 312, 114)
 const ITEM_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
 var world: Node2D
@@ -23,12 +25,12 @@ var selected_station: Dictionary = {}
 var construction: Node
 var preview_fixed := false
 var power_load := 0.0
+var fabrication := Fabrication.new()
+var local_lab_level := 1
+var activation_cube_id := 0
 
 func toggle_build() -> void:
-	build_mode = not build_mode
-	world.mouse_mining = false
-	if build_mode:
-		origin = placement_origin(blueprint, Grid.to_cell(world.player.position - Vector2(0, 1)))
+	world._note("Fabbrica un cubo nel laboratorio, prendilo e posalo con Spazio")
 
 func placement_origin(id: String, anchor: Vector2i) -> Vector2i:
 	var size := buildings.size_for(id)
@@ -42,6 +44,10 @@ func _ready() -> void:
 	construction = ConstructionUI.new()
 	construction.outpost = self
 	add_child(construction)
+	var cube_view := CubeView.new()
+	cube_view.outpost = self
+	cube_view.z_index = 7
+	add_child(cube_view)
 
 func station_rect(station: Dictionary) -> Rect2:
 	return SHIP_LAB_RECT if station.get("kind") == "ship" else buildings.world_rect(station.building)
@@ -129,7 +135,7 @@ func laboratory_unlocked() -> bool:
 	return (world.ship_state != null and world.ship_state.lab_research_unlocked) or world.guide_state.facts.get("lab_built", false) or not buildings.labs().is_empty()
 
 func recipe_visible(id: String) -> bool:
-	return id == "laboratory" or (id in ["lamp", "pump"] and laboratory_unlocked())
+	return id == "laboratory"
 
 func find_laboratory_space() -> Variant:
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
@@ -166,28 +172,62 @@ func lab_definition() -> Dictionary:
 	return OcraCatalog.load_data().get("laboratory", {})
 
 func lab_cube_count() -> int:
-	return world.field_cargo.available("lab_cube", world.drone_help_available())
+	return fabrication.cubes.size() + world.field_cargo.available("lab_cube", true)
+
+func station_identity(station: Dictionary) -> Array:
+	return ["ship"] if station.get("kind") == "ship" else ["laboratory", station.building.origin.x, station.building.origin.y]
+
+func resolve_station(identity: Array) -> Dictionary:
+	if identity == ["ship"]:
+		return {"kind": "ship"}
+	for lab: Dictionary in buildings.labs():
+		if identity == ["laboratory", lab.origin.x, lab.origin.y]:
+			return {"kind": "laboratory", "building": lab}
+	return {}
+
+func station_level(station: Dictionary = {}) -> int:
+	var current := nearby_station() if station.is_empty() else station
+	return int(world.ship_state.laboratory_level if world.ship_state != null else local_lab_level) if current.get("kind") == "ship" else int(current.get("building", {}).get("level", 1))
+
+func fabrication_seconds(station: Dictionary = {}) -> float:
+	return float(lab_definition().get("seconds", 5.0)) / (1.0 + 0.5 * (station_level(station) - 1))
+
+func fabrication_stock() -> Dictionary:
+	return source_stock() if source_available() else {}
+
+func fabrication_amount(id: String) -> int:
+	return world.field_cargo.available(id, true, fabrication_stock())
+
+func station_output(station: Dictionary) -> Vector2:
+	return Vector2(-80, -80) if station.get("kind") == "ship" else Vector2(buildings.world_rect(station.building).get_center().x, buildings.world_rect(station.building).end.y)
 
 func fabrication_blocker() -> String:
 	var definition := lab_definition()
 	if definition.is_empty():
 		return "Catalogo del laboratorio non disponibile"
-	if not world.aboard_workshop():
-		return "Raggiungi l'officina della nave per fabbricare il cubo"
+	var station := nearby_station()
+	if station.is_empty():
+		return "Raggiungi un laboratorio per fabbricare il cubo"
+	if station.get("kind") != "ship" and not operational(station.building):
+		return "Laboratorio spento, non alimentato o area non sicura"
+	var identity := station_identity(station)
+	if not fabrication.job_at(identity).is_empty():
+		return "Produzione in corso su questo banco"
+	if not fabrication.output_at(identity).is_empty():
+		return "Prendi il cubo pronto sul banco con Spazio"
+	if fabrication.cubes.any(func(cube: Dictionary): return cube.uid != fabrication.carried_id and cube.position.distance_to(station_output(station)) < 32):
+		return "Banco occupato da un cubo posato: spostalo con Spazio"
+	if fabrication.jobs.size() + fabrication.cubes.size() >= 200:
+		return "Troppi cubi o lavorazioni: utilizza quelli gia prodotti"
 	if world.ship_energy() < float(definition.energy):
 		return "Ricarica la batteria della nave"
-	var trial := Cargo.new()
-	trial.drone_capacity = world.field_cargo.drone_capacity
-	trial.restore(world.field_cargo.snapshot())
-	if not trial.pay(definition.cost, world.drone_help_available(), source_stock().duplicate()):
+	if not world.field_cargo.can_pay(definition.cost, true, fabrication_stock()):
 		var missing: Array[String] = []
 		for id: String in definition.cost:
-			var deficit: int = int(definition.cost[id]) - world.field_cargo.available(id, world.drone_help_available(), source_stock())
+			var deficit: int = int(definition.cost[id]) - fabrication_amount(id)
 			if deficit > 0:
 				missing.append("%d %s" % [deficit, ITEM_NAMES[id].to_lower()])
-		return "Mancano nell'officina o nel carico: " + ", ".join(missing)
-	if not trial.collect("lab_cube", 1, world.drone_help_available()):
-		return "Libera 4 posti nello stesso zaino: tuo o di Robbie"
+		return "Mancano: " + ", ".join(missing)
 	return ""
 
 func fabricate_lab_cube() -> bool:
@@ -196,43 +236,167 @@ func fabricate_lab_cube() -> bool:
 		world._note(reason)
 		return false
 	var definition := lab_definition()
-	world.field_cargo.pay(definition.cost, world.drone_help_available(), source_stock())
-	world.field_cargo.collect("lab_cube", 1, world.drone_help_available())
+	if not world.field_cargo.pay(definition.cost, true, fabrication_stock()):
+		return false
 	world._set_ship_energy(world.ship_energy() - float(definition.energy))
-	world.guide_event("lab_cube_crafted")
-	world._note("Cubo laboratorio nel carico: 4 posti, materiali gia pagati")
+	fabrication.jobs.append({"id": "laboratory", "level": 1, "station": station_identity(nearby_station()), "elapsed": 0.0, "seconds": fabrication_seconds()})
+	world.guide_event("lab_fabrication_started")
+	world._note("Produzione avviata: il cubo si materializza sul banco")
 	return true
+
+func advance_fabrication(delta: float) -> void:
+	if delta <= 0 or not is_finite(delta):
+		return
+	for job: Dictionary in fabrication.jobs.duplicate():
+		var station := resolve_station(job.station)
+		if not fabrication_pause_reason(job).is_empty():
+			continue
+		job.elapsed = minf(job.seconds, float(job.elapsed) + delta)
+		if job.elapsed >= job.seconds:
+			fabrication.add_cube(station_output(station), job.station)
+			fabrication.jobs.erase(job)
+			world.guide_event("lab_cube_crafted")
+			world._note("Cubo laboratorio pronto sul banco: avvicinati e premi Spazio")
+
+func fabrication_pause_reason(job: Dictionary) -> String:
+	var station := resolve_station(job.station)
+	if station.is_empty():
+		return "Produzione in pausa / laboratorio non disponibile"
+	if world.ship_energy() <= 0:
+		return "Produzione in pausa / ricarica la batteria della nave"
+	if station.kind != "ship" and not operational(station.building):
+		return "Produzione in pausa / accendi il laboratorio e verifica collegamento e sicurezza"
+	return ""
+
+func cube_near_player(cube: Dictionary) -> bool:
+	var point: Vector2 = cube.position
+	return absf(point.x - world.player.position.x) <= Grid.metres(1.1) and absf(point.y - world.player.position.y) <= Grid.metres(1.1) and _clear_cube_path(point)
+
+func _clear_cube_path(point: Vector2) -> bool:
+	var query := PhysicsRayQueryParameters2D.create(world.player.position - Vector2(0, 24), point - Vector2(0, 20), 1, [world.player.get_rid(), world.drone.get_rid()])
+	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
+
+func cube_at(point: Vector2) -> Dictionary:
+	for cube: Dictionary in fabrication.cubes:
+		if cube.uid != fabrication.carried_id and Rect2(cube.position - Vector2(22, 42), Vector2(44, 46)).has_point(point) and cube_near_player(cube):
+			return cube
+	return {}
+
+func use_cube() -> bool:
+	var carried := fabrication.carried()
+	if not carried.is_empty():
+		var cell := Grid.to_cell(world.player.position - Vector2(0, 1))
+		if not world.on_ladder(world.player.position) and not world.player.is_on_floor():
+			world._note("Per posare il cubo fermati sul pavimento o su una scala")
+			return true
+		if cell.y >= 0 and (not world.site.contains(cell) or not world.site.material(cell).is_empty()):
+			world._note("Non puoi posare il cubo dentro la roccia")
+			return true
+		var point := Vector2(Grid.center(cell).x, (cell.y + 1) * Grid.CELL_SIZE)
+		if cell.y < 0:
+			point = Vector2(world.player.position.x, world.player.position.y)
+		if fabrication.cubes.any(func(cube: Dictionary): return cube.uid != carried.uid and cube.position.distance_to(point) < 32):
+			world._note("C'e gia un cubo in questo punto")
+			return true
+		for job: Dictionary in fabrication.jobs:
+			var station := resolve_station(job.station)
+			if not station.is_empty() and station_output(station).distance_to(point) < 32:
+				world._note("Il banco sta producendo un cubo: posa questo altrove")
+				return true
+		carried.position = point
+		fabrication.carried_id = 0
+		world.player.queue_redraw()
+		world.guide_event("lab_cube_dropped")
+		world._note("Cubo posato: clic destro sul cubo per attivarlo")
+		return true
+	var nearest: Dictionary = {}
+	var distance := INF
+	for cube: Dictionary in fabrication.cubes:
+		var candidate: float = cube.position.distance_to(world.player.position)
+		if cube_near_player(cube) and candidate < distance:
+			nearest = cube
+			distance = candidate
+	if nearest.is_empty():
+		# Old saves carried paid cubes as inventory items. Materialize one on pickup.
+		if world.field_cargo.available("lab_cube", true) <= 0:
+			return false
+		world.field_cargo.pay({"lab_cube": 1}, true)
+		nearest = fabrication.add_cube(world.player.position)
+	fabrication.carried_id = nearest.uid
+	world.player.queue_redraw()
+	nearest.station = []
+	activation_cube_id = 0
+	build_mode = false
+	world.guide_event("lab_cube_carried")
+	world._note("Cubo in mano / Spazio per posarlo")
+	return true
+
+func cube_origin(cube: Dictionary) -> Vector2i:
+	return placement_origin(cube.id, Grid.to_cell(cube.position - Vector2(0, 1)))
+
+func activation_cube() -> Dictionary:
+	for cube: Dictionary in fabrication.cubes:
+		if cube.uid == activation_cube_id and cube.uid != fabrication.carried_id:
+			return cube
+	return {}
+
+func activate_cube(cube: Dictionary) -> bool:
+	if not fabrication.cubes.has(cube) or cube.uid == fabrication.carried_id or not cube_near_player(cube):
+		world._note("Avvicinati al cubo posato per attivarlo")
+		return false
+	activation_cube_id = cube.uid
+	blueprint = cube.id
+	origin = cube_origin(cube)
+	preview_fixed = true
+	build_mode = true
+	var reason := placement_blocker(cube.id, origin)
+	if not reason.is_empty():
+		world._note(reason + ". Riprendi il cubo con Spazio e spostalo.")
+		return false
+	var building: Dictionary = buildings.plan(cube.id, origin)
+	building.state = "building"
+	building.progress = 0.0
+	fabrication.cubes.erase(cube)
+	activation_cube_id = 0
+	build_mode = false
+	world.guide_event("lab_cube_deployed")
+	world._note("Apertura del laboratorio / materiali gia pagati")
+	return true
+
+func move_fabrication_to_ship() -> void:
+	if world.ship_state == null:
+		return
+	var aboard := Fabrication.new()
+	for job: Dictionary in fabrication.jobs.duplicate():
+		if job.station == ["ship"]:
+			aboard.jobs.append(job)
+			fabrication.jobs.erase(job)
+	for cube: Dictionary in fabrication.cubes.duplicate():
+		if cube.uid == fabrication.carried_id or (cube.position.y < 0 and absf(cube.position.x) < 160):
+			var copy := aboard.add_cube(cube.position, cube.station)
+			if cube.uid == fabrication.carried_id:
+				aboard.carried_id = copy.uid
+				fabrication.carried_id = 0
+			fabrication.cubes.erase(cube)
+	world.ship_state.fabrication = aboard
 
 func preview_blocker(id: String, cell: Vector2i) -> String:
 	var reason := placement_blocker(id, cell)
 	if not reason.is_empty():
 		return reason
-	if id == "laboratory" and lab_cube_count() <= 0:
-		return "Cubo laboratorio assente: fabbricalo nell'officina"
+	if id == "laboratory" and activation_cube().is_empty():
+		return "Posa il cubo con Spazio e attivalo con clic destro"
 	return ""
 
 func deploy_lab_cube(cell: Vector2i) -> bool:
-	var reason := preview_blocker("laboratory", cell)
-	if not reason.is_empty():
-		world._note(reason)
-		return false
-	if not world.field_cargo.pay({"lab_cube": 1}, world.drone_help_available()):
-		return false
-	buildings.plan("laboratory", cell)
-	var building: Dictionary = buildings.structures.back()
-	building.state = "building"
-	building.progress = 0.0
-	world.guide_event("lab_cube_deployed")
-	world._note("Il cubo si apre: nessun altro materiale da trasferire")
-	build_mode = false
-	queue_redraw()
-	return true
+	var cube := activation_cube()
+	return not cube.is_empty() and cube_origin(cube) == cell and activate_cube(cube)
 
 func place_blueprint(cell: Vector2i) -> bool:
 	return deploy_lab_cube(cell) if blueprint == "laboratory" else place(blueprint, cell)
 
 func placement_blocker(id: String, cell: Vector2i) -> String:
-	if id in ["lamp", "pump"] and not recipe_visible(id):
+	if id in ["lamp", "pump"] and not laboratory_unlocked():
 		return "Costruisci e attiva il primo laboratorio"
 	if buildings.structures.size() >= 200:
 		return "Limite di strutture e cantieri raggiunto"
@@ -386,13 +550,10 @@ func upgrade_blocker() -> String:
 	if station.is_empty():
 		return "Laboratorio fuori portata"
 	if station.kind == "ship":
-		if world.ship_state == null:
-			return "Potenziamenti della nave disponibili nella spedizione"
-		var reason: String = world.ship_state.upgrade_blocker("drill")
-		if not reason.is_empty():
-			return reason
-		var cost: Dictionary = world.ship_state.upgrade_cost("drill")
-		return "Livello massimo raggiunto" if cost.is_empty() else ("" if world.ship_state.can_afford(cost) else "Materiali insufficienti nella stiva")
+		if not laboratory_unlocked():
+			return "Attiva prima il primo laboratorio sotterraneo"
+		var level := station_level(station)
+		return "Livello massimo raggiunto" if level >= 3 else ("" if world.field_cargo.can_pay({"stone": 4 * level, "copper": 3 * level}, true, source_stock()) else "Materiali insufficienti nel carico comune e nel deposito")
 	var cost := Buildings.upgrade_cost(station.building)
 	if not operational(station.building):
 		return "Accendi il laboratorio e controlla la batteria della nave"
@@ -403,7 +564,14 @@ func upgrade_station() -> bool:
 		return false
 	var station := nearby_station()
 	if station.kind == "ship":
-		return world.ship_state.upgrade("drill")
+		var level := station_level(station)
+		if not world.field_cargo.pay({"stone": 4 * level, "copper": 3 * level}, true, source_stock()):
+			return false
+		if world.ship_state != null:
+			world.ship_state.laboratory_level += 1
+		else:
+			local_lab_level += 1
+		return true
 	var cost := Buildings.upgrade_cost(station.building)
 	if not world.field_cargo.pay(cost, world.drone_help_available(), station.building.stock):
 		return false
@@ -448,6 +616,9 @@ func _refresh_light_sources() -> void:
 				light_sources.append({"point": point, "inner": Grid.metres(1.2), "outer": Grid.metres(3.5)})
 
 func mining_blocker(cell: Vector2i) -> String:
+	for cube: Dictionary in fabrication.cubes:
+		if cube.uid != fabrication.carried_id and Grid.to_cell(cube.position - Vector2(0, 1)) + Vector2i.DOWN == cell:
+			return "Sposta prima il cubo appoggiato su questo blocco"
 	for building: Dictionary in buildings.structures:
 		if building.id == "ladder":
 			continue
@@ -457,6 +628,14 @@ func mining_blocker(cell: Vector2i) -> String:
 	return ""
 
 func _process(delta: float) -> void:
+	if not world.controls_locked:
+		advance_fabrication(delta)
+	var carried := fabrication.carried()
+	if not carried.is_empty():
+		carried.position = world.player.position - Vector2(0, 66)
+	if activation_cube_id != 0 and (activation_cube().is_empty() or not cube_near_player(activation_cube())):
+		activation_cube_id = 0
+		build_mode = false
 	_refresh_light_sources()
 	if build_mode:
 		if world.mouse_aim and not preview_fixed:
@@ -481,16 +660,14 @@ func handle_input(event: InputEvent) -> bool:
 	if build_mode and event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			build_mode = false
+		elif event.button_index == MOUSE_BUTTON_LEFT:
 			return true
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			var point: Vector2 = world.get_global_transform_with_canvas().affine_inverse() * event.position
-			place_blueprint(placement_origin(blueprint, Grid.to_cell(point)))
-			return true
-	if build_mode and event.is_action_pressed("interact"):
-		place_blueprint(origin)
-		return true
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		var point: Vector2 = world.get_global_transform_with_canvas().affine_inverse() * event.position
+		var cube := cube_at(point)
+		if not cube.is_empty():
+			construction.open_cube(cube, event.position)
+			return true
 		if open_station(station_at(point), event.position):
 			return true
 		for building: Dictionary in buildings.structures:
@@ -500,7 +677,7 @@ func handle_input(event: InputEvent) -> bool:
 				else:
 					world._note("Costruzione %.0f%%" % (float(building.progress) * 100))
 				return true
-		construction.open_picker(Grid.to_cell(point), event.position)
+		world._note("I cubi si creano al laboratorio. Scale immediate con B.")
 		return true
 	return false
 
@@ -580,6 +757,10 @@ func _draw() -> void:
 		var color := Color("87e4c0") if valid else Color("f16d72")
 		draw_rect(rect, Color(color, 0.14))
 		_dashed_rect(rect, color)
+		var cube := activation_cube()
+		if not cube.is_empty() and not valid:
+			var text := placement_blocker(cube.id, origin)
+			draw_string(ThemeDB.fallback_font, rect.position - Vector2(0, 12), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("ff9a9e"))
 
 func _dashed_rect(rect: Rect2, color: Color) -> void:
 	var corners := [rect.position, Vector2(rect.end.x, rect.position.y), rect.end, Vector2(rect.position.x, rect.end.y)]

@@ -107,7 +107,7 @@
       {
         "id": "first_excavation",
         "title_it": "Scava le prime due celle",
-        "hint_it": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Scava due celle: ogni blocco raccolto va nel tuo zaino o nel mio carico se sono vicino. La stiva della nave e separata.",
+        "hint_it": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Ogni blocco va nel tuo zaino o nel mio carico. I nostri materiali contano sempre insieme; la nave parte senza scorte. Raccogliamo 6 pietra e 4 rame per il laboratorio.",
         "detail_it": "Pulse / 2 celle da 1 metro",
         "action": "help",
         "complete_when": {"counter": "mined_cells", "at_least": 2}
@@ -121,26 +121,42 @@
         "complete_when": {"fact": "ladder"}
       },
       {
-        "id": "laboratory_cube",
-        "title_it": "Fabbrica il cubo laboratorio",
-        "hint_it": "Per il laboratorio servono 6 pietra e 4 rame. Puoi raccoglierli o usare le scorte iniziali in officina. Rientra al banco, clic destro e Costruisci: fabbrica il cubo, che occupa 4 posti. Portalo con te; non devi trasportare anche gli ingredienti gia usati.",
-        "detail_it": "Officina / 6 pietra + 4 rame / cubo da 4 posti",
-        "action": "fabricate_lab",
-        "complete_when": {"fact": "lab_cube_crafted"}
+        "id": "laboratory_materials",
+        "title_it": "Raccogli per il laboratorio",
+        "hint_it": "Ci servono 6 pietra e 4 rame: il tuo zaino e il mio carico si sommano sempre. La pietra inizia a 5 metri. Se ci riempiamo di terra, risali al banco e deposita: il deposito locale puo alimentare la fabbricazione. Nella nave non ci sono scorte regalate.",
+        "detail_it": "6 pietra + 4 rame / zaino e Robbie insieme",
+        "action": "inventory",
+        "complete_when": {"fact": "lab_materials_ready"}
       },
       {
         "id": "laboratory_room",
         "title_it": "Scava la stanza del laboratorio",
-        "hint_it": "Il cubo e pronto. Libera uno spazio largo 4 celle e alto 3, con terra o roccia sotto tutte le colonne. Puoi stare nella stanza mentre il laboratorio si apre. Se il carico e pieno, torna al banco e deposita il materiale.",
+        "hint_it": "Prima di trasportare il cubo, libera uno spazio largo 4 celle e alto 3, con pavimento continuo. Puoi restare nella stanza quando il laboratorio si apre. Se ci riempiamo, torna al banco e deposita il materiale.",
         "detail_it": "Stanza 4 x 3 m / pavimento continuo",
         "action": "help",
         "complete_when": {"fact": "lab_room_ready"}
       },
       {
+        "id": "laboratory_cube",
+        "title_it": "Fabbrica il cubo laboratorio",
+        "hint_it": "Rientra nel laboratorio della nave, clic destro sul banco e Costruisci. Nella riga Laboratorio trovi livello, tempo e risorse: quando sono tutte verdi premi Crea. Il cubo si materializza sul banco; puoi chiudere il pannello mentre lavora.",
+        "detail_it": "Laboratorio / clic destro / Costruisci / Crea",
+        "action": "fabricate_lab",
+        "complete_when": {"fact": "lab_cube_crafted"}
+      },
+      {
+        "id": "carry_laboratory",
+        "title_it": "Prendi il cubo pronto",
+        "hint_it": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, senza occupare lo zaino. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
+        "detail_it": "Cubo sul banco / avvicinati e premi Spazio",
+        "action": "help",
+        "complete_when": {"fact": "lab_cube_carried"}
+      },
+      {
         "id": "deploy_laboratory",
         "title_it": "Apri il cubo nella stanza",
-        "hint_it": "Qui entra il laboratorio! Clic destro nell'area, scegli Laboratorio e Posiziona cubo. Fai entrare tutto il tratteggio nello scavo e clicca. Il cubo si apre senza chiedere altri materiali; attendi la barra e vedrai il banco illuminarsi.",
-        "detail_it": "Posa il cubo / nessun secondo pagamento",
+        "hint_it": "Porta il cubo nella stanza e premi Spazio per posarlo. Poi clic destro sul cubo e Attiva laboratorio. Se il tratteggio e rosso, leggi l'errore, riprendilo con Spazio e spostalo. Quando tutto entra il cubo si apre, senza chiedere altri materiali.",
+        "detail_it": "Spazio: posa / clic destro sul cubo: attiva",
         "action": "place_lab",
         "complete_when": {"fact": "lab_built"}
       }

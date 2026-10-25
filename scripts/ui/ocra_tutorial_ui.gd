@@ -71,7 +71,7 @@ func refresh() -> void:
 	if tutorial.complete():
 		title.text = "Primo laboratorio attivo"
 		title.modulate = Color("a7e5b4")
-		detail.text = "Hai una base sotterranea. Ora puoi depositare, riparare e costruire le luci."
+		detail.text = "Hai una base sotterranea. Puoi depositare, riparare e fabbricare altri laboratori."
 		action.text = "Apri laboratorio" if not world.outpost.nearby_lab().is_empty() else "Riascolta Robbie"
 		return
 	if step.is_empty():
@@ -81,19 +81,19 @@ func refresh() -> void:
 	detail.text = step.detail_it
 	if step.complete_when.has("counter"):
 		stock.text = "%d / %d celle scavate" % [mini(tutorial.counters.get(step.complete_when.counter, 0), int(step.complete_when.at_least)), step.complete_when.at_least]
-	if step.action == "fabricate_lab":
+	if step.action == "fabricate_lab" or step.id == "laboratory_materials":
 		var cargo: RefCounted = world.field_cargo
 		var source: Dictionary = world.outpost.source_stock() if world.aboard_workshop() else {}
 		var cost: Dictionary = world.outpost.lab_definition().get("cost", {})
 		stock.text = "Pietra %d / %d   Rame %d / %d" % [cargo.available("stone", world.drone_help_available(), source), cost.get("stone", 0), cargo.available("copper", world.drone_help_available(), source), cost.get("copper", 0)]
-		action.text = "Apri officina" if world.aboard_workshop() else "Riascolta Robbie"
+		action.text = "Apri officina" if step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
 	elif step.action == "place_lab":
 		var building: Dictionary = world.outpost.buildings.structures.filter(func(item: Dictionary): return item.id == "laboratory").front() if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory") else {}
 		if not building.is_empty():
 			stock.text = "Montaggio %.0f%%" % (float(building.progress) * 100) if building.state == "building" else "Cantiere precedente / trasferisci le materie mancanti"
 		else:
-			stock.text = "Cubo nel carico: %d" % world.outpost.lab_cube_count()
-		action.text = "Posiziona cubo" if building.is_empty() and world.outpost.lab_cube_count() > 0 else "Riascolta Robbie"
+			stock.text = "Cubo in mano / Spazio per posare" if world.outpost.fabrication.carried_id != 0 else "Cubo posato / clic destro per attivare"
+		action.text = "Riascolta Robbie"
 	else:
 		action.text = "Apri inventario" if step.action == "inventory" else "Riascolta Robbie"
 
@@ -106,9 +106,6 @@ func _activate() -> void:
 		world.outpost.open_station(world.outpost.nearby_station(), world.player.get_global_transform_with_canvas() * Vector2(0, -40))
 	elif step.get("action") == "fabricate_lab" and world.aboard_workshop():
 		world.outpost.construction.open_picker(world.Grid.to_cell(world.player.position), Vector2(330, 180), true)
-	elif step.get("action") == "place_lab" and world.outpost.lab_cube_count() > 0:
-		world.outpost.construction.open_picker(world.Grid.to_cell(world.player.position), Vector2(330, 180))
-		world.outpost.construction._choose(0)
 	elif step.get("action") == "inventory":
 		world.outpost.open_cargo()
 	else:

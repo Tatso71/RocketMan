@@ -41,7 +41,7 @@ func climb_to(y: float) -> void:
 
 func return_to_workshop() -> void:
 	Input.action_press("climb_up")
-	for index in range(210):
+	for index in range(400):
 		if world.player.position.y < -77:
 			Input.action_press("move_left")
 		if world.player.position.x < -55 and world.player.position.y < -77:
@@ -85,7 +85,7 @@ func layout() -> void:
 		check(not panel.intersects(world.guide.bubble.get_global_rect()), "Robbie balloon avoids objective panel")
 
 func _run() -> void:
-	create_timer(130).timeout.connect(func(): push_error("Ocra onboarding timeout"); quit(2))
+	create_timer(160).timeout.connect(func(): push_error("Ocra onboarding timeout"); quit(2))
 	capture = "--capture" in OS.get_cmdline_user_args()
 	root.size = Vector2i(1280, 720)
 	campaign = load("res://scenes/prototype/expedition.tscn").instantiate()
@@ -118,30 +118,8 @@ func _run() -> void:
 	await mine(Vector2i(-1, 0))
 	check(task() == "return_ladder", "two actual mined cells lead to instant ladder objective")
 	await climb_to(40)
-	check(world.place_ladder() and task() == "laboratory_cube", "character builds first ladder immediately using mined soil")
-	await return_to_workshop()
-	check(world.aboard_workshop(), "player can physically climb back aboard to fabricate the cube")
-	await frames(90)
-	world.outpost.open_station({"kind": "ship"}, Vector2(550, 330))
-	world.outpost.station_menu.activate(2)
-	var ui: Node = world.outpost.construction
-	check(ui.picker.visible and ui.fabrication_mode and not world.outpost.build_mode, "ship construction opens fabrication without a red terrain footprint")
-	var before: Dictionary = campaign.model.ship.resources.duplicate()
-	ui.craft_button.pressed.emit()
-	ui._process(2)
-	ui._cancel_picker()
-	check(campaign.model.ship.resources == before and world.outpost.lab_cube_count() == 0, "cancelled fabrication consumes no ingredients or output")
-	ui.open_picker(Vector2i.ZERO, Vector2(340, 160), true)
-	ui.craft_button.pressed.emit()
-	await screenshot("ocra-02-fabrication-720p", ui.picker)
-	ui._process(5.1)
-	check(world.outpost.lab_cube_count() == 1, "workshop fabricates a physical laboratory cube")
-	check(world.field_cargo.used(world.field_cargo.backpack) == 4 and world.field_cargo.backpack.get("lab_cube", 0) == 1, "one cube occupies four backpack units")
-	check(int(before.stone) - int(campaign.model.ship.resources.stone) == 6 and int(before.copper) - int(campaign.model.ship.resources.copper) == 4, "fabrication charges exactly the authored ingredients once")
-	check(task() == "laboratory_room", "crafting changes goal to digging a supported 4 by 3 room")
-	ui._cancel_picker()
-	await walk_to(20)
-	await climb_to(40)
+	check(world.place_ladder() and task() == "laboratory_materials", "character builds first ladder and must gather real resources, not free ship stock")
+	check(campaign.model.ship.cargo_used() == 0, "Ocra starts with an empty ship hold")
 	for y in range(1, 4):
 		await mine(Vector2i(0, y))
 		await mine(Vector2i(-1, y))
@@ -154,10 +132,10 @@ func _run() -> void:
 			await mine(Vector2i(x, y))
 		await walk_to(x * 40 + 20)
 	world.guide.room_poll = 0
-	check(task() == "deploy_laboratory", "actual excavation, not a fixture room, advances the placement objective")
+	check(world.guide_state.ocra.facts.get("lab_room_ready", false) or task() == "laboratory_materials", "room can be prepared before cube fabrication without artificial task gates")
 	await frames(120)
 	check(world.drone.position.distance_to(world.player.position - Vector2(0, 32)) >= 60, "Robbie rests outside the player's personal space")
-	check(world.drone_help_available(), "greater following distance still keeps Robbie's cargo usable")
+	check(world.drone_help_available(), "Robbie's cargo is always part of the common resource pool")
 	await walk_to(-60)
 	world.player.facing = -world.player.facing
 	var no_overlap := true
@@ -172,15 +150,47 @@ func _run() -> void:
 	world.guide.request_help()
 	layout()
 	await screenshot("ocra-03-room-and-spacing-720p")
-	ui.open_picker(Vector2i(-2, 3), Vector2(460, 260))
-	ui._choose(0)
-	var cargo_before: Dictionary = world.field_cargo.snapshot()
+	for y in range(3, 0, -1):
+		await mine(Vector2i(-5, y))
+	await walk_to(20)
+	for y in range(4, 8):
+		await mine(Vector2i(0, y))
+		await mine(Vector2i(-1, y))
+		check(world.place_ladder_at(Vector2i(0, y)), "build actual ladder while gathering at depth " + str(y + 1))
+		await climb_to((y + 1) * 40)
+	await mine(Vector2i(1, 7))
+	check(world.field_cargo.available("stone", true) >= 6 and world.field_cargo.available("copper", true) >= 4, "virgin Ocra supplies first laboratory ingredients through reachable native mining")
+	await return_to_workshop()
+	check(world.aboard_workshop(), "climb the actual dug shaft back to the workshop")
+	await frames(20)
+	world.outpost.open_station({"kind": "ship"}, Vector2(550, 330))
+	world.outpost.station_menu.activate(2)
+	var ui: Node = world.outpost.construction
+	check(ui.picker.visible and not world.outpost.build_mode, "workshop opens physical fabrication table without a red terrain footprint")
+	var stone_before: int = world.field_cargo.available("stone", true)
+	var copper_before: int = world.field_cargo.available("copper", true)
+	ui.craft_button.pressed.emit()
+	await screenshot("ocra-02-fabrication-720p", ui.picker)
+	ui._cancel_picker()
+	world.outpost.advance_fabrication(5.1)
+	check(world.outpost.fabrication.cubes.size() == 1 and world.field_cargo.available("lab_cube", true) == 0, "cube materializes on bench rather than in backpack")
+	check(stone_before - world.field_cargo.available("stone", true) == 6 and copper_before - world.field_cargo.available("copper", true) == 4, "fabrication charges only actually mined ingredients once")
+	check(task() == "carry_laboratory" and world.outpost.use_cube(), "Robbie asks to take ready cube with Space")
+	if world.outpost.fabrication.cubes.is_empty():
+		quit(1)
+		return
+	check(task() == "deploy_laboratory", "early excavation is remembered after picking up the cube")
+	await walk_to(20)
+	await climb_to(140)
+	await walk_to(-100)
+	await frames(30)
+	check(world.outpost.use_cube() and world.outpost.fabrication.carried_id == 0, "physically carry and drop the cube on the excavated room's floor")
+	var cube: Dictionary = world.outpost.fabrication.cubes[0]
 	var stock_before: Dictionary = campaign.model.ship.resources.duplicate()
-	check(not world.outpost.deploy_lab_cube(Vector2i(10, 0)), "invalid location cannot consume a carried cube")
-	check(world.field_cargo.snapshot() == cargo_before, "invalid deployment preserves every carried item")
-	check(world.outpost.deploy_lab_cube(Vector2i(-4, 1)), "carried cube starts assembly inside the excavated room")
+	check(world.outpost.activate_cube(cube), "right-click activation starts the paid room's assembly")
 	if world.outpost.buildings.structures.is_empty():
-		print("DEPLOY BLOCKER: " + world.outpost.preview_blocker("laboratory", Vector2i(-4, 1)))
+		print("DEPLOY GEOMETRY: player=%s cube=%s origin=%s carried=%s" % [world.player.position, cube.position, world.outpost.cube_origin(cube), world.outpost.fabrication.carried_id])
+		print("DEPLOY BLOCKER: " + world.outpost.placement_blocker("laboratory", world.outpost.cube_origin(cube)))
 		quit(1)
 		return
 	var lab: Dictionary = world.outpost.buildings.structures.back()

@@ -110,7 +110,7 @@
         "recipe_and_folded_cube",
         "world_footprint_preview"
       ],
-      "primary": "craft_or_place_cube",
+      "primary": "create_physical_cube_at_station",
       "secondary": "pin_recipe",
       "focus_order": [
         "category",
@@ -120,7 +120,13 @@
       ],
       "world_paused": "menu_only",
       "rules": [
-        "show_folded_inventory_cost_and_unfolded_width_height",
+        "rows_object_name_output_level_seconds_each_resource_red_or_green_create_button",
+        "create_button_disabled_until_all_resources_green_and_bench_available",
+        "always_sum_player_and_robbie_materials_plus_reachable_station_storage",
+        "physical_materialization_progress_on_bench_persists_after_menu_close",
+        "space_pick_up_or_drop_one_cube_separate_from_backpack",
+        "right_click_dropped_cube_to_activate",
+        "prototype_only_laboratory_then_future_light_water_pump_gas_fan_unlocks",
         "ghost_cells_plus_obstruction_reason",
         "show_ports_floor_and_return_path",
         "no_green_preview_until_all_checks_pass",

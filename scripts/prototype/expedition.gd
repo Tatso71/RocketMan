@@ -65,6 +65,8 @@ func _sync_phase() -> void:
 		add_child(world)
 		if model.outposts.has(model.active_planet):
 			world.restore_state(model.outposts[model.active_planet], false)
+		world.outpost.fabrication.import_state(model.ship.fabrication)
+		model.ship.fabrication = world.outpost.Fabrication.new()
 	_refresh_interface()
 	planet_list.select(_selected_index())
 
@@ -105,6 +107,7 @@ func request_takeoff() -> bool:
 	if model.ship.hull < 20 or model.ship.fuel < 6 or model.ship.energy < 2:
 		_notify("Ripara lo scafo, rifornisci e ricarica prima del decollo")
 		return false
+	world.outpost.move_fabrication_to_ship()
 	model.outposts[model.active_planet] = world.capture_state()
 	if not model.takeoff():
 		return false

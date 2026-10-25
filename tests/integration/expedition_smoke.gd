@@ -59,6 +59,7 @@ func _run() -> void:
 	await frames()
 	await screenshot("expedition-ship-modules", campaign.ship_menu)
 	campaign.module_picker.select(2)
+	campaign.model.ship.resources = {"soil": 0, "stone": 8, "copper": 6, "crystal": 0}
 	campaign._upgrade()
 	check(campaign.model.ship.cargo_capacity() == 200, "cargo expansion can be installed")
 	campaign._close_ship_menu()

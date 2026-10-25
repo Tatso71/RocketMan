@@ -53,6 +53,7 @@ func _run() -> void:
 	check(world.drone_help_available(), "support drone starts aboard within helping distance")
 	await screenshot("outpost-virgin-arrival-1080p")
 	check(not world.outpost.craft_lamp(), "lights cannot be fabricated before building a lab")
+	campaign.model.ship.resources = {"soil": 12, "stone": 8, "copper": 6, "crystal": 0}
 	check(world.field_cargo.withdraw(campaign.model.ship.resources, "stone", 6, world.drone_help_available()), "load laboratory stone physically from ship")
 	check(world.field_cargo.withdraw(campaign.model.ship.resources, "copper", 4, world.drone_help_available()), "drone carries recipe overflow beyond backpack capacity")
 	check(world.field_cargo.used(world.field_cargo.backpack) == 8 and world.field_cargo.used(world.field_cargo.drone) == 2, "backpack and drone have distinct bounded holds")
@@ -145,7 +146,7 @@ func _run() -> void:
 	world.player.set_physics_process(false)
 	world.player.position = Vector2(740, 160)
 	await frames(150)
-	check(not world.drone_help_available(), "drone cannot assist an explorer beyond its signal range")
+	check(not world.drone_can_collect() and world.drone_help_available(), "radio limits new collection, not the always-shared material pool")
 	check(world.drone.position.distance_to(Vector2(0, -80)) <= 601, "drone remains inside the fifteen-metre ship radius")
 	check(world.drone.status == "Limite segnale", "drone reports waiting at radio limit")
 	world.field_cargo.backpack.clear()

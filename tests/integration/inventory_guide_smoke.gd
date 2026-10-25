@@ -52,6 +52,7 @@ func _run() -> void:
 	root.add_child(world)
 	current_scene = world
 	Fixture.workshop(world)
+	world.local_store = {"soil": 12, "stone": 8, "copper": 6}
 	await frames(10)
 	world.player.set_physics_process(false)
 	world.drone.set_physics_process(false)
@@ -121,7 +122,7 @@ func _run() -> void:
 	world.field_cargo.collect("copper", 4, true)
 	check(world.outpost.funding_blocker(site).is_empty(), "laboratory cube can overlap the explorer")
 	check(world.outpost.fund_site(site), "fund laboratory while standing inside its footprint")
-	world.outpost.construction.window.hide()
+	world.outpost.construction.activation_popup.hide()
 	world.outpost.advance(5.1)
 	check(world.guide_state.facts.get("lab_built", false), "laboratory completion reaches drone tutorial")
 	world.guide_state.dismiss()

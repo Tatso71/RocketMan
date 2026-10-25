@@ -37,7 +37,11 @@ Gli eventi gia avvenuti restano validi anche se il giocatore esegue le azioni in
 | `ladder` | Scala realmente costruita e pagata |
 | `inventory_opened` | Inventario aperto da qualsiasi accesso |
 | `bed_inspected` | Apertura del pannello del letto |
-| `lab_cube_crafted` | Cubo fisico fabbricato, oppure gia presente nel carico |
+| `lab_materials_ready` | 6 pietra + 4 rame nel carico comune o nel deposito locale raggiungibile |
+| `lab_fabrication_started` | Pagamento unico e lavorazione avviata sul banco |
+| `lab_cube_crafted` | Cubo pronto fisicamente sul banco, oppure cubo pagato da un salvataggio precedente |
+| `lab_cube_carried` | Cubo preso con Spazio e portato in mano |
+| `lab_cube_dropped` | Cubo posato con Spazio prima dell'attivazione |
 | `lab_room_ready` | Stanza 4 x 3 libera, asciutta, sostenuta e nel raggio locale |
 | `lab_cube_deployed` | Cubo consumato e montaggio iniziato |
 | `lab_built` | Laboratorio attivo dopo il montaggio |
@@ -49,9 +53,15 @@ Per una nuova azione di gioco emettere una volta `world.guide_event("nome_evento
 
 ## Costruzione E Compatibilita
 
-Il laboratorio usa la ricetta `recipe_cube_lab`: fabbricazione di 5 s in officina, 6 pietra + 4 rame e 0.01 kWh. Il pagamento avviene alla conclusione dopo una nuova verifica di ingredienti e spazio. Chiudere il menu annulla un assemblaggio non completato senza costi; non esiste un lavoro pagato nascosto da ripristinare. Il cubo occupa 4 posti in un solo contenitore, non puo essere diviso fra zaino e Robbie. Posarlo consuma un cubo e avvia il montaggio di 5 s, senza un secondo pagamento; il montaggio pagato e persistente anche a meta.
+Le nuove partite iniziano senza materiali nella nave, nel giocatore o in Robbie. I due carichi si sommano sempre per disponibilita, pagamento e trasferimenti; il raggio radio continua a limitare il movimento del robot e la raccolta di nuove risorse, non l'uso dei materiali gia trasportati. Il deposito della nave o del laboratorio contribuisce solo quando quel banco e raggiungibile.
 
-I vecchi cantieri gia posati e non finanziati mantengono la richiesta di materie sul posto; non vengono convertiti o addebitati di nuovo. Luci e pompe mantengono il precedente flusso di finanziamento locale in questa tranche. Il resto del catalogo completo, la nuova progressione planetaria e l'eventuale strato limite di Ocra non sono implementati da questo tutorial.
+La ricetta `recipe_cube_lab` costa 6 pietra + 4 rame e 0.01 kWh. Crea verifica e paga atomicamente all'avvio, riservando il singolo slot di uscita del banco: non occorre spazio nello zaino. La produzione dura 5 / 3.33 / 2.5 secondi ai livelli I / II / III del laboratorio e produce attualmente un laboratorio di livello I. Il cubo si materializza sul banco con una barra; il lavoro continua chiudendo il pannello e persiste anche a meta. Un banco sotterraneo spento o senza energia sospende il lavoro pagato senza perderlo.
+
+Spazio vicino al cubo lo prende; Spazio mentre lo si trasporta lo posa senza saltare. Un solo cubo puo stare in mano, separato dalle risorse dello zaino. Durante il trasporto lo strumento non puo scavare. Clic destro sul cubo posato apre Attiva laboratorio: solo ora viene verificato l'intero ingombro 4 x 3. Se non entra, il cubo resta recuperabile con tratteggio rosso e motivo del blocco; non si paga nulla. Se valido, viene consumato quel cubo e parte il montaggio di 5 s. Il personaggio puo stare nell'ingombro.
+
+`fabrication_state.gd` salva lavori pagati, cubi pronti/posati e il cubo in mano. Il banco di bordo e i cubi che viaggiano sulla nave vengono trasferiti allo stato nave al decollo e importati una sola volta al nuovo atterraggio. Le lavorazioni locali restano sul pianeta; non si simulano pianeti non visitati o tempo offline. I vecchi cubi pagati nello zaino vengono materializzati quando si preme Spazio; le scorte reali gia presenti nei salvataggi non vengono cancellate.
+
+I vecchi cantieri non finanziati conservano un comando esplicito di compatibilita con materiali comuni, senza popup automatici. Il solo oggetto nel nuovo pannello e il laboratorio. Luci, pompa asciuga acqua e ventilatore rimuovi gas sono gli sblocchi futuri: non sono offerti oggi; vecchie luci/pompe gia salvate continuano a funzionare. Scale sempre immediate con B, per 2 terra e senza cubo. La progressione completa e lo strato limite di Ocra restano da definire.
 
 ## Verifica
 
@@ -60,6 +70,7 @@ node tools/design/build.mjs
 node tools/design/validate.mjs
 node tools/design/check-preview.mjs
 godot --headless --path . -s res://tests/integration/ocra_onboarding_smoke.gd
+godot --headless --path . -s res://tests/integration/physical_fabrication_smoke.gd
 ```
 
 Il test attraversa la nave e scava realmente la stanza, senza la fixture di gallerie preesistenti. `-- --capture` senza `--headless` verifica pannello obiettivo, balloon, fabbricazione, distanza di Robbie e laboratorio a 720p/1080p. I test unitari coprono l'aggiunta di un compito dai dati, ordine libero, richiamo, priorita dei pericoli e salvataggi nativi/JSON.

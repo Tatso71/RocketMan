@@ -19,6 +19,9 @@ func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
 		return
 	var horizontal := Input.get_axis("move_left", "move_right")
+	var jump_pressed := Input.is_action_just_pressed("jump")
+	if jump_pressed and world.outpost.use_cube():
+		jump_pressed = false
 	var vertical := Input.get_axis("climb_up", "climb_down")
 	var environment: Dictionary = world.player_environment()
 	var wet: bool = environment.wet
@@ -30,14 +33,14 @@ func _physics_process(delta: float) -> void:
 	climbing = world.on_ladder(position) and (absf(vertical) > 0.1 or climbing or not is_on_floor())
 	if climbing:
 		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor
-		if Input.is_action_just_pressed("jump"):
+		if jump_pressed:
 			climbing = false
 	else:
 		velocity.x = horizontal * 190 * speed_factor
 		velocity.y = minf(velocity.y + (260 if wet else 900) * delta, 140 if wet else 650)
 		if wet and vertical < -0.1:
 			velocity.y = -100
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if jump_pressed and is_on_floor():
 		velocity.y = -330
 	if horizontal != 0:
 		facing = signf(horizontal)
@@ -57,5 +60,7 @@ func _draw() -> void:
 	draw_circle(Vector2(facing * 4, -33), 3, Color("8de2e5"))
 	draw_circle(Vector2(0, -43), 4, Color("fff3bf"))
 	draw_line(Vector2(facing * 8, -20), Vector2(facing * 18, -22), Color("f7c45c"), 6)
+	if not world.outpost.fabrication.carried().is_empty():
+		return
 	draw_colored_polygon(PackedVector2Array([Vector2(facing * 15, -29), Vector2(facing * 31, -29), Vector2(facing * 34, -25), Vector2(facing * 31, -20), Vector2(facing * 15, -20)]), Color("526e79"))
 	draw_line(Vector2(facing * 22, -24), Vector2(facing * 34, -25), world.active_tool().beam_color, 3)

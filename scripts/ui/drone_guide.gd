@@ -87,8 +87,8 @@ func context() -> String:
 		return "bed_rest"
 	var step: Dictionary = state.ocra.current()
 	if world.is_ocra() and not step.is_empty() and not state.ocra.complete():
-		if world.field_cargo.free_space(world.drone_help_available()) <= 0:
-			return "cargo_full" if world.drone_help_available() else "drone_unavailable"
+		if step.id not in ["laboratory_cube", "carry_laboratory", "deploy_laboratory"] and world.field_cargo.free_space(world.drone_can_collect()) <= 0:
+			return "cargo_full" if world.drone_can_collect() else "drone_unavailable"
 		if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory" and item.get("state") == "planned"):
 			return "tutorial_fund"
 		return "ocra/" + step.id
@@ -96,8 +96,8 @@ func context() -> String:
 		return "bed_rest"
 	if world.drone.status == "Limite segnale":
 		return "signal_limit"
-	if world.field_cargo.free_space(world.drone_help_available()) <= 0:
-		return "cargo_full" if world.drone_help_available() else "drone_unavailable"
+	if world.field_cargo.free_space(world.drone_can_collect()) <= 0:
+		return "cargo_full" if world.drone_can_collect() else "drone_unavailable"
 	if not world.outpost.laboratory_unlocked() and state.facts.get("mined", false):
 		for building: Dictionary in world.outpost.buildings.structures:
 			if building.id == "laboratory":
@@ -121,7 +121,7 @@ func context() -> String:
 		if state.facts.get(id, false) and id not in state.seen:
 			return id
 	if world.outpost.has_lab():
-		return "lamp_plan"
+		return "lab_built"
 	if state.facts.get("mined", false):
 		if "lab_plan" not in state.seen:
 			return "lab_plan"
@@ -187,7 +187,7 @@ func _update_bubble() -> void:
 		speech.text = replay_text if not replay_text.is_empty() else state.message(current_id)[2]
 		bubble.size = Vector2(332, 0)
 	if current_id == "cargo_full" and replay_text.is_empty():
-		speech.text = "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi lo zaino e anche il mio carico se resto vicino. Per ripartire scegli Preleva materiali o Costruisci." if world.outpost.source_available() else Guide.MESSAGES[current_id][2]
+		speech.text = "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Per ripartire scegli Preleva materiali o Costruisci." if world.outpost.source_available() else Guide.MESSAGES[current_id][2]
 	last_message_id = current_id
 	last_message_text = speech.text
 	var viewport := get_viewport().get_visible_rect().size
@@ -210,7 +210,7 @@ func _update_bubble() -> void:
 		var clamped := candidate.clamp(safe.position, safe.end - size)
 		var rect := Rect2(clamped, size)
 		var score := candidate.distance_to(clamped)
-		var obstacles: Array[Rect2] = [body, Rect2(0, 70, 400, 105), Rect2(viewport.x - 304, 70, 304, 300)]
+		var obstacles: Array[Rect2] = [body, Rect2(0, 70, 400, 105), Rect2(viewport.x - 352, 70, 352, 300)]
 		if is_instance_valid(world.tutorial_ui) and world.tutorial_ui.panel.visible:
 			obstacles.append(world.tutorial_ui.panel.get_global_rect())
 		for obstacle: Rect2 in obstacles:

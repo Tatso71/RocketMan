@@ -59,6 +59,7 @@ func _run() -> void:
 	campaign._process(10)
 	world = campaign.world
 	Fixture.workshop(world)
+	campaign.model.ship.resources = {"soil": 12, "stone": 12, "copper": 12, "crystal": 0}
 	await frames()
 	world.player.set_physics_process(false)
 	world.drone.set_physics_process(false)
@@ -88,7 +89,7 @@ func _run() -> void:
 	menu.activate(2)
 	await frames()
 	var construction: Node = world.outpost.construction
-	check(construction.picker.visible and construction.recipe_items.size() == 1, "construction action uses dependency tree with locked children hidden")
+	check(construction.picker.visible and construction.resource_labels.size() == 2, "construction action opens the laboratory recipe table")
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(construction.picker, construction.picker.get_visible_rect()), "construction tree fits at 720p")
 	await screenshot("workstation-construction", construction.picker)
@@ -114,7 +115,7 @@ func _run() -> void:
 	campaign.model.ship.resources.copper = 20
 	menu.refresh()
 	menu.rows[0].button.pressed.emit()
-	check(campaign.model.ship.modules.drill == 2 and "resonator" in campaign.model.ship.tool_slots, "ship laboratory upgrade improves tools rather than a cosmetic level")
+	check(campaign.model.ship.laboratory_level == 2 and world.outpost.fabrication_seconds() < 5, "ship laboratory upgrade reduces actual production time")
 	menu.window.hide()
 	world.guide_state.offer("first_dig", true)
 	world.guide._update_bubble()
@@ -132,6 +133,8 @@ func _run() -> void:
 	check(world.guide.speech.text == message, "drone hit testing follows camera zoom")
 	world.guide_state.dismiss()
 	Fixture.lab_room(world)
+	world.field_cargo.backpack = {"stone": 6, "copper": 2}
+	world.field_cargo.drone = {"copper": 2}
 	world.set_hatch(true)
 	world.player.position = Vector2(-140, 160)
 	world.drone.position = Vector2(-100, 90)
@@ -170,8 +173,8 @@ func _run() -> void:
 	menu.window.hide()
 	click(Vector2(-120, 100), MOUSE_BUTTON_RIGHT)
 	menu.activate(2)
-	construction._choose(1)
-	check(world.outpost.build_mode and world.outpost.blueprint == "lamp" and not menu.is_open(), "light cube action closes popup and enters snapped planning mode")
+	check(construction.picker.visible and not world.outpost.recipe_visible("lamp") and not world.outpost.build_mode, "field station opens fabrication; future devices cannot create free plans")
+	construction.picker.hide()
 	world.outpost.build_mode = false
 	# Keep the multi-station fixture dry; fluid behavior has a separate smoke test.
 	world.environment.water.clear()

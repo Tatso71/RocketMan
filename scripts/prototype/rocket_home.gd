@@ -52,7 +52,7 @@ var mouse_mining := false
 var local_suit := 100.0
 var hazard_label: Label
 var field_cargo := FieldCargo.new()
-var local_store: Dictionary = {"soil": 12, "stone": 8, "copper": 6, "crystal": 0, "lamp_kit": 0}
+var local_store: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0, "lamp_kit": 0}
 var drone: CharacterBody2D
 var outpost: Node2D
 var navigation_revision := 0
@@ -80,12 +80,21 @@ func observe_tutorial(room_ready: bool = false) -> void:
 		tutorial.mark("ladder")
 	if outpost.lab_cube_count() > 0:
 		tutorial.mark("lab_cube_crafted")
+		tutorial.mark("lab_materials_ready")
+	if not outpost.fabrication.jobs.is_empty():
+		tutorial.mark("lab_materials_ready")
+	if outpost.fabrication.carried_id != 0:
+		tutorial.mark("lab_cube_carried")
+	if field_cargo.can_pay(outpost.lab_definition().get("cost", {}), true, outpost.fabrication_stock()):
+		tutorial.mark("lab_materials_ready")
 	if room_ready:
 		tutorial.mark("lab_room_ready")
 	for building: Dictionary in outpost.buildings.structures:
 		if building.id == "laboratory":
-			tutorial.mark("lab_cube_crafted")
 			tutorial.mark("lab_room_ready")
+			if building.get("state") != "planned":
+				tutorial.mark("lab_cube_crafted")
+				tutorial.mark("lab_materials_ready")
 			if Buildings.is_active(building):
 				tutorial.mark("lab_built")
 	if guide_state.facts.get("lab_built", false) or (ship_state != null and ship_state.lab_research_unlocked):
@@ -118,6 +127,9 @@ func aboard_workshop() -> bool:
 	return is_instance_valid(player) and absf(player.position.x) < 160 and player.position.y <= -78 and player.position.y > -200
 
 func drone_help_available() -> bool:
+	return is_instance_valid(drone)
+
+func drone_can_collect() -> bool:
 	return is_instance_valid(drone) and drone.signal_connected() and drone.position.distance_to(player.position - Vector2(0, 32)) <= Grid.metres(3) and drone._clear(drone.position, player.position - Vector2(0, 32))
 
 func suit_integrity() -> float:
@@ -402,6 +414,8 @@ func can_reach(cell: Vector2i) -> bool:
 	return not hit.is_empty() and blocks.get(cell) == hit.collider
 
 func target_blocker(cell: Vector2i) -> String:
+	if not outpost.fabrication.carried().is_empty():
+		return "Posa il cubo con Spazio prima di usare lo strumento"
 	if site.material(cell).is_empty():
 		return "Spazio libero"
 	if not can_reach(cell):
@@ -415,7 +429,7 @@ func target_blocker(cell: Vector2i) -> String:
 		return "Materiale incompatibile: serve un altro strumento"
 	if ship_energy() < tool.energy_per_pulse:
 		return "Energia esaurita: ricarica in officina"
-	if tool.mode == "mine" and field_cargo.free_space(drone_help_available()) <= 0:
+	if tool.mode == "mine" and field_cargo.free_space(drone_can_collect()) <= 0:
 		return "Carico pieno: deposita zaino e drone"
 	return ""
 
@@ -450,7 +464,7 @@ func _mine_target() -> void:
 		blocks.erase(target_cell)
 		navigation_revision += 1
 		var resource_id: String = site.RESOURCE_YIELDS.get(collected, collected)
-		field_cargo.collect(resource_id, 1, drone_help_available())
+		field_cargo.collect(resource_id, 1, drone_can_collect())
 		scanned.erase(target_cell)
 		guide_event("mined")
 		_note("+1 " + MATERIAL_NAMES[resource_id])
@@ -507,7 +521,7 @@ func capture_state() -> Dictionary:
 	var readings: Array = []
 	for cell: Vector2i in scanned:
 		readings.append([cell.x, cell.y])
-	return {"version": 1, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	return {"version": 1, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
 
 func save_run() -> bool:
 	if campaign != null:
@@ -536,6 +550,10 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	if not next_buildings.restore(data.get("buildings", []), next_site):
 		_note("Dati delle costruzioni non validi")
 		return false
+	var next_fabrication := Outpost.Fabrication.new()
+	if not next_fabrication.restore(data.get("fabrication", {})) or not next_fabrication.valid_world(next_site, next_buildings) or not Outpost.Fabrication.integer(data.get("local_lab_level", 1), 1, 3):
+		_note("Dati di fabbricazione non validi")
+		return false
 	var next_cargo := FieldCargo.new()
 	next_cargo.drone_capacity = field_cargo.drone_capacity
 	if restore_inventory and not next_cargo.restore(data.get("field_cargo", {"backpack": {}, "drone": {}})):
@@ -557,12 +575,14 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	site = next_site
 	environment = next_environment
 	outpost.buildings = next_buildings
+	outpost.fabrication = next_fabrication
+	outpost.local_lab_level = int(data.get("local_lab_level", 1))
+	outpost.activation_cube_id = 0
 	outpost.selected_station = {}
 	outpost.station_menu.popup.hide()
 	outpost.station_menu.window.hide()
 	outpost.construction.picker.hide()
-	outpost.construction.window.hide()
-	outpost.construction.prompted.clear()
+	outpost.construction.activation_popup.hide()
 	rooms.popup.hide()
 	rooms._close_bed()
 	outpost.build_mode = false

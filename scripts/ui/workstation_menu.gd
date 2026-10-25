@@ -92,11 +92,7 @@ func show_section(id: int) -> void:
 	column.add_child(heading)
 	column.add_child(UI.label(outpost.station_name(), 15, Color("a7e5b4")))
 	column.add_child(HSeparator.new())
-	if id == 2:
-		row("laboratory", "Laboratorio 4 x 3 m", "Posiziona", _begin_build.bind("laboratory"))
-		row("supplies", "Materiali del laboratorio", "Prepara carico", _prepare)
-		row("lamp", "Cubo luce / 1 x 1 m", "Progetta cubo", _begin_build.bind("lamp"))
-	elif id == 3:
+	if id == 3:
 		row("suit", "Ripristina la tuta", "Ripara", _perform.bind("suit"))
 		row("hull", "Ripara lo scafo della nave", "Ripara", _perform.bind("hull"))
 	elif id == 4:
@@ -131,19 +127,6 @@ func row(key: String, name: String, command: String, callback: Callable) -> void
 	button.custom_minimum_size.x = 136
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	rows.append({"key": key, "info": info, "button": button})
-
-func _begin_build(id: String) -> void:
-	window.hide()
-	outpost.blueprint = id
-	outpost.build_mode = false
-	outpost.toggle_build()
-
-func _prepare() -> void:
-	if not outpost.station_available(outpost.selected_station):
-		return
-	outpost.cargo_ui.prepare_lab()
-	feedback.text = outpost.cargo_ui.feedback.text
-	refresh()
 
 func hull_blocker() -> String:
 	var ship: RefCounted = outpost.world.ship_state
@@ -194,16 +177,16 @@ func refresh() -> void:
 				text = "2 pietra + 1 rame dalla stiva / +25 integrita"
 				reason = hull_blocker()
 			"upgrade":
-				var ship: RefCounted = outpost.world.ship_state
-				if aboard and ship != null:
-					text = "Banco strumenti / livello %d di 3" % ship.modules.drill
-					if not ship.upgrade_cost("drill").is_empty():
-						text += "\nProssimo livello: +1 potenza di scavo, nuovi estrattori\nCosto: %s" % cost_text(ship.upgrade_cost("drill"))
+				if aboard:
+					var level: int = outpost.station_level()
+					text = "Laboratorio / livello %d di 3 / tempo cubo %.1f s" % [level, outpost.fabrication_seconds()]
+					if level < 3:
+						text += "\nProssimo livello: produzione piu rapida\nCosto: %s" % cost_text({"stone": 4 * level, "copper": 3 * level})
 				elif not aboard:
 					var lab: Dictionary = outpost.selected_station.building
 					text = "Livello %d di 3 / deposito %d unita / luci %.0f m\nAlimentazione dalla nave: %.2f kWh/min" % [lab.get("level", 1), Buildings.cache_capacity(lab), Buildings.light_range(lab), Buildings.power_draw(lab) * 60]
 					if not Buildings.upgrade_cost(lab).is_empty():
-						text += "\nProssimo livello: +16 unita e +2 m per le luci\nCosto: %s" % cost_text(Buildings.upgrade_cost(lab))
+						text += "\nProssimo livello: produzione piu rapida, +16 unita e +2 m\nCosto: %s" % cost_text(Buildings.upgrade_cost(lab))
 				reason = outpost.upgrade_blocker()
 		item.info.text = text + ("\n" + reason if not reason.is_empty() else "")
 		item.button.disabled = not reason.is_empty()

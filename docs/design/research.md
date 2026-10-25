@@ -57,6 +57,8 @@ Questa sequenza fino al primo laboratorio e letta dal runtime da progression.ocr
 | open_hatch | Apri la botola | {"fact":"hatch_opened"} | help |
 | first_excavation | Scava le prime due celle | {"counter":"mined_cells","at_least":2} | help |
 | return_ladder | Prepara la risalita | {"fact":"ladder"} | help |
-| laboratory_cube | Fabbrica il cubo laboratorio | {"fact":"lab_cube_crafted"} | fabricate_lab |
+| laboratory_materials | Raccogli per il laboratorio | {"fact":"lab_materials_ready"} | inventory |
 | laboratory_room | Scava la stanza del laboratorio | {"fact":"lab_room_ready"} | help |
+| laboratory_cube | Fabbrica il cubo laboratorio | {"fact":"lab_cube_crafted"} | fabricate_lab |
+| carry_laboratory | Prendi il cubo pronto | {"fact":"lab_cube_carried"} | help |
 | deploy_laboratory | Apri il cubo nella stanza | {"fact":"lab_built"} | place_lab |

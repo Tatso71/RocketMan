@@ -27,6 +27,7 @@ var availability: Label
 var cost_labels: Array[Label] = []
 var preparation_status: Label
 var compact_rows: Dictionary = {}
+var compact_totals: Dictionary = {}
 
 func _ready() -> void:
 	_build_compact()
@@ -88,7 +89,7 @@ func _build_compact() -> void:
 	add_child(root)
 	compact = PanelContainer.new()
 	compact.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	compact.offset_left = -296
+	compact.offset_left = -344
 	compact.offset_right = -16
 	compact.offset_top = 76
 	compact.add_theme_stylebox_override("panel", panel_style())
@@ -121,13 +122,14 @@ func _build_compact() -> void:
 		compact_titles.append(count)
 		compact_bars.append(_meter(hold, Color("a7e5b4") if index == 0 else Color("8edce1")))
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 4)
 	column.add_child(grid)
 	grid.add_child(label("", 11))
 	grid.add_child(label("Zaino", 11, Color("a7e5b4")))
 	grid.add_child(label("Robbie", 13, Color("8edce1")))
+	grid.add_child(label("Totale", 13, Color("e8d388")))
 	for id: String in Cargo.ITEM_IDS:
 		var name_label := label(NAMES[id], 15, COLORS[id])
 		name_label.custom_minimum_size.x = 128
@@ -140,6 +142,11 @@ func _build_compact() -> void:
 			grid.add_child(count)
 			compact_counts.append(count)
 			compact_rows[id].append(count)
+		var total := label("0", 14, Color("e8d388"))
+		total.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		grid.add_child(total)
+		compact_totals[id] = total
+		compact_rows[id].append(total)
 	compact_link = label("", 12)
 	column.add_child(compact_link)
 
@@ -228,7 +235,7 @@ func _build_window() -> void:
 	recipe_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	recipe.add_child(recipe_spacer)
 	prepare_button = button(recipe, "Fabbrica cubo", open_fabrication)
-	prepare_button.tooltip_text = "Officina: trasforma 6 pietra + 4 rame in un cubo da 4 posti"
+	prepare_button.tooltip_text = "Apri il banco del laboratorio vicino"
 	preparation_status = label("", 13, Color("b4c5c6"))
 	column.add_child(preparation_status)
 	var actions := HBoxContainer.new()
@@ -272,7 +279,7 @@ func lab_missing() -> Dictionary:
 	return missing
 
 func open_fabrication() -> void:
-	if not world.aboard_workshop():
+	if world.outpost.nearby_station().is_empty():
 		return
 	window.hide()
 	world.outpost.construction.open_picker(world.Grid.to_cell(world.player.position), Vector2(340, 150), true)
@@ -317,8 +324,6 @@ func deposit() -> void:
 		return
 	var transferred: int = world.field_cargo.deposit(world.outpost.source_stock(), storage_capacity(), world.drone_help_available())
 	feedback.text = "Scaricate %d unita nel deposito." % transferred if transferred > 0 else "Nessun trasferimento: carico vuoto o deposito pieno."
-	if not world.drone_help_available() and world.field_cargo.used(world.field_cargo.drone) > 0:
-		feedback.text += " Il drone deve avvicinarsi per essere scaricato."
 	if transferred > 0:
 		world.guide_event("deposited")
 	refresh()
@@ -339,6 +344,7 @@ func refresh() -> void:
 		var visible_row := int(cargo.backpack.get(id, 0)) + int(cargo.drone.get(id, 0)) > 0 or id in ["soil", "stone", "copper"]
 		for widget: Control in compact_rows[id]:
 			widget.visible = visible_row
+		compact_totals[id].text = str(cargo.available(id, true))
 	for index in range(2):
 		var used: int = cargo.used(stocks[index])
 		compact_titles[index].text = "%d / %d%s" % [used, limits[index], " PIENO" if used == limits[index] else ""]
@@ -348,8 +354,8 @@ func refresh() -> void:
 		for item in range(Cargo.ITEM_IDS.size()):
 			compact_counts[item * 2 + index].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0))
 			compact_counts[item * 2 + index].modulate = Color("829396") if index == 1 and not connected else Color.WHITE
-	compact_link.text = "Robbie vicino / carico utilizzabile" if connected else "Robbie lontano / carico escluso"
-	compact_link.modulate = Color("a7e5b4") if connected else Color("f0d281")
+	compact_link.text = "Zaino + Robbie / materiali condivisi"
+	compact_link.modulate = Color("a7e5b4")
 	if not window.visible:
 		return
 	var source: bool = world.outpost.source_available()
@@ -362,14 +368,14 @@ func refresh() -> void:
 			counts[index][item].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0)) if index < 2 or source else "--"
 			counts[index][item].modulate = Color.WHITE if index != 1 or connected else Color("829396")
 	subtitles[0].text = "Sempre con te"
-	subtitles[1].text = "Vicino e collegato" if connected else "Lontano: non utilizzabile"
+	subtitles[1].text = "Sempre nel carico comune"
 	subtitles[2].text = ("Officina della nave" if world.aboard_workshop() else "Laboratorio vicino") if source else "Nessun deposito vicino"
 	availability.text = "Trasferimenti disponibili / " + subtitles[2].text if source else "Solo consultazione: raggiungi l'officina o un laboratorio per trasferire."
 	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(Cargo.ITEM_IDS[picker.selected], connected) < int(amount.value)
 	deposit_button.disabled = not source or cargo.used(stocks[2]) >= storage_capacity() or cargo.used(cargo.backpack) + (cargo.used(cargo.drone) if connected else 0) == 0
-	prepare_button.disabled = not world.aboard_workshop()
-	prepare_button.tooltip_text = "Officina: costo unico di 6 pietra + 4 rame" if not prepare_button.disabled else "Fabbrica il cubo nell'officina della nave"
-	preparation_status.text = "Il cubo usa 4 posti nel carico. I materiali si pagano in officina, non una seconda volta nello scavo."
+	prepare_button.disabled = world.outpost.nearby_station().is_empty()
+	prepare_button.tooltip_text = "Apri fabbricazione al laboratorio" if not prepare_button.disabled else "Raggiungi un laboratorio"
+	preparation_status.text = "Cubi sul banco: %d / In mano: %d" % [world.outpost.fabrication.cubes.size() - (1 if world.outpost.fabrication.carried_id != 0 else 0), 1 if world.outpost.fabrication.carried_id != 0 else 0]
 	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()
 	craft_button.tooltip_text = world.outpost.lamp_craft_blocker() if craft_button.disabled else "1 terra + 1 rame / fabbrica nel laboratorio vicino"
 	var index := 0

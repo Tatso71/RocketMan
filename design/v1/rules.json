@@ -2,13 +2,15 @@
   "version": "1.0.0",
   "status": "design_proposal_not_runtime_implementation",
   "language": "it",
-  "date": "2026-10-24",
+  "date": "2026-10-25",
   "confirmed_decisions": [
     "12 pianeti principali persistenti",
     "36 specie originali senza combattimenti",
     "Massimo 3 compagni, sbloccati uno per volta",
     "Cristalli da scoperte e giacimenti finiti, nessun commercio necessario",
     "Cubi trasportabili che si dispiegano nel volume scavato dal giocatore",
+    "Nave iniziale senza scorte: zaino e carico di Robbie sempre comuni per disponibilita e pagamento",
+    "Il laboratorio materializza fisicamente un cubo sul banco, con tempo e barra persistenti; Spazio per prenderlo e posarlo, clic destro per attivarlo",
     "Scale costruite istantaneamente sul posto dal personaggio per 2 terriccio, senza cubo, postazione o energia",
     "Sopravvivenza intermedia e recupero del carico",
     "Robbie trasporta automaticamente solo su percorsi esplorati",
@@ -82,14 +84,7 @@
       ],
       "external_sockets": 2
     },
-    "ship_stock": {
-      "res_soil": 12,
-      "res_stone": 12,
-      "res_copper": 12,
-      "res_water": 6,
-      "res_biomass": 6,
-      "res_silica": 4
-    },
+    "ship_stock": {},
     "carried_stock": {},
     "wallet": {
       "cur_lumen": 0
@@ -115,7 +110,23 @@
       0.5
     ],
     "packed_grid_occupation": 0,
-    "packed_capacity_rule": "use_packed_inventory_units_per_module",
+    "packed_capacity_rule": "one_physical_cube_in_hands_separate_from_resource_backpack",
+    "fabrication": {
+      "prototype_available_modules": ["mod_lab"],
+      "future_unlocks": ["mod_light", "mod_pump", "mod_gas_filter"],
+      "shared_sources": ["player_backpack", "robbie_cargo", "interacted_station_storage"],
+      "robbie_distance_gates_materials": false,
+      "pay_once": "atomically_on_start",
+      "output": "physical_cube_on_station_bench",
+      "one_output_slot_per_station": true,
+      "continues_when_menu_closed": true,
+      "save_jobs_ready_dropped_and_carried_cubes": true,
+      "speed_multiplier_by_station_level": [1, 1.5, 2],
+      "output_level_prototype": 1,
+      "pick_up_and_drop": "Space_context_overrides_jump",
+      "activate": "right_click_dropped_cube",
+      "invalid_activation": "keep_cube_red_dashed_footprint_error_no_payment"
+    },
     "states": [
       "packed",
       "preview",
@@ -128,8 +139,12 @@
     ],
     "transaction": [
       "validate_research_and_station",
-      "consume_local_ingredients_atomically_create_cube",
+      "consume_shared_and_local_ingredients_atomically_start_saved_job",
+      "materialize_physical_cube_on_bench_with_progress",
+      "pick_up_cube_with_space",
       "carry_cube_to_site",
+      "drop_cube_with_space",
+      "right_click_cube_to_activate",
       "preview_full_footprint_and_ports",
       "validate_empty_excavated_supported_safe_space",
       "reserve_cells_and_consume_exact_cube",
@@ -189,13 +204,13 @@
   "logistics": {
     "payment_sources_order": [
       "backpack",
-      "connected_robbie_within_3m_clear_segment",
+      "robbie_cargo_always_shared",
       "selected_station_cache_within_reach"
     ],
     "ship_stock_remote_access": false,
     "cache_access_through_walls": false,
     "infinite_stacking": false,
-    "crafting_output_rule": "reserve_output_capacity_before_consuming_inputs; cube_mass_is_abstract_stock_units",
+    "crafting_output_rule": "reserve_station_output_slot_before_payment; materialize_physical_cube; one_cube_in_hands_separate_from_stock",
     "robbie_routes": {
       "node_type": "visited_station_or_player_waypoint",
       "edge_requires": [

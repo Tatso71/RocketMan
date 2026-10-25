@@ -6,6 +6,7 @@ const Grid = preload("res://scripts/world/world_grid.gd")
 const DigSite = preload("res://scripts/systems/dig_site.gd")
 const HazardField = preload("res://scripts/systems/environment_field.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
+const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
 enum Phase {SELECT, FLIGHT, LANDING, DIGGING, TAKEOFF}
 const DURATIONS := {Phase.FLIGHT: 3.5, Phase.LANDING: 4.0, Phase.TAKEOFF: 2.5}
 var ship := Ship.new()
@@ -104,6 +105,9 @@ func restore(data: Dictionary) -> bool:
 			return false
 		var buildings := Buildings.new()
 		if not buildings.restore(outpost.get("buildings", []), terrain):
+			return false
+		var fabrication := Fabrication.new()
+		if not fabrication.restore(outpost.get("fabrication", {})) or not fabrication.valid_world(terrain, buildings) or not Fabrication.integer(outpost.get("local_lab_level", 1), 1, 3):
 			return false
 	if not ship.restore(data.ship):
 		return false

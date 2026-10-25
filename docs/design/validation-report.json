@@ -67,6 +67,36 @@
     },
     {
       "iteration": 1,
+      "type": "gather",
+      "id": "res_soil"
+    },
+    {
+      "iteration": 1,
+      "type": "gather",
+      "id": "res_stone"
+    },
+    {
+      "iteration": 1,
+      "type": "gather",
+      "id": "res_copper"
+    },
+    {
+      "iteration": 1,
+      "type": "gather",
+      "id": "res_silica"
+    },
+    {
+      "iteration": 1,
+      "type": "gather",
+      "id": "res_water"
+    },
+    {
+      "iteration": 1,
+      "type": "gather",
+      "id": "res_biomass"
+    },
+    {
+      "iteration": 1,
       "type": "craft",
       "id": "res_wire"
     },

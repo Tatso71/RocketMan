@@ -6,7 +6,7 @@ Catalogo generato da [gui.json](../../design/v1/gui.json). Modificare il JSON e 
 | --- | --- | --- | --- | --- |
 | ui_hud | Esplorazione | minimal_stats, tools, goal, context_action | context_action | false |
 | ui_inventory | Inventario | backpack, robbie, selected_local_station | transfer_selected | true |
-| ui_build | Cubi e costruzione | stage_filtered_catalog, recipe_and_folded_cube, world_footprint_preview | craft_or_place_cube | menu_only |
+| ui_build | Cubi e costruzione | stage_filtered_catalog, recipe_and_folded_cube, world_footprint_preview | create_physical_cube_at_station | menu_only |
 | ui_station | Postazione | station_identity_level_power_cache, five_actions | selected_action | true |
 | ui_research | Ricerca | current_tier, next_two_unlocks, materials, lumen_reserve | research | true |
 | ui_upgrades | Potenziamenti | player_ship_robbie_station_tabs, current_next_comparison, physical_cost, wallet_cost | upgrade | true |

@@ -4,9 +4,12 @@ const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 const Tools = preload("res://scripts/data/digital_tool_catalog.gd")
 const FieldCargo = preload("res://scripts/systems/field_cargo.gd")
 const GuideState = preload("res://scripts/systems/drone_guide_state.gd")
+const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
 const RESOURCE_IDS := FieldCargo.ITEM_IDS
 var modules: Dictionary = {"hull": 1, "engine": 1, "cargo": 1, "battery": 1, "drill": 1, "landing_gear": 1, "habitat": 1, "drone": 1}
-var resources: Dictionary = {"soil": 12, "stone": 8, "copper": 6, "crystal": 0, "lamp_kit": 0}
+var resources: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0, "lamp_kit": 0}
+var laboratory_level := 1
+var fabrication := Fabrication.new()
 var field_cargo := FieldCargo.new()
 var drone_guide := GuideState.new()
 var lab_research_unlocked := false
@@ -124,13 +127,16 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
 	if not data.get("modules") is Dictionary or not data.get("resources") is Dictionary:
 		return false
 	var next: RefCounted = get_script().new()
+	if not _integer(data.get("laboratory_level", 1), 1, 3) or not next.fabrication.restore(data.get("fabrication", {})) or not next.fabrication.valid_ship():
+		return false
+	next.laboratory_level = int(data.get("laboratory_level", 1))
 	for definition: Resource in Modules.all():
 		var level = data.modules.get(definition.module_id, 1 if definition.module_id == "drone" else null)
 		if not _integer(level, 1, definition.max_level):
@@ -180,6 +186,8 @@ func restore(data: Dictionary) -> bool:
 	field_cargo.restore(next.field_cargo.snapshot())
 	drone_guide.restore(next.drone_guide.snapshot())
 	lab_research_unlocked = data.get("lab_research_unlocked", false)
+	laboratory_level = next.laboratory_level
+	fabrication.restore(next.fabrication.snapshot())
 	hull = float(data.hull)
 	fuel = float(data.fuel)
 	energy = float(data.energy)
