@@ -1,0 +1,3002 @@
+[
+  {
+    "id": "mod_workshop",
+    "name_it": "Officina di bordo",
+    "stage": 0,
+    "kind": "fixed_ship_station",
+    "footprint_m": [
+      4,
+      3
+    ],
+    "footprint_cells": [
+      4,
+      3
+    ],
+    "packed_inventory_units": 0,
+    "research": "tech_start",
+    "fabricated_at": null,
+    "mount": "ship_internal",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 5,
+    "functions": [
+      "assembly",
+      "repair",
+      "upgrade",
+      "craft"
+    ],
+    "crafting_recipes": [
+      "recipe_wire",
+      "recipe_glass",
+      "recipe_filter",
+      "recipe_feed",
+      "recipe_cube_lab",
+      "recipe_cube_crate",
+      "recipe_cube_fabricator",
+      "recipe_hydrogen_fuel",
+      "recipe_repair_patch",
+      "recipe_melt_ice",
+      "recipe_cube_light_ship"
+    ],
+    "icon": "assets/design/icons/mod_workshop.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "frame"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [
+      "svc_refuel_basic",
+      "svc_refuel_advanced",
+      "svc_hull_repair",
+      "svc_suit_ship",
+      "svc_ship_robbie",
+      "svc_engine"
+    ],
+    "accepted_upgrade_tracks": [
+      "upg_ship_hull",
+      "upg_ship_cargo",
+      "upg_ship_battery",
+      "upg_ship_engine",
+      "upg_ship_landing",
+      "upg_ship_oxygen",
+      "upg_ship_radar",
+      "upg_ship_workbench",
+      "upg_ship_climate",
+      "upg_ship_stasis",
+      "upg_ship_archive",
+      "upg_robbie_cargo",
+      "upg_robbie_signal",
+      "upg_robbie_battery",
+      "upg_robbie_sensors",
+      "upg_robbie_light",
+      "upg_robbie_hull",
+      "upg_robbie_thermal",
+      "upg_robbie_seal",
+      "upg_robbie_attachments",
+      "upg_robbie_route",
+      "upg_robbie_medic",
+      "upg_robbie_manipulator"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "baseline_exists_cube_flow_and_extended_effects_proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_ladder",
+    "name_it": "Scala di emergenza",
+    "stage": 0,
+    "kind": "manual_infrastructure",
+    "footprint_m": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      1,
+      1
+    ],
+    "packed_inventory_units": 0,
+    "research": "tech_start",
+    "fabricated_at": null,
+    "mount": "floor_or_vertical_chain",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 0,
+    "functions": [
+      "traverse_vertical"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_ladder.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "ladder"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "instant_manual_construction_implemented",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_lab",
+    "name_it": "Laboratorio da campo",
+    "stage": 0,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      4,
+      3
+    ],
+    "footprint_cells": [
+      4,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_start",
+    "fabricated_at": "mod_workshop",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.2,
+    "cache_units": 32,
+    "deployment_seconds": 5,
+    "functions": [
+      "research",
+      "scan_analysis",
+      "cache",
+      "craft_light",
+      "repair_suit"
+    ],
+    "crafting_recipes": [
+      "recipe_cube_light"
+    ],
+    "icon": "assets/design/icons/mod_lab.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "lab"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_lab",
+    "services": [
+      "svc_suit_field"
+    ],
+    "accepted_upgrade_tracks": [
+      "upg_player_oxygen",
+      "upg_player_pack",
+      "upg_player_suit",
+      "upg_player_thermal",
+      "upg_player_filter",
+      "upg_player_pressure",
+      "upg_player_traction",
+      "upg_player_scanner",
+      "upg_player_tool_efficiency",
+      "upg_player_radiation",
+      "upg_module_lab"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "baseline_exists_cube_flow_and_extended_effects_proposed",
+    "stats_by_installation_level": {
+      "cache_units": [
+        32,
+        48,
+        64
+      ],
+      "lamp_link_m": [
+        8,
+        10,
+        12
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_light",
+    "name_it": "Luce da galleria",
+    "stage": 0,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      1,
+      1
+    ],
+    "packed_inventory_units": 1,
+    "research": "tech_field_science",
+    "fabricated_at": "mod_lab",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          0
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    ],
+    "power_kw": 0.02,
+    "cache_units": 0,
+    "deployment_seconds": 5,
+    "functions": [
+      "illuminate"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_light.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "lamp"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_light",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_light"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "baseline_exists_cube_flow_and_extended_effects_proposed",
+    "stats_by_installation_level": {
+      "illumination_m": [
+        4,
+        5,
+        6
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_crate",
+    "name_it": "Deposito locale",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 2,
+    "research": "tech_field_science",
+    "fabricated_at": "mod_workshop",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 48,
+    "deployment_seconds": 7,
+    "functions": [
+      "cache",
+      "route_endpoint"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_crate.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "crate"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_crate",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_crate"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "cache_units": [
+        48,
+        72,
+        96
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_fabricator",
+    "name_it": "Fabbricatore",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_field_science",
+    "fabricated_at": "mod_workshop",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.6,
+    "cache_units": 16,
+    "deployment_seconds": 7,
+    "functions": [
+      "smelt",
+      "process",
+      "assemble_cubes"
+    ],
+    "crafting_recipes": [
+      "recipe_plate",
+      "recipe_steel",
+      "recipe_ceramic",
+      "recipe_circuit",
+      "recipe_insulation",
+      "recipe_battery",
+      "recipe_coolant",
+      "recipe_sealant",
+      "recipe_pressure_frame",
+      "recipe_magnetic_coil",
+      "recipe_advanced_battery",
+      "recipe_heat_shield",
+      "recipe_titanium_alloy",
+      "recipe_gold_circuit",
+      "recipe_advanced_ceramic",
+      "recipe_iridium_frame",
+      "recipe_cube_support",
+      "recipe_cube_door",
+      "recipe_cube_airlock",
+      "recipe_cube_life_support",
+      "recipe_cube_solar",
+      "recipe_cube_battery_bank",
+      "recipe_cube_heater",
+      "recipe_cube_pump",
+      "recipe_cube_tank",
+      "recipe_cube_relay",
+      "recipe_cube_greenhouse",
+      "recipe_cube_habitat",
+      "recipe_cube_infirmary",
+      "recipe_cube_bioprocessor",
+      "recipe_cube_gas_filter",
+      "recipe_cube_route_dock",
+      "recipe_cube_fuel_plant",
+      "recipe_cube_magnetic_shield",
+      "recipe_cube_geothermal",
+      "recipe_cube_habitat_aquatic",
+      "recipe_cube_habitat_climate",
+      "recipe_cube_photonics",
+      "recipe_cube_observatory",
+      "recipe_cube_habitat_aviary",
+      "recipe_cube_sanctuary",
+      "recipe_cube_beacon",
+      "recipe_cube_drain",
+      "recipe_cube_pipe",
+      "recipe_cube_cable",
+      "recipe_cube_concord_archive",
+      "recipe_cube_ship_cargo_pod",
+      "recipe_cube_ship_engine_pod",
+      "recipe_cube_ship_radar_pod",
+      "recipe_cube_ship_battery_pod",
+      "recipe_pressure_cuff",
+      "recipe_stasis_carrier"
+    ],
+    "icon": "assets/design/icons/mod_fabricator.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "factory"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_fabricator",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_fabricator"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "processing_speed": [
+        1,
+        1.25,
+        1.5
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_support",
+    "name_it": "Arco di sostegno",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 2,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "support_8m"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_support.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "arch"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_door",
+    "name_it": "Porta stagna",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      1,
+      2
+    ],
+    "footprint_cells": [
+      1,
+      2
+    ],
+    "packed_inventory_units": 2,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.02,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "seal",
+      "manual_override"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_door.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "door"
+    },
+    "collision": "door_rectangles_solid_when_closed",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [
+      [
+        0.4,
+        0,
+        0.2,
+        2
+      ]
+    ],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_airlock",
+    "name_it": "Camera di compensazione",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.08,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "safe_transition",
+      "seal"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_airlock.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "airlock"
+    },
+    "collision": "door_rectangles_solid_when_closed",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [
+      [
+        0,
+        1,
+        0.2,
+        2
+      ],
+      [
+        2.8,
+        1,
+        0.2,
+        2
+      ]
+    ],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_life_support",
+    "name_it": "Supporto vitale",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      3
+    ],
+    "footprint_cells": [
+      2,
+      3
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.3,
+    "cache_units": 4,
+    "deployment_seconds": 7,
+    "functions": [
+      "oxygen_refill",
+      "air_filter",
+      "room_condition"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_life_support.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "air"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_life_support",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_life_support"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "sealed_cells_served": [
+        60,
+        90,
+        120
+      ],
+      "oxygen_refill_minutes_per_second": [
+        0.2,
+        0.3,
+        0.4
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_solar",
+    "name_it": "Pannello solare",
+    "stage": 1,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      2
+    ],
+    "footprint_cells": [
+      3,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_metallurgy",
+    "fabricated_at": "mod_fabricator",
+    "mount": "surface",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "generate_solar_1kw"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_solar.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "solar"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_solar",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_solar"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 1,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "generation_kw": [
+        1,
+        1.5,
+        2
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_battery_bank",
+    "name_it": "Accumulatore",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_cold",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "store_40kwh"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_battery_bank.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "battery"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_battery_bank",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_battery_bank"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 40,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "energy_storage_kwh": [
+        40,
+        60,
+        80
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_heater",
+    "name_it": "Termoregolatore",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_cold",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.4,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "warm_room",
+      "cool_room"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_heater.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "thermo"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_pump",
+    "name_it": "Pompa idrica",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_hydraulics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.2,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "transfer_water_2litres_second"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_pump.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "pump"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_pump",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_pump"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "litres_per_second": [
+        2,
+        3,
+        4
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_tank",
+    "name_it": "Serbatoio",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      3
+    ],
+    "footprint_cells": [
+      2,
+      3
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_hydraulics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "store_200litres"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_tank.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "tank"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 200,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_relay",
+    "name_it": "Ripetitore",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      1,
+      2
+    ],
+    "footprint_cells": [
+      1,
+      2
+    ],
+    "packed_inventory_units": 2,
+    "research": "tech_cold",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.04,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "extend_radio_15m_clear_path"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_relay.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "relay"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_relay",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_relay"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "radio_m": [
+        15,
+        20,
+        25
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_greenhouse",
+    "name_it": "Serra",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      4,
+      3
+    ],
+    "footprint_cells": [
+      4,
+      3
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_hydraulics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.15,
+    "cache_units": 16,
+    "deployment_seconds": 9,
+    "functions": [
+      "grow_biomass",
+      "grow_algae",
+      "feed"
+    ],
+    "crafting_recipes": [
+      "recipe_grow_biomass",
+      "recipe_grow_algae",
+      "recipe_grow_resin",
+      "recipe_grow_spores"
+    ],
+    "icon": "assets/design/icons/mod_greenhouse.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "greenhouse"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_greenhouse",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_greenhouse"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "processing_speed": [
+        1,
+        1.25,
+        1.5
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_habitat",
+    "name_it": "Habitat piccolo",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      4,
+      3
+    ],
+    "footprint_cells": [
+      4,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_bond",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.15,
+    "cache_units": 12,
+    "deployment_seconds": 9,
+    "functions": [
+      "house_2_small_species",
+      "care",
+      "passive_outputs"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_habitat.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "habitat"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_habitat",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_habitat"
+    ],
+    "habitat_slots": 2,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "food_buffer_minutes": [
+        30,
+        45,
+        60
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_infirmary",
+    "name_it": "Infermeria",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_cold",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.2,
+    "cache_units": 8,
+    "deployment_seconds": 9,
+    "functions": [
+      "heal",
+      "repair_suit",
+      "remove_contamination"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_infirmary.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "med"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_infirmary",
+    "services": [
+      "svc_clinic"
+    ],
+    "accepted_upgrade_tracks": [
+      "upg_module_infirmary"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "treatment_seconds": [
+        60,
+        45,
+        30
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_bioprocessor",
+    "name_it": "Bioprocessore",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_biology",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.4,
+    "cache_units": 16,
+    "deployment_seconds": 11,
+    "functions": [
+      "bio_refine",
+      "medicine",
+      "membranes"
+    ],
+    "crafting_recipes": [
+      "recipe_polymer",
+      "recipe_bio_gel",
+      "recipe_membrane",
+      "recipe_medgel",
+      "recipe_lubricant",
+      "recipe_nutrient",
+      "recipe_aerogel",
+      "recipe_culture_enzymes"
+    ],
+    "icon": "assets/design/icons/mod_bioprocessor.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "bio"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_gas_filter",
+    "name_it": "Filtro gas avanzato",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_biology",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.25,
+    "cache_units": 4,
+    "deployment_seconds": 11,
+    "functions": [
+      "filter_spores_and_toxic_gas"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_gas_filter.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "filter"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_gas_filter",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_gas_filter"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "concentration_removed_per_second": [
+        0.015,
+        0.025,
+        0.04
+      ],
+      "cells_served": [
+        16,
+        24,
+        32
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_route_dock",
+    "name_it": "Stazione Robbie",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 3,
+    "research": "tech_logistics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.08,
+    "cache_units": 24,
+    "deployment_seconds": 11,
+    "functions": [
+      "route_endpoint",
+      "charge_robbie",
+      "repair_robbie"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_route_dock.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "drone"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_route_dock",
+    "services": [
+      "svc_robbie_repair"
+    ],
+    "accepted_upgrade_tracks": [
+      "upg_module_route_dock"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "robbie_battery_minutes_per_second": [
+        0.1,
+        0.15,
+        0.2
+      ],
+      "cache_units": [
+        24,
+        32,
+        40
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_fuel_plant",
+    "name_it": "Impianto propellente",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_hydraulics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.4,
+    "cache_units": 16,
+    "deployment_seconds": 9,
+    "functions": [
+      "water_electrolysis",
+      "fuel_conversion"
+    ],
+    "crafting_recipes": [
+      "recipe_helium_fuel"
+    ],
+    "icon": "assets/design/icons/mod_fuel_plant.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "fuel"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_magnetic_shield",
+    "name_it": "Schermo elettromagnetico",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      3
+    ],
+    "footprint_cells": [
+      2,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_electrics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.5,
+    "cache_units": 0,
+    "deployment_seconds": 11,
+    "functions": [
+      "ground_storms",
+      "protect_local_network"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_magnetic_shield.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "shield"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_geothermal",
+    "name_it": "Generatore geotermico",
+    "stage": 4,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_heat",
+    "fabricated_at": "mod_fabricator",
+    "mount": "geothermal_vent",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 13,
+    "functions": [
+      "generate_4kw"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_geothermal.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "generator"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 4,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_habitat_aquatic",
+    "name_it": "Habitat acquatico",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      4,
+      3
+    ],
+    "footprint_cells": [
+      4,
+      3
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_ecology",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.25,
+    "cache_units": 16,
+    "deployment_seconds": 11,
+    "functions": [
+      "house_2_aquatic_species",
+      "water_loop"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_habitat_aquatic.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "aquarium"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_habitat_aquatic",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_habitat_aquatic"
+    ],
+    "habitat_slots": 2,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 100,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "food_buffer_minutes": [
+        30,
+        45,
+        60
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_habitat_climate",
+    "name_it": "Habitat climatico",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      5,
+      3
+    ],
+    "footprint_cells": [
+      5,
+      3
+    ],
+    "packed_inventory_units": 6,
+    "research": "tech_ecology",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          4,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.4,
+    "cache_units": 20,
+    "deployment_seconds": 11,
+    "functions": [
+      "house_2_cold_hot_or_spore_species"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_habitat_climate.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "habitat"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_habitat_climate",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_habitat_climate"
+    ],
+    "habitat_slots": 2,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "food_buffer_minutes": [
+        30,
+        45,
+        60
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_photonics",
+    "name_it": "Banco fotonico",
+    "stage": 4,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_resonance",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.6,
+    "cache_units": 16,
+    "deployment_seconds": 13,
+    "functions": [
+      "optics",
+      "resonant_components"
+    ],
+    "crafting_recipes": [
+      "recipe_prism_lens",
+      "recipe_superconductor",
+      "recipe_resonant_core",
+      "recipe_cryo_fluid",
+      "recipe_dark_lens",
+      "recipe_atlas_chip",
+      "recipe_concord_matrix"
+    ],
+    "icon": "assets/design/icons/mod_photonics.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "lens"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_photonics",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_photonics"
+    ],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "processing_speed": [
+        1,
+        1.25,
+        1.5
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_observatory",
+    "name_it": "Osservatorio",
+    "stage": 5,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      4,
+      4
+    ],
+    "footprint_cells": [
+      4,
+      4
+    ],
+    "packed_inventory_units": 6,
+    "research": "tech_resonance",
+    "fabricated_at": "mod_fabricator",
+    "mount": "ceiling_clear_sky",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          3
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          3,
+          3
+        ]
+      }
+    ],
+    "power_kw": 0.5,
+    "cache_units": 8,
+    "deployment_seconds": 15,
+    "functions": [
+      "deep_scan",
+      "chart_routes"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_observatory.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "radar"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_habitat_aviary",
+    "name_it": "Voliera pressurizzata",
+    "stage": 5,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      5,
+      4
+    ],
+    "footprint_cells": [
+      5,
+      4
+    ],
+    "packed_inventory_units": 6,
+    "research": "tech_sky",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          3
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          4,
+          3
+        ]
+      }
+    ],
+    "power_kw": 0.4,
+    "cache_units": 20,
+    "deployment_seconds": 15,
+    "functions": [
+      "house_2_flying_species"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_habitat_aviary.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "aviary"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_habitat_aviary",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_habitat_aviary"
+    ],
+    "habitat_slots": 2,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "food_buffer_minutes": [
+        30,
+        45,
+        60
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_sanctuary",
+    "name_it": "Santuario multispecie",
+    "stage": 5,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      6,
+      4
+    ],
+    "footprint_cells": [
+      6,
+      4
+    ],
+    "packed_inventory_units": 8,
+    "research": "tech_symbiosis",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          3
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          5,
+          3
+        ]
+      }
+    ],
+    "power_kw": 0.6,
+    "cache_units": 32,
+    "deployment_seconds": 15,
+    "functions": [
+      "house_4_compatible_species",
+      "study_synergy"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_sanctuary.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "sanctuary"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": "upg_module_sanctuary",
+    "services": [],
+    "accepted_upgrade_tracks": [
+      "upg_module_sanctuary"
+    ],
+    "habitat_slots": 4,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {
+      "food_buffer_minutes": [
+        30,
+        45,
+        60
+      ]
+    },
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_beacon",
+    "name_it": "Faro di soccorso",
+    "stage": 4,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      3
+    ],
+    "footprint_cells": [
+      2,
+      3
+    ],
+    "packed_inventory_units": 4,
+    "research": "tech_heat",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.1,
+    "cache_units": 4,
+    "deployment_seconds": 13,
+    "functions": [
+      "safe_rescue_anchor",
+      "map_route"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_beacon.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "beacon"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_drain",
+    "name_it": "Drenaggio passivo",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      1,
+      1
+    ],
+    "packed_inventory_units": 1,
+    "research": "tech_hydraulics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          0
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 9,
+    "functions": [
+      "direct_finite_water_to_lower_tank"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_drain.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "drain"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_pipe",
+    "name_it": "Condotta",
+    "stage": 1,
+    "kind": "infrastructure_kit",
+    "footprint_m": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      1,
+      1
+    ],
+    "packed_inventory_units": 1,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "wall_or_floor",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          0
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "connect_fluid_or_air_selected_mode"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_pipe.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "pipe"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_cable",
+    "name_it": "Cavo di rete",
+    "stage": 1,
+    "kind": "infrastructure_kit",
+    "footprint_m": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      1,
+      1
+    ],
+    "packed_inventory_units": 1,
+    "research": "tech_sealing",
+    "fabricated_at": "mod_fabricator",
+    "mount": "wall_or_floor",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          0
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 7,
+    "functions": [
+      "connect_power_and_data"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_cable.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "cable"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_concord_archive",
+    "name_it": "Archivio concorde",
+    "stage": 7,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      5,
+      4
+    ],
+    "footprint_cells": [
+      5,
+      4
+    ],
+    "packed_inventory_units": 8,
+    "research": "tech_concord",
+    "fabricated_at": "mod_fabricator",
+    "mount": "floor",
+    "requires_floor": true,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          3
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          4,
+          3
+        ]
+      }
+    ],
+    "power_kw": 1,
+    "cache_units": 32,
+    "deployment_seconds": 19,
+    "functions": [
+      "complete_atlas",
+      "endgame_projects"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_concord_archive.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "archive"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 1
+  },
+  {
+    "id": "mod_ship_cargo_pod",
+    "name_it": "Stiva esterna",
+    "stage": 2,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      3
+    ],
+    "footprint_cells": [
+      3,
+      3
+    ],
+    "packed_inventory_units": 6,
+    "research": "tech_cold",
+    "fabricated_at": "mod_fabricator",
+    "mount": "ship_side_socket",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.05,
+    "cache_units": 80,
+    "deployment_seconds": 9,
+    "functions": [
+      "add_80_ship_stock",
+      "visible_pod"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_ship_cargo_pod.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "crate"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 3
+  },
+  {
+    "id": "mod_ship_engine_pod",
+    "name_it": "Motore ausiliario",
+    "stage": 4,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      3
+    ],
+    "footprint_cells": [
+      2,
+      3
+    ],
+    "packed_inventory_units": 6,
+    "research": "tech_heat",
+    "fabricated_at": "mod_fabricator",
+    "mount": "ship_engine_socket",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    ],
+    "power_kw": 0.2,
+    "cache_units": 0,
+    "deployment_seconds": 13,
+    "functions": [
+      "reduce_route_fuel_12percent",
+      "visible_engine"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_ship_engine_pod.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "engine"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 6
+  },
+  {
+    "id": "mod_ship_radar_pod",
+    "name_it": "Radar esterno",
+    "stage": 5,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      3,
+      2
+    ],
+    "footprint_cells": [
+      3,
+      2
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_resonance",
+    "fabricated_at": "mod_fabricator",
+    "mount": "ship_radar_socket",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0.25,
+    "cache_units": 0,
+    "deployment_seconds": 15,
+    "functions": [
+      "reveal_optional_landing_sites",
+      "visible_radar"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_ship_radar_pod.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "radar"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 8
+  },
+  {
+    "id": "mod_ship_battery_pod",
+    "name_it": "Batteria esterna",
+    "stage": 3,
+    "kind": "unfolding_cube",
+    "footprint_m": [
+      2,
+      2
+    ],
+    "footprint_cells": [
+      2,
+      2
+    ],
+    "packed_inventory_units": 5,
+    "research": "tech_electrics",
+    "fabricated_at": "mod_fabricator",
+    "mount": "ship_side_socket",
+    "requires_floor": false,
+    "ports": [
+      {
+        "kind": "walk",
+        "cell": [
+          0,
+          1
+        ]
+      },
+      {
+        "kind": "power_data",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    ],
+    "power_kw": 0,
+    "cache_units": 0,
+    "deployment_seconds": 11,
+    "functions": [
+      "add_80kwh",
+      "visible_battery"
+    ],
+    "crafting_recipes": [],
+    "icon": "assets/design/icons/mod_ship_battery_pod.svg",
+    "visual": {
+      "color": "#88b9bb",
+      "shape": "battery"
+    },
+    "collision": "background_furnishing_no_player_blocking",
+    "gas_tolerance": 0.05,
+    "water_tolerance_litres": 0,
+    "upgrade_track": null,
+    "services": [],
+    "accepted_upgrade_tracks": [],
+    "habitat_slots": 0,
+    "generation_kw": 0,
+    "energy_storage_kwh": 0,
+    "fluid_capacity_litres": 0,
+    "runtime_status": "proposed",
+    "stats_by_installation_level": {},
+    "collision_rects_m": [],
+    "walk_port_clearance_m": [
+      1,
+      2
+    ],
+    "front_access_required": true,
+    "required_ship_level": 5
+  }
+]

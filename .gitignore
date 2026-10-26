@@ -2,3 +2,8 @@
 .godot/
 reports/
 *.uid
+.tokensave/*.db*
+.tokensave/branches/
+.tokensave/branch-meta.json
+design/v1/robbie_texts.json.bak
+design/v1/robbie_texts.json.tmp

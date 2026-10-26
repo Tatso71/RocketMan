@@ -1,0 +1,18 @@
+{
+  "resources": 76,
+  "recipes": 85,
+  "modules": 40,
+  "research": 18,
+  "currencies": 12,
+  "planets": 12,
+  "tools": 5,
+  "services": 11,
+  "hazards": 26,
+  "creatures": 36,
+  "upgrades": 52,
+  "items": 1,
+  "upgrade_levels": 137,
+  "icons": 289,
+  "tiles": 76,
+  "materials": 76
+}

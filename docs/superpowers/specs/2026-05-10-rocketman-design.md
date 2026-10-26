@@ -1,5 +1,7 @@
 # RocketMan Design Spec
 
+Historical design. The current product direction is `2026-10-24-rocket-home-and-digging.md`; keep this document as context for legacy scenes and systems.
+
 Date: 2026-05-10
 Project: RocketMan
 Branch: Aurora

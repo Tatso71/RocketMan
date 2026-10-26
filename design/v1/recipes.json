@@ -1,0 +1,1826 @@
+[
+  {
+    "id": "recipe_wire",
+    "name_it": "Filo di rame",
+    "category": "processing",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_copper": 2
+    },
+    "outputs": {
+      "res_wire": 2
+    },
+    "seconds": 3,
+    "energy_kwh": 0.006,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_glass",
+    "name_it": "Vetro",
+    "category": "processing",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_silica": 2
+    },
+    "outputs": {
+      "res_glass": 1
+    },
+    "seconds": 4,
+    "energy_kwh": 0.008,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_plate",
+    "name_it": "Piastra di ferro",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_metallurgy",
+    "inputs": {
+      "res_iron": 2,
+      "res_carbon": 1
+    },
+    "outputs": {
+      "res_plate": 2
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_steel",
+    "name_it": "Acciaio",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_metallurgy",
+    "inputs": {
+      "res_iron": 2,
+      "res_carbon": 1
+    },
+    "outputs": {
+      "res_steel": 2
+    },
+    "seconds": 6,
+    "energy_kwh": 0.012,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_ceramic",
+    "name_it": "Ceramica",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_metallurgy",
+    "inputs": {
+      "res_clay": 2,
+      "res_silica": 1
+    },
+    "outputs": {
+      "res_ceramic": 2
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_filter",
+    "name_it": "Filtro a carbone",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_workshop",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_carbon": 1,
+      "res_biomass": 1
+    },
+    "outputs": {
+      "res_filter": 2
+    },
+    "seconds": 3,
+    "energy_kwh": 0.006,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_circuit",
+    "name_it": "Circuito",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_metallurgy",
+    "inputs": {
+      "res_wire": 2,
+      "res_glass": 1
+    },
+    "outputs": {
+      "res_circuit": 1
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_insulation",
+    "name_it": "Isolante",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_ceramic": 1,
+      "res_biomass": 1
+    },
+    "outputs": {
+      "res_insulation": 2
+    },
+    "seconds": 4,
+    "energy_kwh": 0.008,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_battery",
+    "name_it": "Cella energetica",
+    "category": "processing",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_lithium": 1,
+      "res_cobalt": 1,
+      "res_carbon": 1
+    },
+    "outputs": {
+      "res_battery": 1
+    },
+    "seconds": 6,
+    "energy_kwh": 0.012,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_coolant",
+    "name_it": "Refrigerante salino",
+    "category": "processing",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_water": 2,
+      "res_salt": 1
+    },
+    "outputs": {
+      "res_coolant": 2
+    },
+    "seconds": 4,
+    "energy_kwh": 0.008,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_feed",
+    "name_it": "Mangime vegetale",
+    "category": "processing",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_biomass": 1,
+      "res_water": 1
+    },
+    "outputs": {
+      "res_feed": 2
+    },
+    "seconds": 2,
+    "energy_kwh": 0.004,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_polymer",
+    "name_it": "Polimero vegetale",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_bioprocessor",
+    "research": "tech_biology",
+    "inputs": {
+      "res_resin": 2,
+      "res_algae": 1
+    },
+    "outputs": {
+      "res_polymer": 2
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_sealant",
+    "name_it": "Sigillante",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_biology",
+    "inputs": {
+      "res_polymer": 1,
+      "res_silica": 1
+    },
+    "outputs": {
+      "res_sealant": 2
+    },
+    "seconds": 4,
+    "energy_kwh": 0.008,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_bio_gel",
+    "name_it": "Biogel",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_bioprocessor",
+    "research": "tech_biology",
+    "inputs": {
+      "res_algae": 1,
+      "res_resin": 1
+    },
+    "outputs": {
+      "res_bio_gel": 2
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_membrane",
+    "name_it": "Membrana selettiva",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_bioprocessor",
+    "research": "tech_biology",
+    "inputs": {
+      "res_bio_gel": 1,
+      "res_enzymes": 1
+    },
+    "outputs": {
+      "res_membrane": 2
+    },
+    "seconds": 6,
+    "energy_kwh": 0.012,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_medgel",
+    "name_it": "Gel curativo",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_bioprocessor",
+    "research": "tech_biology",
+    "inputs": {
+      "res_bio_gel": 1,
+      "res_water": 1,
+      "res_enzymes": 1
+    },
+    "outputs": {
+      "res_medgel": 2
+    },
+    "seconds": 6,
+    "energy_kwh": 0.012,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_pressure_frame",
+    "name_it": "Telaio pressurizzato",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_biology",
+    "inputs": {
+      "res_steel": 2,
+      "res_polymer": 1
+    },
+    "outputs": {
+      "res_pressure_frame": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.016,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_magnetic_coil",
+    "name_it": "Bobina magnetica",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_electrics",
+    "inputs": {
+      "res_wire": 2,
+      "res_magnetite": 1
+    },
+    "outputs": {
+      "res_magnetic_coil": 1
+    },
+    "seconds": 6,
+    "energy_kwh": 0.012,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_advanced_battery",
+    "name_it": "Cella ad alta densità",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_electrics",
+    "inputs": {
+      "res_battery": 1,
+      "res_graphite": 1,
+      "res_vanadium": 1
+    },
+    "outputs": {
+      "res_advanced_battery": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.016,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_heat_shield",
+    "name_it": "Scudo termico",
+    "category": "processing",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_heat",
+    "inputs": {
+      "res_ceramic": 2,
+      "res_carbon": 1,
+      "res_wire": 1
+    },
+    "outputs": {
+      "res_heat_shield": 1
+    },
+    "seconds": 7,
+    "energy_kwh": 0.014,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_titanium_alloy",
+    "name_it": "Lega di titanio",
+    "category": "processing",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_heat",
+    "inputs": {
+      "res_titanium": 2,
+      "res_nickel": 1
+    },
+    "outputs": {
+      "res_titanium_alloy": 2
+    },
+    "seconds": 10,
+    "energy_kwh": 0.02,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_lubricant",
+    "name_it": "Lubrificante",
+    "category": "processing",
+    "stage": 4,
+    "station": "mod_bioprocessor",
+    "research": "tech_heat",
+    "inputs": {
+      "res_resin": 1,
+      "res_sulfur": 1
+    },
+    "outputs": {
+      "res_lubricant": 2
+    },
+    "seconds": 4,
+    "energy_kwh": 0.008,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_gold_circuit",
+    "name_it": "Circuito di precisione",
+    "category": "processing",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_desert",
+    "inputs": {
+      "res_circuit": 1,
+      "res_gold": 1
+    },
+    "outputs": {
+      "res_gold_circuit": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.016,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_nutrient",
+    "name_it": "Nutrienti",
+    "category": "processing",
+    "stage": 4,
+    "station": "mod_bioprocessor",
+    "research": "tech_desert",
+    "inputs": {
+      "res_phosphate": 1,
+      "res_algae": 1,
+      "res_water": 1
+    },
+    "outputs": {
+      "res_nutrient": 3
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_advanced_ceramic",
+    "name_it": "Ceramica tecnica",
+    "category": "processing",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_desert",
+    "inputs": {
+      "res_alumina": 2,
+      "res_ceramic": 1,
+      "res_calcium": 1
+    },
+    "outputs": {
+      "res_advanced_ceramic": 2
+    },
+    "seconds": 8,
+    "energy_kwh": 0.016,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_prism_lens",
+    "name_it": "Lente prismatica",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_photonics",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_prism_quartz": 2,
+      "res_glass": 1
+    },
+    "outputs": {
+      "res_prism_lens": 1
+    },
+    "seconds": 10,
+    "energy_kwh": 0.02,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_superconductor",
+    "name_it": "Superconduttore",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_photonics",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_vanadium": 1,
+      "res_boron": 1,
+      "res_coolant": 1
+    },
+    "outputs": {
+      "res_superconductor": 1
+    },
+    "seconds": 12,
+    "energy_kwh": 0.024,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_resonant_core",
+    "name_it": "Nucleo risonante tecnico",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_photonics",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_geode_seed": 1,
+      "res_gold_circuit": 1
+    },
+    "outputs": {
+      "res_resonant_core": 1
+    },
+    "seconds": 12,
+    "energy_kwh": 0.024,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_aerogel",
+    "name_it": "Aerogel",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_bioprocessor",
+    "research": "tech_sky",
+    "inputs": {
+      "res_aerospore": 2,
+      "res_silica": 1
+    },
+    "outputs": {
+      "res_aerogel": 2
+    },
+    "seconds": 10,
+    "energy_kwh": 0.02,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cryo_fluid",
+    "name_it": "Fluido criogenico",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_photonics",
+    "research": "tech_sky",
+    "inputs": {
+      "res_xenon": 1,
+      "res_coolant": 1
+    },
+    "outputs": {
+      "res_cryo_fluid": 2
+    },
+    "seconds": 10,
+    "energy_kwh": 0.02,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_helium_fuel",
+    "name_it": "Propellente a elio",
+    "category": "processing",
+    "stage": 5,
+    "station": "mod_fuel_plant",
+    "research": "tech_sky",
+    "inputs": {
+      "res_helium3": 1,
+      "res_water": 1
+    },
+    "outputs": {
+      "res_helium_fuel": 2
+    },
+    "seconds": 8,
+    "energy_kwh": 0.016,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_iridium_frame",
+    "name_it": "Telaio all'iridio",
+    "category": "processing",
+    "stage": 6,
+    "station": "mod_fabricator",
+    "research": "tech_void",
+    "inputs": {
+      "res_iridium": 2,
+      "res_titanium_alloy": 1
+    },
+    "outputs": {
+      "res_iridium_frame": 1
+    },
+    "seconds": 15,
+    "energy_kwh": 0.03,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_dark_lens",
+    "name_it": "Lente notturna",
+    "category": "processing",
+    "stage": 6,
+    "station": "mod_photonics",
+    "research": "tech_void",
+    "inputs": {
+      "res_dark_silicate": 1,
+      "res_prism_lens": 1
+    },
+    "outputs": {
+      "res_dark_lens": 1
+    },
+    "seconds": 15,
+    "energy_kwh": 0.03,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_atlas_chip",
+    "name_it": "Matrice cartografica",
+    "category": "processing",
+    "stage": 6,
+    "station": "mod_photonics",
+    "research": "tech_void",
+    "inputs": {
+      "res_memory_pearl": 1,
+      "res_gold_circuit": 1
+    },
+    "outputs": {
+      "res_atlas_chip": 1
+    },
+    "seconds": 15,
+    "energy_kwh": 0.03,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_concord_matrix",
+    "name_it": "Matrice concorde",
+    "category": "processing",
+    "stage": 7,
+    "station": "mod_photonics",
+    "research": "tech_concord",
+    "inputs": {
+      "res_aether_lattice": 1,
+      "res_atlas_chip": 1,
+      "res_superconductor": 1
+    },
+    "outputs": {
+      "res_concord_matrix": 1
+    },
+    "seconds": 20,
+    "energy_kwh": 0.04,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_ladder",
+    "name_it": "Scala di emergenza",
+    "category": "manual_construction",
+    "stage": 0,
+    "station": null,
+    "research": "tech_start",
+    "inputs": {
+      "res_soil": 2
+    },
+    "outputs": {
+      "mod_ladder": 1
+    },
+    "seconds": 0,
+    "energy_kwh": 0,
+    "batch_limit": 1,
+    "output_mode": "immediate_world_placement",
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "invalid_placement_consumes_nothing"
+  },
+  {
+    "id": "recipe_cube_lab",
+    "name_it": "Laboratorio da campo",
+    "category": "module_cube",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_stone": 6,
+      "res_copper": 4
+    },
+    "outputs": {
+      "mod_lab": 1
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_light",
+    "name_it": "Luce da galleria",
+    "category": "module_cube",
+    "stage": 0,
+    "station": "mod_lab",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_soil": 1,
+      "res_copper": 1
+    },
+    "outputs": {
+      "mod_light": 1
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_crate",
+    "name_it": "Deposito locale",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_workshop",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_stone": 4,
+      "res_copper": 2
+    },
+    "outputs": {
+      "mod_crate": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_fabricator",
+    "name_it": "Fabbricatore",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_workshop",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_stone": 4,
+      "res_copper": 4
+    },
+    "outputs": {
+      "mod_fabricator": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_support",
+    "name_it": "Arco di sostegno",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_steel": 2,
+      "res_stone": 2
+    },
+    "outputs": {
+      "mod_support": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_door",
+    "name_it": "Porta stagna",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_plate": 2,
+      "res_ceramic": 1,
+      "res_wire": 1
+    },
+    "outputs": {
+      "mod_door": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_airlock",
+    "name_it": "Camera di compensazione",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_steel": 3,
+      "res_glass": 1,
+      "res_filter": 1
+    },
+    "outputs": {
+      "mod_airlock": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_life_support",
+    "name_it": "Supporto vitale",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_filter": 2,
+      "res_wire": 2,
+      "res_plate": 2
+    },
+    "outputs": {
+      "mod_life_support": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_solar",
+    "name_it": "Pannello solare",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_metallurgy",
+    "inputs": {
+      "res_glass": 2,
+      "res_wire": 3,
+      "res_plate": 1
+    },
+    "outputs": {
+      "mod_solar": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_battery_bank",
+    "name_it": "Accumulatore",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_battery": 2,
+      "res_wire": 2,
+      "res_plate": 1
+    },
+    "outputs": {
+      "mod_battery_bank": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_heater",
+    "name_it": "Termoregolatore",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_insulation": 2,
+      "res_wire": 2,
+      "res_plate": 1
+    },
+    "outputs": {
+      "mod_heater": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_pump",
+    "name_it": "Pompa idrica",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_steel": 2,
+      "res_wire": 2,
+      "res_filter": 1
+    },
+    "outputs": {
+      "mod_pump": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_tank",
+    "name_it": "Serbatoio",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_steel": 3,
+      "res_glass": 1
+    },
+    "outputs": {
+      "mod_tank": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_relay",
+    "name_it": "Ripetitore",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_circuit": 1,
+      "res_wire": 2,
+      "res_plate": 1
+    },
+    "outputs": {
+      "mod_relay": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_greenhouse",
+    "name_it": "Serra",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_glass": 3,
+      "res_steel": 2,
+      "res_water": 2
+    },
+    "outputs": {
+      "mod_greenhouse": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_habitat",
+    "name_it": "Habitat piccolo",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_bond",
+    "inputs": {
+      "res_glass": 2,
+      "res_steel": 2,
+      "res_feed": 2
+    },
+    "outputs": {
+      "mod_habitat": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_infirmary",
+    "name_it": "Infermeria",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_steel": 2,
+      "res_glass": 1,
+      "res_filter": 2
+    },
+    "outputs": {
+      "mod_infirmary": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_bioprocessor",
+    "name_it": "Bioprocessore",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_biology",
+    "inputs": {
+      "res_steel": 2,
+      "res_glass": 2,
+      "res_filter": 1
+    },
+    "outputs": {
+      "mod_bioprocessor": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_gas_filter",
+    "name_it": "Filtro gas avanzato",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_biology",
+    "inputs": {
+      "res_membrane": 2,
+      "res_wire": 2,
+      "res_steel": 1
+    },
+    "outputs": {
+      "mod_gas_filter": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_route_dock",
+    "name_it": "Stazione Robbie",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_logistics",
+    "inputs": {
+      "res_circuit": 2,
+      "res_steel": 2,
+      "res_battery": 1
+    },
+    "outputs": {
+      "mod_route_dock": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_fuel_plant",
+    "name_it": "Impianto propellente",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_steel": 3,
+      "res_wire": 2,
+      "res_filter": 1
+    },
+    "outputs": {
+      "mod_fuel_plant": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_magnetic_shield",
+    "name_it": "Schermo elettromagnetico",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_electrics",
+    "inputs": {
+      "res_magnetic_coil": 2,
+      "res_steel": 2,
+      "res_battery": 1
+    },
+    "outputs": {
+      "mod_magnetic_shield": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_geothermal",
+    "name_it": "Generatore geotermico",
+    "category": "module_cube",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_heat",
+    "inputs": {
+      "res_heat_shield": 2,
+      "res_steel": 3,
+      "res_wire": 2
+    },
+    "outputs": {
+      "mod_geothermal": 1
+    },
+    "seconds": 17,
+    "energy_kwh": 0.05,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_habitat_aquatic",
+    "name_it": "Habitat acquatico",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_ecology",
+    "inputs": {
+      "res_pressure_frame": 2,
+      "res_glass": 3,
+      "res_membrane": 1
+    },
+    "outputs": {
+      "mod_habitat_aquatic": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_habitat_climate",
+    "name_it": "Habitat climatico",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_ecology",
+    "inputs": {
+      "res_pressure_frame": 2,
+      "res_insulation": 2,
+      "res_battery": 1
+    },
+    "outputs": {
+      "mod_habitat_climate": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_photonics",
+    "name_it": "Banco fotonico",
+    "category": "module_cube",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_gold_circuit": 2,
+      "res_glass": 2,
+      "res_titanium_alloy": 1
+    },
+    "outputs": {
+      "mod_photonics": 1
+    },
+    "seconds": 17,
+    "energy_kwh": 0.05,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_observatory",
+    "name_it": "Osservatorio",
+    "category": "module_cube",
+    "stage": 5,
+    "station": "mod_fabricator",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_prism_lens": 1,
+      "res_titanium_alloy": 2,
+      "res_gold_circuit": 1
+    },
+    "outputs": {
+      "mod_observatory": 1
+    },
+    "seconds": 20,
+    "energy_kwh": 0.06,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_habitat_aviary",
+    "name_it": "Voliera pressurizzata",
+    "category": "module_cube",
+    "stage": 5,
+    "station": "mod_fabricator",
+    "research": "tech_sky",
+    "inputs": {
+      "res_pressure_frame": 2,
+      "res_aerogel": 2,
+      "res_glass": 2
+    },
+    "outputs": {
+      "mod_habitat_aviary": 1
+    },
+    "seconds": 20,
+    "energy_kwh": 0.06,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_sanctuary",
+    "name_it": "Santuario multispecie",
+    "category": "module_cube",
+    "stage": 5,
+    "station": "mod_fabricator",
+    "research": "tech_symbiosis",
+    "inputs": {
+      "res_pressure_frame": 3,
+      "res_advanced_ceramic": 2,
+      "res_prism_lens": 1
+    },
+    "outputs": {
+      "mod_sanctuary": 1
+    },
+    "seconds": 20,
+    "energy_kwh": 0.06,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_beacon",
+    "name_it": "Faro di soccorso",
+    "category": "module_cube",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_heat",
+    "inputs": {
+      "res_titanium_alloy": 1,
+      "res_battery": 1,
+      "res_circuit": 2
+    },
+    "outputs": {
+      "mod_beacon": 1
+    },
+    "seconds": 17,
+    "energy_kwh": 0.05,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_drain",
+    "name_it": "Drenaggio passivo",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_steel": 1,
+      "res_filter": 1
+    },
+    "outputs": {
+      "mod_drain": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_pipe",
+    "name_it": "Condotta",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_plate": 1
+    },
+    "outputs": {
+      "mod_pipe": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_cable",
+    "name_it": "Cavo di rete",
+    "category": "module_cube",
+    "stage": 1,
+    "station": "mod_fabricator",
+    "research": "tech_sealing",
+    "inputs": {
+      "res_wire": 1
+    },
+    "outputs": {
+      "mod_cable": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_concord_archive",
+    "name_it": "Archivio concorde",
+    "category": "module_cube",
+    "stage": 7,
+    "station": "mod_fabricator",
+    "research": "tech_concord",
+    "inputs": {
+      "res_concord_matrix": 2,
+      "res_iridium_frame": 2,
+      "res_aerogel": 2
+    },
+    "outputs": {
+      "mod_concord_archive": 1
+    },
+    "seconds": 26,
+    "energy_kwh": 0.08,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_ship_cargo_pod",
+    "name_it": "Stiva esterna",
+    "category": "module_cube",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_cold",
+    "inputs": {
+      "res_steel": 4,
+      "res_wire": 2,
+      "res_insulation": 1
+    },
+    "outputs": {
+      "mod_ship_cargo_pod": 1
+    },
+    "seconds": 11,
+    "energy_kwh": 0.03,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_ship_engine_pod",
+    "name_it": "Motore ausiliario",
+    "category": "module_cube",
+    "stage": 4,
+    "station": "mod_fabricator",
+    "research": "tech_heat",
+    "inputs": {
+      "res_titanium_alloy": 3,
+      "res_heat_shield": 1,
+      "res_magnetic_coil": 1
+    },
+    "outputs": {
+      "mod_ship_engine_pod": 1
+    },
+    "seconds": 17,
+    "energy_kwh": 0.05,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_ship_radar_pod",
+    "name_it": "Radar esterno",
+    "category": "module_cube",
+    "stage": 5,
+    "station": "mod_fabricator",
+    "research": "tech_resonance",
+    "inputs": {
+      "res_prism_lens": 1,
+      "res_gold_circuit": 2,
+      "res_titanium_alloy": 1
+    },
+    "outputs": {
+      "mod_ship_radar_pod": 1
+    },
+    "seconds": 20,
+    "energy_kwh": 0.06,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_cube_ship_battery_pod",
+    "name_it": "Batteria esterna",
+    "category": "module_cube",
+    "stage": 3,
+    "station": "mod_fabricator",
+    "research": "tech_electrics",
+    "inputs": {
+      "res_advanced_battery": 2,
+      "res_steel": 2
+    },
+    "outputs": {
+      "mod_ship_battery_pod": 1
+    },
+    "seconds": 14,
+    "energy_kwh": 0.04,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_hydrogen_fuel",
+    "name_it": "Propellente elettrolitico",
+    "category": "processing",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_start",
+    "inputs": {
+      "res_water": 2
+    },
+    "outputs": {
+      "res_hydrogen_fuel": 1
+    },
+    "seconds": 30,
+    "energy_kwh": 4,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_repair_patch",
+    "name_it": "Toppa per tuta",
+    "category": "processing",
+    "stage": 1,
+    "station": "mod_workshop",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_biomass": 1,
+      "res_wire": 1
+    },
+    "outputs": {
+      "res_repair_patch": 2
+    },
+    "seconds": 4,
+    "energy_kwh": 0.01,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_pressure_cuff",
+    "name_it": "Bracciale pressorio",
+    "category": "processing",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_steel": 1,
+      "res_glass": 1,
+      "res_wire": 1
+    },
+    "outputs": {
+      "res_pressure_cuff": 1
+    },
+    "seconds": 5,
+    "energy_kwh": 0.02,
+    "batch_limit": 10,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_grow_biomass",
+    "name_it": "Coltiva biomassa",
+    "category": "cultivation",
+    "stage": 2,
+    "station": "mod_greenhouse",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_water": 1,
+      "res_biomass": 1
+    },
+    "outputs": {
+      "res_biomass": 3
+    },
+    "seconds": 120,
+    "energy_kwh": 0.06,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_grow_algae",
+    "name_it": "Coltiva alghe",
+    "category": "cultivation",
+    "stage": 2,
+    "station": "mod_greenhouse",
+    "research": "tech_hydraulics",
+    "inputs": {
+      "res_water": 1,
+      "res_algae": 1
+    },
+    "outputs": {
+      "res_algae": 3
+    },
+    "seconds": 150,
+    "energy_kwh": 0.075,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_grow_resin",
+    "name_it": "Coltiva resina",
+    "category": "cultivation",
+    "stage": 3,
+    "station": "mod_greenhouse",
+    "research": "tech_biology",
+    "inputs": {
+      "res_water": 1,
+      "res_biomass": 1,
+      "res_resin": 1
+    },
+    "outputs": {
+      "res_resin": 2
+    },
+    "seconds": 180,
+    "energy_kwh": 0.09,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_grow_spores",
+    "name_it": "Coltiva spore",
+    "category": "cultivation",
+    "stage": 3,
+    "station": "mod_greenhouse",
+    "research": "tech_biology",
+    "inputs": {
+      "res_water": 1,
+      "res_biomass": 1,
+      "res_spores": 1
+    },
+    "outputs": {
+      "res_spores": 2
+    },
+    "seconds": 180,
+    "energy_kwh": 0.09,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_culture_enzymes",
+    "name_it": "Coltura enzimatica",
+    "category": "cultivation",
+    "stage": 3,
+    "station": "mod_bioprocessor",
+    "research": "tech_biology",
+    "inputs": {
+      "res_spores": 1,
+      "res_algae": 1
+    },
+    "outputs": {
+      "res_enzymes": 2
+    },
+    "seconds": 150,
+    "energy_kwh": 0.075,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_melt_ice",
+    "name_it": "Sciogli ghiaccio",
+    "category": "cultivation",
+    "stage": 2,
+    "station": "mod_workshop",
+    "research": "tech_cold",
+    "inputs": {
+      "res_ice": 1
+    },
+    "outputs": {
+      "res_water": 1
+    },
+    "seconds": 10,
+    "energy_kwh": 0.005,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs",
+    "finite_seed_required": true
+  },
+  {
+    "id": "recipe_cube_light_ship",
+    "name_it": "Luce da galleria",
+    "category": "module_cube",
+    "stage": 0,
+    "station": "mod_workshop",
+    "research": "tech_field_science",
+    "inputs": {
+      "res_soil": 1,
+      "res_copper": 1
+    },
+    "outputs": {
+      "mod_light": 1
+    },
+    "seconds": 5,
+    "energy_kwh": 0.01,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  },
+  {
+    "id": "recipe_stasis_carrier",
+    "name_it": "Culla di stasi",
+    "category": "equipment",
+    "stage": 2,
+    "station": "mod_fabricator",
+    "research": "tech_bond",
+    "inputs": {
+      "res_glass": 1,
+      "res_steel": 1
+    },
+    "outputs": {
+      "item_stasis_carrier": 1
+    },
+    "seconds": 8,
+    "energy_kwh": 0.02,
+    "batch_limit": 5,
+    "currency_output": false,
+    "byproducts": {},
+    "cancellation": "before_completion_returns_reserved_inputs"
+  }
+]

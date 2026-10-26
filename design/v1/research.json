@@ -1,0 +1,550 @@
+[
+  {
+    "id": "tech_start",
+    "name_it": "Dotazione iniziale",
+    "stage": 0,
+    "requires_all": [],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": null,
+    "requires_milestones": [],
+    "cost_items": {},
+    "cost_currency": {},
+    "seconds": 0,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_start.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": []
+  },
+  {
+    "id": "tech_field_science",
+    "name_it": "Ricerca sul campo",
+    "stage": 0,
+    "requires_all": [
+      "tech_start"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [
+      "first_lab"
+    ],
+    "cost_items": {},
+    "cost_currency": {},
+    "seconds": 15,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_field_science.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": []
+  },
+  {
+    "id": "tech_metallurgy",
+    "name_it": "Metallurgia",
+    "stage": 1,
+    "requires_all": [
+      "tech_field_science"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_iron": 4,
+      "res_carbon": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 15
+    },
+    "seconds": 20,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_metallurgy.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_ferrum"
+    ]
+  },
+  {
+    "id": "tech_sealing",
+    "name_it": "Caverne attrezzate",
+    "stage": 1,
+    "requires_all": [
+      "tech_metallurgy"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_plate": 2,
+      "res_glass": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 15
+    },
+    "seconds": 20,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_sealing.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_ferrum"
+    ]
+  },
+  {
+    "id": "tech_cold",
+    "name_it": "Protezione termica",
+    "stage": 2,
+    "requires_all": [
+      "tech_sealing"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_insulation": 2,
+      "res_wire": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 20
+    },
+    "seconds": 25,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_cold.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_ferrum"
+    ]
+  },
+  {
+    "id": "tech_hydraulics",
+    "name_it": "Idraulica",
+    "stage": 2,
+    "requires_all": [
+      "tech_sealing"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_steel": 2,
+      "res_wire": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 20
+    },
+    "seconds": 25,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_hydraulics.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_ferrum"
+    ]
+  },
+  {
+    "id": "tech_bond",
+    "name_it": "Legame con le creature",
+    "stage": 2,
+    "requires_all": [
+      "tech_hydraulics"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_feed": 2,
+      "res_glass": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 15
+    },
+    "seconds": 25,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_bond.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_ocra"
+    ]
+  },
+  {
+    "id": "tech_biology",
+    "name_it": "Biotecnologia",
+    "stage": 3,
+    "requires_all": [
+      "tech_hydraulics"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_algae": 2,
+      "res_salt": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 25
+    },
+    "seconds": 30,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_biology.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_pelagia"
+    ]
+  },
+  {
+    "id": "tech_electrics",
+    "name_it": "Reti ad alta densità",
+    "stage": 3,
+    "requires_all": [
+      "tech_cold"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_lithium": 2,
+      "res_cobalt": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 25
+    },
+    "seconds": 30,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_electrics.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_brina"
+    ]
+  },
+  {
+    "id": "tech_logistics",
+    "name_it": "Trasporto assistito",
+    "stage": 3,
+    "requires_all": [
+      "tech_cold",
+      "tech_hydraulics"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_battery": 1,
+      "res_circuit": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 20
+    },
+    "seconds": 30,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_logistics.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_brina"
+    ]
+  },
+  {
+    "id": "tech_ecology",
+    "name_it": "Habitat specialistici",
+    "stage": 3,
+    "requires_all": [
+      "tech_biology",
+      "tech_bond"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_bio_gel": 2,
+      "res_polymer": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 25
+    },
+    "seconds": 30,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_ecology.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_viridia"
+    ]
+  },
+  {
+    "id": "tech_heat",
+    "name_it": "Tecnologia termica",
+    "stage": 4,
+    "requires_all": [
+      "tech_biology",
+      "tech_electrics"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_ceramic": 2,
+      "res_resin": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 30
+    },
+    "seconds": 35,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_heat.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_viridia",
+      "planet_fulmen"
+    ]
+  },
+  {
+    "id": "tech_desert",
+    "name_it": "Sistemi aridi",
+    "stage": 4,
+    "requires_all": [
+      "tech_biology"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_polymer": 2,
+      "res_water": 2
+    },
+    "cost_currency": {
+      "cur_lumen": 25
+    },
+    "seconds": 35,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_desert.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_viridia"
+    ]
+  },
+  {
+    "id": "tech_resonance",
+    "name_it": "Risonanza e ottiche",
+    "stage": 5,
+    "requires_all": [
+      "tech_heat",
+      "tech_desert"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_nickel": 2,
+      "res_gold": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 40
+    },
+    "seconds": 40,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_resonance.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_vulcania",
+      "planet_duna"
+    ]
+  },
+  {
+    "id": "tech_sky",
+    "name_it": "Esplorazione atmosferica",
+    "stage": 5,
+    "requires_all": [
+      "tech_heat",
+      "tech_electrics"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_titanium_alloy": 2,
+      "res_magnetic_coil": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 40
+    },
+    "seconds": 40,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_sky.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_vulcania",
+      "planet_fulmen"
+    ]
+  },
+  {
+    "id": "tech_symbiosis",
+    "name_it": "Simbiosi multispecie",
+    "stage": 5,
+    "requires_all": [
+      "tech_ecology",
+      "tech_resonance"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_nutrient": 2,
+      "res_prism_quartz": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 40
+    },
+    "seconds": 40,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_symbiosis.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_prismara"
+    ]
+  },
+  {
+    "id": "tech_void",
+    "name_it": "Esplorazione profonda",
+    "stage": 6,
+    "requires_all": [
+      "tech_resonance",
+      "tech_sky"
+    ],
+    "requires_any": [],
+    "requires_surveys": [],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_prism_lens": 1,
+      "res_cryo_fluid": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 50
+    },
+    "seconds": 45,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_void.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": [
+      "planet_prismara",
+      "planet_nimbo"
+    ]
+  },
+  {
+    "id": "tech_concord",
+    "name_it": "Atlante concorde",
+    "stage": 7,
+    "requires_all": [
+      "tech_void",
+      "tech_symbiosis"
+    ],
+    "requires_any": [],
+    "requires_surveys": [
+      "planet_ocra",
+      "planet_ferrum",
+      "planet_brina",
+      "planet_pelagia",
+      "planet_viridia",
+      "planet_fulmen",
+      "planet_vulcania",
+      "planet_duna",
+      "planet_prismara",
+      "planet_nimbo",
+      "planet_nox"
+    ],
+    "requires_functional_module": "mod_lab",
+    "requires_milestones": [],
+    "cost_items": {
+      "res_atlas_chip": 1,
+      "res_dark_lens": 1
+    },
+    "cost_currency": {
+      "cur_lumen": 60
+    },
+    "seconds": 50,
+    "mandatory": true,
+    "unlock_policy": "prerequisites_visible_before_purchase",
+    "icon": "assets/design/icons/tech_concord.svg",
+    "visual": {
+      "color": "#c0a0dc",
+      "shape": "research"
+    },
+    "requires_planet_visits": []
+  }
+]

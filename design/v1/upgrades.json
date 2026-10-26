@@ -1,0 +1,3242 @@
+[
+  {
+    "id": "upg_player_oxygen",
+    "name_it": "Riserva ossigeno",
+    "owner": "player",
+    "stage": 1,
+    "stat": "oxygen_minutes",
+    "unit": "minutes",
+    "baseline": 12,
+    "icon": "assets/design/icons/upg_player_oxygen.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": 18,
+        "cost_items": {
+          "res_plate": 2,
+          "res_filter": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 24,
+        "cost_items": {
+          "res_membrane": 2,
+          "res_battery": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_tidal": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 30,
+        "cost_items": {
+          "res_aerogel": 2,
+          "res_pressure_frame": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_pack",
+    "name_it": "Zaino",
+    "owner": "player",
+    "stage": 0,
+    "stat": "backpack_units",
+    "unit": "inventory_units",
+    "baseline": 8,
+    "icon": "assets/design/icons/upg_player_pack.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 12,
+        "cost_items": {
+          "res_stone": 2,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 16,
+        "cost_items": {
+          "res_polymer": 2,
+          "res_steel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_heat",
+        "value": 24,
+        "cost_items": {
+          "res_titanium_alloy": 2,
+          "res_sealant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_magma": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_suit",
+    "name_it": "Resistenza tuta",
+    "owner": "player",
+    "stage": 1,
+    "stat": "suit_integrity_max",
+    "unit": "points",
+    "baseline": 100,
+    "icon": "assets/design/icons/upg_player_suit.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": 125,
+        "cost_items": {
+          "res_plate": 2,
+          "res_insulation": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 150,
+        "cost_items": {
+          "res_polymer": 2,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 200,
+        "cost_items": {
+          "res_iridium_frame": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_void": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_thermal",
+    "name_it": "Tolleranza termica",
+    "owner": "player",
+    "stage": 2,
+    "stat": "thermal_damage_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_player_thermal.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 30,
+        "cost_items": {
+          "res_insulation": 2,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 55,
+        "cost_items": {
+          "res_heat_shield": 2,
+          "res_coolant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 75,
+        "cost_items": {
+          "res_aerogel": 2,
+          "res_cryo_fluid": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_filter",
+    "name_it": "Filtrazione personale",
+    "owner": "player",
+    "stage": 1,
+    "stat": "gas_damage_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_player_filter.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": 30,
+        "cost_items": {
+          "res_filter": 2,
+          "res_glass": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 55,
+        "cost_items": {
+          "res_membrane": 2,
+          "res_polymer": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_symbiosis",
+        "value": 75,
+        "cost_items": {
+          "res_advanced_ceramic": 2,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_pressure",
+    "name_it": "Tenuta pressoria",
+    "owner": "player",
+    "stage": 2,
+    "stat": "safe_water_depth",
+    "unit": "metres",
+    "baseline": 3,
+    "icon": "assets/design/icons/upg_player_pressure.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_hydraulics",
+        "value": 10,
+        "cost_items": {
+          "res_pressure_cuff": 1,
+          "res_plate": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_tidal": 1
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 25,
+        "cost_items": {
+          "res_pressure_frame": 1,
+          "res_sealant": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 25
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 50,
+        "cost_items": {
+          "res_titanium_alloy": 2,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_traction",
+    "name_it": "Aderenza",
+    "owner": "player",
+    "stage": 2,
+    "stat": "slip_resistance",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_player_traction.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 35,
+        "cost_items": {
+          "res_ceramic": 1,
+          "res_plate": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_desert",
+        "value": 60,
+        "cost_items": {
+          "res_polymer": 2,
+          "res_advanced_ceramic": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_dune": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 80,
+        "cost_items": {
+          "res_iridium_frame": 1,
+          "res_sealant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_scanner",
+    "name_it": "Analisi scanner",
+    "owner": "player",
+    "stage": 0,
+    "stat": "scan_range",
+    "unit": "metres",
+    "baseline": 4,
+    "icon": "assets/design/icons/upg_player_scanner.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 5,
+        "cost_items": {
+          "res_copper": 2,
+          "res_silica": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 6,
+        "cost_items": {
+          "res_circuit": 2,
+          "res_magnetic_coil": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 7,
+        "cost_items": {
+          "res_prism_lens": 1,
+          "res_gold_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_tool_efficiency",
+    "name_it": "Efficienza estrattore",
+    "owner": "player",
+    "stage": 1,
+    "stat": "tool_energy_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_player_tool_efficiency.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 10,
+        "cost_items": {
+          "res_circuit": 1,
+          "res_steel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 20,
+        "cost_items": {
+          "res_titanium_alloy": 1,
+          "res_coolant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 30,
+        "cost_items": {
+          "res_superconductor": 1,
+          "res_dark_lens": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_void": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_player_radiation",
+    "name_it": "Protezione radiante",
+    "owner": "player",
+    "stage": 4,
+    "stat": "radiation_damage_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_player_radiation.svg",
+    "visual": {
+      "color": "#9acb9d",
+      "shape": "suit"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_heat",
+        "value": 25,
+        "cost_items": {
+          "res_basalt": 2,
+          "res_heat_shield": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_magma": 1
+        },
+        "station": "mod_lab",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_sky",
+        "value": 50,
+        "cost_items": {
+          "res_advanced_ceramic": 2,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_sky": 1
+        },
+        "station": "mod_lab",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 75,
+        "cost_items": {
+          "res_iridium_frame": 1,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_void": 1
+        },
+        "station": "mod_lab",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_hull",
+    "name_it": "Scafo",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "hull_max",
+    "unit": "points",
+    "baseline": 100,
+    "icon": "assets/design/icons/upg_ship_hull.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 140,
+        "cost_items": {
+          "res_steel": 3,
+          "res_wire": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 180,
+        "cost_items": {
+          "res_titanium_alloy": 3,
+          "res_sealant": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 260,
+        "cost_items": {
+          "res_iridium_frame": 2,
+          "res_advanced_ceramic": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_void": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_cargo",
+    "name_it": "Stiva interna",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "cargo_units",
+    "unit": "inventory_units",
+    "baseline": 120,
+    "icon": "assets/design/icons/upg_ship_cargo.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 200,
+        "cost_items": {
+          "res_plate": 4,
+          "res_wire": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 280,
+        "cost_items": {
+          "res_pressure_frame": 2,
+          "res_polymer": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 400,
+        "cost_items": {
+          "res_titanium_alloy": 3,
+          "res_aerogel": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_battery",
+    "name_it": "Batterie interne",
+    "owner": "ship",
+    "stage": 2,
+    "stat": "battery_kwh",
+    "unit": "kWh",
+    "baseline": 60,
+    "icon": "assets/design/icons/upg_ship_battery.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 100,
+        "cost_items": {
+          "res_battery": 2,
+          "res_wire": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 140,
+        "cost_items": {
+          "res_advanced_battery": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 220,
+        "cost_items": {
+          "res_superconductor": 2,
+          "res_advanced_battery": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_engine",
+    "name_it": "Propulsori",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "route_fuel_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_ship_engine.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 12,
+        "cost_items": {
+          "res_circuit": 2,
+          "res_steel": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 24,
+        "cost_items": {
+          "res_titanium_alloy": 2,
+          "res_heat_shield": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 36,
+        "cost_items": {
+          "res_superconductor": 1,
+          "res_helium_fuel": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_landing",
+    "name_it": "Piedi di atterraggio",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "landing_wear_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_ship_landing.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": 25,
+        "cost_items": {
+          "res_steel": 2,
+          "res_ceramic": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 50,
+        "cost_items": {
+          "res_titanium_alloy": 2,
+          "res_polymer": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 70,
+        "cost_items": {
+          "res_iridium_frame": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_oxygen",
+    "name_it": "Supporto vitale di bordo",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "nominal_oxygen_minutes",
+    "unit": "minutes",
+    "baseline": 120,
+    "icon": "assets/design/icons/upg_ship_oxygen.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": 180,
+        "cost_items": {
+          "res_filter": 2,
+          "res_wire": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 240,
+        "cost_items": {
+          "res_membrane": 2,
+          "res_pressure_frame": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 360,
+        "cost_items": {
+          "res_aerogel": 2,
+          "res_superconductor": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_radar",
+    "name_it": "Radar interno",
+    "owner": "ship",
+    "stage": 0,
+    "stat": "scan_detail_rank",
+    "unit": "rank",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_ship_radar.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 1,
+        "cost_items": {
+          "res_copper": 3,
+          "res_silica": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 2,
+        "cost_items": {
+          "res_magnetic_coil": 1,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 3,
+        "cost_items": {
+          "res_prism_lens": 1,
+          "res_gold_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_workbench",
+    "name_it": "Banco strumenti",
+    "owner": "ship",
+    "stage": 1,
+    "stat": "tool_service_rank",
+    "unit": "rank",
+    "baseline": 1,
+    "icon": "assets/design/icons/upg_ship_workbench.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 2,
+        "cost_items": {
+          "res_plate": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 3,
+        "cost_items": {
+          "res_titanium_alloy": 1,
+          "res_heat_shield": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 4,
+        "cost_items": {
+          "res_resonant_core": 1,
+          "res_gold_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_climate",
+    "name_it": "Climatizzazione",
+    "owner": "ship",
+    "stage": 2,
+    "stat": "ambient_wear_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_ship_climate.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 25,
+        "cost_items": {
+          "res_insulation": 2,
+          "res_battery": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 50,
+        "cost_items": {
+          "res_heat_shield": 1,
+          "res_coolant": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 75,
+        "cost_items": {
+          "res_aerogel": 2,
+          "res_cryo_fluid": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_stasis",
+    "name_it": "Culle di trasporto creature",
+    "owner": "ship",
+    "stage": 2,
+    "stat": "creature_carriers",
+    "unit": "slots",
+    "baseline": 1,
+    "icon": "assets/design/icons/upg_ship_stasis.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_bond",
+        "value": 3,
+        "cost_items": {
+          "res_glass": 2,
+          "res_steel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_tidal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 6,
+        "cost_items": {
+          "res_pressure_frame": 2,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_symbiosis",
+        "value": 9,
+        "cost_items": {
+          "res_aerogel": 2,
+          "res_advanced_ceramic": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_ship_archive",
+    "name_it": "Archivio di bordo",
+    "owner": "ship",
+    "stage": 7,
+    "stat": "charted_landmark_slots",
+    "unit": "markers",
+    "baseline": 40,
+    "icon": "assets/design/icons/upg_ship_archive.svg",
+    "visual": {
+      "color": "#e0be7b",
+      "shape": "rocket"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_concord",
+        "value": 80,
+        "cost_items": {
+          "res_atlas_chip": 1,
+          "res_aether_lattice": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_concord": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_concord",
+        "value": 120,
+        "cost_items": {
+          "res_concord_matrix": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_concord": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_concord",
+        "value": 200,
+        "cost_items": {
+          "res_concord_matrix": 2,
+          "res_iridium_frame": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_concord": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_cargo",
+    "name_it": "Robbie carico",
+    "owner": "robbie",
+    "stage": 0,
+    "stat": "cargo_units",
+    "unit": "inventory_units",
+    "baseline": 12,
+    "icon": "assets/design/icons/upg_robbie_cargo.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 16,
+        "cost_items": {
+          "res_stone": 2,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_logistics",
+        "value": 20,
+        "cost_items": {
+          "res_plate": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_heat",
+        "value": 28,
+        "cost_items": {
+          "res_titanium_alloy": 2,
+          "res_polymer": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_signal",
+    "name_it": "Robbie antenna",
+    "owner": "robbie",
+    "stage": 0,
+    "stat": "radio_metres",
+    "unit": "metres",
+    "baseline": 15,
+    "icon": "assets/design/icons/upg_robbie_signal.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 20,
+        "cost_items": {
+          "res_copper": 3,
+          "res_silica": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 25,
+        "cost_items": {
+          "res_magnetic_coil": 1,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 40,
+        "cost_items": {
+          "res_prism_lens": 1,
+          "res_gold_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_battery",
+    "name_it": "Robbie autonomia",
+    "owner": "robbie",
+    "stage": 2,
+    "stat": "battery_minutes",
+    "unit": "minutes",
+    "baseline": 15,
+    "icon": "assets/design/icons/upg_robbie_battery.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 22,
+        "cost_items": {
+          "res_battery": 1,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 30,
+        "cost_items": {
+          "res_advanced_battery": 1,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 45,
+        "cost_items": {
+          "res_superconductor": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_sensors",
+    "name_it": "Robbie sensori",
+    "owner": "robbie",
+    "stage": 1,
+    "stat": "sensor_metres",
+    "unit": "metres",
+    "baseline": 4,
+    "icon": "assets/design/icons/upg_robbie_sensors.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 5,
+        "cost_items": {
+          "res_circuit": 1,
+          "res_glass": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 6,
+        "cost_items": {
+          "res_membrane": 1,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 8,
+        "cost_items": {
+          "res_prism_lens": 1,
+          "res_resonant_core": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_light",
+    "name_it": "Robbie faro",
+    "owner": "robbie",
+    "stage": 0,
+    "stat": "light_metres",
+    "unit": "metres",
+    "baseline": 3,
+    "icon": "assets/design/icons/upg_robbie_light.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": 4,
+        "cost_items": {
+          "res_copper": 2,
+          "res_silica": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 5,
+        "cost_items": {
+          "res_battery": 1,
+          "res_glass": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 6,
+        "cost_items": {
+          "res_prism_lens": 1,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_hull",
+    "name_it": "Robbie telaio",
+    "owner": "robbie",
+    "stage": 1,
+    "stat": "integrity_max",
+    "unit": "points",
+    "baseline": 100,
+    "icon": "assets/design/icons/upg_robbie_hull.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 125,
+        "cost_items": {
+          "res_plate": 2,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 150,
+        "cost_items": {
+          "res_titanium_alloy": 1,
+          "res_sealant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 200,
+        "cost_items": {
+          "res_iridium_frame": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_void": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_thermal",
+    "name_it": "Robbie termica",
+    "owner": "robbie",
+    "stage": 2,
+    "stat": "thermal_damage_reduction",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_robbie_thermal.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": 35,
+        "cost_items": {
+          "res_insulation": 1,
+          "res_battery": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_heat",
+        "value": 60,
+        "cost_items": {
+          "res_heat_shield": 1,
+          "res_coolant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 80,
+        "cost_items": {
+          "res_aerogel": 1,
+          "res_cryo_fluid": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_seal",
+    "name_it": "Robbie tenuta",
+    "owner": "robbie",
+    "stage": 2,
+    "stat": "safe_water_depth",
+    "unit": "metres",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_robbie_seal.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_hydraulics",
+        "value": 1,
+        "cost_items": {
+          "res_ceramic": 1,
+          "res_plate": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_tidal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": 3,
+        "cost_items": {
+          "res_sealant": 2,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 10,
+        "cost_items": {
+          "res_pressure_frame": 1,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_attachments",
+    "name_it": "Robbie accessori",
+    "owner": "robbie",
+    "stage": 1,
+    "stat": "attachment_slots",
+    "unit": "slots",
+    "baseline": 1,
+    "icon": "assets/design/icons/upg_robbie_attachments.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 2,
+        "cost_items": {
+          "res_plate": 1,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_logistics",
+        "value": 3,
+        "cost_items": {
+          "res_circuit": 1,
+          "res_steel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_resonance",
+        "value": 4,
+        "cost_items": {
+          "res_gold_circuit": 1,
+          "res_titanium_alloy": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_prism": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_route",
+    "name_it": "Robbie trasporti",
+    "owner": "robbie",
+    "stage": 3,
+    "stat": "route_capability_rank",
+    "unit": "rank",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_robbie_route.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_logistics",
+        "value": 1,
+        "cost_items": {
+          "res_circuit": 2,
+          "res_battery": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_thermal": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 2,
+        "cost_items": {
+          "res_membrane": 1,
+          "res_advanced_battery": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_void",
+        "value": 3,
+        "cost_items": {
+          "res_atlas_chip": 1,
+          "res_superconductor": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_medic",
+    "name_it": "Robbie soccorso",
+    "owner": "robbie",
+    "stage": 3,
+    "stat": "carried_medgel_slots",
+    "unit": "slots",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_robbie_medic.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_biology",
+        "value": 1,
+        "cost_items": {
+          "res_medgel": 1,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_bio": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": 2,
+        "cost_items": {
+          "res_medgel": 2,
+          "res_membrane": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_sky",
+        "value": 3,
+        "cost_items": {
+          "res_medgel": 2,
+          "res_aerogel": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_sky": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_robbie_manipulator",
+    "name_it": "Robbie assistenza montaggio",
+    "owner": "robbie",
+    "stage": 1,
+    "stat": "deployment_speed_bonus",
+    "unit": "percent",
+    "baseline": 0,
+    "icon": "assets/design/icons/upg_robbie_manipulator.svg",
+    "visual": {
+      "color": "#83cdd4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": 10,
+        "cost_items": {
+          "res_plate": 1,
+          "res_wire": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10,
+          "cur_forge": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 10
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_electrics",
+        "value": 20,
+        "cost_items": {
+          "res_magnetic_coil": 1,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 25,
+          "cur_storm": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 20
+      },
+      {
+        "level": 3,
+        "requires_previous": 2,
+        "required_research": "tech_heat",
+        "value": 30,
+        "cost_items": {
+          "res_titanium_alloy": 1,
+          "res_lubricant": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 50,
+          "cur_magma": 1
+        },
+        "station": "mod_workshop",
+        "seconds": 30
+      }
+    ],
+    "respec": "100percent_currency_refund_and_ingredients_stored_aboard; reject_if_capacity_would_trap_items; no_refill_health_energy_or_fuel"
+  },
+  {
+    "id": "upg_module_lab",
+    "name_it": "Laboratorio da campo II e III",
+    "owner": "module",
+    "target_module": "mod_lab",
+    "stage": 0,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "cache_units": 32,
+      "lamp_link_m": 8
+    },
+    "icon": "assets/design/icons/upg_module_lab.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "lab"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_start",
+        "value": {
+          "cache_units": 48,
+          "lamp_link_m": 10
+        },
+        "cost_items": {
+          "res_stone": 4,
+          "res_copper": 3
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_lab",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_start",
+        "value": {
+          "cache_units": 64,
+          "lamp_link_m": 12
+        },
+        "cost_items": {
+          "res_stone": 8,
+          "res_copper": 6
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_lab",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_light",
+    "name_it": "Luce da galleria II e III",
+    "owner": "module",
+    "target_module": "mod_light",
+    "stage": 0,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "illumination_m": 4
+    },
+    "icon": "assets/design/icons/upg_module_light.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "lamp"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": {
+          "illumination_m": 5
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_light",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_field_science",
+        "value": {
+          "illumination_m": 6
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_light",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_crate",
+    "name_it": "Deposito locale II e III",
+    "owner": "module",
+    "target_module": "mod_crate",
+    "stage": 1,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "cache_units": 48
+    },
+    "icon": "assets/design/icons/upg_module_crate.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "crate"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": {
+          "cache_units": 72
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_crate",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_field_science",
+        "value": {
+          "cache_units": 96
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_crate",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_fabricator",
+    "name_it": "Fabbricatore II e III",
+    "owner": "module",
+    "target_module": "mod_fabricator",
+    "stage": 1,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "processing_speed": 1
+    },
+    "icon": "assets/design/icons/upg_module_fabricator.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "factory"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_field_science",
+        "value": {
+          "processing_speed": 1.25
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_fabricator",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_field_science",
+        "value": {
+          "processing_speed": 1.5
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_fabricator",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_life_support",
+    "name_it": "Supporto vitale II e III",
+    "owner": "module",
+    "target_module": "mod_life_support",
+    "stage": 1,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "sealed_cells_served": 60,
+      "oxygen_refill_minutes_per_second": 0.2
+    },
+    "icon": "assets/design/icons/upg_module_life_support.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "air"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sealing",
+        "value": {
+          "sealed_cells_served": 90,
+          "oxygen_refill_minutes_per_second": 0.3
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_life_support",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_sealing",
+        "value": {
+          "sealed_cells_served": 120,
+          "oxygen_refill_minutes_per_second": 0.4
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_life_support",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_solar",
+    "name_it": "Pannello solare II e III",
+    "owner": "module",
+    "target_module": "mod_solar",
+    "stage": 1,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "generation_kw": 1
+    },
+    "icon": "assets/design/icons/upg_module_solar.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "solar"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_metallurgy",
+        "value": {
+          "generation_kw": 1.5
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_solar",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_metallurgy",
+        "value": {
+          "generation_kw": 2
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_solar",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_battery_bank",
+    "name_it": "Accumulatore II e III",
+    "owner": "module",
+    "target_module": "mod_battery_bank",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "energy_storage_kwh": 40
+    },
+    "icon": "assets/design/icons/upg_module_battery_bank.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "battery"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": {
+          "energy_storage_kwh": 60
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_battery_bank",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_cold",
+        "value": {
+          "energy_storage_kwh": 80
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_battery_bank",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_pump",
+    "name_it": "Pompa idrica II e III",
+    "owner": "module",
+    "target_module": "mod_pump",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "litres_per_second": 2
+    },
+    "icon": "assets/design/icons/upg_module_pump.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "pump"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_hydraulics",
+        "value": {
+          "litres_per_second": 3
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_pump",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_hydraulics",
+        "value": {
+          "litres_per_second": 4
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_pump",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_relay",
+    "name_it": "Ripetitore II e III",
+    "owner": "module",
+    "target_module": "mod_relay",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "radio_m": 15
+    },
+    "icon": "assets/design/icons/upg_module_relay.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "relay"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": {
+          "radio_m": 20
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_relay",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_cold",
+        "value": {
+          "radio_m": 25
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_relay",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_greenhouse",
+    "name_it": "Serra II e III",
+    "owner": "module",
+    "target_module": "mod_greenhouse",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "processing_speed": 1
+    },
+    "icon": "assets/design/icons/upg_module_greenhouse.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "greenhouse"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_hydraulics",
+        "value": {
+          "processing_speed": 1.25
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_greenhouse",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_hydraulics",
+        "value": {
+          "processing_speed": 1.5
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_greenhouse",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_habitat",
+    "name_it": "Habitat piccolo II e III",
+    "owner": "module",
+    "target_module": "mod_habitat",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "food_buffer_minutes": 30
+    },
+    "icon": "assets/design/icons/upg_module_habitat.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "habitat"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_bond",
+        "value": {
+          "food_buffer_minutes": 45
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_habitat",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_bond",
+        "value": {
+          "food_buffer_minutes": 60
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_habitat",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_infirmary",
+    "name_it": "Infermeria II e III",
+    "owner": "module",
+    "target_module": "mod_infirmary",
+    "stage": 2,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "treatment_seconds": 60
+    },
+    "icon": "assets/design/icons/upg_module_infirmary.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "med"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_cold",
+        "value": {
+          "treatment_seconds": 45
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_infirmary",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_cold",
+        "value": {
+          "treatment_seconds": 30
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_infirmary",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_gas_filter",
+    "name_it": "Filtro gas avanzato II e III",
+    "owner": "module",
+    "target_module": "mod_gas_filter",
+    "stage": 3,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "concentration_removed_per_second": 0.015,
+      "cells_served": 16
+    },
+    "icon": "assets/design/icons/upg_module_gas_filter.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "filter"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_biology",
+        "value": {
+          "concentration_removed_per_second": 0.025,
+          "cells_served": 24
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_gas_filter",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_biology",
+        "value": {
+          "concentration_removed_per_second": 0.04,
+          "cells_served": 32
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_gas_filter",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_route_dock",
+    "name_it": "Stazione Robbie II e III",
+    "owner": "module",
+    "target_module": "mod_route_dock",
+    "stage": 3,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "robbie_battery_minutes_per_second": 0.1,
+      "cache_units": 24
+    },
+    "icon": "assets/design/icons/upg_module_route_dock.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "drone"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_logistics",
+        "value": {
+          "robbie_battery_minutes_per_second": 0.15,
+          "cache_units": 32
+        },
+        "cost_items": {
+          "res_stone": 3,
+          "res_copper": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_route_dock",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_logistics",
+        "value": {
+          "robbie_battery_minutes_per_second": 0.2,
+          "cache_units": 40
+        },
+        "cost_items": {
+          "res_stone": 6,
+          "res_copper": 4
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_route_dock",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_habitat_aquatic",
+    "name_it": "Habitat acquatico II e III",
+    "owner": "module",
+    "target_module": "mod_habitat_aquatic",
+    "stage": 3,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "food_buffer_minutes": 30
+    },
+    "icon": "assets/design/icons/upg_module_habitat_aquatic.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "aquarium"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_ecology",
+        "value": {
+          "food_buffer_minutes": 45
+        },
+        "cost_items": {
+          "res_steel": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_habitat_aquatic",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": {
+          "food_buffer_minutes": 60
+        },
+        "cost_items": {
+          "res_steel": 4,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_habitat_aquatic",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_habitat_climate",
+    "name_it": "Habitat climatico II e III",
+    "owner": "module",
+    "target_module": "mod_habitat_climate",
+    "stage": 3,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "food_buffer_minutes": 30
+    },
+    "icon": "assets/design/icons/upg_module_habitat_climate.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "habitat"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_ecology",
+        "value": {
+          "food_buffer_minutes": 45
+        },
+        "cost_items": {
+          "res_steel": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_habitat_climate",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_ecology",
+        "value": {
+          "food_buffer_minutes": 60
+        },
+        "cost_items": {
+          "res_steel": 4,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_habitat_climate",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_photonics",
+    "name_it": "Banco fotonico II e III",
+    "owner": "module",
+    "target_module": "mod_photonics",
+    "stage": 4,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "processing_speed": 1
+    },
+    "icon": "assets/design/icons/upg_module_photonics.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "lens"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_resonance",
+        "value": {
+          "processing_speed": 1.25
+        },
+        "cost_items": {
+          "res_steel": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_photonics",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_resonance",
+        "value": {
+          "processing_speed": 1.5
+        },
+        "cost_items": {
+          "res_steel": 4,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_photonics",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_habitat_aviary",
+    "name_it": "Voliera pressurizzata II e III",
+    "owner": "module",
+    "target_module": "mod_habitat_aviary",
+    "stage": 5,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "food_buffer_minutes": 30
+    },
+    "icon": "assets/design/icons/upg_module_habitat_aviary.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "aviary"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_sky",
+        "value": {
+          "food_buffer_minutes": 45
+        },
+        "cost_items": {
+          "res_steel": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_habitat_aviary",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_sky",
+        "value": {
+          "food_buffer_minutes": 60
+        },
+        "cost_items": {
+          "res_steel": 4,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_habitat_aviary",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  },
+  {
+    "id": "upg_module_sanctuary",
+    "name_it": "Santuario multispecie II e III",
+    "owner": "module",
+    "target_module": "mod_sanctuary",
+    "stage": 5,
+    "stat": "explicit_module_stats",
+    "unit": "see_effects",
+    "baseline": {
+      "food_buffer_minutes": 30
+    },
+    "icon": "assets/design/icons/upg_module_sanctuary.svg",
+    "visual": {
+      "color": "#8fc4c4",
+      "shape": "sanctuary"
+    },
+    "levels": [
+      {
+        "level": 1,
+        "requires_previous": 0,
+        "required_research": "tech_symbiosis",
+        "value": {
+          "food_buffer_minutes": 45
+        },
+        "cost_items": {
+          "res_steel": 2,
+          "res_circuit": 1
+        },
+        "cost_currency": {
+          "cur_lumen": 10
+        },
+        "station": "mod_sanctuary",
+        "seconds": 15,
+        "display_installation_level": 2
+      },
+      {
+        "level": 2,
+        "requires_previous": 1,
+        "required_research": "tech_symbiosis",
+        "value": {
+          "food_buffer_minutes": 60
+        },
+        "cost_items": {
+          "res_steel": 4,
+          "res_circuit": 2
+        },
+        "cost_currency": {
+          "cur_lumen": 20
+        },
+        "station": "mod_sanctuary",
+        "seconds": 30,
+        "display_installation_level": 3
+      }
+    ],
+    "footprint_changes": false,
+    "power_multiplier_per_level": 1.15,
+    "respec": "return_to_previous_level_refunds_currency_only_never_creates_materials"
+  }
+]

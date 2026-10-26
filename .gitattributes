@@ -16,3 +16,6 @@ source_assets/**/*.psd filter=lfs diff=lfs merge=lfs -text
 source_assets/**/*.ase filter=lfs diff=lfs merge=lfs -text
 source_assets/**/*.aseprite filter=lfs diff=lfs merge=lfs -text
 source_assets/**/*.kra filter=lfs diff=lfs merge=lfs -text
+refs/**/*.png filter=lfs diff=lfs merge=lfs -text
+scenes/player/sources/*.png filter=lfs diff=lfs merge=lfs -text
+scenes/player/sources/*.psd filter=lfs diff=lfs merge=lfs -text

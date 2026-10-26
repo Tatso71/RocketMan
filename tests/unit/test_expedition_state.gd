@@ -1,0 +1,147 @@
+extends GdUnitTestSuite
+
+const State = preload("res://scripts/systems/expedition_state.gd")
+const Planets = preload("res://scripts/data/planet_catalog.gd")
+const DigSite = preload("res://scripts/systems/dig_site.gd")
+
+func test_cycle_transitions_and_one_time_costs() -> void:
+	var state := State.new()
+	state.ship.lab_research_unlocked = true
+	assert_bool(state.choose("verdant")).is_true()
+	assert_bool(state.depart()).is_true()
+	var fuel := state.ship.fuel
+	assert_bool(state.depart()).is_false()
+	assert_float(state.ship.fuel).is_equal(fuel)
+	assert_bool(state.choose("frost")).is_false()
+	state.advance(10)
+	assert_int(state.phase).is_equal(State.Phase.LANDING)
+	var hull := state.ship.hull
+	state.advance(10)
+	assert_int(state.phase).is_equal(State.Phase.DIGGING)
+	assert_float(state.ship.hull).is_less(hull)
+	var landed_hull := state.ship.hull
+	state.advance(100)
+	assert_float(state.ship.hull).is_equal(landed_hull)
+	assert_bool(state.takeoff()).is_true()
+	assert_bool(state.takeoff()).is_false()
+	state.advance(10)
+	assert_int(state.phase).is_equal(State.Phase.SELECT)
+
+func test_unaffordable_or_invalid_routes_leave_state_unchanged() -> void:
+	var state := State.new()
+	assert_bool(state.choose("missing")).is_false()
+	state.ship.fuel = 1
+	var before := state.snapshot()
+	assert_bool(state.depart()).is_false()
+	assert_dict(state.snapshot()).is_equal(before)
+	assert_bool(state.takeoff()).is_false()
+
+func test_midflight_save_resumes_without_paying_twice() -> void:
+	var state := State.new()
+	state.depart()
+	state.advance(1)
+	var fuel := state.ship.fuel
+	var data: Dictionary = JSON.parse_string(JSON.stringify(state.snapshot()))
+	var loaded := State.new()
+	assert_bool(loaded.restore(data)).is_true()
+	assert_int(loaded.phase).is_equal(State.Phase.FLIGHT)
+	assert_float(loaded.ship.fuel).is_equal(fuel)
+	assert_bool(is_equal_approx(loaded.progress, state.progress)).is_true()
+	loaded.advance(10)
+	assert_float(loaded.ship.fuel).is_equal(fuel)
+
+func test_outpost_snapshots_are_independent_and_planets_have_distinct_terrain() -> void:
+	var state := State.new()
+	var ocra := DigSite.new(Planets.find("ochre").terrain_seed)
+	var brina := DigSite.new(Planets.find("frost").terrain_seed)
+	assert_str(ocra.material(Vector2i(0, 4))).is_not_equal(brina.material(Vector2i(0, 4)))
+	state.outposts.ochre = {"removed": ocra.snapshot()}
+	var data := state.snapshot()
+	state.outposts.ochre.removed.clear()
+	assert_int(data.outposts.ochre.removed.size()).is_greater(0)
+
+func test_invalid_phase_and_unknown_planet_do_not_mutate_state() -> void:
+	var state := State.new()
+	var data := state.snapshot()
+	data.phase = 99
+	assert_bool(state.restore(data)).is_false()
+	assert_int(state.phase).is_equal(State.Phase.SELECT)
+	data = state.snapshot()
+	data.selected_planet = "missing"
+	assert_bool(state.restore(data)).is_false()
+	data = state.snapshot()
+	data.progress = NAN
+	assert_bool(state.restore(data)).is_false()
+
+func test_ocra_is_the_only_initial_destination_and_cannot_be_bypassed() -> void:
+	var state := State.new()
+	assert_int(state.available_planets().size()).is_equal(1)
+	assert_str(state.available_planets()[0].planet_id).is_equal("ochre")
+	assert_bool(state.choose("verdant")).is_false()
+	assert_bool(state.choose("frost")).is_false()
+	state.selected_planet = "frost"
+	var fuel := state.ship.fuel
+	assert_bool(state.depart()).is_false()
+	assert_float(state.ship.fuel).is_equal(fuel)
+
+func test_first_completed_lab_unlocks_both_outer_routes_and_persists() -> void:
+	var state := State.new()
+	state.ship.lab_research_unlocked = true
+	assert_int(state.available_planets().size()).is_equal(3)
+	assert_bool(state.choose("frost")).is_true()
+	var restored := State.new()
+	assert_bool(restored.restore(JSON.parse_string(JSON.stringify(state.snapshot())))).is_true()
+	assert_int(restored.available_planets().size()).is_equal(3)
+
+func test_legacy_outer_planet_campaign_keeps_access() -> void:
+	var state := State.new()
+	state.active_planet = "frost"
+	var restored := State.new()
+	assert_bool(restored.restore(state.snapshot())).is_true()
+	assert_int(restored.available_planets().size()).is_equal(3)
+
+func test_instant_arrival_matches_normal_travel_costs_damage_and_destination() -> void:
+	for planet: Resource in Planets.all():
+		var normal := State.new()
+		var instant := State.new()
+		for state: RefCounted in [normal, instant]:
+			state.ship.lab_research_unlocked = true
+			state.ship.modules.engine = 2
+			state.ship.modules.landing_gear = 2
+			state.choose(planet.planet_id)
+		normal.depart()
+		normal.advance(State.DURATIONS[State.Phase.FLIGHT])
+		normal.advance(State.DURATIONS[State.Phase.LANDING])
+		assert_bool(instant.arrive_immediately()).is_true()
+		assert_int(instant.phase).is_equal(State.Phase.DIGGING)
+		assert_dict(instant.snapshot()).is_equal(normal.snapshot())
+		var before := instant.snapshot()
+		assert_bool(instant.arrive_immediately()).is_false()
+		instant.advance(100)
+		assert_dict(instant.snapshot()).is_equal(before)
+
+func test_instant_arrival_respects_locked_invalid_and_unaffordable_routes() -> void:
+	for id: String in ["frost", "verdant", "missing"]:
+		var state := State.new()
+		state.selected_planet = id
+		var before := state.snapshot()
+		assert_bool(state.arrive_immediately()).is_false()
+		assert_dict(state.snapshot()).is_equal(before)
+	for stat: String in ["fuel", "energy", "hull"]:
+		var state := State.new()
+		state.ship.set(stat, 1)
+		var before := state.snapshot()
+		assert_bool(state.arrive_immediately()).is_false()
+		assert_dict(state.snapshot()).is_equal(before)
+
+func test_instant_arrival_json_save_load_does_not_restart_or_charge_again() -> void:
+	var state := State.new()
+	assert_bool(state.arrive_immediately()).is_true()
+	var loaded := State.new()
+	assert_bool(loaded.restore(JSON.parse_string(JSON.stringify(state.snapshot())))).is_true()
+	assert_int(loaded.phase).is_equal(State.Phase.DIGGING)
+	assert_str(loaded.active_planet).is_equal("ochre")
+	assert_int(loaded.available_planets().size()).is_equal(1)
+	var before := loaded.snapshot()
+	loaded.advance(100)
+	assert_dict(loaded.snapshot()).is_equal(before)

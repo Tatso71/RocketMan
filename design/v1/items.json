@@ -1,0 +1,16 @@
+[
+  {
+    "id": "item_stasis_carrier",
+    "name_it": "Culla di stasi riutilizzabile",
+    "kind": "equipment",
+    "stage": 2,
+    "inventory_units": 2,
+    "icon": "assets/design/icons/item_stasis_carrier.svg",
+    "visual": {
+      "color": "#93d2bf",
+      "shape": "habitat"
+    },
+    "capacity_creatures": 1,
+    "reusable": true
+  }
+]
