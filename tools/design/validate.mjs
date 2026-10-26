@@ -77,6 +77,19 @@ for(const step of tutorial?.steps||[]){
   check(['title_it','hint_it','detail_it'].every(key=>typeof step[key]==='string'&&step[key].length>0),`Missing Robbie task copy ${step.id}`);
   check(['help','fabricate_lab','place_lab','inventory'].includes(step.action)&&validCondition(step.complete_when),`Invalid Robbie task action or condition ${step.id}`);
 }
+const fabrication=D.progression.prototype_fabrication;
+const deviceModules={lamp:'mod_light',pump:'mod_pump',fan:'mod_gas_filter'};
+check(fabrication?.version===1&&fabrication.unlock_after==='first_completed_laboratory'&&Array.isArray(fabrication.recipes)&&fabrication.recipes.length===3,'Invalid prototype device fabrication catalog');
+const deviceIds=new Set();
+for(const recipe of fabrication?.recipes||[]){
+  check(Object.hasOwn(deviceModules,recipe.id)&&!deviceIds.has(recipe.id)&&recipe.module===deviceModules[recipe.id],`Invalid prototype device ${recipe.id}`);
+  deviceIds.add(recipe.id);
+  ref(recipe.module,'prototype_fabrication');quantities(recipe.inputs,`prototype_fabrication.${recipe.id}`);
+  check(Object.keys(recipe.inputs||{}).every(id=>['res_soil','res_stone','res_copper'].includes(id)),`Unsupported prototype ingredient ${recipe.id}`);
+  check(typeof recipe.name_it==='string'&&recipe.name_it.length>0,`Missing prototype device name ${recipe.id}`);
+  check([recipe.seconds,recipe.deployment_seconds].every(n=>Number.isFinite(n)&&n>0&&n<=120)&&Number.isFinite(recipe.energy_kwh)&&recipe.energy_kwh>=0&&recipe.energy_kwh<=60,`Invalid prototype device timing ${recipe.id}`);
+}
+check(JSON.stringify(D.rules.cubes.fabrication.after_first_completed_laboratory)===JSON.stringify(Object.values(deviceModules)),'Prototype device unlock rules must match fabrication recipes');
 
 // Research prerequisite graph must be acyclic even before material reachability.
 const visiting=new Set(),done=new Set();

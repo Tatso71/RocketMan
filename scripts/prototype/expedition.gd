@@ -6,7 +6,7 @@ const Modules = preload("res://scripts/data/ship_module_catalog.gd")
 const Exterior = preload("res://scripts/prototype/rocket_exterior.gd")
 const Home = preload("res://scenes/prototype/rocket_home.tscn")
 const PHASE_NAMES := ["Scelta del pianeta", "Volo interplanetario", "Atterraggio verticale", "Esplorazione e scavo", "Decollo"]
-const RESOURCE_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
+const RESOURCE_NAMES := preload("res://scripts/systems/field_cargo.gd").NAMES
 var model := State.new()
 var world: Node2D
 var exterior: Node2D
@@ -17,6 +17,7 @@ var stats_label: Label
 var status_label: Label
 var planet_list: ItemList
 var depart_button: Button
+var instant_arrival_button: Button
 var progress_bar: ProgressBar
 var selection_controls: VBoxContainer
 var ship_menu: Window
@@ -87,6 +88,16 @@ func select_planet(index: int) -> void:
 func depart() -> bool:
 	if not model.depart():
 		_notify(model.ship.flight_blocker(Planets.find(model.selected_planet)))
+		return false
+	feedback = ""
+	_sync_phase()
+	return true
+
+func arrive_immediately() -> bool:
+	if not model.arrive_immediately():
+		var planet := Planets.find(model.selected_planet)
+		var reason: String = model.ship.flight_blocker(planet) if planet != null else "Destinazione non disponibile"
+		_notify(reason if not reason.is_empty() else "Viaggio non disponibile")
 		return false
 	feedback = ""
 	_sync_phase()
@@ -224,7 +235,14 @@ func _build_interface() -> void:
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info_label.add_theme_font_size_override("font_size", 16)
 	selection_controls.add_child(info_label)
-	depart_button = _button(selection_controls, "Avvia volo", depart)
+	var travel_actions := HBoxContainer.new()
+	travel_actions.add_theme_constant_override("separation", 10)
+	selection_controls.add_child(travel_actions)
+	depart_button = _button(travel_actions, "Avvia volo", depart)
+	depart_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	instant_arrival_button = _button(travel_actions, "Arriva subito al pianeta", arrive_immediately)
+	instant_arrival_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	instant_arrival_button.tooltip_text = "Salta volo e atterraggio, mantenendo costi e usura del viaggio"
 	stats_label = _label(screen, "", Vector2(24, 500), Vector2(360, 162), 14)
 	progress_bar = ProgressBar.new()
 	progress_bar.position = Vector2(24, 420)
@@ -266,10 +284,12 @@ func _refresh_interface() -> void:
 	phase_label.text = PHASE_NAMES[model.phase]
 	planet_list.visible = model.phase == State.Phase.SELECT
 	depart_button.visible = model.phase == State.Phase.SELECT
+	instant_arrival_button.visible = model.phase == State.Phase.SELECT
 	var cost: float = model.ship.route_cost(planet)
 	info_label.text = "%s\n\nRotta: %.0f u carburante + 6 u riserva\nUsura atterraggio: %.1f integrita\n\n%s" % [planet.display_name, cost, planet.landing_hazard / int(model.ship.modules.landing_gear), planet.scan_summary]
 	depart_button.disabled = not model.ship.flight_blocker(planet).is_empty()
 	depart_button.tooltip_text = model.ship.flight_blocker(planet)
+	instant_arrival_button.disabled = depart_button.disabled
 	stats_label.text = _ship_summary()
 	progress_bar.visible = model.phase in State.DURATIONS
 	progress_bar.value = model.progress * 100

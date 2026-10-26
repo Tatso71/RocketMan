@@ -1,12 +1,15 @@
 extends RefCounted
 
 const Catalog = preload("res://scripts/data/ocra_catalog.gd")
+const Texts = preload("res://scripts/data/robbie_texts.gd")
 var definition: Dictionary
+var authored_texts := true
 var facts: Dictionary = {}
 var counters: Dictionary = {}
 
 func _init(custom_definition: Dictionary = {}) -> void:
 	definition = custom_definition if not custom_definition.is_empty() else Catalog.load_data().get("tutorial", {})
+	authored_texts = custom_definition.is_empty()
 
 func record(event: String) -> void:
 	mark(event)
@@ -38,13 +41,17 @@ func index() -> int:
 
 func current() -> Dictionary:
 	var position := index()
-	return definition.steps[position] if position < definition.get("steps", []).size() else {}
+	if position >= definition.get("steps", []).size():
+		return {}
+	return Texts.tutorial_step(definition.steps[position]) if authored_texts else definition.steps[position]
 
 func message(id: String) -> Array:
 	if not id.begins_with("ocra/"):
 		return []
 	for step: Dictionary in definition.get("steps", []):
 		if id == "ocra/" + step.id:
+			if authored_texts and not Texts.message(id).is_empty():
+				return Texts.message(id)
 			return [65, step.title_it, step.hint_it]
 	return []
 

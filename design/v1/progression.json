@@ -83,6 +83,15 @@
       "completion": "first_destination_plan"
     }
   ],
+  "prototype_fabrication": {
+    "version": 1,
+    "unlock_after": "first_completed_laboratory",
+    "recipes": [
+      {"id": "lamp", "module": "mod_light", "name_it": "Luce", "inputs": {"res_soil": 1, "res_copper": 1}, "seconds": 2.5, "energy_kwh": 0.004, "deployment_seconds": 2.5},
+      {"id": "pump", "module": "mod_pump", "name_it": "Pompa acqua", "inputs": {"res_stone": 3, "res_copper": 4}, "seconds": 4, "energy_kwh": 0.008, "deployment_seconds": 4},
+      {"id": "fan", "module": "mod_gas_filter", "name_it": "Ventilatore gas", "inputs": {"res_stone": 2, "res_copper": 3}, "seconds": 4, "energy_kwh": 0.006, "deployment_seconds": 4}
+    ]
+  },
   "ocra_tutorial": {
     "version": 1,
     "planet": "planet_ocra",

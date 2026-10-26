@@ -29,6 +29,14 @@ func freeze() -> void:
 	world.guide_state.set_muted(true)
 
 func controls_fit(node: Node, bounds: Rect2) -> bool:
+	if node is ScrollContainer:
+		# Scroll content may be taller, but the viewport and horizontal minimum must fit.
+		if not bounds.grow(1).encloses(node.get_global_rect()):
+			return false
+		for content in node.get_children():
+			if content is Container and content.get_combined_minimum_size().x > node.size.x + 1:
+				return false
+		return true
 	for child in node.get_children():
 		if child is Control and child.is_visible_in_tree() and not bounds.grow(1).encloses(child.get_global_rect()):
 			print("Overflow: ", child.get_class(), " ", child.get_global_rect(), " / ", bounds)
@@ -162,7 +170,7 @@ func _run() -> void:
 	outpost.advance(4)
 	check(outpost.has_lab() and world.guide_state.ocra.complete(), "completed laboratory is powered and completes Ocra tutorial")
 	var lab: Dictionary = outpost.buildings.labs()[0]
-	check(not outpost.recipe_visible("lamp") and not outpost.recipe_visible("pump"), "only laboratory is currently offered; device unlocks are deferred")
+	check(outpost.recipe_visible("lamp") and outpost.recipe_visible("pump") and outpost.recipe_visible("fan"), "first completed laboratory unlocks all three utility cubes")
 	outpost.selected_station = {"kind": "laboratory", "building": lab}
 	lab.stock = {"stone": 20, "copper": 20}
 	world.field_cargo.backpack.clear()

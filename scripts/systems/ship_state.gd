@@ -5,6 +5,7 @@ const Tools = preload("res://scripts/data/digital_tool_catalog.gd")
 const FieldCargo = preload("res://scripts/systems/field_cargo.gd")
 const GuideState = preload("res://scripts/systems/drone_guide_state.gd")
 const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
+const IndustryCatalog = preload("res://scripts/data/industry_catalog.gd")
 const RESOURCE_IDS := FieldCargo.ITEM_IDS
 var modules: Dictionary = {"hull": 1, "engine": 1, "cargo": 1, "battery": 1, "drill": 1, "landing_gear": 1, "habitat": 1, "drone": 1}
 var resources: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0, "lamp_kit": 0}
@@ -13,6 +14,7 @@ var fabrication := Fabrication.new()
 var field_cargo := FieldCargo.new()
 var drone_guide := GuideState.new()
 var lab_research_unlocked := false
+var seed_bank := IndustryCatalog.initial_seeds()
 var hull := 100.0
 var fuel := 80.0
 var energy := 60.0
@@ -127,13 +129,18 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "seed_bank": seed_bank.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
 	if not data.get("modules") is Dictionary or not data.get("resources") is Dictionary:
 		return false
 	var next: RefCounted = get_script().new()
+	if not IndustryCatalog.seeds_valid(data.get("seed_bank", IndustryCatalog.initial_seeds())):
+		return false
+	if data.has("seed_bank"):
+		for crop: String in IndustryCatalog.CROP_IDS:
+			next.seed_bank[crop] = int(data.seed_bank.get(crop, 0))
 	if not _integer(data.get("laboratory_level", 1), 1, 3) or not next.fabrication.restore(data.get("fabrication", {})) or not next.fabrication.valid_ship():
 		return false
 	next.laboratory_level = int(data.get("laboratory_level", 1))
@@ -187,6 +194,8 @@ func restore(data: Dictionary) -> bool:
 	drone_guide.restore(next.drone_guide.snapshot())
 	lab_research_unlocked = data.get("lab_research_unlocked", false)
 	laboratory_level = next.laboratory_level
+	seed_bank.clear()
+	seed_bank.merge(next.seed_bank)
 	fabrication.restore(next.fabrication.snapshot())
 	hull = float(data.hull)
 	fuel = float(data.fuel)

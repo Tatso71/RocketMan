@@ -36,6 +36,14 @@ func check_layout() -> void:
 	check(world.outpost.cargo_ui.compact.get_global_rect().end.x <= view.end.x, "inventory HUD fits viewport width")
 
 func controls_fit(node: Node, bounds: Rect2) -> bool:
+	if node is ScrollContainer:
+		# Scroll content may be taller, but the viewport and horizontal minimum must fit.
+		if not bounds.grow(1).encloses(node.get_global_rect()):
+			return false
+		for content in node.get_children():
+			if content is Container and content.get_combined_minimum_size().x > node.size.x + 1:
+				return false
+		return true
 	for child in node.get_children():
 		if child is Control and child.is_visible_in_tree() and not bounds.grow(1).encloses(child.get_global_rect()):
 			print("Overflow: ", child.get_class(), " ", child.get_global_rect(), " bounds ", bounds)

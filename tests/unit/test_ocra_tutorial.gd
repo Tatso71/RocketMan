@@ -40,6 +40,27 @@ func test_catalog_loads_the_authored_tasks_and_laboratory_recipe() -> void:
 	assert_int(data.laboratory.cost.stone).is_equal(6)
 	assert_int(data.laboratory.cost.copper).is_equal(4)
 	assert_float(data.laboratory.seconds).is_equal(5.0)
+	assert_int(data.fabrication.size()).is_equal(7)
+	assert_dict(data.fabrication.lamp.cost).is_equal({"soil": 1, "copper": 1})
+	assert_dict(data.fabrication.pump.cost).is_equal({"stone": 3, "copper": 4})
+	assert_dict(data.fabrication.fan.cost).is_equal({"stone": 2, "copper": 3})
+
+func test_device_recipes_reject_missing_unknown_duplicate_and_invalid_costs() -> void:
+	var data := payload()
+	data.progression.prototype_fabrication.recipes.remove_at(0)
+	assert_bool(Catalog.validate(data).is_empty()).is_true()
+	data = payload()
+	data.progression.prototype_fabrication.recipes[1] = data.progression.prototype_fabrication.recipes[0].duplicate(true)
+	assert_bool(Catalog.validate(data).is_empty()).is_true()
+	data = payload()
+	data.progression.prototype_fabrication.recipes[0].id = "unknown_device"
+	assert_bool(Catalog.validate(data).is_empty()).is_true()
+	data = payload()
+	data.progression.prototype_fabrication.recipes[0].inputs.res_copper = -1
+	assert_bool(Catalog.validate(data).is_empty()).is_true()
+	data = payload()
+	data.progression.prototype_fabrication.recipes[0].seconds = 0
+	assert_bool(Catalog.validate(data).is_empty()).is_true()
 
 func test_task_order_uses_real_events_and_unique_mined_cells() -> void:
 	var tutorial := Tutorial.new()

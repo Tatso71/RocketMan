@@ -2,6 +2,7 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const HazardLayout = preload("res://scripts/data/hazard_layout.gd")
+const Geology = preload("res://scripts/data/ocra_geology.gd")
 const CELL := Grid.CELL_SIZE
 const LEFT := -24
 const RIGHT := 24
@@ -12,18 +13,23 @@ const ANCHORS := [Vector2i(-6, 6), Vector2i(-5, 6), Vector2i(-4, 6), Vector2i(7,
 var removed: Dictionary = {}
 var damage: Dictionary = {}
 var terrain_seed := 0
+var layout_version := 1
 
-func _init(seed_value: int = 0) -> void:
+func _init(seed_value: int = 0, version: int = 1) -> void:
 	terrain_seed = seed_value
+	layout_version = version
 	_add_pocket_cavities()
 
 func _add_pocket_cavities() -> void:
-	for pocket: Dictionary in HazardLayout.pockets(terrain_seed):
+	for pocket: Dictionary in pockets():
 		for cell: Vector2i in HazardLayout.cells(pocket):
 			removed[cell] = true
 
 func indestructible(cell: Vector2i) -> bool:
-	return cell in ANCHORS or cell.y == DEPTH - 1
+	return cell in ANCHORS or cell.y == DEPTH - 1 or (terrain_seed == 0 and layout_version >= 1 and Geology.protected(cell))
+
+func pockets() -> Array:
+	return HazardLayout.pockets(terrain_seed, layout_version)
 
 func contains(cell: Vector2i) -> bool:
 	return cell.x >= LEFT and cell.x < RIGHT and cell.y >= 0 and cell.y < DEPTH
@@ -33,6 +39,10 @@ func material(cell: Vector2i) -> String:
 		return ""
 	if indestructible(cell):
 		return "anchor"
+	if terrain_seed == 0 and layout_version >= 1:
+		var ore := Geology.ore(cell)
+		if not ore.is_empty():
+			return ore
 	if cell.y >= 15:
 		return "bedrock"
 	var sample := posmod(cell.x * 37 + cell.y * 73 + terrain_seed, 29)

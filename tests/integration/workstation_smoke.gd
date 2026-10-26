@@ -29,6 +29,14 @@ func click(point: Vector2, button: MouseButton) -> void:
 	world._unhandled_input(event)
 
 func controls_fit(node: Node, bounds: Rect2) -> bool:
+	if node is ScrollContainer:
+		# Scroll content may be taller, but the viewport and horizontal minimum must fit.
+		if not bounds.grow(1).encloses(node.get_global_rect()):
+			return false
+		for content in node.get_children():
+			if content is Container and content.get_combined_minimum_size().x > node.size.x + 1:
+				return false
+		return true
 	for child in node.get_children():
 		if child is Control and child.is_visible_in_tree() and not bounds.grow(1).encloses(child.get_global_rect()):
 			print("Overflow: ", child.get_class(), " ", child.get_global_rect(), " bounds ", bounds)
@@ -173,7 +181,7 @@ func _run() -> void:
 	menu.window.hide()
 	click(Vector2(-120, 100), MOUSE_BUTTON_RIGHT)
 	menu.activate(2)
-	check(construction.picker.visible and not world.outpost.recipe_visible("lamp") and not world.outpost.build_mode, "field station opens fabrication; future devices cannot create free plans")
+	check(construction.picker.visible and construction.recipe_rows.size() == 7 and not world.outpost.build_mode, "field station exposes seven fabrication rows without free world blueprints")
 	construction.picker.hide()
 	world.outpost.build_mode = false
 	# Keep the multi-station fixture dry; fluid behavior has a separate smoke test.

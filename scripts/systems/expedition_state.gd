@@ -7,6 +7,8 @@ const DigSite = preload("res://scripts/systems/dig_site.gd")
 const HazardField = preload("res://scripts/systems/environment_field.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
+const Network = preload("res://scripts/systems/utility_network.gd")
+const Industry = preload("res://scripts/systems/industry_state.gd")
 enum Phase {SELECT, FLIGHT, LANDING, DIGGING, TAKEOFF}
 const DURATIONS := {Phase.FLIGHT: 3.5, Phase.LANDING: 4.0, Phase.TAKEOFF: 2.5}
 var ship := Ship.new()
@@ -39,6 +41,13 @@ func depart() -> bool:
 	active_planet = selected_planet
 	phase = Phase.FLIGHT
 	progress = 0
+	return true
+
+func arrive_immediately() -> bool:
+	if not depart():
+		return false
+	advance(DURATIONS[Phase.FLIGHT])
+	advance(DURATIONS[Phase.LANDING])
 	return true
 
 func advance(delta: float) -> void:
@@ -98,13 +107,17 @@ func restore(data: Dictionary) -> bool:
 			var cell = Grid.decode_cell(entry)
 			if not cell is Vector2i or cell.x < DigSite.LEFT or cell.x >= DigSite.RIGHT or cell.y < -2 or cell.y >= DigSite.DEPTH:
 				return false
-		var terrain := DigSite.new(Planets.find(planet_id).terrain_seed)
+		if not Fabrication.integer(outpost.get("layout_version", 0), 0, 1):
+			return false
+		var terrain := DigSite.new(Planets.find(planet_id).terrain_seed, int(outpost.get("layout_version", 0)))
 		terrain.restore(outpost.removed)
 		var field := HazardField.new(terrain)
 		if not field.restore(outpost.get("hazards", {})):
 			return false
 		var buildings := Buildings.new()
 		if not buildings.restore(outpost.get("buildings", []), terrain):
+			return false
+		if not Network.new().restore(outpost.get("network", {}), terrain) or not Industry.new().restore(outpost.get("industry", {}), buildings, terrain):
 			return false
 		var fabrication := Fabrication.new()
 		if not fabrication.restore(outpost.get("fabrication", {})) or not fabrication.valid_world(terrain, buildings) or not Fabrication.integer(outpost.get("local_lab_level", 1), 1, 3):

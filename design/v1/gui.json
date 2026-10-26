@@ -52,7 +52,8 @@
       "radiation",
       "gas",
       "water_pressure",
-      "robbie_signal",
+        "robbie_signal",
+        "laboratory_shared_charge_and_segmented_device_consumption_bars",
       "building_network"
     ],
     "max_simultaneous_warning_cards": 2,
@@ -126,7 +127,7 @@
         "physical_materialization_progress_on_bench_persists_after_menu_close",
         "space_pick_up_or_drop_one_cube_separate_from_backpack",
         "right_click_dropped_cube_to_activate",
-        "prototype_only_laboratory_then_future_light_water_pump_gas_fan_unlocks",
+        "laboratory_initially_then_light_water_pump_gas_fan_after_first_completed_lab",
         "ghost_cells_plus_obstruction_reason",
         "show_ports_floor_and_return_path",
         "no_green_preview_until_all_checks_pass",

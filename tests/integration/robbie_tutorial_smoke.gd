@@ -140,7 +140,7 @@ func _run() -> void:
 	await screenshot("robbie-laboratory-recipe", ui.picker)
 	ui.picker.hide()
 	lab.enabled = false
-	check(not world.outpost.recipe_visible("lamp") and not world.outpost.recipe_visible("pump"), "future device recipes remain deferred")
+	check(world.outpost.recipe_visible("lamp") and world.outpost.recipe_visible("pump") and world.outpost.recipe_visible("fan"), "device research stays unlocked while laboratory is switched off")
 	lab.enabled = true
 	for y in range(2, 4):
 		for x in range(1, 3):

@@ -1,39 +1,10 @@
 extends RefCounted
 
 const Tutorial = preload("res://scripts/systems/ocra_tutorial.gd")
-const MESSAGES := {
-	"welcome": [10, "Atterraggio completato", "Siamo arrivati! Sei ancora in cabina: clic destro per gestire la nave. Scendi con la scala al letto, poi al laboratorio. Ogni stanza si illumina quando puoi usarla."],
-	"bed_rest": [35, "Una pausa nel letto", "La stanza centrale e il nostro rifugio. Clic destro sul letto e Riposa: recuperi energia personale e integrita della tuta. La batteria della nave invece alimenta i laboratori e va gestita a parte."],
-	"first_dig": [15, "Il primo scavo", "Punta il terreno e usa il raggio Pulse per scavare. Io ti seguo e trasporto il materiale che non entra nello zaino. Non allontaniamoci troppo dalla nave."],
-	"lab_plan": [20, "Il primo cubo creatore", "Raccogli 6 pietra e 4 rame e scava una stanza 4 x 3 con pavimento. Al laboratorio, clic destro e Costruisci: premi Crea quando tutte le risorse sono verdi. Il cubo compare sul banco."],
-	"tutorial_collect": [65, "Prima il laboratorio", "Raccogli 6 pietra e 4 rame per il laboratorio. Il tuo zaino e il mio carico si sommano sempre, anche a distanza. La nave parte senza materiali; la pietra nel terreno inizia a 5 m."],
-	"tutorial_excavate": [65, "I materiali ci sono", "Hai le materie per il laboratorio! Ora libera una stanza larga 4 celle e alta 3, lasciando un pavimento solido. Ti avviso appena lo spazio e pronto per posare il cubo."],
-	"tutorial_place": [70, "La stanza e abbastanza grande", "Qui entra un laboratorio! Prendi il cubo pronto al banco con Spazio, portalo qui e posalo con Spazio. Clic destro sul cubo per attivarlo. Se l'ingombro e rosso, riprendilo e spostalo."],
-	"tutorial_fund": [65, "Riempiamo il cubo", "Il cubo e pronto. Porta 6 pietra e 4 rame tra zaino e Robbie, avvicinati e conferma il trasferimento. Le materie nella stiva non sono disponibili a distanza."],
-	"tutorial_build": [60, "Sta prendendo forma", "Il laboratorio si sta aprendo! Quando la barra sara piena avremo un nuovo banco e altre due rotte. Luci, pompa e ventilatore arriveranno con gli sblocchi successivi. Mantieni una via di ritorno con le scale."],
-	"pump_plan": [40, "Pompa di drenaggio", "La pompa dipende dal laboratorio. Il cubo occupa 2 x 2 m e costa 3 pietra e 4 rame. Puo stare nell'acqua: drena le celle collegate vicine, ma richiede laboratorio acceso e batteria della nave."],
-	"pump_built": [45, "Pompa attiva", "La pompa sta drenando l'acqua vicina attraverso i passaggi aperti. Consuma la batteria della nave; non aspira attraverso la roccia e si ferma se il laboratorio non e alimentato."],
-	"cargo_full": [80, "Carico pieno", "Non possiamo raccogliere altro. Raggiungi il laboratorio della nave o uno sotterraneo, clic destro e scegli Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Il deposito del banco conta per la fabbricazione locale."],
-	"drone_unavailable": [70, "Devo avvicinarmi", "Il tuo zaino e pieno, ma io sono troppo lontano per aiutarti. Aspettami in un passaggio aperto, oppure rientra in officina e scarica il materiale."],
-	"signal_limit": [75, "Limite del collegamento", "Sono al limite del segnale della nave e ti aspetto qui. I materiali del mio carico restano disponibili insieme ai tuoi. Potremo ampliare il mio raggio con la ricerca."],
-	"build_resources": [45, "Fabbricazione del cubo", "Per creare il cubo servono 6 pietra e 4 rame, dal carico comune o dal deposito del laboratorio vicino. Il pagamento avviene solo al comando Crea. Il cubo si materializza sul banco: poi prendilo con Spazio."],
-	"build_space": [40, "La stanza del laboratorio", "Libera un rettangolo di 4 celle per 3, con pavimento sotto tutte e 4 le colonne. Puoi restare dentro mentre lo monto! Tienimi vicino ed evita acqua e gas."],
-	"lab_built": [55, "Laboratorio attivo", "La barra e piena: il laboratorio ora funziona! Consuma la batteria della nave. Clic destro per usarlo o spegnerlo; dalla cabina puoi potenziare gli accumulatori della nave."],
-	"lamp_crafted": [50, "Portiamo luce nelle gallerie", "Il kit luce e nel carico. Dal menu Costruisci scegli Luce sotto Laboratorio, poi Posiziona cubo. Cerca un pavimento libero nel raggio del laboratorio: 8 metri di base, di piu con i potenziamenti."],
-	"lamp_plan": [30, "Un cubo per fare luce", "Clic destro su una cella libera con pavimento e scegli Luce. Anche lei nasce da un cubo: porta 1 terra e 1 rame, conferma il trasferimento e aspetta che si apra. Serve un laboratorio alimentato vicino."],
-	"lamp_placed": [30, "Una luce che resta", "Questa luce rimane qui anche quando ci allontaniamo. Continuiamo ad ampliare le gallerie dal laboratorio, mantenendo una via di ritorno alla nave."],
-	"deposited": [25, "Materiale al sicuro", "Carico scaricato! Il deposito e separato dal nostro carico comune. Questo laboratorio puo usare anche le materie nel suo deposito: clic destro e Costruisci. Per portarle altrove scegli Preleva materiali."],
-	"gas_danger": [100, "Gas! Indietro!", "La nube sta danneggiando la tuta. Allontanati e torna in una zona pulita. In nave la tuta si ripristina; usa lo scanner prima di aprire nuove sacche."],
-	"water_danger": [100, "Stai subendo danni!", "Sei sott'acqua e stai perdendo integrita! Risali subito con il comando di salita. Io resto fuori dall'acqua e lampeggio in rosso: non posso seguirti li. Una pompa puo asciugare la zona."],
-	"gas_leak": [90, "Sacca di gas aperta", "Abbiamo aperto una sacca di gas! Allontaniamoci dalla nube: non possiamo rendere operativo un laboratorio in un'area contaminata."],
-	"water_leak": [90, "Infiltrazione!", "L'acqua sta entrando nelle gallerie. Mantieni una via di risalita e proteggi il cantiere: serve una stanza asciutta per installare il laboratorio."],
-	"energy_low": [85, "Batteria nave quasi scarica", "Il raggio e i laboratori usano la stessa batteria. Spegni le postazioni inutili e rientra in cabina: Batteria e potenziamenti permette di gestire gli accumulatori. Il letto non ricarica la nave."],
-	"ladder_tip": [25, "Non dimenticare la risalita", "Con B costruisci subito una scala: costa 2 terra, senza cubi ne attese. La monti tu, anche senza drone, laboratorio o batteria. Manteniamo sempre una via di ritorno!"],
-	"tools": [20, "Prima analizziamo", "Lo Scanner rivela il materiale del blocco e le sacche vicine. Alcune rocce richiedono strumenti migliori; i nuclei indistruttibili vanno aggirati."],
-}
-const REPEATING := ["cargo_full", "drone_unavailable", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "gas_leak", "water_leak", "energy_low"]
+const Texts = preload("res://scripts/data/robbie_texts.gd")
+const REPEATING := ["cargo_full", "drone_unavailable", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "oil_danger", "gas_leak", "water_leak", "oil_leak", "energy_low"]
 const PERSISTENT := {"tutorial_collect": 20.0, "tutorial_excavate": 20.0, "tutorial_place": 20.0, "tutorial_fund": 25.0, "water_danger": 10.0}
-const FACTS := ["mined", "ladder", "lab_built", "lamp_crafted", "lamp_placed", "pump_built", "deposited"]
+const FACTS := ["mined", "ladder", "lab_built", "lamp_crafted", "lamp_placed", "pump_built", "fan_built", "deposited", "furnace_built", "gas_converter_built", "greenhouse_built", "seeds_found", "seed_pod_seen"]
 var seen: Array[String] = []
 var facts: Dictionary = {}
 var muted := false
@@ -48,7 +19,7 @@ var latched: Array[String] = []
 var ocra := Tutorial.new()
 
 func message(id: String) -> Array:
-	return MESSAGES[id] if MESSAGES.has(id) else ocra.message(id)
+	return ocra.message(id) if id.begins_with("ocra/") else Texts.message(id)
 
 func recurring(id: String) -> bool:
 	return id in REPEATING or PERSISTENT.has(id) or id.begins_with("ocra/")
@@ -79,9 +50,9 @@ func tick(delta: float, current_context: String) -> void:
 	gap = maxf(0, gap - delta)
 	# Re-arm a recurring hint only after its actual condition has cleared.
 	for id: String in latched.duplicate():
-		if id != current_context and id not in ["gas_leak", "water_leak"]:
+		if id != current_context and id not in ["gas_leak", "water_leak", "oil_leak"]:
 			latched.erase(id)
-	if recurring(active_id) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak"]:
+	if recurring(active_id) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak", "oil_leak"]:
 		dismiss()
 	context_id = current_context
 	remaining = maxf(0, remaining - delta)

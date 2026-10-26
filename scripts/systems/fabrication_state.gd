@@ -2,6 +2,7 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Site = preload("res://scripts/systems/dig_site.gd")
+const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 var jobs: Array = []
 var cubes: Array = []
 var carried_id := 0
@@ -25,8 +26,10 @@ func output_at(station: Array) -> Dictionary:
 			return cube
 	return {}
 
-func add_cube(point: Vector2, station: Array = []) -> Dictionary:
-	var cube := {"uid": next_id, "id": "laboratory", "level": 1, "position": point, "station": station.duplicate()}
+func add_cube(point: Vector2, station: Array = [], id: String = "laboratory") -> Dictionary:
+	if id not in Buildings.CUBE_IDS:
+		return {}
+	var cube := {"uid": next_id, "id": id, "level": 1, "position": point, "station": station.duplicate()}
 	next_id += 1
 	cubes.append(cube)
 	return cube
@@ -62,7 +65,7 @@ func restore(data: Variant) -> bool:
 	var stations: Array = []
 	var ids: Array = []
 	for job in data.get("jobs", []):
-		if not job is Dictionary or job.get("id") != "laboratory" or not station_valid(job.get("station")) or not integer(job.get("level"), 1, 1):
+		if not job is Dictionary or job.get("id") not in Buildings.CUBE_IDS or not station_valid(job.get("station")) or not integer(job.get("level"), 1, 1):
 			return false
 		for key: String in ["elapsed", "seconds"]:
 			if not (job.get(key) is int or job.get(key) is float) or not is_finite(float(job[key])):
@@ -73,9 +76,9 @@ func restore(data: Variant) -> bool:
 		if station in stations:
 			return false
 		stations.append(station)
-		next_jobs.append({"id": "laboratory", "level": 1, "station": station, "elapsed": float(job.elapsed), "seconds": float(job.seconds)})
+		next_jobs.append({"id": job.id, "level": 1, "station": station, "elapsed": float(job.elapsed), "seconds": float(job.seconds)})
 	for cube in data.get("cubes", []):
-		if not cube is Dictionary or cube.get("id") != "laboratory" or not integer(cube.get("level"), 1, 1) or not integer(cube.get("uid"), 1, int(data.get("next_id", 1)) - 1) or cube.uid in ids or not station_valid(cube.get("station"), true):
+		if not cube is Dictionary or cube.get("id") not in Buildings.CUBE_IDS or not integer(cube.get("level"), 1, 1) or not integer(cube.get("uid"), 1, int(data.get("next_id", 1)) - 1) or cube.uid in ids or not station_valid(cube.get("station"), true):
 			return false
 		var point = cube.get("position")
 		if not point is Array or point.size() != 2:
@@ -92,7 +95,7 @@ func restore(data: Variant) -> bool:
 				return false
 			stations.append(station)
 		ids.append(int(cube.uid))
-		next_cubes.append({"uid": int(cube.uid), "id": "laboratory", "level": 1, "station": station, "position": position})
+		next_cubes.append({"uid": int(cube.uid), "id": cube.id, "level": 1, "station": station, "position": position})
 	if int(data.get("carried_id", 0)) != 0 and int(data.carried_id) not in ids:
 		return false
 	jobs = next_jobs
@@ -129,6 +132,6 @@ func valid_ship() -> bool:
 func import_state(other: RefCounted) -> void:
 	jobs.append_array(other.jobs.duplicate(true))
 	for cube: Dictionary in other.cubes:
-		var imported := add_cube(cube.position, cube.station)
+		var imported := add_cube(cube.position, cube.station, cube.id)
 		if cube.uid == other.carried_id:
 			carried_id = imported.uid

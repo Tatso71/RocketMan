@@ -1,7 +1,8 @@
 extends RefCounted
 
 const ROOT := "res://design/v1/"
-const RESOURCE_ALIASES := {"res_stone": "stone", "res_copper": "copper"}
+const RESOURCE_ALIASES := {"res_soil": "soil", "res_stone": "stone", "res_copper": "copper"}
+const DEVICE_MODULES := {"lamp": "mod_light", "pump": "mod_pump", "fan": "mod_gas_filter"}
 const ACTIONS := ["help", "fabricate_lab", "place_lab", "inventory"]
 static var cached: Dictionary = {}
 static var loaded := false
@@ -16,6 +17,12 @@ static func load_data() -> Dictionary:
 	cached = validate(payload)
 	if cached.is_empty():
 		push_error("Catalogo tutorial di Ocra non valido: controlla design/v1")
+	else:
+		var industry := preload("res://scripts/data/industry_catalog.gd").load_data()
+		cached.fabrication.merge(industry.get("recipes", {}).duplicate(true))
+		for definition: Dictionary in cached.fabrication.values():
+			for id: String in definition.cost:
+				definition.cost[id] = int(definition.cost[id])
 	return cached
 
 static func condition_valid(condition: Variant) -> bool:
@@ -60,7 +67,28 @@ static func validate(payload: Dictionary) -> Dictionary:
 			return {}
 	if not number(recipe.get("energy_kwh")) or recipe.energy_kwh < 0 or recipe.energy_kwh > 60:
 		return {}
-	return {"tutorial": tutorial.duplicate(true), "laboratory": {"cost": cost, "seconds": float(recipe.seconds), "energy": float(recipe.energy_kwh), "deployment_seconds": float(module.deployment_seconds), "packed_units": 4}}
+	var lab := {"name_it": "Laboratorio", "cost": cost, "seconds": float(recipe.seconds), "energy": float(recipe.energy_kwh), "deployment_seconds": float(module.deployment_seconds), "packed_units": 4}
+	var fabrication := {"laboratory": lab}
+	var devices = payload.progression.get("prototype_fabrication")
+	if not devices is Dictionary or devices.get("version") != 1 or devices.get("unlock_after") != "first_completed_laboratory" or not devices.get("recipes") is Array or devices.recipes.size() != DEVICE_MODULES.size():
+		return {}
+	for entry in devices.recipes:
+		if not entry is Dictionary or not DEVICE_MODULES.has(entry.get("id")) or fabrication.has(entry.id) or entry.get("module") != DEVICE_MODULES[entry.id] or not entry.get("name_it") is String or entry.name_it.is_empty() or not entry.get("inputs") is Dictionary or entry.inputs.is_empty():
+			return {}
+		if payload.modules.filter(func(item): return item is Dictionary and item.get("id") == entry.module).size() != 1:
+			return {}
+		var device_cost := {}
+		for id in entry.inputs:
+			if not RESOURCE_ALIASES.has(id) or not integer(entry.inputs[id], 1, 120):
+				return {}
+			device_cost[RESOURCE_ALIASES[id]] = int(entry.inputs[id])
+		for value in [entry.get("seconds"), entry.get("deployment_seconds")]:
+			if not number(value) or value <= 0 or value > 120:
+				return {}
+		if not number(entry.get("energy_kwh")) or entry.energy_kwh < 0 or entry.energy_kwh > 60:
+			return {}
+		fabrication[entry.id] = {"name_it": entry.name_it, "cost": device_cost, "seconds": float(entry.seconds), "energy": float(entry.energy_kwh), "deployment_seconds": float(entry.deployment_seconds)}
+	return {"tutorial": tutorial.duplicate(true), "laboratory": lab, "fabrication": fabrication}
 
 static func number(value: Variant) -> bool:
 	return (value is int or value is float) and is_finite(float(value))

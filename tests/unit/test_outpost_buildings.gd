@@ -169,3 +169,43 @@ func test_pump_statistics_and_dependencies_are_validated_on_restore() -> void:
 	data[1].drained = -1
 	assert_bool(restored.restore(data, site)).is_false()
 	assert_float(float(restored.structures[1].drained)).is_equal(2.5)
+
+func test_fan_accepts_gas_but_not_water_and_uses_real_power() -> void:
+	var site := Site.new()
+	_room(site)
+	var field := Field.new(site)
+	field.gas[Vector2i(-5, 3)] = 1.0
+	var buildings := Buildings.new()
+	assert_str(buildings.blocker("fan", Vector2i(-5, 2), site, field)).is_empty()
+	assert_str(buildings.blocker("pump", Vector2i(-5, 2), site, field)).contains("sicura")
+	assert_str(buildings.blocker("lamp", Vector2i(-5, 3), site, field)).contains("sicura")
+	field.water[Vector2i(-5, 3)] = 1.0
+	assert_str(buildings.blocker("fan", Vector2i(-5, 2), site, field)).contains("sicura")
+	assert_vector(buildings.size_for("fan")).is_equal(Vector2i(2, 2))
+	assert_dict(Buildings.cost_for("fan")).is_equal({"stone": 2, "copper": 3})
+	assert_float(Buildings.power_draw({"id": "fan", "state": "active"})).is_equal(0.02)
+	assert_float(Buildings.power_draw({"id": "fan", "state": "building"})).is_equal(0.05)
+
+func test_fan_state_statistics_and_dependency_survive_save() -> void:
+	var site := Site.new()
+	_room(site)
+	for y in range(2, 4):
+		for x in range(1, 3):
+			site.removed[Vector2i(x, y)] = true
+	var buildings := Buildings.new()
+	buildings.install("laboratory", Vector2i(-5, 1))
+	var fan := buildings.install("fan", Vector2i(1, 2))
+	fan.drained = 1.25
+	fan.enabled = false
+	var restored := Buildings.new()
+	var data: Array = JSON.parse_string(JSON.stringify(buildings.snapshot()))
+	assert_bool(restored.restore(data, site)).is_true()
+	assert_float(restored.structures[1].drained).is_equal(1.25)
+	assert_bool(restored.structures[1].enabled).is_false()
+	var before := restored.snapshot()
+	data[1].drained = INF
+	assert_bool(restored.restore(data, site)).is_false()
+	assert_array(restored.snapshot()).is_equal(before)
+	data = buildings.snapshot()
+	data.remove_at(0)
+	assert_bool(restored.restore(data, site)).is_false()

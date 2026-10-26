@@ -1,6 +1,8 @@
 extends RefCounted
 
-const ITEM_IDS := ["soil", "stone", "copper", "crystal", "lamp_kit", "lab_cube"]
+const ITEM_IDS := ["soil", "stone", "copper", "crystal", "lamp_kit", "lab_cube", "copper_ingot", "glass", "potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
+const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio", "copper_ingot": "Lingotto rame", "glass": "Vetro", "potato": "Patata", "ochre_tuber": "Tubero ocra", "verdant_leaf": "Verdura viridia", "frost_berry": "Bacca brina"}
+const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "crystal": Color("7be1da"), "lamp_kit": Color("fff3b2"), "lab_cube": Color("a7e5b4"), "copper_ingot": Color("e8a76c"), "glass": Color("a0dce4"), "potato": Color("e6d28b"), "ochre_tuber": Color("e4a57f"), "verdant_leaf": Color("a8db86"), "frost_berry": Color("c7acf0")}
 const ITEM_UNITS := {"lab_cube": 4}
 const PACK_CAPACITY := 8
 var drone_capacity := 12

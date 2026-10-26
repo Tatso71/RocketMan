@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "welcome",
+      "priority": 10,
+      "title": "Atterraggio completato",
+      "body": "Siamo arrivati! Sei ancora in cabina: clic destro per gestire la nave. Scendi con la scala al letto, poi al laboratorio. Ogni stanza si illumina quando puoi usarla.",
+      "detail": ""
+    },
+    {
+      "id": "bed_rest",
+      "priority": 35,
+      "title": "Una pausa nel letto",
+      "body": "La stanza centrale e il nostro rifugio. Clic destro sul letto e Riposa: recuperi energia personale e integrita della tuta. La batteria della nave invece alimenta i laboratori e va gestita a parte.",
+      "detail": ""
+    },
+    {
+      "id": "first_dig",
+      "priority": 15,
+      "title": "Il primo scavo",
+      "body": "Punta il terreno e usa il raggio Pulse per scavare. Io ti seguo e trasporto il materiale che non entra nello zaino. Non allontaniamoci troppo dalla nave.",
+      "detail": ""
+    },
+    {
+      "id": "lab_plan",
+      "priority": 20,
+      "title": "Il primo cubo creatore",
+      "body": "Raccogli 6 pietra e 4 rame e scava una stanza 4 x 3 con pavimento. Al laboratorio, clic destro e Costruisci: premi Crea quando tutte le risorse sono verdi. Il cubo compare sul banco.",
+      "detail": ""
+    },
+    {
+      "id": "tutorial_collect",
+      "priority": 65,
+      "title": "Prima il laboratorio",
+      "body": "Raccogli 6 pietra e 4 rame per il laboratorio. Il tuo zaino e il mio carico si sommano sempre, anche a distanza. La nave parte senza materiali; la pietra nel terreno inizia a 5 m.",
+      "detail": ""
+    },
+    {
+      "id": "tutorial_excavate",
+      "priority": 65,
+      "title": "I materiali ci sono",
+      "body": "Hai le materie per il laboratorio! Ora libera una stanza larga 4 celle e alta 3, lasciando un pavimento solido. Ti avviso appena lo spazio e pronto per posare il cubo.",
+      "detail": ""
+    },
+    {
+      "id": "tutorial_place",
+      "priority": 70,
+      "title": "La stanza e abbastanza grande",
+      "body": "Qui entra un laboratorio! Prendi il cubo pronto al banco con Spazio, portalo qui e posalo con Spazio. Clic destro sul cubo per attivarlo. Se l'ingombro e rosso, riprendilo e spostalo.",
+      "detail": ""
+    },
+    {
+      "id": "tutorial_fund",
+      "priority": 65,
+      "title": "Riempiamo il cubo",
+      "body": "Il cubo e pronto. Porta 6 pietra e 4 rame tra zaino e Robbie, avvicinati e conferma il trasferimento. Le materie nella stiva non sono disponibili a distanza.",
+      "detail": ""
+    },
+    {
+      "id": "tutorial_build",
+      "priority": 60,
+      "title": "Sta prendendo forma",
+      "body": "Il laboratorio si sta aprendo! Quando la barra sara piena avremo un nuovo banco, luci, pompa acqua e ventilatore gas, oltre ad altre due rotte. Mantieni una via di ritorno con le scale.",
+      "detail": ""
+    },
+    {
+      "id": "pump_plan",
+      "priority": 40,
+      "title": "Pompa di drenaggio",
+      "body": "Fabbrica la pompa al laboratorio con 3 pietra e 4 rame. Prendi e posa il cubo con Spazio, poi clic destro per attivarlo. Occupa 2 x 2 m, puo stare nell'acqua e drena i passaggi vicini. Servono laboratorio acceso e batteria della nave.",
+      "detail": ""
+    },
+    {
+      "id": "pump_built",
+      "priority": 45,
+      "title": "Pompa attiva",
+      "body": "La pompa sta drenando l'acqua vicina attraverso i passaggi aperti. Consuma la batteria della nave; non aspira attraverso la roccia e si ferma se il laboratorio non e alimentato.",
+      "detail": ""
+    },
+    {
+      "id": "fan_plan",
+      "priority": 40,
+      "title": "Ripuliamo il gas",
+      "body": "Fabbrica un ventilatore al laboratorio con 2 pietra e 3 rame. Spazio per prendere e posare il cubo, clic destro per attivarlo. Occupa 2 x 2 m e funziona nel gas, ma non sott'acqua. Pulisce solo passaggi aperti collegati ed e alimentato dal laboratorio.",
+      "detail": ""
+    },
+    {
+      "id": "fan_built",
+      "priority": 45,
+      "title": "Ventilatore attivo",
+      "body": "Il ventilatore rimuove il gas dai passaggi vicini, senza aspirare attraverso la roccia. Controlla la batteria della nave e proteggi il laboratorio dalla nube. Clic destro sul ventilatore per spegnerlo quando non serve.",
+      "detail": ""
+    },
+    {
+      "id": "cargo_full",
+      "priority": 80,
+      "title": "Carico pieno",
+      "body": "Non possiamo raccogliere altro. Raggiungi il laboratorio della nave o uno sotterraneo, clic destro e scegli Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Il deposito del banco conta per la fabbricazione locale.",
+      "detail": ""
+    },
+    {
+      "id": "drone_unavailable",
+      "priority": 70,
+      "title": "Devo avvicinarmi",
+      "body": "Il tuo zaino e pieno, ma io sono troppo lontano per aiutarti. Aspettami in un passaggio aperto, oppure rientra in officina e scarica il materiale.",
+      "detail": ""
+    },
+    {
+      "id": "signal_limit",
+      "priority": 75,
+      "title": "Limite del collegamento",
+      "body": "Sono al limite del segnale della nave e ti aspetto qui. I materiali del mio carico restano disponibili insieme ai tuoi. Potremo ampliare il mio raggio con la ricerca.",
+      "detail": ""
+    },
+    {
+      "id": "build_resources",
+      "priority": 45,
+      "title": "Fabbricazione del cubo",
+      "body": "Per creare il cubo servono 6 pietra e 4 rame, dal carico comune o dal deposito del laboratorio vicino. Il pagamento avviene solo al comando Crea. Il cubo si materializza sul banco: poi prendilo con Spazio.",
+      "detail": ""
+    },
+    {
+      "id": "build_space",
+      "priority": 40,
+      "title": "La stanza del laboratorio",
+      "body": "Libera un rettangolo di 4 celle per 3, con pavimento sotto tutte e 4 le colonne. Puoi restare dentro mentre lo monto! Tienimi vicino ed evita acqua e gas.",
+      "detail": ""
+    },
+    {
+      "id": "lab_built",
+      "priority": 55,
+      "title": "Laboratorio attivo",
+      "body": "Il primo laboratorio e attivo: luci, pompa acqua e ventilatore gas sono sbloccati! Clic destro sul banco e Costruisci. Ogni cubo si fabbrica qui, si prende e si posa con Spazio, poi si attiva con clic destro. Le strutture usano la batteria della nave.",
+      "detail": ""
+    },
+    {
+      "id": "lamp_crafted",
+      "priority": 50,
+      "title": "Portiamo luce nelle gallerie",
+      "body": "Il cubo luce e pronto sul banco. Spazio per prenderlo, Spazio per posarlo e clic destro per attivarlo. Cerca un pavimento libero nel raggio del laboratorio: 8 metri di base, di piu con i potenziamenti.",
+      "detail": ""
+    },
+    {
+      "id": "lamp_plan",
+      "priority": 30,
+      "title": "Un cubo per fare luce",
+      "body": "Al laboratorio scegli Costruisci e Crea nella riga Luce: costa 1 terra e 1 rame. Prendi il cubo pronto con Spazio, portalo nelle gallerie e posalo con Spazio. Clic destro sul cubo lo trasforma nella luce: serve un laboratorio alimentato vicino.",
+      "detail": ""
+    },
+    {
+      "id": "lamp_placed",
+      "priority": 30,
+      "title": "Una luce che resta",
+      "body": "Questa luce rimane qui anche quando ci allontaniamo. Continuiamo ad ampliare le gallerie dal laboratorio, mantenendo una via di ritorno alla nave.",
+      "detail": ""
+    },
+    {
+      "id": "deposited",
+      "priority": 25,
+      "title": "Materiale al sicuro",
+      "body": "Carico scaricato! Il deposito e separato dal nostro carico comune. Questo laboratorio puo usare anche le materie nel suo deposito: clic destro e Costruisci. Per portarle altrove scegli Preleva materiali.",
+      "detail": ""
+    },
+    {
+      "id": "gas_danger",
+      "priority": 100,
+      "title": "Gas! Indietro!",
+      "body": "La nube sta danneggiando la tuta. Allontanati e torna in una zona pulita. In nave la tuta si ripristina; usa lo scanner prima di aprire nuove sacche.",
+      "detail": ""
+    },
+    {
+      "id": "water_danger",
+      "priority": 100,
+      "title": "Stai subendo danni!",
+      "body": "Sei sott'acqua e stai perdendo integrita! Risali subito con il comando di salita. Io resto fuori dall'acqua e lampeggio in rosso: non posso seguirti li. Una pompa puo asciugare la zona.",
+      "detail": ""
+    },
+    {
+      "id": "gas_leak",
+      "priority": 90,
+      "title": "Sacca di gas aperta",
+      "body": "Abbiamo aperto una sacca di gas! Allontaniamoci dalla nube: non possiamo rendere operativo un laboratorio in un'area contaminata.",
+      "detail": ""
+    },
+    {
+      "id": "water_leak",
+      "priority": 90,
+      "title": "Infiltrazione!",
+      "body": "L'acqua sta entrando nelle gallerie. Mantieni una via di risalita e proteggi il cantiere: serve una stanza asciutta per installare il laboratorio.",
+      "detail": ""
+    },
+    {
+      "id": "energy_low",
+      "priority": 85,
+      "title": "Batteria nave quasi scarica",
+      "body": "Il raggio e i laboratori usano la stessa batteria. Spegni le postazioni inutili e rientra in cabina: Batteria e potenziamenti permette di gestire gli accumulatori. Il letto non ricarica la nave.",
+      "detail": ""
+    },
+    {
+      "id": "ladder_tip",
+      "priority": 25,
+      "title": "Non dimenticare la risalita",
+      "body": "Con B costruisci subito una scala: costa 2 terra, senza cubi ne attese. La monti tu, anche senza drone, laboratorio o batteria. Manteniamo sempre una via di ritorno!",
+      "detail": ""
+    },
+    {
+      "id": "tools",
+      "priority": 20,
+      "title": "Prima analizziamo",
+      "body": "Lo Scanner rivela il materiale del blocco e le sacche vicine. Alcune rocce richiedono strumenti migliori; i nuclei indistruttibili vanno aggirati.",
+      "detail": ""
+    },
+    {
+      "id": "cargo_near_station",
+      "priority": 80,
+      "title": "Carico pieno",
+      "body": "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Per ripartire scegli Preleva materiali o Costruisci.",
+      "detail": ""
+    },
+    {
+      "id": "oil_leak",
+      "priority": 90,
+      "title": "Sacca di petrolio aperta",
+      "body": "Petrolio! Scorre piu lentamente dell'acqua, ma contamina la tuta. Resta all'asciutto e aggira la sacca. La pompa acqua non puo raccoglierlo: ci servira un estrattore dedicato.",
+      "detail": ""
+    },
+    {
+      "id": "oil_danger",
+      "priority": 100,
+      "title": "Tuta contaminata!",
+      "body": "Stai toccando il petrolio e la tuta si danneggia! Risali su terreno asciutto. Io resto fuori dalla sacca: non posso seguirti nel liquido.",
+      "detail": ""
+    },
+    {
+      "id": "ocra/reach_workshop",
+      "priority": 65,
+      "title": "Scendi in officina",
+      "body": "Volo concluso! Raggiungi la scala interna a destra e scendi fino al piano piu basso. Nel piano centrale trovi il letto; sotto c'e l'officina da cui prepareremo la spedizione.",
+      "detail": "Officina / piano inferiore della nave"
+    },
+    {
+      "id": "ocra/open_hatch",
+      "priority": 65,
+      "title": "Apri la botola",
+      "body": "Siamo in officina. Avvicinati alla botola centrale e premi E per aprirla. Poi scendi fino al terreno: sotto la nave non abbiamo ancora scavato nulla.",
+      "detail": "Botola centrale / interagisci per aprire"
+    },
+    {
+      "id": "ocra/first_excavation",
+      "priority": 65,
+      "title": "Scava le prime due celle",
+      "body": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Ogni blocco va nel tuo zaino o nel mio carico. I nostri materiali contano sempre insieme; la nave parte senza scorte. Raccogliamo 6 pietra e 4 rame per il laboratorio.",
+      "detail": "Pulse / 2 celle da 1 metro"
+    },
+    {
+      "id": "ocra/return_ladder",
+      "priority": 65,
+      "title": "Prepara la risalita",
+      "body": "Scendi nel primo spazio scavato con S, poi monta la scala con B. Costa 2 terra e compare subito: la costruisci tu, senza cubi, officina o batteria. Non scendiamo senza una via di ritorno.",
+      "detail": "Scendi nello scavo / B / 2 terra"
+    },
+    {
+      "id": "ocra/laboratory_materials",
+      "priority": 65,
+      "title": "Raccogli per il laboratorio",
+      "body": "Ci servono 6 pietra e 4 rame: il tuo zaino e il mio carico si sommano sempre. La pietra inizia a 5 metri. Se ci riempiamo di terra, risali al banco e deposita: il deposito locale puo alimentare la fabbricazione. Nella nave non ci sono scorte regalate.",
+      "detail": "6 pietra + 4 rame / zaino e Robbie insieme"
+    },
+    {
+      "id": "ocra/laboratory_room",
+      "priority": 65,
+      "title": "Scava la stanza del laboratorio",
+      "body": "Prima di trasportare il cubo, libera uno spazio largo 4 celle e alto 3, con pavimento continuo. Puoi restare nella stanza quando il laboratorio si apre. Se ci riempiamo, torna al banco e deposita il materiale.",
+      "detail": "Stanza 4 x 3 m / pavimento continuo"
+    },
+    {
+      "id": "ocra/laboratory_cube",
+      "priority": 65,
+      "title": "Fabbrica il cubo laboratorio",
+      "body": "Rientra nel laboratorio della nave, clic destro sul banco e Costruisci. Nella riga Laboratorio trovi livello, tempo e risorse: quando sono tutte verdi premi Crea. Il cubo si materializza sul banco; puoi chiudere il pannello mentre lavora.",
+      "detail": "Laboratorio / clic destro / Costruisci / Crea"
+    },
+    {
+      "id": "ocra/carry_laboratory",
+      "priority": 65,
+      "title": "Prendi il cubo pronto",
+      "body": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, senza occupare lo zaino. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
+      "detail": "Cubo sul banco / avvicinati e premi Spazio"
+    },
+    {
+      "id": "ocra/deploy_laboratory",
+      "priority": 65,
+      "title": "Apri il cubo nella stanza",
+      "body": "Porta il cubo nella stanza e premi Spazio per posarlo. Poi clic destro sul cubo e Attiva laboratorio. Se il tratteggio e rosso, leggi l'errore, riprendilo con Spazio e spostalo. Quando tutto entra il cubo si apre, senza chiedere altri materiali.",
+      "detail": "Spazio: posa / clic destro sul cubo: attiva"
+    },
+    {
+      "id": "furnace_built",
+      "priority": 55,
+      "title": "La nostra fornace",
+      "body": "Qui possiamo fondere rame in lingotti e pietra in vetro. Il banco prende le materie dal carico comune; l'ordine resta caricato anche se manca energia. Porta gas a un convertitore con i tubi gialli, poi collega l'uscita alla fornace con un cavo. Clic destro sulla macchina per ordinare e ritirare.",
+      "detail": ""
+    },
+    {
+      "id": "gas_converter_built",
+      "priority": 55,
+      "title": "Dal gas all'energia",
+      "body": "Il convertitore consuma il gas reale della sacca, non lo crea. Collega l'ingresso giallo alla sacca con tubi gas e l'uscita arancio alla fornace o serra con cavi energia. Si ferma quando l'accumulatore e pieno o il gas finisce. T apre i condotti: ogni metro costa 1 rame.",
+      "detail": ""
+    },
+    {
+      "id": "greenhouse_built",
+      "priority": 60,
+      "title": "Una serra sottoterra",
+      "body": "Abbiamo solo tre patate da semina sulla nave. Clic destro sulla serra per piantare. La pompa deve portare acqua con i tubi azzurri; il cavo dal convertitore alimenta le luci di coltivazione. Senza acqua o energia la crescita si ferma, ma non perdi la pianta.",
+      "detail": ""
+    },
+    {
+      "id": "seeds_found",
+      "priority": 60,
+      "title": "Nuovi semi!",
+      "body": "Abbiamo trovato una capsula di semi! Le sementi sono comuni e viaggiano con noi. Ogni pianeta puo nascondere una pianta diversa. Alla maturazione raccogli cibo e nuove sementi nella serra. Il cibo recupera energia personale dall'inventario.",
+      "detail": ""
+    },
+    {
+      "id": "seed_pod_seen",
+      "priority": 55,
+      "title": "Una capsula di semi",
+      "body": "Guarda quella piccola pianta nello scavo: contiene semi! Avvicinati e clic destro sulla capsula per raccoglierli. Li conserveremo nelle sementi comuni; in serra potremo piantarli quando arrivano acqua ed energia.",
+      "detail": ""
+    }
+  ]
+}

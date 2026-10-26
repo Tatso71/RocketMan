@@ -9,8 +9,12 @@ const ConstructionUI = preload("res://scripts/ui/fabrication_ui.gd")
 const OcraCatalog = preload("res://scripts/data/ocra_catalog.gd")
 const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
 const CubeView = preload("res://scripts/ui/physical_cube_view.gd")
+const EnergyUI = preload("res://scripts/ui/laboratory_energy_ui.gd")
+const Network = preload("res://scripts/systems/utility_network.gd")
+const Industry = preload("res://scripts/systems/industry_state.gd")
+const IndustryUI = preload("res://scripts/ui/industry_ui.gd")
 const SHIP_LAB_RECT := Rect2(-156, -194, 312, 114)
-const ITEM_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
+const ITEM_NAMES := Cargo.NAMES
 var world: Node2D
 var buildings := Buildings.new()
 var build_mode := false
@@ -28,6 +32,10 @@ var power_load := 0.0
 var fabrication := Fabrication.new()
 var local_lab_level := 1
 var activation_cube_id := 0
+var energy_ui: CanvasLayer
+var network := Network.new()
+var industry := Industry.new()
+var industry_ui: Node2D
 
 func toggle_build() -> void:
 	world._note("Fabbrica un cubo nel laboratorio, prendilo e posalo con Spazio")
@@ -48,6 +56,12 @@ func _ready() -> void:
 	cube_view.outpost = self
 	cube_view.z_index = 7
 	add_child(cube_view)
+	energy_ui = EnergyUI.new()
+	energy_ui.outpost = self
+	add_child(energy_ui)
+	industry_ui = IndustryUI.new()
+	industry_ui.outpost = self
+	add_child(industry_ui)
 
 func station_rect(station: Dictionary) -> Rect2:
 	return SHIP_LAB_RECT if station.get("kind") == "ship" else buildings.world_rect(station.building)
@@ -120,11 +134,14 @@ func operational(building: Dictionary) -> bool:
 func safe_link(building: Dictionary) -> bool:
 	if buildings.world_rect(building).get_center().distance_to(Vector2(0, -80)) > Grid.metres(signal_range()):
 		return false
+	return environment_safe(building)
+
+func environment_safe(building: Dictionary) -> bool:
 	var rect := buildings.footprint(building.id, building.origin)
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var cell := Vector2i(x, y)
-			if (building.id != "pump" and float(world.environment.water.get(cell, 0)) > 0.05) or float(world.environment.gas.get(cell, 0)) > 0.03:
+			if not Buildings.environment_safe(building.id, float(world.environment.water.get(cell, 0)), float(world.environment.gas.get(cell, 0)), float(world.environment.oil.get(cell, 0))):
 				return false
 	return true
 
@@ -135,7 +152,42 @@ func laboratory_unlocked() -> bool:
 	return (world.ship_state != null and world.ship_state.lab_research_unlocked) or world.guide_state.facts.get("lab_built", false) or not buildings.labs().is_empty()
 
 func recipe_visible(id: String) -> bool:
-	return id == "laboratory"
+	return id == "laboratory" or ((id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and laboratory_unlocked())
+
+func reachable_cell(cell: Vector2i, reach: float = 3.0) -> bool:
+	if not world.site.contains(cell):
+		return false
+	var hand: Vector2 = world.player.position - Vector2(0, 32)
+	if hand.distance_to(Grid.center(cell)) > Grid.metres(reach):
+		return false
+	var ray := PhysicsRayQueryParameters2D.create(hand, Grid.center(cell), 1, [world.player.get_rid(), world.drone.get_rid()])
+	return get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
+
+func conduit_blocker(kind: String, cell: Vector2i) -> String:
+	if kind not in Network.KINDS or not world.site.contains(cell) or not world.site.material(cell).is_empty():
+		return "Serve una cella scavata"
+	if network.cells[kind].has(cell):
+		return "Condotto gia presente"
+	if not reachable_cell(cell):
+		return "Condotto fuori portata o dietro una parete"
+	return "" if world.field_cargo.can_pay(Industry.Catalog.load_data().conduit_cost, true, payment_cache()) else "Serve 1 rame per metro di condotto"
+
+func place_conduit(kind: String, cell: Vector2i) -> bool:
+	var reason := conduit_blocker(kind, cell)
+	if not reason.is_empty():
+		world._note(reason)
+		return false
+	if not world.field_cargo.pay(Industry.Catalog.load_data().conduit_cost, true, payment_cache()):
+		return false
+	network.add(kind, cell)
+	world._note(Network.NAMES[kind] + " installato / 1 m")
+	return true
+
+func remove_conduit(kind: String, cell: Vector2i) -> bool:
+	if not reachable_cell(cell) or not network.remove(kind, cell):
+		return false
+	world._note(Network.NAMES[kind] + " rimosso")
+	return true
 
 func find_laboratory_space() -> Variant:
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
@@ -169,10 +221,18 @@ func source_available() -> bool:
 	return world.aboard_workshop() or not nearby_lab().is_empty()
 
 func lab_definition() -> Dictionary:
-	return OcraCatalog.load_data().get("laboratory", {})
+	return recipe_definition("laboratory")
+
+func recipe_definition(id: String) -> Dictionary:
+	return OcraCatalog.load_data().get("fabrication", {}).get(id, {})
+
+func cube_event(id: String, phase: String) -> String:
+	if id == "lamp" and phase == "crafted":
+		return "lamp_crafted"
+	return ("lab" if id == "laboratory" else id) + "_cube_" + phase
 
 func lab_cube_count() -> int:
-	return fabrication.cubes.size() + world.field_cargo.available("lab_cube", true)
+	return fabrication.cubes.filter(func(cube: Dictionary): return cube.id == "laboratory").size() + world.field_cargo.available("lab_cube", true)
 
 func station_identity(station: Dictionary) -> Array:
 	return ["ship"] if station.get("kind") == "ship" else ["laboratory", station.building.origin.x, station.building.origin.y]
@@ -189,8 +249,8 @@ func station_level(station: Dictionary = {}) -> int:
 	var current := nearby_station() if station.is_empty() else station
 	return int(world.ship_state.laboratory_level if world.ship_state != null else local_lab_level) if current.get("kind") == "ship" else int(current.get("building", {}).get("level", 1))
 
-func fabrication_seconds(station: Dictionary = {}) -> float:
-	return float(lab_definition().get("seconds", 5.0)) / (1.0 + 0.5 * (station_level(station) - 1))
+func fabrication_seconds(station: Dictionary = {}, id: String = "laboratory") -> float:
+	return float(recipe_definition(id).get("seconds", 5.0)) / (1.0 + 0.5 * (station_level(station) - 1))
 
 func fabrication_stock() -> Dictionary:
 	return source_stock() if source_available() else {}
@@ -201,10 +261,12 @@ func fabrication_amount(id: String) -> int:
 func station_output(station: Dictionary) -> Vector2:
 	return Vector2(-80, -80) if station.get("kind") == "ship" else Vector2(buildings.world_rect(station.building).get_center().x, buildings.world_rect(station.building).end.y)
 
-func fabrication_blocker() -> String:
-	var definition := lab_definition()
+func fabrication_blocker(id: String = "laboratory") -> String:
+	var definition := recipe_definition(id)
 	if definition.is_empty():
-		return "Catalogo del laboratorio non disponibile"
+		return "Ricetta non disponibile"
+	if not recipe_visible(id):
+		return "Attiva il primo laboratorio per sbloccare questa ricetta"
 	var station := nearby_station()
 	if station.is_empty():
 		return "Raggiungi un laboratorio per fabbricare il cubo"
@@ -223,25 +285,28 @@ func fabrication_blocker() -> String:
 		return "Ricarica la batteria della nave"
 	if not world.field_cargo.can_pay(definition.cost, true, fabrication_stock()):
 		var missing: Array[String] = []
-		for id: String in definition.cost:
-			var deficit: int = int(definition.cost[id]) - fabrication_amount(id)
+		for resource: String in definition.cost:
+			var deficit: int = int(definition.cost[resource]) - fabrication_amount(resource)
 			if deficit > 0:
-				missing.append("%d %s" % [deficit, ITEM_NAMES[id].to_lower()])
+				missing.append("%d %s" % [deficit, ITEM_NAMES[resource].to_lower()])
 		return "Mancano: " + ", ".join(missing)
 	return ""
 
 func fabricate_lab_cube() -> bool:
-	var reason := fabrication_blocker()
+	return fabricate_cube("laboratory")
+
+func fabricate_cube(id: String) -> bool:
+	var reason := fabrication_blocker(id)
 	if not reason.is_empty():
 		world._note(reason)
 		return false
-	var definition := lab_definition()
+	var definition := recipe_definition(id)
 	if not world.field_cargo.pay(definition.cost, true, fabrication_stock()):
 		return false
 	world._set_ship_energy(world.ship_energy() - float(definition.energy))
-	fabrication.jobs.append({"id": "laboratory", "level": 1, "station": station_identity(nearby_station()), "elapsed": 0.0, "seconds": fabrication_seconds()})
-	world.guide_event("lab_fabrication_started")
-	world._note("Produzione avviata: il cubo si materializza sul banco")
+	fabrication.jobs.append({"id": id, "level": 1, "station": station_identity(nearby_station()), "elapsed": 0.0, "seconds": fabrication_seconds({}, id)})
+	world.guide_event(("lab" if id == "laboratory" else id) + "_fabrication_started")
+	world._note("Produzione avviata: " + definition.name_it)
 	return true
 
 func advance_fabrication(delta: float) -> void:
@@ -253,10 +318,10 @@ func advance_fabrication(delta: float) -> void:
 			continue
 		job.elapsed = minf(job.seconds, float(job.elapsed) + delta)
 		if job.elapsed >= job.seconds:
-			fabrication.add_cube(station_output(station), job.station)
+			fabrication.add_cube(station_output(station), job.station, job.id)
 			fabrication.jobs.erase(job)
-			world.guide_event("lab_cube_crafted")
-			world._note("Cubo laboratorio pronto sul banco: avvicinati e premi Spazio")
+			world.guide_event(cube_event(job.id, "crafted"))
+			world._note("Cubo %s pronto sul banco: premi Spazio" % Buildings.NAMES[job.id].to_lower())
 
 func fabrication_pause_reason(job: Dictionary) -> String:
 	var station := resolve_station(job.station)
@@ -306,7 +371,7 @@ func use_cube() -> bool:
 		carried.position = point
 		fabrication.carried_id = 0
 		world.player.queue_redraw()
-		world.guide_event("lab_cube_dropped")
+		world.guide_event(cube_event(carried.id, "dropped"))
 		world._note("Cubo posato: clic destro sul cubo per attivarlo")
 		return true
 	var nearest: Dictionary = {}
@@ -327,8 +392,8 @@ func use_cube() -> bool:
 	nearest.station = []
 	activation_cube_id = 0
 	build_mode = false
-	world.guide_event("lab_cube_carried")
-	world._note("Cubo in mano / Spazio per posarlo")
+	world.guide_event(cube_event(nearest.id, "carried"))
+	world._note("%s in mano / Spazio per posare" % Buildings.NAMES[nearest.id])
 	return true
 
 func cube_origin(cube: Dictionary) -> Vector2i:
@@ -359,8 +424,8 @@ func activate_cube(cube: Dictionary) -> bool:
 	fabrication.cubes.erase(cube)
 	activation_cube_id = 0
 	build_mode = false
-	world.guide_event("lab_cube_deployed")
-	world._note("Apertura del laboratorio / materiali gia pagati")
+	world.guide_event(cube_event(cube.id, "deployed"))
+	world._note("Apertura: %s / materiali gia pagati" % Buildings.NAMES[cube.id])
 	return true
 
 func move_fabrication_to_ship() -> void:
@@ -373,7 +438,7 @@ func move_fabrication_to_ship() -> void:
 			fabrication.jobs.erase(job)
 	for cube: Dictionary in fabrication.cubes.duplicate():
 		if cube.uid == fabrication.carried_id or (cube.position.y < 0 and absf(cube.position.x) < 160):
-			var copy := aboard.add_cube(cube.position, cube.station)
+			var copy := aboard.add_cube(cube.position, cube.station, cube.id)
 			if cube.uid == fabrication.carried_id:
 				aboard.carried_id = copy.uid
 				fabrication.carried_id = 0
@@ -384,7 +449,8 @@ func preview_blocker(id: String, cell: Vector2i) -> String:
 	var reason := placement_blocker(id, cell)
 	if not reason.is_empty():
 		return reason
-	if id == "laboratory" and activation_cube().is_empty():
+	var cube := activation_cube()
+	if cube.is_empty() or cube.id != id:
 		return "Posa il cubo con Spazio e attivalo con clic destro"
 	return ""
 
@@ -393,10 +459,10 @@ func deploy_lab_cube(cell: Vector2i) -> bool:
 	return not cube.is_empty() and cube_origin(cube) == cell and activate_cube(cube)
 
 func place_blueprint(cell: Vector2i) -> bool:
-	return deploy_lab_cube(cell) if blueprint == "laboratory" else place(blueprint, cell)
+	return deploy_lab_cube(cell)
 
 func placement_blocker(id: String, cell: Vector2i) -> String:
-	if id in ["lamp", "pump"] and not laboratory_unlocked():
+	if (id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and not laboratory_unlocked():
 		return "Costruisci e attiva il primo laboratorio"
 	if buildings.structures.size() >= 200:
 		return "Limite di strutture e cantieri raggiunto"
@@ -404,9 +470,6 @@ func placement_blocker(id: String, cell: Vector2i) -> String:
 	if not reason.is_empty():
 		return reason
 	var rect := Rect2(Grid.to_world(cell), Grid.to_world(buildings.size_for(id)))
-	var body := Rect2(world.player.position - Vector2(12, 64), Vector2(24, 64))
-	if id == "lamp" and rect.intersects(body):
-		return "Spostati fuori dall'ingombro del progetto"
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
 	if torso.distance_to(rect.get_center()) > Grid.metres(3):
 		return "Cantiere fuori portata"
@@ -414,9 +477,9 @@ func placement_blocker(id: String, cell: Vector2i) -> String:
 		return "Laboratorio fuori dal segnale della nave"
 	if id == "ladder" and world.ladders.has(cell):
 		return "Scala gia presente"
-	if id in ["lamp", "pump"] and not has_lab():
+	if id in Buildings.DEVICE_IDS and not has_lab():
 		return "Costruisci prima un laboratorio operativo"
-	if id in ["lamp", "pump"] and not buildings.labs().any(func(lab: Dictionary): return operational(lab) and buildings.world_rect(lab).get_center().distance_to(rect.get_center()) <= Grid.metres(Buildings.light_range(lab))):
+	if id in Buildings.DEVICE_IDS and not buildings.labs().any(func(lab: Dictionary): return operational(lab) and buildings.world_rect(lab).get_center().distance_to(rect.get_center()) <= Grid.metres(Buildings.light_range(lab))):
 		return "Struttura fuori dal collegamento del laboratorio"
 	return ""
 
@@ -449,7 +512,7 @@ func funding_blocker(building: Dictionary) -> String:
 		return reason
 	if building.id != "ladder" and not safe_link(building):
 		return "Cantiere fuori dal collegamento della nave o area non sicura"
-	if building.id in ["lamp", "pump"] and not has_lab():
+	if building.id in Buildings.DEVICE_IDS and not has_lab():
 		return "Serve un laboratorio operativo per costruire questa struttura"
 	var missing: Array[String] = []
 	for id: String in site_cost(building):
@@ -474,45 +537,101 @@ func lamp_powered(building: Dictionary) -> bool:
 	return building.id == "lamp" and device_powered(building)
 
 func device_powered(building: Dictionary) -> bool:
-	if building.id not in ["lamp", "pump"] or not Buildings.is_active(building) or not building.get("enabled", true) or not safe_link(building):
+	if building.id not in Buildings.DEVICE_IDS or not Buildings.is_active(building) or not building.get("enabled", true) or not safe_link(building):
 		return false
-	return buildings.labs().any(func(lab: Dictionary): return operational(lab) and buildings.world_rect(lab).get_center().distance_to(buildings.world_rect(building).get_center()) <= Grid.metres(Buildings.light_range(lab)))
+	return not supplying_lab(building).is_empty()
+
+func supplying_lab(building: Dictionary, powered_only: bool = true) -> Dictionary:
+	var nearest: Dictionary = {}
+	var distance := INF
+	for lab: Dictionary in buildings.labs():
+		if powered_only and not operational(lab):
+			continue
+		var candidate := buildings.world_rect(lab).get_center().distance_to(buildings.world_rect(building).get_center())
+		if candidate <= Grid.metres(Buildings.light_range(lab)) and candidate < distance:
+			nearest = lab
+			distance = candidate
+	return nearest
+
+func consumption_for(building: Dictionary) -> float:
+	if building.get("state") == "building":
+		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
+		return Buildings.power_draw(building) if connected and world.ship_energy() > 0 else 0.0
+	var powered := operational(building) if building.id == "laboratory" else device_powered(building)
+	return Buildings.power_draw(building) if powered else 0.0
 
 func network_load() -> float:
 	var load := 0.0
 	for building: Dictionary in buildings.structures:
-		var powered := operational(building) if building.id == "laboratory" else device_powered(building)
-		if building.get("state") == "building":
-			powered = safe_link(building) and world.ship_energy() > 0
-		if powered:
-			load += Buildings.power_draw(building)
+		load += consumption_for(building)
 	return load
+
+func power_report(lab: Dictionary = {}) -> Dictionary:
+	var reports := power_reports()
+	return reports.get(lab.origin, reports.ship) if not lab.is_empty() else reports.ship
+
+func _empty_power_report() -> Dictionary:
+	var report := {"charge": world.ship_energy(), "capacity": world.ship_state.energy_capacity() if world.ship_state != null else 60.0, "load": 0.0, "potential": 0.0, "network": 0.0, "groups": {}, "counts": {}}
+	for id: String in Buildings.CUBE_IDS:
+		report.groups[id] = 0.0
+		report.counts[id] = 0
+	return report
+
+func power_reports() -> Dictionary:
+	var reports := {"ship": _empty_power_report()}
+	for lab: Dictionary in buildings.labs():
+		reports[lab.origin] = _empty_power_report()
+	for building: Dictionary in buildings.structures:
+		if building.id not in Buildings.CUBE_IDS or building.get("state") not in ["active", "building"]:
+			continue
+		var draw := consumption_for(building)
+		var owner: Dictionary = building if building.id == "laboratory" else supplying_lab(building, draw > 0)
+		if owner.is_empty():
+			owner = supplying_lab(building, false)
+		var targets: Array = [reports.ship]
+		if not owner.is_empty() and reports.has(owner.origin):
+			targets.append(reports[owner.origin])
+		for report: Dictionary in targets:
+			report.groups[building.id] += draw
+			report.counts[building.id] += 1
+			report.load += draw
+			report.potential += Buildings.power_draw(building)
+	for report: Dictionary in reports.values():
+		report.network = reports.ship.load
+	return reports
 
 func advance(delta: float) -> void:
 	if delta <= 0 or not is_finite(delta):
 		return
 	power_load = network_load()
+	var active_before := buildings.structures.filter(func(building: Dictionary): return Buildings.is_active(building))
+	var running_devices := buildings.structures.filter(func(building: Dictionary): return building.id in ["pump", "fan"] and device_powered(building))
 	var duration := minf(delta, world.ship_energy() / power_load) if power_load > 0 else 0.0
-	var completed: Array = []
 	for building: Dictionary in buildings.structures:
-		if building.get("state") != "building" or (building.id != "ladder" and not safe_link(building)):
+		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
+		if building.get("state") != "building" or (building.id != "ladder" and not connected):
 			continue
-		var seconds: float = float(lab_definition().get("deployment_seconds", Buildings.build_seconds(building.id))) if building.id == "laboratory" else Buildings.build_seconds(building.id)
+		var seconds: float = float(recipe_definition(building.id).get("deployment_seconds", Buildings.build_seconds(building.id)))
 		building.progress = 1.0 if building.id == "ladder" else minf(1, float(building.progress) + duration / seconds)
 		if building.progress >= 1:
 			building.state = "active"
-			completed.append(building)
 			if building.id == "laboratory" and world.ship_state != null:
 				world.ship_state.lab_research_unlocked = true
 			if building.id == "ladder":
 				world.ladders[building.origin] = true
-			world.guide_event({"laboratory": "lab_built", "lamp": "lamp_placed", "pump": "pump_built", "ladder": "ladder"}[building.id])
-			world._note({"laboratory": "Laboratorio attivo: nuove rotte sbloccate", "lamp": "Luce attiva", "pump": "Pompa attiva", "ladder": "Scala pronta"}[building.id])
-	for building: Dictionary in buildings.structures:
-		if building.id == "pump" and building not in completed and device_powered(building):
-			var removed: float = world.environment.drain_water(Grid.to_cell(buildings.world_rect(building).get_center()), Buildings.PUMP_RADIUS, Buildings.PUMP_RATE * duration)
-			building.drained = float(building.get("drained", 0)) + removed
+			world.guide_event({"laboratory": "lab_built", "lamp": "lamp_placed", "pump": "pump_built", "fan": "fan_built", "ladder": "ladder"}.get(building.id, building.id + "_built"))
+			world._note(Buildings.NAMES.get(building.id, "Scala") + " attivo")
+	for building: Dictionary in running_devices:
+		var intake := Grid.to_cell(buildings.world_rect(building).get_center())
+		var budget := Buildings.PUMP_RATE * duration if building.id == "pump" else Buildings.FAN_RATE * duration
+		if building.id == "pump":
+			budget = industry.pump_budget(building, self, budget)
+		var removed: float = world.environment.drain_water(intake, Buildings.PUMP_RADIUS, budget) if building.id == "pump" else world.environment.drain_gas(intake, Buildings.FAN_RADIUS, budget)
+		building.drained = float(building.get("drained", 0)) + removed
+		if building.id == "pump":
+			industry.capture_water(building, self, removed)
 	world._set_ship_energy(world.ship_energy() - power_load * duration)
+	industry.advance(delta, self, active_before)
 	_refresh_light_sources()
 
 func lamp_craft_blocker() -> String:
@@ -614,6 +733,13 @@ func _refresh_light_sources() -> void:
 			var point := Grid.center(building.origin)
 			if lab_points.any(func(lab: Dictionary): return lab.point.distance_to(point) <= lab.range):
 				light_sources.append({"point": point, "inner": Grid.metres(1.2), "outer": Grid.metres(3.5)})
+		elif building.id in ["greenhouse", "furnace"] and Buildings.is_active(building) and industry.healthy(building, self) and industry.energy_available(building, self) > 0:
+			var storage := industry.state(building)
+			var growing: bool = building.id == "greenhouse" and not storage.crop.is_empty()
+			if growing:
+				growing = float(storage.elapsed) < float(Industry.Catalog.load_data().crops[storage.crop].seconds) and industry.water_available(building, self) > 0
+			if growing or (building.id == "furnace" and not storage.recipe.is_empty()):
+				light_sources.append({"point": buildings.world_rect(building).get_center(), "inner": Grid.metres(1.0), "outer": Grid.metres(2.5 if building.id == "greenhouse" else 1.5)})
 
 func mining_blocker(cell: Vector2i) -> String:
 	for cube: Dictionary in fabrication.cubes:
@@ -630,6 +756,8 @@ func mining_blocker(cell: Vector2i) -> String:
 func _process(delta: float) -> void:
 	if not world.controls_locked:
 		advance_fabrication(delta)
+		if is_instance_valid(industry_ui) and industry_ui.window.visible:
+			advance(delta)
 	var carried := fabrication.carried()
 	if not carried.is_empty():
 		carried.position = world.player.position - Vector2(0, 66)
@@ -651,6 +779,8 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func handle_input(event: InputEvent) -> bool:
+	if is_instance_valid(industry_ui) and industry_ui.handle_input(event):
+		return true
 	if event.is_action_pressed("toggle_build") or (event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_Y and Input.is_joy_button_pressed(event.device, JOY_BUTTON_LEFT_SHOULDER)):
 		toggle_build()
 		return true
@@ -671,6 +801,9 @@ func handle_input(event: InputEvent) -> bool:
 		if open_station(station_at(point), event.position):
 			return true
 		for building: Dictionary in buildings.structures:
+			if building.id in Buildings.DEVICE_IDS and Buildings.is_active(building) and buildings.world_rect(building).has_point(point) and site_reachable(building):
+				construction.open_device(building, event.position)
+				return true
 			if not Buildings.is_active(building) and buildings.world_rect(building).has_point(point) and site_reachable(building):
 				if building.state == "planned":
 					construction.open_site(building)
@@ -691,17 +824,18 @@ func _build_interface() -> void:
 	cargo_window = cargo_ui.window
 
 func _draw() -> void:
+	var energy_reports := power_reports()
 	for building: Dictionary in buildings.structures:
 		var rect := buildings.world_rect(building)
 		var state: String = building.get("state", "active")
 		if state == "planned":
 			_dashed_rect(rect, Color("e7d28b"))
-			_draw_cube(rect, 0)
+			_draw_cube(rect, 0, building.id)
 			continue
 		var progress: float = float(building.get("progress", 1.0))
 		if state == "building":
 			_dashed_rect(rect, Color("8be7df"))
-			_draw_cube(rect, progress)
+			_draw_cube(rect, progress, building.id)
 			draw_rect(Rect2(rect.position - Vector2(0, 14), Vector2(rect.size.x, 7)), Color("222b2e"))
 			draw_rect(Rect2(rect.position - Vector2(0, 14), Vector2(rect.size.x * progress, 7)), Color("8be7df"))
 			if sin(world.ambient_time * 15) < -0.3:
@@ -726,6 +860,8 @@ func _draw() -> void:
 				draw_rect(Rect2(base + Vector2(x, -14), Vector2(9, 13)), Color("dcb65b"))
 			if state == "active" and not operational(building):
 				draw_string(ThemeDB.fallback_font, rect.position + Vector2(8, 20), "NON ALIMENTATO", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("f2ba85"))
+			if state == "active":
+				_draw_energy_bars(rect, energy_reports[building.origin])
 		elif building.id == "lamp":
 			var center := rect.get_center()
 			draw_line(center + Vector2(0, 15), center - Vector2(0, 12), Color("7b9499"), 4)
@@ -745,7 +881,22 @@ func _draw() -> void:
 			draw_circle(base + Vector2(49, 8), 3, Color("a8f9a6") if working else Color("e8a477"))
 			if state == "active":
 				draw_string(ThemeDB.fallback_font, rect.position + Vector2(2, 10), "DRENATO %.1f u" % float(building.get("drained", 0)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("b6e7df"))
-		elif state == "building":
+		elif building.id == "fan":
+			var working := device_powered(building)
+			var center := rect.get_center() + Vector2(0, 2)
+			draw_rect(rect.grow(-8), Color("74897e"))
+			draw_rect(rect.grow(-12), Color("233b38"))
+			draw_circle(center, 25, Color("afc7b5"))
+			draw_circle(center, 22, Color("304e46"))
+			for index in range(4):
+				var angle: float = index * TAU / 4 + (world.ambient_time * 8 if working else 0)
+				draw_line(center, center + Vector2(cos(angle), sin(angle)) * 18, Color("c8eea5") if working else Color("8b9c92"), 7)
+			draw_circle(center, 6, Color("e8d296"))
+			draw_rect(Rect2(center + Vector2(-25, 29), Vector2(50, 7)), Color("8d9d85"))
+			draw_circle(rect.position + Vector2(65, 15), 3, Color("c0f7a3") if working else Color("e8a477"))
+			if state == "active":
+				draw_string(ThemeDB.fallback_font, rect.position + Vector2(2, 10), "FILTRATO %.1f u" % float(building.get("drained", 0)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("d2efb8"))
+		elif building.id == "ladder" and state == "building":
 			for x in [-12, 12]:
 				draw_line(rect.position + Vector2(20 + x, 0), rect.position + Vector2(20 + x, 40), Color("e4c78b"), 3)
 			for y in [8, 20, 32]:
@@ -767,9 +918,25 @@ func _dashed_rect(rect: Rect2, color: Color) -> void:
 	for index in range(4):
 		draw_dashed_line(corners[index], corners[(index + 1) % 4], color, 2, 7)
 
-func _draw_cube(rect: Rect2, opening: float) -> void:
+func _draw_energy_bars(rect: Rect2, report: Dictionary) -> void:
+	var width := rect.size.x - 12
+	var start := rect.position + Vector2(6, -26)
+	draw_rect(Rect2(start, Vector2(width, 5)), Color("142229"))
+	var charge_color := Color("a7e5b4") if report.charge / report.capacity > 0.2 else Color("ef876d")
+	draw_rect(Rect2(start, Vector2(width * report.charge / report.capacity, 5)), charge_color)
+	start.y += 9
+	draw_rect(Rect2(start, Vector2(width, 5)), Color("142229"))
+	var x := start.x
+	for id: String in Buildings.CUBE_IDS:
+		var size: float = width * float(report.groups[id]) / maxf(float(report.potential), 0.000001)
+		if size > 0:
+			draw_rect(Rect2(Vector2(x, start.y), Vector2(size, 5)), Buildings.CUBE_COLORS[id])
+			x += size
+	draw_string(ThemeDB.fallback_font, rect.position + Vector2(6, -32), "%.1f/%.0f kWh | %.2f/m" % [report.charge, report.capacity, float(report.load) * 60], HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("daeee1"))
+
+func _draw_cube(rect: Rect2, opening: float, id: String) -> void:
 	var base := Vector2(rect.get_center().x, rect.end.y - 18)
-	var color := Color("e8c77a") if opening == 0 else Color("8be7df")
+	var color: Color = Buildings.CUBE_COLORS.get(id, Color("e8c77a"))
 	draw_colored_polygon(PackedVector2Array([base + Vector2(-16, -12), base + Vector2(0, -20), base + Vector2(16, -12), base + Vector2(0, -4)]), color.lightened(0.15))
 	draw_colored_polygon(PackedVector2Array([base + Vector2(-16, -12), base + Vector2(0, -4), base + Vector2(0, 15), base + Vector2(-16, 7)]), color.darkened(0.25))
 	draw_colored_polygon(PackedVector2Array([base + Vector2(0, -4), base + Vector2(16, -12), base + Vector2(16, 7), base + Vector2(0, 15)]), color)

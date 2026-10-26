@@ -2,8 +2,8 @@ extends CanvasLayer
 
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio"}
-const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "crystal": Color("7be1da"), "lamp_kit": Color("fff3b2"), "lab_cube": Color("a7e5b4")}
+const NAMES := Cargo.NAMES
+const COLORS := Cargo.COLORS
 const ICONS := [preload("res://assets/ui/backpack.svg"), preload("res://assets/ui/drone.svg"), preload("res://assets/ui/storage.svg")]
 var world: Node2D
 var window: Window
@@ -28,6 +28,11 @@ var cost_labels: Array[Label] = []
 var preparation_status: Label
 var compact_rows: Dictionary = {}
 var compact_totals: Dictionary = {}
+var eat_button: Button
+var seed_summary: Label
+var compact_scroll: ScrollContainer
+var hold_scrolls: Array[ScrollContainer] = []
+var syncing_holds := false
 
 func _ready() -> void:
 	_build_compact()
@@ -121,11 +126,15 @@ func _build_compact() -> void:
 		hold.add_child(count)
 		compact_titles.append(count)
 		compact_bars.append(_meter(hold, Color("a7e5b4") if index == 0 else Color("8edce1")))
+	compact_scroll = ScrollContainer.new()
+	compact_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	column.add_child(compact_scroll)
 	var grid := GridContainer.new()
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 4)
-	column.add_child(grid)
+	compact_scroll.add_child(grid)
 	grid.add_child(label("", 11))
 	grid.add_child(label("Zaino", 11, Color("a7e5b4")))
 	grid.add_child(label("Robbie", 13, Color("8edce1")))
@@ -180,6 +189,9 @@ func _build_window() -> void:
 	column.add_child(label("INVENTARIO", 22))
 	availability = label("", 14, Color("b4c5c6"))
 	column.add_child(availability)
+	seed_summary = label("", 13, Color("b8d68a"))
+	seed_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(seed_summary)
 	var holds := HBoxContainer.new()
 	holds.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	holds.add_theme_constant_override("separation", 20)
@@ -203,11 +215,27 @@ func _build_window() -> void:
 		hold.add_child(capacity)
 		capacities.append(capacity)
 		bars.append(_meter(hold, [Color("a7e5b4"), Color("8edce1"), Color("f0d281")][index]))
+		var scroll := ScrollContainer.new()
+		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		hold.add_child(scroll)
+		hold_scrolls.append(scroll)
+		scroll.get_v_scroll_bar().value_changed.connect(func(value: float):
+			if syncing_holds:
+				return
+			syncing_holds = true
+			for other: ScrollContainer in hold_scrolls:
+				if other != scroll:
+					other.scroll_vertical = int(value)
+			syncing_holds = false)
+		var items := VBoxContainer.new()
+		items.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.add_child(items)
 		var item_counts: Array[Label] = []
 		for id: String in Cargo.ITEM_IDS:
 			var row := HBoxContainer.new()
 			row.custom_minimum_size.y = 28
-			hold.add_child(row)
+			items.add_child(row)
 			var swatch := ColorRect.new()
 			swatch.color = COLORS[id]
 			swatch.custom_minimum_size = Vector2(9, 9)
@@ -245,6 +273,10 @@ func _build_window() -> void:
 	picker.custom_minimum_size.x = 160
 	for id: String in Cargo.ITEM_IDS:
 		picker.add_item(NAMES[id])
+	picker.item_selected.connect(func(index: int):
+		for hold in range(hold_scrolls.size()):
+			hold_scrolls[hold].ensure_control_visible(counts[hold][index])
+		refresh())
 	actions.add_child(picker)
 	amount = SpinBox.new()
 	amount.min_value = 1
@@ -254,6 +286,8 @@ func _build_window() -> void:
 	withdraw_button = button(actions, "Preleva", withdraw)
 	withdraw_button.tooltip_text = "Dal deposito allo zaino, poi al drone vicino"
 	deposit_button = button(actions, "Scarica tutto", deposit)
+	eat_button = button(actions, "Consuma", eat)
+	eat_button.tooltip_text = "Consuma un alimento dal carico comune per recuperare 20 energia personale"
 	deposit_button.tooltip_text = "Deposita lo zaino e, se vicino, anche il drone"
 	craft_button = button(actions, "Fabbrica luce", craft)
 	craft_button.visible = false
@@ -332,6 +366,14 @@ func craft() -> void:
 	feedback.text = "Luce fabbricata: kit aggiunto al carico." if world.outpost.craft_lamp() else "Servono un laboratorio vicino, 1 terra, 1 rame e spazio per il kit."
 	refresh()
 
+func eat() -> void:
+	var id: String = Cargo.ITEM_IDS[picker.selected]
+	if id not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or world.crew_energy() >= 100 or not world.field_cargo.pay({id: 1}, true):
+		return
+	world._set_crew_energy(world.crew_energy() + 20)
+	feedback.text = "Consumata una porzione: +20 energia personale"
+	refresh()
+
 func storage_capacity() -> int:
 	return world.outpost.storage_capacity()
 
@@ -345,6 +387,11 @@ func refresh() -> void:
 		for widget: Control in compact_rows[id]:
 			widget.visible = visible_row
 		compact_totals[id].text = str(cargo.available(id, true))
+	var visible_count := 0
+	for id: String in compact_rows:
+		if compact_rows[id][0].visible:
+			visible_count += 1
+	compact_scroll.custom_minimum_size.y = minf(200, 25 + visible_count * 24)
 	for index in range(2):
 		var used: int = cargo.used(stocks[index])
 		compact_titles[index].text = "%d / %d%s" % [used, limits[index], " PIENO" if used == limits[index] else ""]
@@ -358,6 +405,11 @@ func refresh() -> void:
 	compact_link.modulate = Color("a7e5b4")
 	if not window.visible:
 		return
+	var seed_lines: Array[String] = []
+	for crop: String in world.seeds():
+		if int(world.seeds()[crop]) > 0 or crop == "potato":
+			seed_lines.append("%s %d" % [preload("res://scripts/data/industry_catalog.gd").load_data().crops[crop].name_it, world.seeds()[crop]])
+	seed_summary.text = "Sementi comuni / " + " / ".join(seed_lines)
 	var source: bool = world.outpost.source_available()
 	for index in range(3):
 		var used: int = cargo.used(stocks[index])
@@ -374,6 +426,8 @@ func refresh() -> void:
 	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(Cargo.ITEM_IDS[picker.selected], connected) < int(amount.value)
 	deposit_button.disabled = not source or cargo.used(stocks[2]) >= storage_capacity() or cargo.used(cargo.backpack) + (cargo.used(cargo.drone) if connected else 0) == 0
 	prepare_button.disabled = world.outpost.nearby_station().is_empty()
+	var item: String = Cargo.ITEM_IDS[picker.selected]
+	eat_button.disabled = item not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or cargo.available(item, true) <= 0 or world.crew_energy() >= 100
 	prepare_button.tooltip_text = "Apri fabbricazione al laboratorio" if not prepare_button.disabled else "Raggiungi un laboratorio"
 	preparation_status.text = "Cubi sul banco: %d / In mano: %d" % [world.outpost.fabrication.cubes.size() - (1 if world.outpost.fabrication.carried_id != 0 else 0), 1 if world.outpost.fabrication.carried_id != 0 else 0]
 	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()

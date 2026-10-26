@@ -4,6 +4,18 @@ Catalogo generato da [recipes.json](../../design/v1/recipes.json). Modificare il
 
 Le scale sono costruzione manuale immediata sul posto: 2 Terriccio, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
 
+## Prototipo giocabile: cubi di servizio
+
+Da progression.prototype_fabrication: luce, pompa acqua e ventilatore gas si sbloccano dopo il primo laboratorio completato, con materiali comuni e cubi fisici. Queste tre ricette semplificate appartengono alla tranche attuale; il catalogo completo sotto resta il progetto della successiva economia planetaria.
+
+| Oggetto | Ingredienti | Secondi L1 | kWh fabbricazione | Secondi apertura |
+| --- | --- | --- | --- | --- |
+| Luce | 1 Terriccio + 1 Rame | 2.5 | 0.004 | 2.5 |
+| Pompa acqua | 3 Pietra + 4 Rame | 4 | 0.008 | 4 |
+| Ventilatore gas | 2 Pietra + 3 Rame | 4 | 0.006 | 4 |
+
+## Catalogo completo proposto
+
 | ID | Postazione | Ricerca | Ingredienti | Risultato | Secondi | kWh |
 | --- | --- | --- | --- | --- | --- | --- |
 | recipe_wire | Officina di bordo | Dotazione iniziale | 2 Rame | 2 Filo di rame | 3 | 0.006 |

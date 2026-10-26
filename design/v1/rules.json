@@ -112,8 +112,10 @@
     "packed_grid_occupation": 0,
     "packed_capacity_rule": "one_physical_cube_in_hands_separate_from_resource_backpack",
     "fabrication": {
-      "prototype_available_modules": ["mod_lab"],
-      "future_unlocks": ["mod_light", "mod_pump", "mod_gas_filter"],
+      "prototype_available_modules": ["mod_lab", "mod_light", "mod_pump", "mod_gas_filter"],
+      "after_first_completed_laboratory": ["mod_light", "mod_pump", "mod_gas_filter"],
+      "prototype_recipe_source": "progression.prototype_fabrication",
+      "future_unlocks": [],
       "shared_sources": ["player_backpack", "robbie_cargo", "interacted_station_storage"],
       "robbie_distance_gates_materials": false,
       "pay_once": "atomically_on_start",

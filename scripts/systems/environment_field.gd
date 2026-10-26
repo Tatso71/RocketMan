@@ -7,24 +7,27 @@ const EPSILON := 0.000001
 var site: RefCounted
 var water: Dictionary = {}
 var gas: Dictionary = {}
+var oil: Dictionary = {}
 var released: Dictionary = {}
 var accumulator := 0.0
 
 func _init(dig_site: RefCounted) -> void:
 	site = dig_site
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	for pocket: Dictionary in site.pockets():
 		for cell: Vector2i in Layout.cells(pocket):
 			if pocket.kind == "water":
 				water[cell] = 1.0
-			else:
+			elif pocket.kind == "gas":
 				gas[cell] = 1.0
+			elif pocket.kind == "oil":
+				oil[cell] = 1.0
 
 func _open(cell: Vector2i) -> bool:
 	return site.contains(cell) and site.material(cell).is_empty()
 
 func detect_breaches() -> Array[String]:
 	var events: Array[String] = []
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	for pocket: Dictionary in site.pockets():
 		if released.has(pocket.id):
 			continue
 		var cells := Layout.cells(pocket)
@@ -47,23 +50,28 @@ func advance(delta: float) -> void:
 		accumulator -= STEP
 		detect_breaches()
 		_step_water()
+		oil = _step_liquid(oil, water, 0.15, 0.04)
 		_step_gas()
 
 func _step_water() -> void:
 	# Finite cell volumes: gravity first, then lateral equalization. No new water is created.
-	var next := water.duplicate()
-	var cells: Array = water.keys()
+	water = _step_liquid(water, oil, 1.0, 0.2)
+
+func _step_liquid(field: Dictionary, other: Dictionary, fall_rate: float, spread_rate: float) -> Dictionary:
+	var next := field.duplicate()
+	var cells: Array = field.keys()
 	cells.sort_custom(func(a: Vector2i, b: Vector2i): return a.y > b.y if a.y != b.y else a.x < b.x)
 	for cell: Vector2i in cells:
 		var below := cell + Vector2i.DOWN
 		if _open(below):
-			_transfer(next, cell, below, minf(float(next.get(cell, 0)), 1.0 - float(next.get(below, 0))))
+			_transfer(next, cell, below, maxf(0, minf(fall_rate, minf(float(next.get(cell, 0)), 1.0 - float(other.get(below, 0)) - float(next.get(below, 0))))))
 		for offset in [Vector2i.LEFT, Vector2i.RIGHT]:
 			var neighbor: Vector2i = cell + offset
 			if _open(neighbor):
 				var difference := (float(next.get(cell, 0)) - float(next.get(neighbor, 0))) * 0.25
-				_transfer(next, cell, neighbor, maxf(0, minf(0.2, difference)))
-	water = _clean(next)
+				var capacity := 1.0 - float(other.get(neighbor, 0)) - float(next.get(neighbor, 0))
+				_transfer(next, cell, neighbor, maxf(0, minf(capacity, minf(spread_rate, difference))))
+	return _clean(next)
 
 func _transfer(field: Dictionary, source: Vector2i, destination: Vector2i, amount: float) -> void:
 	if amount <= 0:
@@ -93,13 +101,18 @@ func _step_gas() -> void:
 	for cell: Vector2i in changes:
 		next[cell] = maxf(0, float(next.get(cell, 0)) + float(changes[cell]))
 	var dispersing := false
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	var sealed := {}
+	for pocket: Dictionary in site.pockets():
 		if pocket.kind == "gas" and released.has(pocket.id):
 			dispersing = true
+		elif pocket.kind == "gas":
+			for cell: Vector2i in Layout.cells(pocket):
+				sealed[cell] = true
 	if dispersing:
 		for cell: Vector2i in next:
-			# Prototype dispersal after a breach; ventilation hardware is a later system.
-			next[cell] = float(next[cell]) * exp(-STEP * 0.025)
+			# Slow natural dispersal remains separate from active powered ventilation.
+			if not sealed.has(cell):
+				next[cell] = float(next[cell]) * exp(-STEP * 0.025)
 	gas = _clean(next)
 
 func _clean(field: Dictionary) -> Dictionary:
@@ -112,9 +125,15 @@ func _clean(field: Dictionary) -> Dictionary:
 func exposure(feet: Vector2) -> Dictionary:
 	var head := feet - Vector2(0, Grid.metres(1.4))
 	var head_cell := Grid.to_cell(head)
-	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _wet(head), "gas": float(gas.get(head_cell, 0))}
+	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _in_liquid(head, water), "oil": _in_liquid(feet - Vector2(0, 4), oil) or _in_liquid(head, oil), "gas": float(gas.get(head_cell, 0))}
 
 func drain_water(intake: Vector2i, radius: int, amount: float) -> float:
+	return _drain(water, intake, radius, amount)
+
+func drain_gas(intake: Vector2i, radius: int, amount: float) -> float:
+	return _drain(gas, intake, radius, amount)
+
+func _drain(field: Dictionary, intake: Vector2i, radius: int, amount: float) -> float:
 	if not _open(intake) or radius < 0 or not is_finite(amount) or amount <= 0:
 		return 0
 	var queue: Array[Vector2i] = [intake]
@@ -124,14 +143,14 @@ func drain_water(intake: Vector2i, radius: int, amount: float) -> float:
 	while head < queue.size() and drained < amount:
 		var cell := queue[head]
 		head += 1
-		var volume := float(water.get(cell, 0))
+		var volume := float(field.get(cell, 0))
 		var take := minf(volume, amount - drained)
 		if take > 0:
 			drained += take
 			if volume - take <= EPSILON:
-				water.erase(cell)
+				field.erase(cell)
 			else:
-				water[cell] = volume - take
+				field[cell] = volume - take
 		for offset: Vector2i in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
 			var next := cell + offset
 			if not visited.has(next) and absi(next.x - intake.x) + absi(next.y - intake.y) <= radius and _open(next):
@@ -140,24 +159,27 @@ func drain_water(intake: Vector2i, radius: int, amount: float) -> float:
 	return drained
 
 func _wet(point: Vector2) -> bool:
+	return _in_liquid(point, water) or _in_liquid(point, oil)
+
+func _in_liquid(point: Vector2, field: Dictionary) -> bool:
 	var cell := Grid.to_cell(point)
-	var level := float(water.get(cell, 0))
+	var level := float(field.get(cell, 0))
 	return level > 0 and point.y >= Grid.to_world(cell).y + Grid.CELL_SIZE * (1.0 - level)
 
 func reading(cell: Vector2i) -> String:
 	var kinds: Array[String] = []
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	for pocket: Dictionary in site.pockets():
 		var nearby := false
 		for pocket_cell: Vector2i in Layout.cells(pocket):
 			if absi(pocket_cell.x - cell.x) + absi(pocket_cell.y - cell.y) <= 1:
 				nearby = true
 		if nearby:
-			var label := "Gas" if pocket.kind == "gas" else "Acqua"
+			var label: String = {"gas": "Gas", "water": "Acqua", "oil": "Petrolio"}[pocket.kind]
 			kinds.append(label + (": perdita rilevata" if released.has(pocket.id) else ": sacca sigillata oltre la parete"))
 	return " / ".join(kinds)
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "water": _encode(water), "gas": _encode(gas), "released": released.keys()}
+	return {"version": 2, "water": _encode(water), "gas": _encode(gas), "oil": _encode(oil), "released": released.keys()}
 
 func _encode(field: Dictionary) -> Array:
 	var cells: Array = []
@@ -170,14 +192,18 @@ func restore(data: Variant) -> bool:
 		return false
 	if data.is_empty():
 		return true
-	if data.get("version") != 1 or not data.get("water") is Array or not data.get("gas") is Array or not data.get("released") is Array:
+	if (data.get("version") != 1 and data.get("version") != 2) or not data.get("water") is Array or not data.get("gas") is Array or not data.get("released") is Array or (data.version == 2 and not data.get("oil") is Array):
 		return false
 	var next_water = _decode(data.water, "water")
 	var next_gas = _decode(data.gas, "gas")
-	if next_water == null or next_gas == null:
+	var next_oil = _decode(data.get("oil", []), "oil")
+	if next_water == null or next_gas == null or next_oil == null:
 		return false
+	for cell: Vector2i in next_oil:
+		if float(next_water.get(cell, 0)) + float(next_oil[cell]) > 1.001:
+			return false
 	var ids: Array[String] = []
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	for pocket: Dictionary in site.pockets():
 		ids.append(pocket.id)
 	var next_released := {}
 	for id in data.released:
@@ -186,6 +212,7 @@ func restore(data: Variant) -> bool:
 		next_released[id] = true
 	water = next_water
 	gas = next_gas
+	oil = next_oil
 	released = next_released
 	accumulator = 0
 	return true
@@ -196,7 +223,7 @@ func _decode(entries: Array, kind: String) -> Variant:
 	var result := {}
 	var total := 0.0
 	var capacity := 0.0
-	for pocket: Dictionary in Layout.pockets(site.terrain_seed):
+	for pocket: Dictionary in site.pockets():
 		if pocket.kind == kind:
 			capacity += Layout.cells(pocket).size()
 	for entry in entries:

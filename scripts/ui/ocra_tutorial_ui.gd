@@ -71,7 +71,7 @@ func refresh() -> void:
 	if tutorial.complete():
 		title.text = "Primo laboratorio attivo"
 		title.modulate = Color("a7e5b4")
-		detail.text = "Hai una base sotterranea. Puoi depositare, riparare e fabbricare altri laboratori."
+		detail.text = "Luci, pompa acqua e ventilatore gas sono sbloccati. Fabbrica i cubi al laboratorio."
 		action.text = "Apri laboratorio" if not world.outpost.nearby_lab().is_empty() else "Riascolta Robbie"
 		return
 	if step.is_empty():

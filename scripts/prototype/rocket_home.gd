@@ -56,6 +56,7 @@ var local_store: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0,
 var drone: CharacterBody2D
 var outpost: Node2D
 var navigation_revision := 0
+var local_seed_bank := Outpost.Industry.Catalog.initial_seeds()
 var drone_label: Label
 var guide_state := GuideState.new()
 var guide: CanvasLayer
@@ -64,6 +65,9 @@ var local_energy := 60.0
 var local_crew_energy := 100.0
 var power_label: Label
 var tutorial_ui: CanvasLayer
+
+func seeds() -> Dictionary:
+	return ship_state.seed_bank if ship_state != null else local_seed_bank
 
 func is_ocra() -> bool:
 	return planet_def == null or planet_def.planet_id == "ochre"
@@ -150,7 +154,7 @@ func _physics_process(delta: float) -> void:
 	environment.advance(delta)
 	outpost.advance(delta)
 	var danger := player_environment()
-	var damage := (12.0 if danger.submerged else 0.0) + clampf((float(danger.gas) - 0.03) / 0.22, 0, 1) * 18
+	var damage := (12.0 if danger.submerged else 0.0) + (4.0 if danger.oil else 0.0) + clampf((float(danger.gas) - 0.03) / 0.22, 0, 1) * 18
 	if damage > 0:
 		_set_suit(suit_integrity() - damage * delta)
 	if suit_integrity() <= 0:
@@ -185,6 +189,8 @@ func configure(owner_campaign: Node, planet: Resource, ship: RefCounted) -> void
 	inventory.materials = field_cargo.backpack
 
 func controls_blocked() -> bool:
+	if is_instance_valid(outpost) and is_instance_valid(outpost.industry_ui) and outpost.industry_ui.is_open():
+		return true
 	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open())))
 
 func _ready() -> void:
@@ -317,7 +323,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if controls_blocked():
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not outpost.build_mode and drone.hit_test(event.position):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not outpost.build_mode and not outpost.industry_ui.tool_active() and drone.hit_test(event.position):
 		mouse_mining = false
 		guide.repeat_last()
 		get_viewport().set_input_as_handled()
@@ -369,7 +375,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			_note("Botola fuori portata")
 	if event.is_action_pressed("place_ladder"):
-		place_ladder()
+		if event is InputEventKey and event.shift_pressed:
+			remove_ladder_at(Grid.to_cell(player.position - Vector2(0, 20)))
+		else:
+			place_ladder()
 	if event.is_action_pressed("toggle_grid"):
 		show_grid = not show_grid
 	if event.is_action_pressed("return_home"):
@@ -397,7 +406,7 @@ func _process(delta: float) -> void:
 		if aim.length() < 0.3:
 			aim = Vector2(player.facing, Input.get_axis("climb_up", "climb_down"))
 		target_cell = Grid.to_cell(player.position - Vector2(0, 32) + aim.normalized() * 60)
-	if (Input.is_action_pressed("mine") or mouse_mining) and mine_timer <= 0 and not controls_blocked() and not outpost.build_mode:
+	if (Input.is_action_pressed("mine") or mouse_mining) and mine_timer <= 0 and not controls_blocked() and not outpost.build_mode and not outpost.industry_ui.tool_active():
 		_mine_target()
 	if player.position.y > Grid.metres(site.DEPTH + 1):
 		return_home()
@@ -417,6 +426,8 @@ func target_blocker(cell: Vector2i) -> String:
 	if not outpost.fabrication.carried().is_empty():
 		return "Posa il cubo con Spazio prima di usare lo strumento"
 	if site.material(cell).is_empty():
+		if ladders.has(cell) and active_tool().mode == "mine":
+			return "Scala della nave protetta" if cell.y < 0 else ("" if outpost.reachable_cell(cell) else "Scala fuori portata")
 		return "Spazio libero"
 	if not can_reach(cell):
 		return "Fuori portata o percorso ostruito"
@@ -437,6 +448,15 @@ func _mine_target() -> void:
 	if mine_timer > 0:
 		return
 	mine_timer = 0.22
+	if site.material(target_cell).is_empty() and ladders.has(target_cell) and active_tool().mode == "mine":
+		var reason := target_blocker(target_cell)
+		if not reason.is_empty():
+			_note(reason)
+		elif remove_ladder_at(target_cell):
+			beam_time = 0.24
+			beam_tool = active_tool()
+			beam_target = Grid.center(target_cell)
+		return
 	var blocker := target_blocker(target_cell)
 	if not blocker.is_empty():
 		_note(blocker)
@@ -475,6 +495,9 @@ func _mine_target() -> void:
 		elif "water" in breaches:
 			guide_event("water_leak")
 			_note("Allarme: infiltrazione d'acqua! Mantieni una via di risalita")
+		elif "oil" in breaches:
+			guide_event("oil_leak")
+			_note("Petrolio in uscita! Evita il contatto con la tuta")
 	queue_redraw()
 
 func set_hatch(open: bool, notify: bool = true) -> void:
@@ -508,6 +531,17 @@ func place_ladder_at(cell: Vector2i) -> bool:
 	_note("Scala installata: 1 m")
 	return true
 
+func remove_ladder_at(cell: Vector2i) -> bool:
+	if cell.y < 0 or not ladders.has(cell) or not outpost.reachable_cell(cell):
+		_note("Scala protetta o fuori portata")
+		return false
+	ladders.erase(cell)
+	outpost.buildings.structures = outpost.buildings.structures.filter(func(item: Dictionary): return not (item.id == "ladder" and item.origin == cell))
+	player.climbing = false
+	_note("Scala rimossa")
+	queue_redraw()
+	return true
+
 func return_home() -> void:
 	player.position = Vector2(-60, -80)
 	player.velocity = Vector2.ZERO
@@ -521,7 +555,11 @@ func capture_state() -> Dictionary:
 	var readings: Array = []
 	for cell: Vector2i in scanned:
 		readings.append([cell.x, cell.y])
-	return {"version": 1, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	var data := {"version": 1, "layout_version": site.layout_version, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	data.network = outpost.network.snapshot()
+	data.industry = outpost.industry.snapshot()
+	data.seed_bank = seeds().duplicate()
+	return data
 
 func save_run() -> bool:
 	if campaign != null:
@@ -540,7 +578,9 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	if data.get("version") != 1 or data.get("cell_metres") != Grid.CELL_METRES or data.get("terrain_seed", 0) != site.terrain_seed or not data.get("removed") is Array or not data.get("materials") is Dictionary or not data.get("ladders") is Array:
 		_note("Nessun salvataggio compatibile")
 		return false
-	var next_site := DigSite.new(site.terrain_seed)
+	if not Outpost.Fabrication.integer(data.get("layout_version", 0), 0, 1):
+		return false
+	var next_site := DigSite.new(site.terrain_seed, int(data.get("layout_version", 0)))
 	next_site.restore(data.removed)
 	var next_environment := HazardField.new(next_site)
 	if not next_environment.restore(data.get("hazards", {})):
@@ -549,6 +589,12 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	var next_buildings := Buildings.new()
 	if not next_buildings.restore(data.get("buildings", []), next_site):
 		_note("Dati delle costruzioni non validi")
+		return false
+	var next_network := Outpost.Network.new()
+	var next_industry := Outpost.Industry.new()
+	if not next_network.restore(data.get("network", {}), next_site) or not next_industry.restore(data.get("industry", {}), next_buildings, next_site):
+		return false
+	if restore_inventory and not Outpost.Industry.Catalog.seeds_valid(data.get("seed_bank", Outpost.Industry.Catalog.initial_seeds())):
 		return false
 	var next_fabrication := Outpost.Fabrication.new()
 	if not next_fabrication.restore(data.get("fabrication", {})) or not next_fabrication.valid_world(next_site, next_buildings) or not Outpost.Fabrication.integer(data.get("local_lab_level", 1), 1, 3):
@@ -575,6 +621,13 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	site = next_site
 	environment = next_environment
 	outpost.buildings = next_buildings
+	outpost.network = next_network
+	outpost.industry = next_industry
+	outpost.industry_ui.window.hide()
+	outpost.industry_ui.menu.hide()
+	outpost.industry_ui.context_menu.hide()
+	outpost.industry_ui.mode = ""
+	outpost.industry_ui.dragging = false
 	outpost.fabrication = next_fabrication
 	outpost.local_lab_level = int(data.get("local_lab_level", 1))
 	outpost.activation_cube_id = 0
@@ -601,6 +654,8 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 			if not site.material(cell).is_empty():
 				blocks[cell] = _body(Grid.rect(cell), terrain)
 	if restore_inventory:
+		seeds().clear()
+		seeds().merge(data.get("seed_bank", Outpost.Industry.Catalog.initial_seeds()))
 		var saved_suit = data.get("suit_integrity", 100)
 		if (saved_suit is int or saved_suit is float) and is_finite(float(saved_suit)):
 			_set_suit(float(saved_suit))
@@ -635,14 +690,14 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 			drone.position = candidate
 	if not data.has("drone_guide"):
 		# Older saves infer milestones from the restored outpost, not tutorial text.
-		if site.removed.size() > DigSite.new(site.terrain_seed).removed.size():
+		if site.removed.size() > DigSite.new(site.terrain_seed, site.layout_version).removed.size():
 			guide_state.facts.mined = true
 		if not outpost.buildings.labs().is_empty():
 			guide_state.facts.lab_built = true
 		if outpost.buildings.structures.any(func(building: Dictionary): return building.id == "lamp"):
 			guide_state.facts.lamp_placed = true
 	if guide_state.facts.get("mined", false) and int(guide_state.ocra.counters.get("mined_cells", 0)) == 0:
-		guide_state.ocra.counters["mined_cells"] = maxi(1, site.removed.size() - DigSite.new(site.terrain_seed).removed.size())
+		guide_state.ocra.counters["mined_cells"] = maxi(1, site.removed.size() - DigSite.new(site.terrain_seed, site.layout_version).removed.size())
 		guide_state.ocra.counters["mined"] = guide_state.ocra.counters["mined_cells"]
 		guide_state.ocra.mark("workshop_entered")
 		guide_state.ocra.mark("hatch_opened")
@@ -796,6 +851,8 @@ func _refresh_hud() -> void:
 		risk = "SOMMERSO / Risali o raggiungi una zona asciutta"
 	elif float(danger.gas) >= 0.03:
 		risk = "GAS / Allontanati dalla nube"
+	elif danger.oil:
+		risk = "PETROLIO / Tuta contaminata: torna all'asciutto"
 	elif danger.wet:
 		risk = "ACQUA / Movimento rallentato"
 	hazard_label.text = "TUTA %.0f%%  |  ENERGIA PERSONALE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk]
@@ -833,7 +890,7 @@ func _draw() -> void:
 			draw_arc(player.position - Vector2(0, 32), Grid.metres(active_tool().reach_metres), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
 	for cell: Vector2i in ladders:
 		_ladder(Grid.to_world(cell) + Vector2(20, 0), 40)
-	if site.contains(target_cell) and not site.material(target_cell).is_empty():
+	if site.contains(target_cell) and (not site.material(target_cell).is_empty() or ladders.has(target_cell)):
 		var available := target_blocker(target_cell).is_empty() if is_instance_valid(player) else false
 		draw_rect(Grid.rect(target_cell).grow(-1), active_tool().beam_color if available else Color("ff6265"), false, 2.5)
 		var damage := float(site.damage.get(target_cell, 0))
@@ -856,7 +913,9 @@ func _draw_landscape() -> void:
 	draw_rect(Rect2(-3000, -6, 6000, 16), Color("d98b72"))
 
 func _draw_terrain() -> void:
-	var darkness := Color("101721")
+	var darkness := Color("030509")
+	# Keep the void beyond the finite dig-site boundary underground, not sky blue.
+	draw_rect(Rect2(-4000, 0, 8000, 3000), darkness)
 	draw_rect(Rect2(Grid.to_world(Vector2i(site.LEFT, 0)), Grid.to_world(Vector2i(site.RIGHT - site.LEFT, site.DEPTH))), darkness)
 	for y in range(site.DEPTH):
 		for x in range(site.LEFT, site.RIGHT):
@@ -896,6 +955,15 @@ func _draw_terrain() -> void:
 				draw_rect(rect, Color(0.14, 0.12, 0.17, 0.3), false, 1)
 
 func _draw_environment() -> void:
+	for cell: Vector2i in environment.oil:
+		var light := _illumination(Grid.center(cell))
+		if light < 0.08:
+			continue
+		var rect := Grid.rect(cell)
+		var height := Grid.CELL_SIZE * float(environment.oil[cell])
+		var top := rect.end.y - height
+		draw_rect(Rect2(rect.position.x, top, Grid.CELL_SIZE, height), Color("030509").lerp(Color("78556c"), light))
+		draw_line(Vector2(rect.position.x + 2, top + 2), Vector2(rect.end.x - 2, top + 2), Color(0.62, 0.55, 0.78, light), 2)
 	for cell: Vector2i in environment.water:
 		var light := _illumination(Grid.center(cell))
 		if light < 0.12:
@@ -921,8 +989,10 @@ func _draw_environment() -> void:
 func _illumination(point: Vector2) -> float:
 	var hand := player.position - Vector2(0, 32) if is_instance_valid(player) else Vector2(0, -100)
 	var reach := Grid.metres(active_tool().reach_metres)
+	var depth := smoothstep(Grid.metres(2), Grid.metres(16), hand.y)
+	reach = minf(reach, Grid.metres(3)) * lerpf(1, 0.42, depth)
 	var distance := point.distance_to(hand)
-	var light := 1.0 - smoothstep(reach * 0.65, reach * 1.4, distance)
+	var light := (1.0 - smoothstep(reach * 0.65, reach * 1.4, distance)) * lerpf(1, 0.68, depth)
 	var built_light: float = outpost.light_at(point) if is_instance_valid(outpost) else 0.0
 	return maxf(light, built_light)
 

@@ -15,8 +15,14 @@ var clock := 0.0
 var status := "Collegato"
 var water_alarm := false
 var water_timer := 0.0
+var resting_goal := Vector2.ZERO
+var has_resting_goal := false
+var clearance := CircleShape2D.new()
+const SPEED := 125.0
+const ACCELERATION := 420.0
 
 func _ready() -> void:
+	clearance.radius = 10
 	collision_layer = 2
 	collision_mask = 1
 	var collider := CollisionShape2D.new()
@@ -40,14 +46,44 @@ func hit_test(viewport_point: Vector2) -> bool:
 
 func _free(cell: Vector2i) -> bool:
 	if cell.y >= 0:
-		return world.site.contains(cell) and world.site.material(cell).is_empty() and not world.environment._wet(Grid.center(cell))
+		return world.site.contains(cell) and world.site.material(cell).is_empty() and not world.environment._wet(Grid.center(cell) + Vector2(0, 10))
 	if cell.y >= -2:
 		return cell.x in [-1, 0]
 	return cell.y >= -11 and cell.x >= -4 and cell.x < 4
 
 func _clear(from: Vector2, to: Vector2) -> bool:
-	var query := PhysicsRayQueryParameters2D.create(from, to, 1, [get_rid(), world.player.get_rid()])
-	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
+	if to.distance_to(BASE) > Grid.metres(range_metres) + 1 and to.distance_to(BASE) > from.distance_to(BASE):
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = clearance
+	query.transform = Transform2D(0, from)
+	query.motion = to - from
+	query.collision_mask = 1
+	query.exclude = [get_rid(), world.player.get_rid()]
+	var sweep := get_world_2d().direct_space_state.cast_motion(query)
+	return sweep[0] >= 0.999
+
+func _actor_clearance() -> Rect2:
+	return Rect2(world.player.position - Vector2(43, 83), Vector2(86, 102))
+
+func _route_clear(from: Vector2, to: Vector2) -> bool:
+	if not _clear(from, to):
+		return false
+	# Lookahead may skip dry waypoints, but must not shortcut across a liquid pocket.
+	var samples := maxi(1, ceili(from.distance_to(to) / 10))
+	for index in range(samples + 1):
+		if world.environment._wet(from.lerp(to, float(index) / samples) + Vector2(0, 10)):
+			return false
+	var actor := _actor_clearance()
+	if actor.has_point(from):
+		return not actor.has_point(to)
+	if actor.has_point(to):
+		return false
+	var corners := [actor.position, Vector2(actor.end.x, actor.position.y), actor.end, Vector2(actor.position.x, actor.end.y)]
+	for index in range(4):
+		if Geometry2D.segment_intersects_segment(from, to, corners[index], corners[(index + 1) % 4]) != null:
+			return false
+	return true
 
 func _rebuild() -> void:
 	graph.clear()
@@ -71,25 +107,32 @@ func _rebuild() -> void:
 func follow_goal() -> Vector2:
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
 	var desired := torso + Vector2(-world.player.facing * FOLLOW_DISTANCE, -40)
-	var best := desired
+	# Keep a comfortable resting place when the explorer only turns around.
+	if has_resting_goal and resting_goal.distance_to(BASE) <= Grid.metres(range_metres) and resting_goal.distance_to(torso) >= MIN_CLEARANCE + 8 and resting_goal.distance_to(torso) <= Grid.metres(2.8) and not _actor_clearance().has_point(resting_goal) and _clear(torso, resting_goal) and _free(Grid.to_cell(resting_goal)):
+		return resting_goal
+	var best := position
 	var score := INF
-	# Prefer a clear resting place beside the player, not the nearest occupied cell.
+	var start := graph.get_closest_point(position)
 	for id in graph.get_point_ids():
 		var point := graph.get_point_position(id)
 		var distance := point.distance_to(torso)
-		if distance < PERSONAL_SPACE or distance > Grid.metres(2.8) or not _clear(torso, point):
+		if distance < MIN_CLEARANCE or distance > Grid.metres(3.2) or not _clear(torso, point):
 			continue
-		var candidate := point.distance_to(desired)
-		if candidate < score:
+		var candidate := point.distance_to(desired) + maxf(0, PERSONAL_SPACE - distance) * 8
+		if candidate < score and not graph.get_id_path(start, id).is_empty():
 			score = candidate
 			best = point
+	resting_goal = best
+	has_resting_goal = score < INF
 	return best
 
 func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
+		velocity = Vector2.ZERO
 		return
 	clock += delta
-	if world.player_environment().submerged:
+	var danger: Dictionary = world.player_environment()
+	if danger.submerged or danger.oil:
 		water_alarm = true
 		status = "Allarme: stai subendo danni"
 		velocity = Vector2.ZERO
@@ -102,49 +145,67 @@ func _physics_process(delta: float) -> void:
 		revision = -1
 	water_timer -= delta
 	var current_range: float = world.ship_state.drone_range_metres() if world.ship_state != null else 15
-	if revision != world.navigation_revision or range_metres != current_range or (not world.environment.water.is_empty() and water_timer <= 0):
+	if revision != world.navigation_revision or range_metres != current_range or ((not world.environment.water.is_empty() or not world.environment.oil.is_empty()) and water_timer <= 0):
 		range_metres = current_range
 		_rebuild()
 		water_timer = 0.5
 		route_timer = 0
 	route_timer -= delta
 	if route_timer <= 0 and graph.get_point_count() > 0:
-		route_timer = 0.3
+		route_timer = 0.2
 		for id in graph.get_point_ids():
 			graph.set_point_disabled(id, false)
 		var start := graph.get_closest_point(position)
-		var actor := Rect2(world.player.position - Vector2(12, 64), Vector2(24, 64)).grow(24)
+		var torso: Vector2 = world.player.position - Vector2(0, 32)
 		for id in graph.get_point_ids():
-			graph.set_point_disabled(id, id != start and actor.has_point(graph.get_point_position(id)))
+			# The body itself is excluded; personal space outside it is only a cost.
+			graph.set_point_disabled(id, id != start and _actor_clearance().has_point(graph.get_point_position(id)))
+			var proximity := graph.get_point_position(id).distance_to(torso)
+			graph.set_point_weight_scale(id, 1 + maxf(0, PERSONAL_SPACE - proximity) / 10)
 		var goal := follow_goal()
-		var outside: bool = goal.distance_to(BASE) > Grid.metres(range_metres)
-		if outside:
-			goal = BASE + (goal - BASE).normalized() * Grid.metres(range_metres - 0.5)
+		var outside: bool = torso.distance_to(BASE) > Grid.metres(range_metres)
+		if outside or not has_resting_goal:
+			goal = BASE + (torso - BASE).limit_length(Grid.metres(range_metres - 0.7))
 		var end := graph.get_closest_point(goal)
 		route = graph.get_point_path(start, end)
 		status = "Limite segnale" if outside else ("Percorso ostruito" if route.is_empty() else "Ti seguo")
-		if not route.is_empty() and position.distance_to(route[0]) < 8:
+		# Never return to the centre of the start cell on every route refresh.
+		if route.size() > 1 and _route_clear(position, route[1]):
 			route.remove_at(0)
-	velocity = Vector2.ZERO
+	var desired_velocity := Vector2.ZERO
 	if not route.is_empty() and world.environment._wet(route[0]):
 		route.clear()
 		revision = -1
 	if not route.is_empty():
-		if position.distance_to(route[0]) < 5:
+		while route.size() > 1 and _route_clear(position, route[1]):
 			route.remove_at(0)
-		else:
-			velocity = (route[0] - position).normalized() * minf(125, position.distance_to(route[0]) / maxf(delta, 0.001))
+		if position.distance_to(route[0]) < 3:
+			route.remove_at(0)
+		elif _route_clear(position, route[0]):
+			desired_velocity = (route[0] - position).normalized() * minf(SPEED, position.distance_to(route[0]) * 4)
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
 	var distance := position.distance_to(torso)
-	if distance < MIN_CLEARANCE:
+	var comfort := PERSONAL_SPACE
+	if has_resting_goal and world.player.velocity.length() < 1:
+		comfort = clampf(resting_goal.distance_to(torso) - 2, MIN_CLEARANCE, PERSONAL_SPACE)
+	if distance < comfort:
 		var away := (position - torso).normalized()
 		if away.is_zero_approx():
 			away = Vector2(-world.player.facing, -1).normalized()
-		var escape := position + away * minf(MIN_CLEARANCE - distance + 4, 24)
+		var escape := position + away * 28
+		if not _free(Grid.to_cell(escape)) or not _clear(position, escape):
+			for direction: Vector2 in [Vector2.UP, Vector2(-1, -1).normalized(), Vector2(1, -1).normalized(), Vector2.LEFT, Vector2.RIGHT]:
+				var candidate := position + direction * 28
+				if candidate.distance_to(torso) > distance and _free(Grid.to_cell(candidate)) and _clear(position, candidate):
+					away = direction
+					escape = candidate
+					break
 		if _free(Grid.to_cell(escape)) and _clear(position, escape):
-			velocity = away * minf(100, (MIN_CLEARANCE - distance + 4) / maxf(delta, 0.001))
-		else:
-			velocity = Vector2.ZERO
+			desired_velocity = away * minf(SPEED, (comfort - distance + 4) * 4)
+	velocity = velocity.move_toward(desired_velocity, ACCELERATION * delta)
+	if not _clear(position, position + velocity * delta):
+		velocity = velocity.move_toward(Vector2.ZERO, ACCELERATION * delta)
+		route_timer = 0
 	move_and_slide()
 	queue_redraw()
 

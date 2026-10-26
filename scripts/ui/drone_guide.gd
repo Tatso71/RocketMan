@@ -12,8 +12,10 @@ var auto_toggle: CheckButton
 var current_id := ""
 var last_message_id := ""
 var last_message_text := ""
+var last_message_title := ""
 var replay_id := ""
 var replay_text := ""
+var replay_title := ""
 var room_cache: Variant = null
 var room_poll := 0.0
 var room_revision := -1
@@ -79,6 +81,8 @@ func context() -> String:
 	var danger: Dictionary = world.player_environment()
 	if danger.submerged:
 		return "water_danger"
+	if danger.oil:
+		return "oil_danger"
 	if float(danger.gas) >= 0.03:
 		return "gas_danger"
 	if world.ship_energy() < 5:
@@ -116,8 +120,12 @@ func context() -> String:
 			return "lamp_crafted" if world.field_cargo.available("lamp_kit", world.drone_help_available()) > 0 else "lamp_plan"
 		if world.outpost.blueprint == "pump":
 			return "pump_plan"
+		if world.outpost.blueprint == "fan":
+			return "fan_plan"
 		return "build_resources" if not world.outpost.cargo_ui.lab_missing().is_empty() and world.outpost.blueprint == "laboratory" else "build_space"
-	for id: String in ["pump_built", "lamp_placed", "lamp_crafted", "lab_built", "deposited"]:
+	for id: String in ["seed_pod_seen", "seeds_found", "greenhouse_built", "furnace_built", "gas_converter_built", "fan_built", "pump_built", "lamp_placed", "lamp_crafted", "lab_built", "deposited"]:
+		if id == "seed_pod_seen" and state.facts.get("seeds_found", false):
+			continue
 		if state.facts.get(id, false) and id not in state.seen:
 			return id
 	if world.outpost.has_lab():
@@ -133,6 +141,7 @@ func context() -> String:
 func request_help() -> void:
 	replay_id = ""
 	replay_text = ""
+	replay_title = ""
 	current_id = ""
 	var id := context()
 	if not world.is_ocra() and world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
@@ -146,6 +155,7 @@ func repeat_last() -> void:
 		return
 	replay_id = last_message_id
 	replay_text = last_message_text
+	replay_title = last_message_title
 	current_id = ""
 	state.offer(replay_id, true)
 	_update_bubble()
@@ -154,7 +164,10 @@ func event(id: String) -> void:
 	state.ocra.record(id)
 	if id in Guide.FACTS:
 		state.facts[id] = true
-	if id in ["gas_leak", "water_leak"]:
+	if id in ["gas_leak", "water_leak", "oil_leak"]:
+		# Each newly breached pocket may warn again, even after an earlier pocket.
+		state.latched.erase(id)
+		state.last_shown.erase(id)
 		state.offer(id)
 	if id == "mined" and not world.is_ocra() and not world.outpost.laboratory_unlocked():
 		state.offer("tutorial_collect")
@@ -178,18 +191,26 @@ func _update_bubble() -> void:
 		current_id = ""
 		replay_id = ""
 		replay_text = ""
+		replay_title = ""
 		return
 	if current_id != state.active_id:
 		current_id = state.active_id
 		if not state.active_manual or replay_id != current_id:
 			replay_id = ""
 			replay_text = ""
+			replay_title = ""
 		speech.text = replay_text if not replay_text.is_empty() else state.message(current_id)[2]
 		bubble.size = Vector2(332, 0)
 	if current_id == "cargo_full" and replay_text.is_empty():
-		speech.text = "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Per ripartire scegli Preleva materiali o Costruisci." if world.outpost.source_available() else Guide.MESSAGES[current_id][2]
+		speech.text = Guide.Texts.message("cargo_near_station")[2] if world.outpost.source_available() else state.message(current_id)[2]
+	var shown_title: String = state.message(current_id)[1]
+	if not replay_title.is_empty():
+		shown_title = replay_title
+	elif current_id == "cargo_full" and world.outpost.source_available():
+		shown_title = Guide.Texts.message("cargo_near_station")[1]
 	last_message_id = current_id
 	last_message_text = speech.text
+	last_message_title = shown_title
 	var viewport := get_viewport().get_visible_rect().size
 	var point: Vector2 = world.drone.get_global_transform_with_canvas() * Vector2.ZERO
 	var actor: Vector2 = world.player.get_global_transform_with_canvas() * Vector2(0, -32)
@@ -197,13 +218,14 @@ func _update_bubble() -> void:
 	var size := bubble.size.max(bubble.get_combined_minimum_size())
 	var safe := Rect2(Vector2(16, 76), viewport - Vector2(32, 186))
 	var radio := not safe.has_point(point) or current_id == "signal_limit"
-	heading.text = "ROBBIE / " + ("RADIO" if radio else str(state.message(current_id)[1]).to_upper())
+	heading.text = "ROBBIE / " + ("RADIO" if radio else shown_title.to_upper())
 	var bubble_style := bubble.get_theme_stylebox("panel") as StyleBoxFlat
-	bubble_style.border_color = Color("ef6666") if current_id == "water_danger" else Color("589d95")
+	bubble_style.border_color = Color("ef6666") if current_id in ["water_danger", "gas_danger", "oil_danger"] else Color("589d95")
 	# Try both sides of the drone, avoiding the explorer and the fixed HUD areas.
 	var candidates: Array[Vector2] = [point + Vector2(35, -size.y - 24), point - Vector2(size.x + 35, size.y + 24), point + Vector2(35, 32), point - Vector2(size.x + 35, -32)]
 	if radio:
 		candidates.push_front(Vector2(viewport.x - size.x - 24, 360))
+	candidates.append(Vector2((viewport.x - size.x) * 0.5, safe.position.y))
 	var best := Vector2.ZERO
 	var best_score := INF
 	for candidate: Vector2 in candidates:
@@ -213,6 +235,8 @@ func _update_bubble() -> void:
 		var obstacles: Array[Rect2] = [body, Rect2(0, 70, 400, 105), Rect2(viewport.x - 352, 70, 352, 300)]
 		if is_instance_valid(world.tutorial_ui) and world.tutorial_ui.panel.visible:
 			obstacles.append(world.tutorial_ui.panel.get_global_rect())
+		if is_instance_valid(world.outpost.energy_ui) and world.outpost.energy_ui.panel.visible:
+			obstacles.append(world.outpost.energy_ui.panel.get_global_rect())
 		for obstacle: Rect2 in obstacles:
 			var overlap := rect.intersection(obstacle)
 			score += overlap.get_area() * 10

@@ -99,3 +99,49 @@ func test_legacy_outer_planet_campaign_keeps_access() -> void:
 	var restored := State.new()
 	assert_bool(restored.restore(state.snapshot())).is_true()
 	assert_int(restored.available_planets().size()).is_equal(3)
+
+func test_instant_arrival_matches_normal_travel_costs_damage_and_destination() -> void:
+	for planet: Resource in Planets.all():
+		var normal := State.new()
+		var instant := State.new()
+		for state: RefCounted in [normal, instant]:
+			state.ship.lab_research_unlocked = true
+			state.ship.modules.engine = 2
+			state.ship.modules.landing_gear = 2
+			state.choose(planet.planet_id)
+		normal.depart()
+		normal.advance(State.DURATIONS[State.Phase.FLIGHT])
+		normal.advance(State.DURATIONS[State.Phase.LANDING])
+		assert_bool(instant.arrive_immediately()).is_true()
+		assert_int(instant.phase).is_equal(State.Phase.DIGGING)
+		assert_dict(instant.snapshot()).is_equal(normal.snapshot())
+		var before := instant.snapshot()
+		assert_bool(instant.arrive_immediately()).is_false()
+		instant.advance(100)
+		assert_dict(instant.snapshot()).is_equal(before)
+
+func test_instant_arrival_respects_locked_invalid_and_unaffordable_routes() -> void:
+	for id: String in ["frost", "verdant", "missing"]:
+		var state := State.new()
+		state.selected_planet = id
+		var before := state.snapshot()
+		assert_bool(state.arrive_immediately()).is_false()
+		assert_dict(state.snapshot()).is_equal(before)
+	for stat: String in ["fuel", "energy", "hull"]:
+		var state := State.new()
+		state.ship.set(stat, 1)
+		var before := state.snapshot()
+		assert_bool(state.arrive_immediately()).is_false()
+		assert_dict(state.snapshot()).is_equal(before)
+
+func test_instant_arrival_json_save_load_does_not_restart_or_charge_again() -> void:
+	var state := State.new()
+	assert_bool(state.arrive_immediately()).is_true()
+	var loaded := State.new()
+	assert_bool(loaded.restore(JSON.parse_string(JSON.stringify(state.snapshot())))).is_true()
+	assert_int(loaded.phase).is_equal(State.Phase.DIGGING)
+	assert_str(loaded.active_planet).is_equal("ochre")
+	assert_int(loaded.available_planets().size()).is_equal(1)
+	var before := loaded.snapshot()
+	loaded.advance(100)
+	assert_dict(loaded.snapshot()).is_equal(before)
