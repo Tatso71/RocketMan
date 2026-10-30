@@ -96,12 +96,12 @@ func _run() -> void:
 	ui._start_craft()
 	check(outpost.fabrication.jobs.is_empty() and world.field_cargo.snapshot() == before.field_cargo, "invalid create cannot consume partial resources")
 	await screenshot("01-missing-recipe-720p", ui.picker)
-	world.field_cargo.backpack = {"stone": 6, "copper": 2}
-	world.field_cargo.drone = {"copper": 2, "soil": 10}
-	world.inventory.materials = world.field_cargo.backpack
-	world.drone.position = Vector2(800, -700)
+	world.field_cargo.backpack.clear()
+	world.field_cargo.drone = {"stone": 6, "copper": 4, "soil": 10}
+	world.inventory.materials = world.field_cargo.drone
+	Fixture.support(world)
 	ui.refresh()
-	check(not ui.craft_button.disabled and ui.resource_labels.stone.modulate == Color("a7e5b4") and ui.resource_labels.copper.modulate == Color("a7e5b4"), "full split cargo is enough, even with Robbie out of radio range")
+	check(not ui.craft_button.disabled and ui.resource_labels.stone.modulate == Color("a7e5b4") and ui.resource_labels.copper.modulate == Color("a7e5b4"), "full Robbie cargo is enough when physically nearby")
 	check(outpost.fabrication_amount("copper") == 4, "recipe reports the combined copper total")
 	await screenshot("02-ready-recipe-720p", ui.picker)
 	ui.craft_button.pressed.emit()

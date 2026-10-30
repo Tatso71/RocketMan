@@ -40,7 +40,7 @@ func _ready() -> void:
 	panel.add_child(column)
 	heading = UI.label("", 20)
 	column.add_child(heading)
-	column.add_child(UI.label("Materiali comuni: zaino + Robbie + deposito di questo laboratorio", 14, Color("b4c5c6")))
+	column.add_child(UI.label("Materiali: Robbie vicino + deposito del laboratorio", 14, Color("b4c5c6")))
 	column.add_child(HSeparator.new())
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -82,7 +82,7 @@ func _ready() -> void:
 
 func _sync_recipes() -> void:
 	var next: Array[String] = []
-	for id: String in Buildings.CUBE_IDS:
+	for id: String in Buildings.CUBE_IDS + ["bomb"]:
 		if outpost.recipe_visible(id) and not outpost.recipe_definition(id).is_empty():
 			next.append(id)
 	if next == visible_recipes:
@@ -102,12 +102,12 @@ func _sync_recipes() -> void:
 		name_row.add_theme_constant_override("separation", 8)
 		recipe_grid.add_child(name_row)
 		var icon := TextureRect.new()
-		icon.texture = ICONS[id]
+		icon.texture = preload("res://assets/ui/bomb.svg") if id == "bomb" else ICONS[id]
 		icon.custom_minimum_size = Vector2(28, 28)
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		name_row.add_child(icon)
-		name_row.add_child(UI.label(definition.name_it, 17, Buildings.CUBE_COLORS[id]))
+		name_row.add_child(UI.label(definition.name_it, 17, Buildings.CUBE_COLORS.get(id, Color("ef816c"))))
 		recipe_grid.add_child(UI.label("1", 17))
 		var time := UI.label("", 16)
 		time.custom_minimum_size.x = 68
@@ -206,7 +206,7 @@ func refresh() -> void:
 		row.button.disabled = not reason.is_empty()
 		row.button.tooltip_text = reason
 		any_ready = any_ready or reason.is_empty()
-		if not reason.is_empty() and not reason.begins_with("Mancano:"):
+		if not reason.is_empty() and not reason.begins_with("Mancano:") and not (id == "bomb" and reason.begins_with("Scorte bombe piene")):
 			bench_blocker = reason
 	var job: Dictionary = outpost.fabrication.job_at(outpost.station_identity(station))
 	var output: Dictionary = outpost.fabrication.output_at(outpost.station_identity(station))
@@ -214,11 +214,13 @@ func refresh() -> void:
 	if not job.is_empty():
 		craft_bar.value = float(job.elapsed) / float(job.seconds) * 100
 		var pause_reason: String = outpost.fabrication_pause_reason(job)
-		choice_status.text = pause_reason if not pause_reason.is_empty() else "%s sul banco / %.1f s rimanenti" % [Buildings.NAMES[job.id], float(job.seconds) - float(job.elapsed)]
+		choice_status.text = pause_reason if not pause_reason.is_empty() else "%s sul banco / %.1f s rimanenti" % [outpost.recipe_definition(job.id).name_it, float(job.seconds) - float(job.elapsed)]
 	elif not output.is_empty():
 		choice_status.text = "%s pronto / avvicinati al cubo e premi Spazio" % Buildings.NAMES[output.id]
 	elif not bench_blocker.is_empty():
 		choice_status.text = bench_blocker
+	elif not any_ready and recipe_rows.has("bomb") and outpost.world.gear.ammo() >= outpost.world.Gear.BOMB_CAPACITY:
+		choice_status.text = "Bombe 4/4 / Altre ricette: risorse insufficienti"
 	else:
 		choice_status.text = "Banco pronto" if any_ready else "Risorse insufficienti: controlla i requisiti di ogni ricetta"
 	choice_status.modulate = Color("a7e5b4") if any_ready or not output.is_empty() else Color("e5efeb")

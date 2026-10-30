@@ -20,8 +20,14 @@ var fuel := 80.0
 var energy := 60.0
 var suit_integrity := 100.0
 var crew_energy := 100.0
-var tool_slots: Array[String] = ["pulse", "scanner", "", ""]
+var tool_slots: Array[String] = ["pulse", "scanner", "bomb", "jetpack"]
 var active_tool_slot := 0
+var jetpack_charge := 100.0
+var bomb_ammo := 4
+var workshop_damaged := false
+
+func _init() -> void:
+	field_cargo.enable_drone_only(drone_capacity())
 
 func hull_capacity() -> float:
 	return 100.0 + 40.0 * (int(modules.hull) - 1)
@@ -54,7 +60,7 @@ func drill_power() -> int:
 	return int(modules.drill)
 
 func drone_capacity() -> int:
-	return 12 + 4 * (int(modules.drone) - 1)
+	return 20 + 8 * (int(modules.drone) - 1)
 
 func drone_range_metres() -> float:
 	return 15.0 + 5.0 * (int(modules.drone) - 1)
@@ -103,11 +109,7 @@ func upgrade(id: String) -> bool:
 	modules[id] = int(modules[id]) + 1
 	field_cargo.drone_capacity = drone_capacity()
 	if id == "drill":
-		for tool: Resource in Tools.all():
-			if tool.required_level <= drill_power() and tool.tool_id not in tool_slots:
-				var empty := tool_slots.find("")
-				if empty >= 0:
-					tool_slots[empty] = tool.tool_id
+		tool_slots[0] = "plasma" if drill_power() >= 3 else "resonator"
 	return true
 
 func repair() -> bool:
@@ -129,7 +131,7 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "seed_bank": seed_bank.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "seed_bank": seed_bank.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot, "jetpack_charge": jetpack_charge, "workshop_damaged": workshop_damaged, "bomb_ammo": bomb_ammo}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
@@ -179,11 +181,13 @@ func restore(data: Dictionary) -> bool:
 	var active := int(data.get("active_tool_slot", 0))
 	if str(slots[active]).is_empty():
 		return false
-	for stat: String in ["hull", "fuel", "energy", "suit_integrity", "crew_energy"]:
-		var value = data.get(stat, 100 if stat in ["suit_integrity", "crew_energy"] else null)
+	if not data.get("workshop_damaged", false) is bool or not _integer(data.get("bomb_ammo", 4), 0, 4):
+		return false
+	for stat: String in ["hull", "fuel", "energy", "suit_integrity", "crew_energy", "jetpack_charge"]:
+		var value = data.get(stat, 100 if stat in ["suit_integrity", "crew_energy", "jetpack_charge"] else null)
 		if not (value is int or value is float) or not is_finite(float(value)) or float(value) < 0:
 			return false
-		var maximum: float = 100 if stat in ["suit_integrity", "crew_energy"] else (next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity()))
+		var maximum: float = 100 if stat in ["suit_integrity", "crew_energy", "jetpack_charge"] else (next.hull_capacity() if stat == "hull" else (next.fuel_capacity() if stat == "fuel" else next.energy_capacity()))
 		if float(value) > maximum:
 			return false
 	modules = next.modules.duplicate()
@@ -203,6 +207,13 @@ func restore(data: Dictionary) -> bool:
 	suit_integrity = float(data.get("suit_integrity", 100))
 	crew_energy = float(data.get("crew_energy", 100))
 	tool_slots.assign(slots)
+	tool_slots[0] = "plasma" if drill_power() >= 3 else ("resonator" if drill_power() >= 2 else "pulse")
+	tool_slots[1] = "scanner"
+	tool_slots[2] = "bomb"
+	tool_slots[3] = "jetpack"
+	jetpack_charge = float(data.get("jetpack_charge", 100))
+	bomb_ammo = int(data.get("bomb_ammo", 4))
+	workshop_damaged = data.get("workshop_damaged", false)
 	active_tool_slot = active
 	return true
 

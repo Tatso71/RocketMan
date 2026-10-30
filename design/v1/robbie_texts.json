@@ -19,7 +19,7 @@
       "id": "first_dig",
       "priority": 15,
       "title": "Il primo scavo",
-      "body": "Punta il terreno e usa il raggio Pulse per scavare. Io ti seguo e trasporto il materiale che non entra nello zaino. Non allontaniamoci troppo dalla nave.",
+      "body": "Punta il terreno e usa Pulse. Tutti i materiali li porto io: aspettami entro 3 metri. Scendi abbastanza da liberare la botola, cosi posso uscire. Quando sono pieno, Y mi manda a scaricare alla nave e poi torno da te.",
       "detail": ""
     },
     {
@@ -33,7 +33,7 @@
       "id": "tutorial_collect",
       "priority": 65,
       "title": "Prima il laboratorio",
-      "body": "Raccogli 6 pietra e 4 rame per il laboratorio. Il tuo zaino e il mio carico si sommano sempre, anche a distanza. La nave parte senza materiali; la pietra nel terreno inizia a 5 m.",
+      "body": "Servono 6 pietra e 4 rame per il laboratorio. I materiali sono nel mio carico: restiamo vicini per usarli. La nave parte senza materiali; la pietra inizia a 5 m. Y mi manda a scaricare alla nave e poi torno.",
       "detail": ""
     },
     {
@@ -54,7 +54,7 @@
       "id": "tutorial_fund",
       "priority": 65,
       "title": "Riempiamo il cubo",
-      "body": "Il cubo e pronto. Porta 6 pietra e 4 rame tra zaino e Robbie, avvicinati e conferma il trasferimento. Le materie nella stiva non sono disponibili a distanza.",
+      "body": "Porto io le materie prime: avviciniamoci al cubo e confermiamo il trasferimento. Le materie nella stiva non sono disponibili a distanza.",
       "detail": ""
     },
     {
@@ -96,14 +96,14 @@
       "id": "cargo_full",
       "priority": 80,
       "title": "Carico pieno",
-      "body": "Non possiamo raccogliere altro. Raggiungi il laboratorio della nave o uno sotterraneo, clic destro e scegli Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Il deposito del banco conta per la fabbricazione locale.",
+      "body": "Il mio carico e pieno. Premi Y: torno alla nave, scarico nella stiva e poi ti raggiungo. Lascia libera la botola e aspettami prima di scavare ancora. Puoi anche depositare al laboratorio vicino col tasto destro.",
       "detail": ""
     },
     {
       "id": "drone_unavailable",
       "priority": 70,
       "title": "Devo avvicinarmi",
-      "body": "Il tuo zaino e pieno, ma io sono troppo lontano per aiutarti. Aspettami in un passaggio aperto, oppure rientra in officina e scarica il materiale.",
+      "body": "Sono fuori dal tuo raggio di raccolta: aspettami entro 3 metri in un passaggio aperto. Libera la botola scendendo ancora, se sono rimasto nella nave. I materiali li porto soltanto io.",
       "detail": ""
     },
     {
@@ -215,7 +215,7 @@
       "id": "cargo_near_station",
       "priority": 80,
       "title": "Carico pieno",
-      "body": "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali. Scarichi insieme il tuo zaino e il mio carico. Per ripartire scegli Preleva materiali o Costruisci.",
+      "body": "Il laboratorio e raggiungibile: clic destro sul banco e Deposita materiali per scaricare il mio carico. Per ripartire scegli Preleva materiali o Costruisci. Con Y posso anche andare da solo alla stiva della nave e tornare.",
       "detail": ""
     },
     {
@@ -250,7 +250,7 @@
       "id": "ocra/first_excavation",
       "priority": 65,
       "title": "Scava le prime due celle",
-      "body": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Ogni blocco va nel tuo zaino o nel mio carico. I nostri materiali contano sempre insieme; la nave parte senza scorte. Raccogliamo 6 pietra e 4 rame per il laboratorio.",
+      "body": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Porto io tutti i materiali, se sono entro 3 metri. Scendi per liberarmi la botola. Quando sono pieno, Y mi manda a scaricare alla nave e poi torno. Ci servono 6 pietra e 4 rame.",
       "detail": "Pulse / 2 celle da 1 metro"
     },
     {
@@ -264,8 +264,8 @@
       "id": "ocra/laboratory_materials",
       "priority": 65,
       "title": "Raccogli per il laboratorio",
-      "body": "Ci servono 6 pietra e 4 rame: il tuo zaino e il mio carico si sommano sempre. La pietra inizia a 5 metri. Se ci riempiamo di terra, risali al banco e deposita: il deposito locale puo alimentare la fabbricazione. Nella nave non ci sono scorte regalate.",
-      "detail": "6 pietra + 4 rame / zaino e Robbie insieme"
+      "body": "Ci servono 6 pietra e 4 rame nel mio carico o nel deposito del banco. La pietra inizia a 5 metri. Se mi riempio di terra, premi Y: la scarico alla nave e torno da te. Le mie capacita di trasporto si possono potenziare.",
+      "detail": "6 pietra + 4 rame / Carico Robbie e deposito locale"
     },
     {
       "id": "ocra/laboratory_room",
@@ -285,7 +285,7 @@
       "id": "ocra/carry_laboratory",
       "priority": 65,
       "title": "Prendi il cubo pronto",
-      "body": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, senza occupare lo zaino. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
+      "body": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, separato dal carico di Robbie. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
       "detail": "Cubo sul banco / avvicinati e premi Spazio"
     },
     {
@@ -329,6 +329,27 @@
       "title": "Una capsula di semi",
       "body": "Guarda quella piccola pianta nello scavo: contiene semi! Avvicinati e clic destro sulla capsula per raccoglierli. Li conserveremo nelle sementi comuni; in serra potremo piantarli quando arrivano acqua ed energia.",
       "detail": ""
+    },
+    {
+      "id": "drone_delivery",
+      "priority": 75,
+      "title": "Consegna in corso",
+      "body": "Vado alla nave, scarico e torno da te. Aspettami: senza di me non puoi raccogliere materiali. Lascia aperta e libera la botola; se la stiva e piena tornero con il materiale rimasto.",
+      "detail": "Y / Invio alla nave e ritorno automatico"
+    },
+    {
+      "id": "bomb_tool",
+      "priority": 65,
+      "title": "Bombe numerate",
+      "body": "Parti con 4 bombe pronte. Con 3 le selezioni e con un click ne posi una. Quando finiscono, al laboratorio scegli Costruisci e Bomba: 1 pietra e 2 rame ciascuna. Allontanati almeno 4 metri e premi Enter: scoppiano nell'ordine dei numeri. Le strutture colpite richiedono riparazione.",
+      "detail": "Raggio esplosione 2 m / Sicurezza 4 m"
+    },
+    {
+      "id": "jetpack_tool",
+      "priority": 65,
+      "title": "Batteria del jetpack",
+      "body": "Con 4 selezioni il jetpack. Mantieni Spazio o W per volare: la sua batteria dura 5 secondi di spinta. Per ricaricare entra nell'area del laboratorio della nave o di uno sotterraneo acceso, integro e alimentato. La ricarica consuma la batteria della nave.",
+      "detail": "Jetpack 100% / Ricarica automatica nei laboratori"
     }
   ]
 }

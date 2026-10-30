@@ -141,8 +141,9 @@ func _run() -> void:
 	check(world.guide.speech.text == message, "drone hit testing follows camera zoom")
 	world.guide_state.dismiss()
 	Fixture.lab_room(world)
-	world.field_cargo.backpack = {"stone": 6, "copper": 2}
-	world.field_cargo.drone = {"copper": 2}
+	world.field_cargo.backpack.clear()
+	world.field_cargo.drone = {"stone": 6, "copper": 4}
+	Fixture.support(world)
 	world.set_hatch(true)
 	world.player.position = Vector2(-140, 160)
 	world.drone.position = Vector2(-100, 90)
@@ -181,7 +182,7 @@ func _run() -> void:
 	menu.window.hide()
 	click(Vector2(-120, 100), MOUSE_BUTTON_RIGHT)
 	menu.activate(2)
-	check(construction.picker.visible and construction.recipe_rows.size() == 7 and not world.outpost.build_mode, "field station exposes seven fabrication rows without free world blueprints")
+	check(construction.picker.visible and construction.recipe_rows.size() == 8 and not world.outpost.build_mode, "field station exposes structure and ammunition recipes without free world blueprints")
 	construction.picker.hide()
 	world.outpost.build_mode = false
 	# Keep the multi-station fixture dry; fluid behavior has a separate smoke test.
@@ -208,7 +209,8 @@ func _run() -> void:
 	world.drone.position = Vector2(20, 170)
 	world.field_cargo.backpack.clear()
 	world.field_cargo.drone.clear()
-	world.field_cargo.collect("soil", 2, false)
+	world.field_cargo.drone_available = true
+	world.field_cargo.collect("soil", 2, true)
 	await frames()
 	click(Vector2(120, 260), MOUSE_BUTTON_RIGHT)
 	menu.activate(0)

@@ -9,7 +9,9 @@ static func all() -> Array:
 		_tools = [
 			_tool("pulse", "Pulse", "mine", 1, ["soil", "stone", "copper"], 1, 3, 0.2, Color("64e5d6"), 2),
 			_tool("scanner", "Scanner", "scan", 1, [], 0, 4, 0.05, Color("f1cf71"), 1),
-			_tool("resonator", "Risonatore", "mine", 2, ["stone", "copper", "crystal"], 2, 3, 0.3, Color("d59beb"), 3),
+			_tool("bomb", "Bomba", "bomb", 1, [], 0, 3, 0, Color("ef816c"), 2),
+			_tool("jetpack", "Jetpack", "jetpack", 1, [], 0, 0, 0, Color("8dbdeb"), 2),
+			_tool("resonator", "Risonatore", "mine", 2, ["soil", "stone", "copper", "crystal"], 2, 3, 0.3, Color("d59beb"), 3),
 			_tool("plasma", "Plasma", "mine", 3, ["soil", "stone", "copper", "crystal", "bedrock"], 5, 2.5, 0.6, Color("ef875f"), 5)
 		]
 	return _tools

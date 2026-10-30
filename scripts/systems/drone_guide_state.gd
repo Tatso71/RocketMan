@@ -2,7 +2,7 @@ extends RefCounted
 
 const Tutorial = preload("res://scripts/systems/ocra_tutorial.gd")
 const Texts = preload("res://scripts/data/robbie_texts.gd")
-const REPEATING := ["cargo_full", "drone_unavailable", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "oil_danger", "gas_leak", "water_leak", "oil_leak", "energy_low"]
+const REPEATING := ["cargo_full", "drone_unavailable", "drone_delivery", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "oil_danger", "gas_leak", "water_leak", "oil_leak", "energy_low"]
 const PERSISTENT := {"tutorial_collect": 20.0, "tutorial_excavate": 20.0, "tutorial_place": 20.0, "tutorial_fund": 25.0, "water_danger": 10.0}
 const FACTS := ["mined", "ladder", "lab_built", "lamp_crafted", "lamp_placed", "pump_built", "fan_built", "deposited", "furnace_built", "gas_converter_built", "greenhouse_built", "seeds_found", "seed_pod_seen"]
 var seen: Array[String] = []

@@ -5,6 +5,17 @@ static func workshop(world: Node2D) -> void:
 	world.drone.position = Vector2(20, -140)
 	world.drone.velocity = Vector2.ZERO
 
+static func support(world: Node2D) -> void:
+	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	for offset: Vector2 in [Vector2(-70, 0), Vector2(70, 0), Vector2(0, -68), Vector2(0, 68)]:
+		var point := torso + offset
+		if world.drone._free(world.Grid.to_cell(point)) and world.drone._clear(point, torso):
+			world.drone.position = point
+			world.drone.velocity = Vector2.ZERO
+			world.drone.mission = "follow"
+			world.field_cargo.drone_available = true
+			return
+
 static func build(world: Node2D, id: String, cell: Vector2i) -> bool:
 	if not world.outpost.place(id, cell):
 		return false

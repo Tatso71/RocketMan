@@ -85,6 +85,12 @@ func context() -> String:
 		return "oil_danger"
 	if float(danger.gas) >= 0.03:
 		return "gas_danger"
+	if world.drone.mission != "follow":
+		return "drone_delivery"
+	if world.active_tool().mode == "bomb" and "bomb_tool" not in state.seen:
+		return "bomb_tool"
+	if world.active_tool().mode == "jetpack" and "jetpack_tool" not in state.seen:
+		return "jetpack_tool"
 	if world.ship_energy() < 5:
 		return "energy_low"
 	if world.crew_energy() < 25:

@@ -37,6 +37,7 @@ func fresh_world() -> void:
 	await frames()
 
 func pulse(cell: Vector2i, slot: int = 0) -> void:
+	Fixture.support(world)
 	world.equip_tool(slot)
 	world.target_cell = cell
 	world.mine_timer = 0
@@ -44,6 +45,7 @@ func pulse(cell: Vector2i, slot: int = 0) -> void:
 	await frames()
 
 func excavate(cell: Vector2i) -> void:
+	Fixture.support(world)
 	for hit in range(4):
 		if world.site.material(cell).is_empty():
 			break

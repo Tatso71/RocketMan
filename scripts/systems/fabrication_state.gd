@@ -65,7 +65,7 @@ func restore(data: Variant) -> bool:
 	var stations: Array = []
 	var ids: Array = []
 	for job in data.get("jobs", []):
-		if not job is Dictionary or job.get("id") not in Buildings.CUBE_IDS or not station_valid(job.get("station")) or not integer(job.get("level"), 1, 1):
+		if not job is Dictionary or (job.get("id") not in Buildings.CUBE_IDS and job.get("id") != "bomb") or not station_valid(job.get("station")) or not integer(job.get("level"), 1, 1):
 			return false
 		for key: String in ["elapsed", "seconds"]:
 			if not (job.get(key) is int or job.get(key) is float) or not is_finite(float(job[key])):
@@ -107,7 +107,7 @@ func restore(data: Variant) -> bool:
 func valid_world(site: RefCounted, buildings: RefCounted) -> bool:
 	for item: Dictionary in jobs + cubes:
 		var station: Array = item.station
-		if station.size() == 3 and not buildings.labs().any(func(lab: Dictionary): return lab.origin == Vector2i(int(station[1]), int(station[2]))):
+		if station.size() == 3 and not buildings.structures.any(func(lab: Dictionary): return lab.id == "laboratory" and lab.get("state", "active") == "active" and lab.origin == Vector2i(int(station[1]), int(station[2]))):
 			return false
 	for cube: Dictionary in cubes:
 		if cube.uid == carried_id:

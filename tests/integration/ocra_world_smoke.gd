@@ -127,9 +127,10 @@ func _run() -> void:
 	world._refresh_hud()
 	world.queue_redraw()
 	await picture("ocra-tunnel-unlit-720p")
-	world.field_cargo.backpack = {"stone": 6, "copper": 2}
-	world.field_cargo.drone = {"copper": 3, "soil": 1}
+	world.field_cargo.backpack.clear()
+	world.field_cargo.drone = {"stone": 6, "copper": 5, "soil": 1}
 	world.player.position = Vector2(-260, 400)
+	Fixture.support(world)
 	check(Fixture.build(world, "laboratory", Vector2i(-6, 7)), "field laboratory can be built in a real dry supported gallery")
 	check(Fixture.build(world, "lamp", Vector2i(-8, 9)), "lamp works from the first laboratory")
 	world.outpost._refresh_light_sources()

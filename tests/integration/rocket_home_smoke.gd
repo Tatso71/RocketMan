@@ -62,6 +62,10 @@ func _run() -> void:
 	await climb("climb_down", 100)
 	check(world.player.position.y > 145, "open hatch allows descent into two-metre shaft")
 	await walk_to(-170)
+	for index in range(600):
+		if world.drone_can_collect():
+			break
+		await physics_frame
 	check(absf(world.player.position.y - 160) < 3, "player fits in two-metre-high starter tunnel")
 	world.target_cell = Vector2i(-6, 3)
 	check(world.can_reach(world.target_cell), "adjacent exposed tunnel block is in reach")

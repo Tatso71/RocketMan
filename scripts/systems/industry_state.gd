@@ -235,7 +235,7 @@ func restore(data: Variant, buildings: RefCounted, site: RefCounted) -> bool:
 					return false
 			elif not (entry.get(property) is int or entry.get(property) is float) or not is_finite(entry[property]) or entry[property] < 0:
 				return false
-		if not preload("res://scripts/systems/outpost_buildings.gd").is_active(matches[0]) and entry != shape:
+		if matches[0].get("state", "active") != "active" and entry != shape:
 			return false
 		if id == "pump" and entry.water > Catalog.load_data().pump_capacity:
 			return false
