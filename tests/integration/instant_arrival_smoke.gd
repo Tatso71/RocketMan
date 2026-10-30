@@ -81,7 +81,8 @@ func _run() -> void:
 	world.controls_locked = true
 	var cell := Vector2i(0, 0)
 	Fixture.carve(world, cell)
-	world.field_cargo.collect("copper", 1)
+	world.field_cargo.drone_available = true
+	world.field_cargo.collect("copper", 1, true)
 	world.player.position = Vector2(-60, -320)
 	world.drone.position = Vector2(-140, -380)
 	world.set_hatch(false)
@@ -90,7 +91,7 @@ func _run() -> void:
 	check(campaign.instant_arrival_button.visible, "instant-arrival action returns on later destination menus")
 	campaign.instant_arrival_button.pressed.emit()
 	check(campaign.model.phase == campaign.State.Phase.DIGGING and campaign.world.site.material(cell).is_empty(), "instant revisit restores the saved planetary terrain")
-	check(campaign.world.field_cargo.available("copper", true) == 1, "instant revisit preserves carried cargo without duplication")
+	check(int(campaign.world.field_cargo.drone.get("copper", 0)) == 1, "instant revisit preserves Robbie cargo without duplication")
 	await screenshot("instant-arrival-landed")
 	print("INSTANT ARRIVAL SMOKE: %d failures" % failures)
 	quit(0 if failures == 0 else 1)

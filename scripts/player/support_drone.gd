@@ -18,6 +18,8 @@ var water_timer := 0.0
 var resting_goal := Vector2.ZERO
 var has_resting_goal := false
 var clearance := CircleShape2D.new()
+var mission := "follow"
+const UNLOAD_POINT := Vector2(-100, -140)
 const SPEED := 125.0
 const ACCELERATION := 420.0
 
@@ -48,7 +50,7 @@ func _free(cell: Vector2i) -> bool:
 	if cell.y >= 0:
 		return world.site.contains(cell) and world.site.material(cell).is_empty() and not world.environment._wet(Grid.center(cell) + Vector2(0, 10))
 	if cell.y >= -2:
-		return cell.x in [-1, 0]
+		return cell.x == 0
 	return cell.y >= -11 and cell.x >= -4 and cell.x < 4
 
 func _clear(from: Vector2, to: Vector2) -> bool:
@@ -64,7 +66,24 @@ func _clear(from: Vector2, to: Vector2) -> bool:
 	return sweep[0] >= 0.999
 
 func _actor_clearance() -> Rect2:
+	# In ladder shafts reserve only the actual body plus the drone's collision radius.
+	if absf(world.player.position.x - 20) < 24 or absf(world.player.position.x - 100) < 20:
+		return Rect2(world.player.position - Vector2(24, 76), Vector2(48, 88))
 	return Rect2(world.player.position - Vector2(43, 83), Vector2(86, 102))
+
+func send_to_ship() -> bool:
+	if mission != "follow":
+		world._note("Robbie e gia in viaggio / Attendi il rientro")
+		return false
+	if world.field_cargo.used(world.field_cargo.drone) == 0:
+		world._note("Robbie non ha materiali da scaricare")
+		return false
+	mission = "outbound"
+	has_resting_goal = false
+	route_timer = 0
+	world.field_cargo.drone_available = false
+	world._note("Robbie torna alla nave / Lascia libera la botola")
+	return true
 
 func _route_clear(from: Vector2, to: Vector2) -> bool:
 	if not _clear(from, to):
@@ -127,12 +146,12 @@ func follow_goal() -> Vector2:
 	return best
 
 func _physics_process(delta: float) -> void:
-	if world.controls_blocked():
+	if world.controls_locked:
 		velocity = Vector2.ZERO
 		return
 	clock += delta
 	var danger: Dictionary = world.player_environment()
-	if danger.submerged or danger.oil:
+	if mission == "follow" and (danger.submerged or danger.oil):
 		water_alarm = true
 		status = "Allarme: stai subendo danni"
 		velocity = Vector2.ZERO
@@ -140,6 +159,19 @@ func _physics_process(delta: float) -> void:
 		route_timer = 0
 		queue_redraw()
 		return
+	if mission == "outbound" and position.distance_to(UNLOAD_POINT) < 12:
+		var stock: Dictionary = world.ship_state.resources if world.ship_state != null else world.local_store
+		var capacity: int = world.ship_state.cargo_capacity() if world.ship_state != null else 120
+		var unloaded: int = world.field_cargo.unload_drone(stock, capacity)
+		mission = "returning"
+		has_resting_goal = false
+		route_timer = 0
+		world._note("Robbie: scaricate %d unita / Torno da te%s" % [unloaded, " / Stiva piena" if world.field_cargo.used(world.field_cargo.drone) > 0 else ""])
+	if mission == "returning" and position.distance_to(world.player.position - Vector2(0, 32)) <= 112 and _clear(position, world.player.position - Vector2(0, 32)):
+		mission = "follow"
+		has_resting_goal = false
+		route_timer = 0
+		world._note("Robbie e tornato / Raccolta disponibile")
 	if water_alarm:
 		water_alarm = false
 		revision = -1
@@ -166,9 +198,13 @@ func _physics_process(delta: float) -> void:
 		var outside: bool = torso.distance_to(BASE) > Grid.metres(range_metres)
 		if outside or not has_resting_goal:
 			goal = BASE + (torso - BASE).limit_length(Grid.metres(range_metres - 0.7))
+		if mission == "outbound":
+			goal = UNLOAD_POINT
 		var end := graph.get_closest_point(goal)
 		route = graph.get_point_path(start, end)
 		status = "Limite segnale" if outside else ("Percorso ostruito" if route.is_empty() else "Ti seguo")
+		if mission != "follow":
+			status = ("Alla nave per scaricare" if mission == "outbound" else "Rientro verso di te") if not route.is_empty() else "Passaggio ostruito / Libera la botola"
 		# Never return to the centre of the start cell on every route refresh.
 		if route.size() > 1 and _route_clear(position, route[1]):
 			route.remove_at(0)
@@ -207,6 +243,7 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, ACCELERATION * delta)
 		route_timer = 0
 	move_and_slide()
+	world.field_cargo.drone_available = world.drone_can_collect()
 	queue_redraw()
 
 func _draw() -> void:

@@ -70,7 +70,7 @@ func station_available(station: Dictionary) -> bool:
 	if station.is_empty():
 		return false
 	if station.get("kind") == "ship":
-		return world.aboard_workshop()
+		return world.aboard_workshop() and (not is_instance_valid(world.gear) or not world.gear.workshop_damaged())
 	if station.get("kind") != "laboratory" or not buildings.structures.has(station.get("building")) or not Buildings.is_active(station.building):
 		return false
 	return site_reachable(station.building)
@@ -89,7 +89,7 @@ func site_reachable(building: Dictionary) -> bool:
 	return get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
 
 func station_at(point: Vector2) -> Dictionary:
-	if SHIP_LAB_RECT.has_point(point) and world.aboard_workshop():
+	if SHIP_LAB_RECT.has_point(point) and station_available({"kind": "ship"}):
 		return {"kind": "ship"}
 	for lab: Dictionary in buildings.labs():
 		var station := {"kind": "laboratory", "building": lab}
@@ -100,7 +100,7 @@ func station_at(point: Vector2) -> Dictionary:
 func nearby_station() -> Dictionary:
 	if station_available(selected_station):
 		return selected_station
-	if world.aboard_workshop():
+	if station_available({"kind": "ship"}):
 		return {"kind": "ship"}
 	var lab := nearby_lab()
 	return {"kind": "laboratory", "building": lab} if not lab.is_empty() else {}
@@ -152,7 +152,7 @@ func laboratory_unlocked() -> bool:
 	return (world.ship_state != null and world.ship_state.lab_research_unlocked) or world.guide_state.facts.get("lab_built", false) or not buildings.labs().is_empty()
 
 func recipe_visible(id: String) -> bool:
-	return id == "laboratory" or ((id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and laboratory_unlocked())
+	return id in ["laboratory", "bomb"] or ((id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and laboratory_unlocked())
 
 func reachable_cell(cell: Vector2i, reach: float = 3.0) -> bool:
 	if not world.site.contains(cell):
@@ -218,12 +218,14 @@ func source_stock() -> Dictionary:
 	return payment_cache()
 
 func source_available() -> bool:
-	return world.aboard_workshop() or not nearby_lab().is_empty()
+	return station_available({"kind": "ship"}) or not nearby_lab().is_empty()
 
 func lab_definition() -> Dictionary:
 	return recipe_definition("laboratory")
 
 func recipe_definition(id: String) -> Dictionary:
+	if id == "bomb":
+		return {"name_it": "Bomba", "cost": world.Gear.BOMB_COST.duplicate(), "seconds": 2.0, "energy": 0.01}
 	return OcraCatalog.load_data().get("fabrication", {}).get(id, {})
 
 func cube_event(id: String, phase: String) -> String:
@@ -272,6 +274,8 @@ func fabrication_blocker(id: String = "laboratory") -> String:
 		return "Raggiungi un laboratorio per fabbricare il cubo"
 	if station.get("kind") != "ship" and not operational(station.building):
 		return "Laboratorio spento, non alimentato o area non sicura"
+	if id == "bomb" and world.gear.ammo() >= world.Gear.BOMB_CAPACITY:
+		return "Scorte bombe piene: 4/4"
 	var identity := station_identity(station)
 	if not fabrication.job_at(identity).is_empty():
 		return "Produzione in corso su questo banco"
@@ -284,6 +288,8 @@ func fabrication_blocker(id: String = "laboratory") -> String:
 	if world.ship_energy() < float(definition.energy):
 		return "Ricarica la batteria della nave"
 	if not world.field_cargo.can_pay(definition.cost, true, fabrication_stock()):
+		if not world.drone_help_available() and world.field_cargo.used(world.field_cargo.drone) > 0:
+			return "Attendi Robbie entro 3 m per usare il suo carico"
 		var missing: Array[String] = []
 		for resource: String in definition.cost:
 			var deficit: int = int(definition.cost[resource]) - fabrication_amount(resource)
@@ -318,12 +324,19 @@ func advance_fabrication(delta: float) -> void:
 			continue
 		job.elapsed = minf(job.seconds, float(job.elapsed) + delta)
 		if job.elapsed >= job.seconds:
+			if job.id == "bomb":
+				world.gear.set_ammo(world.gear.ammo() + 1)
+				fabrication.jobs.erase(job)
+				world._note("Bomba fabbricata / Scorte %d/4" % world.gear.ammo())
+				continue
 			fabrication.add_cube(station_output(station), job.station, job.id)
 			fabrication.jobs.erase(job)
 			world.guide_event(cube_event(job.id, "crafted"))
 			world._note("Cubo %s pronto sul banco: premi Spazio" % Buildings.NAMES[job.id].to_lower())
 
 func fabrication_pause_reason(job: Dictionary) -> String:
+	if job.id == "bomb" and world.gear.ammo() >= world.Gear.BOMB_CAPACITY:
+		return "Produzione in pausa / Scorte bombe piene"
 	var station := resolve_station(job.station)
 	if station.is_empty():
 		return "Produzione in pausa / laboratorio non disponibile"
@@ -331,6 +344,8 @@ func fabrication_pause_reason(job: Dictionary) -> String:
 		return "Produzione in pausa / ricarica la batteria della nave"
 	if station.kind != "ship" and not operational(station.building):
 		return "Produzione in pausa / accendi il laboratorio e verifica collegamento e sicurezza"
+	if station.kind == "ship" and world.gear.workshop_damaged():
+		return "Produzione in pausa / ripara il laboratorio di bordo"
 	return ""
 
 func cube_near_player(cube: Dictionary) -> bool:
@@ -470,6 +485,8 @@ func placement_blocker(id: String, cell: Vector2i) -> String:
 	if not reason.is_empty():
 		return reason
 	var rect := Rect2(Grid.to_world(cell), Grid.to_world(buildings.size_for(id)))
+	if is_instance_valid(world.gear) and world.gear.bombs.any(func(bomb: Dictionary): return rect.intersects(Grid.rect(bomb.cell))):
+		return "Ingombro occupato da una bomba"
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
 	if torso.distance_to(rect.get_center()) > Grid.metres(3):
 		return "Cantiere fuori portata"
@@ -554,6 +571,8 @@ func supplying_lab(building: Dictionary, powered_only: bool = true) -> Dictionar
 	return nearest
 
 func consumption_for(building: Dictionary) -> float:
+	if building.get("damaged", false):
+		return 0.0
 	if building.get("state") == "building":
 		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
 		return Buildings.power_draw(building) if connected and world.ship_energy() > 0 else 0.0
@@ -609,7 +628,7 @@ func advance(delta: float) -> void:
 	var duration := minf(delta, world.ship_energy() / power_load) if power_load > 0 else 0.0
 	for building: Dictionary in buildings.structures:
 		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
-		if building.get("state") != "building" or (building.id != "ladder" and not connected):
+		if building.get("damaged", false) or building.get("state") != "building" or (building.id != "ladder" and not connected):
 			continue
 		var seconds: float = float(recipe_definition(building.id).get("deployment_seconds", Buildings.build_seconds(building.id)))
 		building.progress = 1.0 if building.id == "ladder" else minf(1, float(building.progress) + duration / seconds)
@@ -861,7 +880,7 @@ func _draw() -> void:
 			if state == "active" and not operational(building):
 				draw_string(ThemeDB.fallback_font, rect.position + Vector2(8, 20), "NON ALIMENTATO", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("f2ba85"))
 			if state == "active":
-				_draw_energy_bars(rect, energy_reports[building.origin])
+				_draw_energy_bars(rect, energy_reports.get(building.origin, _empty_power_report()))
 		elif building.id == "lamp":
 			var center := rect.get_center()
 			draw_line(center + Vector2(0, 15), center - Vector2(0, 12), Color("7b9499"), 4)

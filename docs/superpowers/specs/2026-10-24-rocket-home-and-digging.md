@@ -25,7 +25,7 @@ Planetary collapse and repairing an inherited rocket are no longer the primary p
 - Vertical landing: extended feet, side engines, free central lower passage.
 - Landed: side-on cutaway visualization, not a physically removed hull.
 - Exactly three initial rooms: upper cockpit, middle living quarters, lower workshop.
-- Internal ladder connects floors; lower hatch connects to a two-metre-wide shaft.
+- Internal ladder connects floors; the lower hatch is one metre wide, aligned with the access ladder's cell. The surrounding workshop floor supports both sides of the exit.
 - Final visual target: colorful low-poly 2.5D with a fixed lateral camera.
 - First prototype: native 2D geometry to validate scale, traversal and digging before 3D production.
 - Approved visual anchor: `refs/rocket-concepts/03-landed-cutaway.png`.

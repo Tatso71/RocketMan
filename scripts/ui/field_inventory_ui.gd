@@ -33,6 +33,7 @@ var seed_summary: Label
 var compact_scroll: ScrollContainer
 var hold_scrolls: Array[ScrollContainer] = []
 var syncing_holds := false
+var delivery_button: Button
 
 func _ready() -> void:
 	_build_compact()
@@ -107,6 +108,11 @@ func _build_compact() -> void:
 	var title := label("CARICO", 13, Color("a7b6b8"))
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
+	delivery_button = button(header, "", func(): world.drone.send_to_ship())
+	delivery_button.icon = ICONS[2]
+	delivery_button.expand_icon = true
+	delivery_button.custom_minimum_size = Vector2(28, 28)
+	delivery_button.tooltip_text = "Invia Robbie alla nave per scaricare e tornare (Y)"
 	var open := button(header, ">", open_inventory)
 	open.custom_minimum_size = Vector2(28, 24)
 	open.tooltip_text = "Apri inventario e depositi"
@@ -115,6 +121,7 @@ func _build_compact() -> void:
 	column.add_child(holds)
 	for index in range(2):
 		var hold := VBoxContainer.new()
+		hold.visible = index == 1
 		hold.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		holds.add_child(hold)
 		var row := HBoxContainer.new()
@@ -131,14 +138,18 @@ func _build_compact() -> void:
 	column.add_child(compact_scroll)
 	var grid := GridContainer.new()
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.columns = 4
+	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 4)
 	compact_scroll.add_child(grid)
 	grid.add_child(label("", 11))
-	grid.add_child(label("Zaino", 11, Color("a7e5b4")))
+	var legacy_header := label("Zaino", 11, Color("a7e5b4"))
+	legacy_header.hide()
+	grid.add_child(legacy_header)
 	grid.add_child(label("Robbie", 13, Color("8edce1")))
-	grid.add_child(label("Totale", 13, Color("e8d388")))
+	var total_header := label("Totale", 13, Color("e8d388"))
+	total_header.hide()
+	grid.add_child(total_header)
 	for id: String in Cargo.ITEM_IDS:
 		var name_label := label(NAMES[id], 15, COLORS[id])
 		name_label.custom_minimum_size.x = 128
@@ -197,9 +208,10 @@ func _build_window() -> void:
 	holds.add_theme_constant_override("separation", 20)
 	column.add_child(holds)
 	for index in range(3):
-		if index > 0:
+		if index > 1:
 			holds.add_child(VSeparator.new())
 		var hold := VBoxContainer.new()
+		hold.visible = index != 0
 		hold.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hold.add_theme_constant_override("separation", 6)
 		holds.add_child(hold)
@@ -284,11 +296,11 @@ func _build_window() -> void:
 	amount.value = 1
 	actions.add_child(amount)
 	withdraw_button = button(actions, "Preleva", withdraw)
-	withdraw_button.tooltip_text = "Dal deposito allo zaino, poi al drone vicino"
+	withdraw_button.tooltip_text = "Dal deposito al carico di Robbie, quando e vicino"
 	deposit_button = button(actions, "Scarica tutto", deposit)
 	eat_button = button(actions, "Consuma", eat)
 	eat_button.tooltip_text = "Consuma un alimento dal carico comune per recuperare 20 energia personale"
-	deposit_button.tooltip_text = "Deposita lo zaino e, se vicino, anche il drone"
+	deposit_button.tooltip_text = "Deposita il carico di Robbie quando e vicino"
 	craft_button = button(actions, "Fabbrica luce", craft)
 	craft_button.visible = false
 	craft_button.tooltip_text = "Al laboratorio: 1 terra + 1 rame, con spazio per il kit"
@@ -386,6 +398,8 @@ func refresh() -> void:
 		var visible_row := int(cargo.backpack.get(id, 0)) + int(cargo.drone.get(id, 0)) > 0 or id in ["soil", "stone", "copper"]
 		for widget: Control in compact_rows[id]:
 			widget.visible = visible_row
+		compact_rows[id][1].hide()
+		compact_rows[id].back().hide()
 		compact_totals[id].text = str(cargo.available(id, true))
 	var visible_count := 0
 	for id: String in compact_rows:
@@ -401,8 +415,11 @@ func refresh() -> void:
 		for item in range(Cargo.ITEM_IDS.size()):
 			compact_counts[item * 2 + index].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0))
 			compact_counts[item * 2 + index].modulate = Color("829396") if index == 1 and not connected else Color.WHITE
-	compact_link.text = "Zaino + Robbie / materiali condivisi"
-	compact_link.modulate = Color("a7e5b4")
+	delivery_button.disabled = world.drone.mission != "follow" or cargo.used(cargo.drone) == 0
+	compact_link.text = "Carico disponibile" if world.drone.mission == "follow" else world.drone.status
+	if world.drone.mission == "follow" and not connected:
+		compact_link.text = "Attendi Robbie nel tuo raggio"
+	compact_link.modulate = Color("a7e5b4") if connected else Color("efb784")
 	if not window.visible:
 		return
 	var seed_lines: Array[String] = []
@@ -420,7 +437,7 @@ func refresh() -> void:
 			counts[index][item].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0)) if index < 2 or source else "--"
 			counts[index][item].modulate = Color.WHITE if index != 1 or connected else Color("829396")
 	subtitles[0].text = "Sempre con te"
-	subtitles[1].text = "Sempre nel carico comune"
+	subtitles[1].text = "Carico disponibile" if connected else "In viaggio o fuori portata"
 	subtitles[2].text = ("Officina della nave" if world.aboard_workshop() else "Laboratorio vicino") if source else "Nessun deposito vicino"
 	availability.text = "Trasferimenti disponibili / " + subtitles[2].text if source else "Solo consultazione: raggiungi l'officina o un laboratorio per trasferire."
 	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(Cargo.ITEM_IDS[picker.selected], connected) < int(amount.value)

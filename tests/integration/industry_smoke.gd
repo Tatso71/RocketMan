@@ -44,8 +44,11 @@ func stand(point: Vector2) -> void:
 	await frames(6)
 	world.player.set_physics_process(false)
 	world.drone.position = world.player.position + Vector2(80, -70)
+	Fixture.support(world)
 
 func give(stock: Dictionary, clear: bool = true) -> void:
+	Fixture.support(world)
+	world.field_cargo.drone_available = true
 	if clear:
 		world.field_cargo.backpack.clear()
 		world.field_cargo.drone.clear()

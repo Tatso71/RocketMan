@@ -132,11 +132,11 @@ func test_lab_unlocks_drone_upgrade_and_portable_cargo_survives_save() -> void:
 	ship.resources.crystal = 2
 	ship.resources.stone = 8
 	assert_bool(ship.upgrade("drone")).is_true()
-	assert_int(ship.field_cargo.drone_capacity).is_equal(16)
+	assert_int(ship.field_cargo.drone_capacity).is_equal(28)
 	assert_float(ship.drone_range_metres()).is_equal(20.0)
 	ship.field_cargo.collect("soil", 10, true)
 	var loaded := Ship.new()
 	var data: Dictionary = JSON.parse_string(JSON.stringify(ship.snapshot()))
 	assert_bool(loaded.restore(data)).is_true()
-	assert_int(loaded.field_cargo.used(loaded.field_cargo.drone)).is_equal(2)
+	assert_int(loaded.field_cargo.used(loaded.field_cargo.drone)).is_equal(10)
 	assert_bool(loaded.lab_research_unlocked).is_true()

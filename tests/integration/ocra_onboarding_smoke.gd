@@ -50,8 +50,16 @@ func return_to_workshop() -> void:
 	Input.action_release("climb_up")
 	Input.action_release("move_left")
 	await frames(20)
+	for index in range(600):
+		if world.drone_can_collect():
+			break
+		await physics_frame
 
 func mine(cell: Vector2i) -> void:
+	for index in range(600):
+		if world.drone_can_collect():
+			break
+		await physics_frame
 	for index in range(4):
 		if world.site.material(cell).is_empty():
 			return
@@ -118,6 +126,10 @@ func _run() -> void:
 	await mine(Vector2i(-1, 0))
 	check(task() == "return_ladder", "two actual mined cells lead to instant ladder objective")
 	await climb_to(40)
+	for index in range(600):
+		if world.drone_can_collect():
+			break
+		await physics_frame
 	check(world.place_ladder() and task() == "laboratory_materials", "character builds first ladder and must gather real resources, not free ship stock")
 	check(campaign.model.ship.cargo_used() == 0, "Ocra starts with an empty ship hold")
 	for y in range(1, 4):

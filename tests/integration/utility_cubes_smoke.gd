@@ -148,13 +148,13 @@ func _run() -> void:
 	Fixture.workshop(world)
 	await frames()
 	freeze()
-	world.field_cargo.backpack = {"stone": 6, "copper": 2}
-	world.field_cargo.drone = {"copper": 2}
-	world.inventory.materials = world.field_cargo.backpack
+	world.field_cargo.drone = {"stone": 6, "copper": 4}
+	world.inventory.materials = world.field_cargo.drone
+	Fixture.support(world)
 	world.outpost.selected_station = {"kind": "ship"}
 	var ui: Node = world.outpost.construction
 	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
-	check(ui.recipe_rows.keys() == ["laboratory"], "all utility recipes stay hidden before first laboratory")
+	check(ui.recipe_rows.keys() == ["laboratory", "bomb"], "only laboratory and ammunition recipes are visible before the first laboratory")
 	var cargo: Dictionary = world.field_cargo.snapshot()
 	for id: String in Buildings.DEVICE_IDS:
 		check(not world.outpost.fabricate_cube(id), id + " cannot be fabricated by bypassing the locked UI")
@@ -176,14 +176,13 @@ func _run() -> void:
 			Fixture.carve(world, Vector2i(x, y))
 	world.environment.water.clear()
 	world.player.position = Vector2(-120, 160)
-	world.drone.position = Vector2(900, 0)
-	world.field_cargo.backpack = {"soil": 1}
-	world.field_cargo.drone = {"copper": 1}
-	world.inventory.materials = world.field_cargo.backpack
+	Fixture.support(world)
+	world.field_cargo.drone = {"soil": 1, "copper": 1}
+	world.inventory.materials = world.field_cargo.drone
 	world.outpost.selected_station = {"kind": "laboratory", "building": world.outpost.buildings.labs()[0]}
 	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
-	check(ui.recipe_rows.size() == 7 and not ui.recipe_rows.lamp.button.disabled and ui.recipe_rows.pump.button.disabled, "recipe rows independently reflect affordability after unlock")
-	check(ui.recipe_rows.lamp.resources.copper.modulate == Color("a7e5b4") and ui.recipe_rows.pump.resources.stone.modulate == Color("ff7e85"), "per-device ingredient colors use shared player and distant Robbie totals")
+	check(ui.recipe_rows.size() == 8 and not ui.recipe_rows.lamp.button.disabled and ui.recipe_rows.pump.button.disabled, "recipe rows independently reflect affordability after unlock")
+	check(ui.recipe_rows.lamp.resources.copper.modulate == Color("a7e5b4") and ui.recipe_rows.pump.resources.stone.modulate == Color("ff7e85"), "per-device ingredient colors use nearby Robbie's cargo")
 	await frames()
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(ui.picker, ui.picker.get_visible_rect()), "all four recipe rows fit at 720p")

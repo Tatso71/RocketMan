@@ -5,6 +5,8 @@ var world: Node2D
 var facing := 1.0
 var climbing := false
 var walk_time := 0.0
+var suppress_jet_until_release := false
+var jump_was_held := false
 
 func _ready() -> void:
 	var collider := CollisionShape2D.new()
@@ -17,11 +19,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
+		jump_was_held = Input.is_action_pressed("jump")
 		return
 	var horizontal := Input.get_axis("move_left", "move_right")
-	var jump_pressed := Input.is_action_just_pressed("jump")
+	var jump_held := Input.is_action_pressed("jump")
+	var jump_pressed := jump_held and not jump_was_held
+	jump_was_held = jump_held
+	if not jump_held:
+		suppress_jet_until_release = false
 	if jump_pressed and world.outpost.use_cube():
 		jump_pressed = false
+		suppress_jet_until_release = true
 	var vertical := Input.get_axis("climb_up", "climb_down")
 	var environment: Dictionary = world.player_environment()
 	var wet: bool = environment.wet
@@ -31,7 +39,13 @@ func _physics_process(delta: float) -> void:
 	if world.crew_energy() <= 0:
 		speed_factor *= 0.65
 	climbing = world.on_ladder(position) and (absf(vertical) > 0.1 or climbing or not is_on_floor())
-	if climbing:
+	if suppress_jet_until_release:
+		world.gear.flying = false
+	if not suppress_jet_until_release and world.gear.thrust(delta):
+		climbing = false
+		velocity.x = horizontal * 190 * speed_factor
+		velocity.y = move_toward(velocity.y, -180, 700 * delta)
+	elif climbing:
 		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor
 		if jump_pressed:
 			climbing = false
@@ -40,7 +54,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = minf(velocity.y + (260 if wet else 900) * delta, 140 if wet else 650)
 		if wet and vertical < -0.1:
 			velocity.y = -100
-	if jump_pressed and is_on_floor():
+	if jump_pressed and is_on_floor() and not world.gear.flying:
 		velocity.y = -330
 	if horizontal != 0:
 		facing = signf(horizontal)

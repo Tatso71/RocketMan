@@ -88,11 +88,13 @@ func _run() -> void:
 	world.player.position = Vector2(-170, 160)
 	check(not campaign.request_takeoff(), "player cannot launch from underground")
 	world.target_cell = Vector2i(-6, 3)
+	Fixture.support(world)
+	world.field_cargo.drone_available = true
 	world.mine_timer = 0
-	var soil: int = world.field_cargo.used(world.field_cargo.backpack)
+	var soil: int = world.field_cargo.used(world.field_cargo.drone)
 	world._mine_target()
 	check(world.site.material(world.target_cell).is_empty(), "digital beam destroys reachable soil")
-	check(world.field_cargo.used(world.field_cargo.backpack) == soil + 1, "mined resources enter the physical backpack")
+	check(world.field_cargo.used(world.field_cargo.drone) == soil + 1 and world.field_cargo.backpack.is_empty(), "mined resources enter Robbie's physical hold")
 	check(world.beam_time > 0, "successful pulse starts beam effect")
 	world.target_cell = Vector2i(-6, 2)
 	world.equip_tool(1)
@@ -100,14 +102,14 @@ func _run() -> void:
 	world._mine_target()
 	check(world.scanned.has(world.target_cell), "scanner records cell composition without mining")
 	check(not world.site.material(world.target_cell).is_empty(), "scanner leaves terrain intact")
-	check(not world.equip_tool(3), "locked empty equipment slot cannot be selected")
+	check(world.equip_tool(3) and world.active_tool().mode == "jetpack", "fourth equipment slot selects the jetpack")
 	world.equip_tool(0)
 	var cargo: Dictionary = world.field_cargo.snapshot()
-	world.field_cargo.backpack.soil = 8
+	world.field_cargo.drone.clear()
 	world.field_cargo.drone.soil = world.field_cargo.drone_capacity
 	world.mine_timer = 0
 	world._mine_target()
-	check(world.target_blocker(world.target_cell).contains("Carico pieno"), "full portable cargo marks target unavailable")
+	check(world.target_blocker(world.target_cell).contains("pieno"), "full Robbie cargo marks target unavailable")
 	check(not world.site.material(world.target_cell).is_empty(), "full hold does not destroy or lose a block")
 	world.field_cargo.restore(cargo)
 	check(not world.target_blocker(Vector2i(20, 0)).is_empty(), "distant target has a blocking reason")

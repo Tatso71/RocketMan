@@ -129,7 +129,7 @@ func _run() -> void:
 	world.player.position = Vector2(-140, 160)
 	world.drone.position = Vector2(-100, 90)
 	await frames()
-	check(world.field_cargo.backpack.stone == 6 and world.field_cargo.backpack.copper == 2 and world.field_cargo.drone.copper == 4, "reproduce screenshot with materials distributed across both holds")
+	check(world.field_cargo.backpack.is_empty() and world.field_cargo.drone.stone == 6 and world.field_cargo.drone.copper == 6, "all resources are carried by Robbie without a hidden backpack")
 	check(world.outpost.funding_blocker(lab).is_empty(), "split explorer/drone resources are correctly combined")
 	world.outpost.fund_site(lab)
 	world.outpost.advance(5.1)
