@@ -63,6 +63,9 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if world.is_robbie():
+		_draw_robbie()
+		return
 	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE * 1.35)
 	var step := sin(walk_time) * 3 if is_on_floor() else 0.0
 	draw_rect(Rect2(-14, -29, 9, 20), Color("485c66"))
@@ -78,3 +81,22 @@ func _draw() -> void:
 		return
 	draw_colored_polygon(PackedVector2Array([Vector2(facing * 15, -29), Vector2(facing * 31, -29), Vector2(facing * 34, -25), Vector2(facing * 31, -20), Vector2(facing * 15, -20)]), Color("526e79"))
 	draw_line(Vector2(facing * 22, -24), Vector2(facing * 34, -25), world.active_tool().beam_color, 3)
+
+func _draw_robbie() -> void:
+	var bob := sin(Time.get_ticks_msec() * 0.004) * 1.5
+	var center := Vector2(0, -32 + bob)
+	var ink := Color("78e4dc") if world.suit_integrity() > 25 else Color("ff7774")
+	draw_line(center + Vector2(-17, -17), center + Vector2(-17, -27), Color("799198"), 3)
+	draw_circle(center + Vector2(-17, -28), 3, ink)
+	draw_rect(Rect2(center + Vector2(-23, -13), Vector2(46, 30)), Color("dce7df"))
+	draw_rect(Rect2(center + Vector2(-17, -8), Vector2(34, 17)), Color("294b5a"))
+	draw_circle(center + Vector2(facing * 3, 0), 6, ink)
+	draw_circle(center + Vector2(facing * 5, -2), 2, Color("defbf1"))
+	draw_line(center + Vector2(-29, -17), center + Vector2(-10, -17), Color("d9b25b"), 4)
+	draw_line(center + Vector2(10, -17), center + Vector2(29, -17), Color("d9b25b"), 4)
+	draw_rect(Rect2(center + Vector2(-11, 17), Vector2(22, 9)), Color("70888c"))
+	var flame := 10.0 if world.gear.flying else 4.0
+	draw_colored_polygon(PackedVector2Array([center + Vector2(-7, 26), center + Vector2(7, 26), center + Vector2(0, 26 + flame)]), Color(ink, 0.65))
+	if world.outpost.fabrication.carried().is_empty():
+		draw_line(center + Vector2(facing * 20, 7), center + Vector2(facing * 40, 0), Color("77939a"), 5)
+		draw_line(center + Vector2(facing * 34, 2), center + Vector2(facing * 46, -2), world.active_tool().beam_color, 3)

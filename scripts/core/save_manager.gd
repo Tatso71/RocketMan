@@ -9,16 +9,19 @@ var rocket_save_path := ROCKET_SAVE_PATH
 var campaign_save_path := SAVE_DIR + "/campaign_v1.json"
 
 func write_campaign_save(data: Dictionary) -> bool:
-	return _write_json(campaign_save_path, data)
+	return _write_json(variant_path(campaign_save_path, data.get("variant", "explorer")), data)
 
-func read_campaign_save() -> Dictionary:
-	return _read_json(campaign_save_path)
+func read_campaign_save(variant: String = "explorer") -> Dictionary:
+	return _read_json(variant_path(campaign_save_path, variant))
 
 func write_rocket_save(data: Dictionary) -> bool:
-	return _write_json(rocket_save_path, data)
+	return _write_json(variant_path(rocket_save_path, data.get("variant", "explorer")), data)
 
-func read_rocket_save() -> Dictionary:
-	return _read_json(rocket_save_path)
+func read_rocket_save(variant: String = "explorer") -> Dictionary:
+	return _read_json(variant_path(rocket_save_path, variant))
+
+static func variant_path(path: String, variant: String) -> String:
+	return path.get_basename() + "_robbie." + path.get_extension() if variant == "robbie" else path
 
 func _ready() -> void:
 	ensure_storage_dirs()

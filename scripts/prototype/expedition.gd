@@ -31,6 +31,8 @@ var repair_button: Button
 var fuel_button: Button
 var charge_button: Button
 var feedback := ""
+var variant_controls: HBoxContainer
+var variant_buttons: Array[Button] = []
 
 func _ready() -> void:
 	exterior = Exterior.new()
@@ -85,6 +87,13 @@ func select_planet(index: int) -> void:
 		feedback = ""
 		_refresh_interface()
 
+func select_variant(index: int) -> void:
+	if index < 0 or index > 1:
+		return
+	if model.choose_variant("robbie" if index == 1 else "explorer"):
+		feedback = ""
+	_refresh_interface()
+
 func depart() -> bool:
 	if not model.depart():
 		_notify(model.ship.flight_blocker(Planets.find(model.selected_planet)))
@@ -112,7 +121,7 @@ func request_takeoff() -> bool:
 	if world.hatch_open:
 		_notify("Chiudi la botola prima del decollo")
 		return false
-	if not world.drone.aboard():
+	if not world.is_robbie() and not world.drone.aboard():
 		_notify("Attendi il drone a bordo; riapri la botola se e rimasto fuori")
 		return false
 	if model.ship.hull < 20 or model.ship.fuel < 6 or model.ship.energy < 2:
@@ -134,7 +143,7 @@ func save_campaign() -> bool:
 	return ok
 
 func load_campaign() -> bool:
-	var data: Dictionary = SaveManager.read_campaign_save()
+	var data: Dictionary = SaveManager.read_campaign_save(model.variant)
 	if not model.restore(data):
 		_notify("Nessuna spedizione compatibile da caricare")
 		return false
@@ -162,6 +171,7 @@ func _close_ship_menu() -> void:
 		world.controls_locked = false
 
 func _animate_exterior() -> void:
+	exterior.robbie_pilot = model.variant == "robbie"
 	exterior.legs_deployed = model.phase in [State.Phase.LANDING, State.Phase.TAKEOFF]
 	exterior.engines_on = true
 	exterior.scale = Vector2.ONE * 0.75
@@ -198,8 +208,8 @@ func _build_interface() -> void:
 	header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	header.offset_bottom = 66
 	screen.add_child(header)
-	_label(header, "ROCKETMAN / SPEDIZIONE", Vector2(24, 10), Vector2(600, 26), 20)
-	phase_label = _label(header, "", Vector2(24, 37), Vector2(600, 20), 14)
+	_label(header, "ROCKETMAN / SPEDIZIONE", Vector2(24, 10), Vector2(340, 26), 20)
+	phase_label = _label(header, "", Vector2(24, 37), Vector2(340, 20), 14)
 	var toolbar := HBoxContainer.new()
 	toolbar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	toolbar.offset_left = -300
@@ -223,6 +233,23 @@ func _build_interface() -> void:
 	heading.text = "DESTINAZIONE"
 	heading.add_theme_font_size_override("font_size", 14)
 	selection_controls.add_child(heading)
+	variant_controls = HBoxContainer.new()
+	variant_controls.position = Vector2(400, 16)
+	variant_controls.size = Vector2(350, 34)
+	variant_controls.add_theme_constant_override("separation", 8)
+	header.add_child(variant_controls)
+	var protagonist_label := Label.new()
+	protagonist_label.text = "Gioca come"
+	protagonist_label.add_theme_font_size_override("font_size", 14)
+	variant_controls.add_child(protagonist_label)
+	var group := ButtonGroup.new()
+	for index in range(2):
+		var button := _button(variant_controls, ["Umano", "Robbie"][index], select_variant.bind(index))
+		button.toggle_mode = true
+		button.button_group = group
+		button.custom_minimum_size = Vector2(116, 34)
+		button.tooltip_text = ["Esploratore umano con Robbie assistente", "Robbie protagonista con due specialisti e un gatto in criosonno"][index]
+		variant_buttons.append(button)
 	planet_list = ItemList.new()
 	planet_list.custom_minimum_size = Vector2(360, 116)
 	planet_list.add_theme_font_size_override("font_size", 19)
@@ -282,6 +309,10 @@ func _refresh_interface() -> void:
 		planet_list.select(_selected_index())
 	var planet := Planets.find(model.selected_planet)
 	phase_label.text = PHASE_NAMES[model.phase]
+	variant_controls.visible = model.phase == State.Phase.SELECT
+	for index in range(variant_buttons.size()):
+		variant_buttons[index].disabled = not model.can_choose_variant()
+		variant_buttons[index].set_pressed_no_signal(index == (1 if model.variant == "robbie" else 0))
 	planet_list.visible = model.phase == State.Phase.SELECT
 	depart_button.visible = model.phase == State.Phase.SELECT
 	instant_arrival_button.visible = model.phase == State.Phase.SELECT

@@ -70,7 +70,7 @@ func status(building: Dictionary, outpost: Node2D) -> String:
 	if not building.get("enabled", true):
 		return "Spento"
 	if not outpost.environment_safe(building):
-		return "Area contaminata: acqua, gas o petrolio"
+		return "Area contaminata: acqua, gas, petrolio o acido"
 	var storage := state(building)
 	if building.id == "pump":
 		return "Serbatoio %.2f / %.0f u" % [storage.water, Catalog.load_data().pump_capacity]

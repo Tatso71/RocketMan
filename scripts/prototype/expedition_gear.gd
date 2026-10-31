@@ -81,7 +81,7 @@ func placement_blocker(cell: Vector2i) -> String:
 		return "Serve un appoggio sotto la bomba"
 	if Grid.rect(cell).intersects(Rect2(world.player.position - Vector2(12, 64), Vector2(24, 64))):
 		return "Sposta il personaggio fuori dalla cella"
-	if Grid.rect(cell).grow(10).has_point(world.drone.position):
+	if not world.is_robbie() and Grid.rect(cell).grow(10).has_point(world.drone.position):
 		return "Aspetta che Robbie liberi la cella"
 	if bombs.any(func(bomb: Dictionary): return bomb.cell == cell) or world.ladders.has(cell):
 		return "Cella gia occupata"
@@ -211,6 +211,13 @@ func recharge(delta: float) -> void:
 		return
 	var station: Dictionary = world.outpost.nearby_station()
 	var powered: bool = not station.is_empty() and not workshop_damaged() if station.get("kind") == "ship" else (not station.is_empty() and world.outpost.operational(station.building))
+	if world.is_robbie() and powered and world.outpost.station_rect(station).has_point(world.player.position - Vector2(0, 32)):
+		var charge_gain: float = minf(100 - world.crew_energy(), minf(20 * delta, world.ship_energy() / 0.02))
+		world._set_crew_energy(world.crew_energy() + charge_gain)
+		world._set_ship_energy(world.ship_energy() - charge_gain * 0.02)
+		var repair_gain: float = minf(100 - world.suit_integrity(), minf(10 * delta, world.ship_energy() / 0.02))
+		world._set_suit(world.suit_integrity() + repair_gain)
+		world._set_ship_energy(world.ship_energy() - repair_gain * 0.02)
 	if powered and world.outpost.station_rect(station).has_point(world.player.position - Vector2(0, 32)) and not flying and charge() < 100:
 		var added: float = minf(100 - charge(), minf(25 * delta, world.ship_energy() / 0.02))
 		set_charge(charge() + added)

@@ -2,7 +2,7 @@ extends RefCounted
 
 const Tutorial = preload("res://scripts/systems/ocra_tutorial.gd")
 const Texts = preload("res://scripts/data/robbie_texts.gd")
-const REPEATING := ["cargo_full", "drone_unavailable", "drone_delivery", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "oil_danger", "gas_leak", "water_leak", "oil_leak", "energy_low"]
+const REPEATING := ["cargo_full", "drone_unavailable", "drone_delivery", "signal_limit", "build_resources", "build_space", "gas_danger", "water_danger", "oil_danger", "acid_danger", "gas_leak", "water_leak", "oil_leak", "acid_leak", "energy_low", "robot_charge_low"]
 const PERSISTENT := {"tutorial_collect": 20.0, "tutorial_excavate": 20.0, "tutorial_place": 20.0, "tutorial_fund": 25.0, "water_danger": 10.0}
 const FACTS := ["mined", "ladder", "lab_built", "lamp_crafted", "lamp_placed", "pump_built", "fan_built", "deposited", "furnace_built", "gas_converter_built", "greenhouse_built", "seeds_found", "seed_pod_seen"]
 var seen: Array[String] = []
@@ -17,9 +17,10 @@ var active_manual := false
 var last_shown: Dictionary = {}
 var latched: Array[String] = []
 var ocra := Tutorial.new()
+var variant := "explorer"
 
 func message(id: String) -> Array:
-	return ocra.message(id) if id.begins_with("ocra/") else Texts.message(id)
+	return ocra.message(id, variant) if id.begins_with("ocra/") else Texts.message(id, variant)
 
 func recurring(id: String) -> bool:
 	return id in REPEATING or PERSISTENT.has(id) or id.begins_with("ocra/")
@@ -50,9 +51,9 @@ func tick(delta: float, current_context: String) -> void:
 	gap = maxf(0, gap - delta)
 	# Re-arm a recurring hint only after its actual condition has cleared.
 	for id: String in latched.duplicate():
-		if id != current_context and id not in ["gas_leak", "water_leak", "oil_leak"]:
+		if id != current_context and id not in ["gas_leak", "water_leak", "oil_leak", "acid_leak"]:
 			latched.erase(id)
-	if recurring(active_id) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak", "oil_leak"]:
+	if recurring(active_id) and active_id != current_context and not active_manual and active_id not in ["gas_leak", "water_leak", "oil_leak", "acid_leak"]:
 		dismiss()
 	context_id = current_context
 	remaining = maxf(0, remaining - delta)

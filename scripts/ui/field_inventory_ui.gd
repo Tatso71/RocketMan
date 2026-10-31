@@ -379,6 +379,8 @@ func craft() -> void:
 	refresh()
 
 func eat() -> void:
+	if world.is_robbie():
+		return
 	var id: String = Cargo.ITEM_IDS[picker.selected]
 	if id not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or world.crew_energy() >= 100 or not world.field_cargo.pay({id: 1}, true):
 		return
@@ -416,7 +418,12 @@ func refresh() -> void:
 			compact_counts[item * 2 + index].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0))
 			compact_counts[item * 2 + index].modulate = Color("829396") if index == 1 and not connected else Color.WHITE
 	delivery_button.disabled = world.drone.mission != "follow" or cargo.used(cargo.drone) == 0
+	if world.is_robbie():
+		delivery_button.disabled = cargo.used(cargo.drone) == 0 or not world.outpost.source_available()
+		delivery_button.tooltip_text = "Deposita il cargo nel laboratorio vicino (Y)"
 	compact_link.text = "Carico disponibile" if world.drone.mission == "follow" else world.drone.status
+	if world.is_robbie():
+		compact_link.text = "Cargo personale di Robbie"
 	if world.drone.mission == "follow" and not connected:
 		compact_link.text = "Attendi Robbie nel tuo raggio"
 	compact_link.modulate = Color("a7e5b4") if connected else Color("efb784")
@@ -444,7 +451,8 @@ func refresh() -> void:
 	deposit_button.disabled = not source or cargo.used(stocks[2]) >= storage_capacity() or cargo.used(cargo.backpack) + (cargo.used(cargo.drone) if connected else 0) == 0
 	prepare_button.disabled = world.outpost.nearby_station().is_empty()
 	var item: String = Cargo.ITEM_IDS[picker.selected]
-	eat_button.disabled = item not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or cargo.available(item, true) <= 0 or world.crew_energy() >= 100
+	eat_button.visible = not world.is_robbie()
+	eat_button.disabled = world.is_robbie() or item not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or cargo.available(item, true) <= 0 or world.crew_energy() >= 100
 	prepare_button.tooltip_text = "Apri fabbricazione al laboratorio" if not prepare_button.disabled else "Raggiungi un laboratorio"
 	preparation_status.text = "Cubi sul banco: %d / In mano: %d" % [world.outpost.fabrication.cubes.size() - (1 if world.outpost.fabrication.carried_id != 0 else 0), 1 if world.outpost.fabrication.carried_id != 0 else 0]
 	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()

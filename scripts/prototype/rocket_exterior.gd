@@ -3,6 +3,7 @@ extends Node2D
 var legs_deployed := false
 var engines_on := true
 var clock := 0.0
+var robbie_pilot := false
 
 func _process(delta: float) -> void:
 	clock += delta
@@ -33,10 +34,16 @@ func _draw() -> void:
 	draw_circle(Vector2(0, -375), 51, Color("305362"))
 	draw_arc(Vector2(0, -375), 46, 3.3, 5.5, 24, Color("9cded8"), 4)
 	# The pilot remains visible through the same porthole while the hull is opaque.
-	draw_rect(Rect2(-18, -377, 36, 35), Color("e7a94d"))
-	draw_circle(Vector2(0, -394), 23, Color("f3c774"))
-	draw_circle(Vector2(0, -393), 16, Color("304653"))
-	draw_circle(Vector2(7, -397), 5, Color("8de2de"))
+	if robbie_pilot:
+		draw_rect(Rect2(-28, -410, 56, 36), Color("d8e6df"))
+		draw_rect(Rect2(-21, -403, 42, 22), Color("294b5a"))
+		draw_circle(Vector2(0, -393), 8, Color("78e4dc"))
+		draw_line(Vector2(-17, -414), Vector2(17, -414), Color("d9b25b"), 4)
+	else:
+		draw_rect(Rect2(-18, -377, 36, 35), Color("e7a94d"))
+		draw_circle(Vector2(0, -394), 23, Color("f3c774"))
+		draw_circle(Vector2(0, -393), 16, Color("304653"))
+		draw_circle(Vector2(7, -397), 5, Color("8de2de"))
 	draw_rect(Rect2(-38, -352, 76, 10), Color("718b91"))
 	draw_circle(Vector2(0, -254), 15, Color("355562"))
 	draw_circle(Vector2(0, -254), 10, Color("7bdfd6"))

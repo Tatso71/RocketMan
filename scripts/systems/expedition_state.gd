@@ -17,6 +17,16 @@ var selected_planet := "ochre"
 var active_planet := ""
 var progress := 0.0
 var outposts: Dictionary = {}
+var variant := "explorer"
+
+func can_choose_variant() -> bool:
+	return phase == Phase.SELECT and active_planet.is_empty() and outposts.is_empty()
+
+func choose_variant(value: String) -> bool:
+	if value not in ["explorer", "robbie"] or not can_choose_variant():
+		return false
+	variant = value
+	return true
 
 func available_planets() -> Array:
 	# Preserve access for older campaigns that already visited an outer planet.
@@ -76,10 +86,13 @@ func takeoff() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
+	return {"version": 1, "variant": variant, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
 
 func restore(data: Dictionary) -> bool:
 	if data.get("version") != 1 or not data.get("ship") is Dictionary or not data.get("outposts") is Dictionary:
+		return false
+	var next_variant = data.get("variant", "explorer")
+	if next_variant not in ["explorer", "robbie"]:
 		return false
 	var next_phase = data.get("phase")
 	var next_progress = data.get("progress")
@@ -95,6 +108,8 @@ func restore(data: Dictionary) -> bool:
 		if not planet_id is String or Planets.find(planet_id) == null or not data.outposts[planet_id] is Dictionary:
 			return false
 		var outpost: Dictionary = data.outposts[planet_id]
+		if outpost.get("variant", "explorer") != next_variant:
+			return false
 		if outpost.get("version") != 1 or outpost.get("cell_metres") != 1.0 or not outpost.get("removed") is Array or not outpost.get("ladders") is Array or not outpost.get("materials") is Dictionary:
 			return false
 		if outpost.get("terrain_seed", 0) != Planets.find(planet_id).terrain_seed:
@@ -107,7 +122,7 @@ func restore(data: Dictionary) -> bool:
 			var cell = Grid.decode_cell(entry)
 			if not cell is Vector2i or cell.x < DigSite.LEFT or cell.x >= DigSite.RIGHT or cell.y < -2 or cell.y >= DigSite.DEPTH:
 				return false
-		if not Fabrication.integer(outpost.get("layout_version", 0), 0, 1):
+		if not Fabrication.integer(outpost.get("layout_version", 0), 0, DigSite.HazardLayout.CURRENT_VERSION):
 			return false
 		var terrain := DigSite.new(Planets.find(planet_id).terrain_seed, int(outpost.get("layout_version", 0)))
 		terrain.restore(outpost.removed)
@@ -128,6 +143,7 @@ func restore(data: Dictionary) -> bool:
 		if saved.get("buildings", []).any(func(item: Dictionary): return item.id == "laboratory" and item.get("state", "active") == "active"):
 			ship.lab_research_unlocked = true
 	phase = int(next_phase)
+	variant = next_variant
 	progress = float(next_progress)
 	selected_planet = data.selected_planet
 	active_planet = data.active_planet

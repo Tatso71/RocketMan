@@ -65,6 +65,8 @@ func _ready() -> void:
 	help.tooltip_text = "Chiedi un consiglio al drone (H)"
 	auto_toggle = CheckButton.new()
 	auto_toggle.text = "Aiuti drone"
+	if world.is_robbie():
+		auto_toggle.text = "Diagnostica"
 	auto_toggle.button_pressed = not state.muted
 	auto_toggle.tooltip_text = "Attiva o silenzia i balloon automatici"
 	auto_toggle.toggled.connect(func(enabled: bool): state.set_muted(not enabled))
@@ -79,6 +81,8 @@ func context() -> String:
 		room_poll = 0.5
 	world.observe_tutorial(room_cache is Vector2i)
 	var danger: Dictionary = world.player_environment()
+	if danger.acid:
+		return "acid_danger"
 	if danger.submerged:
 		return "water_danger"
 	if danger.oil:
@@ -94,7 +98,7 @@ func context() -> String:
 	if world.ship_energy() < 5:
 		return "energy_low"
 	if world.crew_energy() < 25:
-		return "bed_rest"
+		return "robot_charge_low" if world.is_robbie() else "bed_rest"
 	var step: Dictionary = state.ocra.current()
 	if world.is_ocra() and not step.is_empty() and not state.ocra.complete():
 		if step.id not in ["laboratory_cube", "carry_laboratory", "deploy_laboratory"] and world.field_cargo.free_space(world.drone_can_collect()) <= 0:
@@ -170,7 +174,7 @@ func event(id: String) -> void:
 	state.ocra.record(id)
 	if id in Guide.FACTS:
 		state.facts[id] = true
-	if id in ["gas_leak", "water_leak", "oil_leak"]:
+	if id in ["gas_leak", "water_leak", "oil_leak", "acid_leak"]:
 		# Each newly breached pocket may warn again, even after an earlier pocket.
 		state.latched.erase(id)
 		state.last_shown.erase(id)
@@ -208,12 +212,12 @@ func _update_bubble() -> void:
 		speech.text = replay_text if not replay_text.is_empty() else state.message(current_id)[2]
 		bubble.size = Vector2(332, 0)
 	if current_id == "cargo_full" and replay_text.is_empty():
-		speech.text = Guide.Texts.message("cargo_near_station")[2] if world.outpost.source_available() else state.message(current_id)[2]
+		speech.text = Guide.Texts.message("cargo_near_station", world.variant)[2] if world.outpost.source_available() else state.message(current_id)[2]
 	var shown_title: String = state.message(current_id)[1]
 	if not replay_title.is_empty():
 		shown_title = replay_title
 	elif current_id == "cargo_full" and world.outpost.source_available():
-		shown_title = Guide.Texts.message("cargo_near_station")[1]
+		shown_title = Guide.Texts.message("cargo_near_station", world.variant)[1]
 	last_message_id = current_id
 	last_message_text = speech.text
 	last_message_title = shown_title
@@ -226,7 +230,7 @@ func _update_bubble() -> void:
 	var radio := not safe.has_point(point) or current_id == "signal_limit"
 	heading.text = "ROBBIE / " + ("RADIO" if radio else shown_title.to_upper())
 	var bubble_style := bubble.get_theme_stylebox("panel") as StyleBoxFlat
-	bubble_style.border_color = Color("ef6666") if current_id in ["water_danger", "gas_danger", "oil_danger"] else Color("589d95")
+	bubble_style.border_color = Color("ef6666") if current_id in ["water_danger", "gas_danger", "oil_danger", "acid_danger"] else Color("589d95")
 	# Try both sides of the drone, avoiding the explorer and the fixed HUD areas.
 	var candidates: Array[Vector2] = [point + Vector2(35, -size.y - 24), point - Vector2(size.x + 35, size.y + 24), point + Vector2(35, 32), point - Vector2(size.x + 35, -32)]
 	if radio:

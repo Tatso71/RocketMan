@@ -13,9 +13,9 @@ const ANCHORS := [Vector2i(-6, 6), Vector2i(-5, 6), Vector2i(-4, 6), Vector2i(7,
 var removed: Dictionary = {}
 var damage: Dictionary = {}
 var terrain_seed := 0
-var layout_version := 1
+var layout_version := HazardLayout.CURRENT_VERSION
 
-func _init(seed_value: int = 0, version: int = 1) -> void:
+func _init(seed_value: int = 0, version: int = HazardLayout.CURRENT_VERSION) -> void:
 	terrain_seed = seed_value
 	layout_version = version
 	_add_pocket_cavities()
