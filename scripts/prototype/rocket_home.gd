@@ -17,6 +17,7 @@ const TutorialUI = preload("res://scripts/ui/ocra_tutorial_ui.gd")
 const HATCH_RECT := Rect2(0, -80, Grid.CELL_SIZE, 8)
 const PERSONAL_LIGHT_RADIUS_METRES := 3.0
 const Gear = preload("res://scripts/prototype/expedition_gear.gd")
+const ScannerPulses = preload("res://scripts/ui/scanner_pulse_view.gd")
 const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
 const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "crystal": Color("55c5c6"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
@@ -70,6 +71,7 @@ var power_label: Label
 var tutorial_ui: CanvasLayer
 var gear: Node2D
 var jetpack_meter: ProgressBar
+var scanner_view: Node2D
 
 func seeds() -> Dictionary:
 	return ship_state.seed_bank if ship_state != null else local_seed_bank
@@ -229,6 +231,9 @@ func _ready() -> void:
 	gear = Gear.new()
 	gear.world = self
 	add_child(gear)
+	scanner_view = ScannerPulses.new()
+	scanner_view.world = self
+	add_child(scanner_view)
 	camera = Camera2D.new()
 	camera.position = Vector2(0, -350)
 	camera.zoom = Vector2.ONE * target_zoom
@@ -445,7 +450,7 @@ func _process(delta: float) -> void:
 
 func can_reach(cell: Vector2i) -> bool:
 	var hand := player.position - Vector2(0, Grid.metres(0.8))
-	if hand.distance_to(Grid.center(cell)) > Grid.metres(active_tool().reach_metres):
+	if hand.distance_to(Grid.center(cell)) > Grid.metres(active_tool().effective_reach_metres()):
 		return false
 	# Cast against the same physics rectangles used by movement: no mining through walls.
 	var query := PhysicsRayQueryParameters2D.create(hand, Grid.center(cell), 1, [player.get_rid()])
@@ -938,7 +943,7 @@ func _refresh_hud() -> void:
 	power_label.text = "BATTERIA NAVE %.1f / %.0f kWh\nRete %.2f kWh/min%s" % [ship_energy(), capacity, load * 60, " / %.1f min" % (ship_energy() / load / 60) if load > 0 else " / nessun consumo"]
 	power_label.modulate = Color("ffb18e") if ship_energy() < 5 else Color("d4e9df")
 	var tool := active_tool()
-	metric_label.text = "1 CELLA = 1 m  |  %s / %.1f m" % [tool.display_name, tool.reach_metres]
+	metric_label.text = "1 CELLA = 1 m  |  %s / %.1f m" % [tool.display_name, tool.effective_reach_metres()]
 	var slots: Array = ship_state.tool_slots if ship_state != null else ["pulse", "scanner", "bomb", "jetpack"]
 	var active: int = ship_state.active_tool_slot if ship_state != null else standalone_slot
 	for slot in range(tool_buttons.size()):
@@ -946,7 +951,7 @@ func _refresh_hud() -> void:
 		tool_buttons[slot].text = "%d  %s" % [slot + 1, definition.display_name if definition != null else "Vuoto"]
 		tool_buttons[slot].disabled = definition == null
 		tool_buttons[slot].modulate = definition.beam_color if slot == active else Color("ccd9d8")
-		tool_buttons[slot].tooltip_text = "%.1f m / %.2f kWh per impulso" % [definition.reach_metres, definition.energy_per_pulse] if definition != null else "Nessuno strumento assegnato"
+		tool_buttons[slot].tooltip_text = "%.1f m / %.2f kWh per impulso" % [definition.effective_reach_metres(), definition.energy_per_pulse] if definition != null else "Nessuno strumento assegnato"
 		if definition != null and definition.mode == "bomb":
 			tool_buttons[slot].text = "3  Bombe %d/%d" % [gear.ammo(), Gear.BOMB_CAPACITY]
 			tool_buttons[slot].tooltip_text = "Click: posa una bomba pronta / Enter: detona da almeno 4 m / Fabbrica al laboratorio"
@@ -968,8 +973,8 @@ func _draw() -> void:
 	_draw_environment()
 	if show_grid:
 		_draw_metric_overlay()
-		if is_instance_valid(player):
-			draw_arc(player.position - Vector2(0, 32), Grid.metres(active_tool().reach_metres), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
+		if is_instance_valid(player) and active_tool().mode != "scan":
+			draw_arc(player.position - Vector2(0, 32), Grid.metres(active_tool().effective_reach_metres()), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
 	for cell: Vector2i in ladders:
 		_ladder(Grid.to_world(cell) + Vector2(20, 0), 40)
 	if site.contains(target_cell) and (not site.material(target_cell).is_empty() or ladders.has(target_cell)):
