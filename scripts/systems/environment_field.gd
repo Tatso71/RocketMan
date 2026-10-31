@@ -2,12 +2,14 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Layout = preload("res://scripts/data/hazard_layout.gd")
+const Fluids = preload("res://scripts/data/fluid_catalog.gd")
 const STEP := 0.2
 const EPSILON := 0.000001
 var site: RefCounted
 var water: Dictionary = {}
 var gas: Dictionary = {}
 var oil: Dictionary = {}
+var acid: Dictionary = {}
 var released: Dictionary = {}
 var accumulator := 0.0
 
@@ -15,12 +17,7 @@ func _init(dig_site: RefCounted) -> void:
 	site = dig_site
 	for pocket: Dictionary in site.pockets():
 		for cell: Vector2i in Layout.cells(pocket):
-			if pocket.kind == "water":
-				water[cell] = 1.0
-			elif pocket.kind == "gas":
-				gas[cell] = 1.0
-			elif pocket.kind == "oil":
-				oil[cell] = 1.0
+			get(pocket.kind)[cell] = 1.0
 
 func _open(cell: Vector2i) -> bool:
 	return site.contains(cell) and site.material(cell).is_empty()
@@ -30,13 +27,11 @@ func detect_breaches() -> Array[String]:
 	for pocket: Dictionary in site.pockets():
 		if released.has(pocket.id):
 			continue
-		var cells := Layout.cells(pocket)
 		var breached := false
-		for cell: Vector2i in cells:
-			for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
-				var neighbor: Vector2i = cell + offset
-				if neighbor not in cells and _open(neighbor):
-					breached = true
+		for cell: Vector2i in Layout.boundary(pocket):
+			if _open(cell):
+				breached = true
+				break
 		if breached:
 			released[pocket.id] = true
 			events.append(pocket.kind)
@@ -49,15 +44,19 @@ func advance(delta: float) -> void:
 	while accumulator >= STEP:
 		accumulator -= STEP
 		detect_breaches()
-		_step_water()
-		oil = _step_liquid(oil, water, 0.15, 0.04)
+		for kind: String in Fluids.LIQUID_IDS:
+			var occupied := {}
+			for other: String in Fluids.LIQUID_IDS:
+				if other == kind:
+					continue
+				for cell: Vector2i in get(other):
+					occupied[cell] = float(occupied.get(cell, 0)) + float(get(other)[cell])
+			var definition: Dictionary = Fluids.KINDS[kind]
+			set(kind, _step_liquid(get(kind), occupied, definition.fall, definition.spread))
 		_step_gas()
 
-func _step_water() -> void:
-	# Finite cell volumes: gravity first, then lateral equalization. No new water is created.
-	water = _step_liquid(water, oil, 1.0, 0.2)
-
 func _step_liquid(field: Dictionary, other: Dictionary, fall_rate: float, spread_rate: float) -> Dictionary:
+	# Gravity first, then lateral equalization; all liquids share one cell's capacity.
 	var next := field.duplicate()
 	var cells: Array = field.keys()
 	cells.sort_custom(func(a: Vector2i, b: Vector2i): return a.y > b.y if a.y != b.y else a.x < b.x)
@@ -86,7 +85,7 @@ func _step_gas() -> void:
 	for cell: Vector2i in gas:
 		for offset in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
 			var neighbor: Vector2i = cell + offset
-			if not _open(neighbor):
+			if not _open(neighbor) or liquid_volume(neighbor) >= 0.95:
 				continue
 			var start := cell if cell.x < neighbor.x or (cell.x == neighbor.x and cell.y < neighbor.y) else neighbor
 			var end := neighbor if start == cell else cell
@@ -100,6 +99,14 @@ func _step_gas() -> void:
 	var next := gas.duplicate()
 	for cell: Vector2i in changes:
 		next[cell] = maxf(0, float(next.get(cell, 0)) + float(changes[cell]))
+	# Buoyancy supplements diffusion without crossing solid ceilings or full liquids.
+	var rising: Array = next.keys()
+	rising.sort_custom(func(a: Vector2i, b: Vector2i): return a.y < b.y if a.y != b.y else a.x < b.x)
+	for cell: Vector2i in rising:
+		var above := cell + Vector2i.UP
+		if _open(above):
+			var capacity := maxf(0, 1.0 - liquid_volume(above) - float(next.get(above, 0)))
+			_transfer(next, cell, above, minf(float(next.get(cell, 0)) * 0.08, capacity))
 	var dispersing := false
 	var sealed := {}
 	for pocket: Dictionary in site.pockets():
@@ -125,7 +132,20 @@ func _clean(field: Dictionary) -> Dictionary:
 func exposure(feet: Vector2) -> Dictionary:
 	var head := feet - Vector2(0, Grid.metres(1.4))
 	var head_cell := Grid.to_cell(head)
-	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _in_liquid(head, water), "oil": _in_liquid(feet - Vector2(0, 4), oil) or _in_liquid(head, oil), "gas": float(gas.get(head_cell, 0))}
+	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _in_liquid(head, water), "oil": _in_liquid(feet - Vector2(0, 4), oil) or _in_liquid(head, oil), "acid": _in_liquid(feet - Vector2(0, 4), acid) or _in_liquid(head, acid), "gas": float(gas.get(head_cell, 0))}
+
+func liquid_volume(cell: Vector2i) -> float:
+	return float(water.get(cell, 0)) + float(acid.get(cell, 0)) + float(oil.get(cell, 0))
+
+func liquid_rect(cell: Vector2i, kind: String) -> Rect2:
+	var bottom := Grid.rect(cell).end.y
+	# The catalog order places the heavier fluids below oil in shared cells.
+	for other: String in Fluids.LIQUID_IDS:
+		if other == kind:
+			break
+		bottom -= Grid.CELL_SIZE * float(get(other).get(cell, 0))
+	var height := Grid.CELL_SIZE * float(get(kind).get(cell, 0))
+	return Rect2(Grid.to_world(cell).x, bottom - height, Grid.CELL_SIZE, height)
 
 func drain_water(intake: Vector2i, radius: int, amount: float) -> float:
 	return _drain(water, intake, radius, amount)
@@ -159,12 +179,14 @@ func _drain(field: Dictionary, intake: Vector2i, radius: int, amount: float) -> 
 	return drained
 
 func _wet(point: Vector2) -> bool:
-	return _in_liquid(point, water) or _in_liquid(point, oil)
+	return _in_liquid(point, water) or _in_liquid(point, oil) or _in_liquid(point, acid)
 
 func _in_liquid(point: Vector2, field: Dictionary) -> bool:
 	var cell := Grid.to_cell(point)
-	var level := float(field.get(cell, 0))
-	return level > 0 and point.y >= Grid.to_world(cell).y + Grid.CELL_SIZE * (1.0 - level)
+	for kind: String in Fluids.LIQUID_IDS:
+		if is_same(field, get(kind)):
+			return float(field.get(cell, 0)) > 0 and liquid_rect(cell, kind).has_point(point)
+	return false
 
 func reading(cell: Vector2i) -> String:
 	var kinds: Array[String] = []
@@ -174,12 +196,12 @@ func reading(cell: Vector2i) -> String:
 			if absi(pocket_cell.x - cell.x) + absi(pocket_cell.y - cell.y) <= 1:
 				nearby = true
 		if nearby:
-			var label: String = {"gas": "Gas", "water": "Acqua", "oil": "Petrolio"}[pocket.kind]
-			kinds.append(label + (": perdita rilevata" if released.has(pocket.id) else ": sacca sigillata oltre la parete"))
+			var label: String = Fluids.KINDS[pocket.kind].name
+			kinds.append(label + (": falda aperta / perdita rilevata" if released.has(pocket.id) else ": falda sigillata oltre la parete"))
 	return " / ".join(kinds)
 
 func snapshot() -> Dictionary:
-	return {"version": 2, "water": _encode(water), "gas": _encode(gas), "oil": _encode(oil), "released": released.keys()}
+	return {"version": 3, "water": _encode(water), "gas": _encode(gas), "oil": _encode(oil), "acid": _encode(acid), "released": released.keys()}
 
 func _encode(field: Dictionary) -> Array:
 	var cells: Array = []
@@ -192,15 +214,23 @@ func restore(data: Variant) -> bool:
 		return false
 	if data.is_empty():
 		return true
-	if (data.get("version") != 1 and data.get("version") != 2) or not data.get("water") is Array or not data.get("gas") is Array or not data.get("released") is Array or (data.version == 2 and not data.get("oil") is Array):
+	var version = data.get("version")
+	if not (version is int or version is float) or (version != 1 and version != 2 and version != 3):
+		return false
+	if not data.get("water") is Array or not data.get("gas") is Array or not data.get("released") is Array or (version >= 2 and not data.get("oil") is Array) or (version == 3 and not data.get("acid") is Array):
 		return false
 	var next_water = _decode(data.water, "water")
 	var next_gas = _decode(data.gas, "gas")
 	var next_oil = _decode(data.get("oil", []), "oil")
-	if next_water == null or next_gas == null or next_oil == null:
+	var next_acid = _decode(data.get("acid", []), "acid")
+	if next_water == null or next_gas == null or next_oil == null or next_acid == null:
 		return false
-	for cell: Vector2i in next_oil:
-		if float(next_water.get(cell, 0)) + float(next_oil[cell]) > 1.001:
+	var occupied := {}
+	for field: Dictionary in [next_water, next_oil, next_acid]:
+		for cell: Vector2i in field:
+			occupied[cell] = float(occupied.get(cell, 0)) + float(field[cell])
+	for cell: Vector2i in occupied:
+		if float(occupied[cell]) > 1.001:
 			return false
 	var ids: Array[String] = []
 	for pocket: Dictionary in site.pockets():
@@ -213,6 +243,7 @@ func restore(data: Variant) -> bool:
 	water = next_water
 	gas = next_gas
 	oil = next_oil
+	acid = next_acid
 	released = next_released
 	accumulator = 0
 	return true

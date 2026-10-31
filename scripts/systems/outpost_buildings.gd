@@ -85,8 +85,8 @@ func world_rect(building: Dictionary) -> Rect2:
 func labs() -> Array:
 	return structures.filter(func(item: Dictionary): return item.id == "laboratory" and is_active(item))
 
-static func environment_safe(id: String, water: float, gas: float, oil: float = 0) -> bool:
-	return oil <= 0.05 and (id == "pump" or water <= 0.05) and (id == "fan" or gas <= 0.03)
+static func environment_safe(id: String, water: float, gas: float, oil: float = 0, acid: float = 0) -> bool:
+	return acid <= 0.05 and oil <= 0.05 and (id == "pump" or water <= 0.05) and (id == "fan" or gas <= 0.03)
 
 func blocker(id: String, origin: Vector2i, site: RefCounted, field: RefCounted, ignore: Dictionary = {}) -> String:
 	if id not in CUBE_IDS and id != "ladder":
@@ -97,8 +97,8 @@ func blocker(id: String, origin: Vector2i, site: RefCounted, field: RefCounted, 
 			var cell := Vector2i(x, y)
 			if not site.contains(cell) or not site.material(cell).is_empty():
 				return "Spazio non libero: scava l'ingombro del progetto"
-			if not environment_safe(id, float(field.water.get(cell, 0)), float(field.gas.get(cell, 0)), float(field.oil.get(cell, 0))):
-				return "Area non sicura: presenza di acqua, gas o petrolio"
+			if not environment_safe(id, float(field.water.get(cell, 0)), float(field.gas.get(cell, 0)), float(field.oil.get(cell, 0)), float(field.acid.get(cell, 0))):
+				return "Area non sicura: presenza di acqua, gas, petrolio o acido"
 	for x in range(rect.position.x, rect.end.x) if id != "ladder" else []:
 		var support := Vector2i(x, rect.end.y)
 		if not site.contains(support) or site.material(support).is_empty():

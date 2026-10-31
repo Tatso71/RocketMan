@@ -34,7 +34,7 @@ func _ready() -> void:
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	header.add_child(icon)
-	heading = UI.label("ROBBIE / OCRA", 14, Color("8edce1"))
+	heading = UI.label("ROBBIE / MISSIONE OCRA" if world.is_robbie() else "ROBBIE / OCRA", 14, Color("8edce1"))
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
 	counter = UI.label("", 14, Color("b4c5c6"))

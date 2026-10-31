@@ -25,6 +25,13 @@ const ACCELERATION := 420.0
 
 func _ready() -> void:
 	clearance.radius = 10
+	if world.is_robbie():
+		# Retain the shared cargo API, without a second visible or collidable actor.
+		collision_layer = 0
+		collision_mask = 0
+		hide()
+		sync_controlled()
+		return
 	collision_layer = 2
 	collision_mask = 1
 	var collider := CollisionShape2D.new()
@@ -37,12 +44,14 @@ func _id(cell: Vector2i) -> int:
 	return (cell.y + 11) * (world.site.RIGHT - world.site.LEFT) + cell.x - world.site.LEFT
 
 func signal_connected() -> bool:
-	return position.distance_to(BASE) <= Grid.metres(range_metres) + 1
+	return world.is_robbie() or position.distance_to(BASE) <= Grid.metres(range_metres) + 1
 
 func aboard() -> bool:
 	return position.y < -80 and absf(position.x) < 152
 
 func hit_test(viewport_point: Vector2) -> bool:
+	if world.is_robbie():
+		return false
 	var local_point := get_global_transform_with_canvas().affine_inverse() * viewport_point
 	return Rect2(-26, -20, 52, 42).has_point(local_point)
 
@@ -72,6 +81,15 @@ func _actor_clearance() -> Rect2:
 	return Rect2(world.player.position - Vector2(43, 83), Vector2(86, 102))
 
 func send_to_ship() -> bool:
+	if world.is_robbie():
+		if not world.outpost.source_available():
+			world._note("Rientra in un laboratorio per depositare il tuo carico")
+			return false
+		var count: int = world.field_cargo.deposit(world.outpost.source_stock(), world.outpost.storage_capacity(), true)
+		if count > 0:
+			world.guide_event("deposited")
+		world._note("Robbie: depositate %d unita" % count)
+		return count > 0
 	if mission != "follow":
 		world._note("Robbie e gia in viaggio / Attendi il rientro")
 		return false
@@ -145,13 +163,23 @@ func follow_goal() -> Vector2:
 	has_resting_goal = score < INF
 	return best
 
+func sync_controlled() -> void:
+	position = world.player.position - Vector2(0, 32)
+	velocity = Vector2.ZERO
+	mission = "follow"
+	status = "Controllo manuale"
+	world.field_cargo.drone_available = true
+
 func _physics_process(delta: float) -> void:
+	if world.is_robbie():
+		sync_controlled()
+		return
 	if world.controls_locked:
 		velocity = Vector2.ZERO
 		return
 	clock += delta
 	var danger: Dictionary = world.player_environment()
-	if mission == "follow" and (danger.submerged or danger.oil):
+	if mission == "follow" and (danger.submerged or danger.oil or danger.acid):
 		water_alarm = true
 		status = "Allarme: stai subendo danni"
 		velocity = Vector2.ZERO
@@ -177,7 +205,7 @@ func _physics_process(delta: float) -> void:
 		revision = -1
 	water_timer -= delta
 	var current_range: float = world.ship_state.drone_range_metres() if world.ship_state != null else 15
-	if revision != world.navigation_revision or range_metres != current_range or ((not world.environment.water.is_empty() or not world.environment.oil.is_empty()) and water_timer <= 0):
+	if revision != world.navigation_revision or range_metres != current_range or ((not world.environment.water.is_empty() or not world.environment.oil.is_empty() or not world.environment.acid.is_empty()) and water_timer <= 0):
 		range_metres = current_range
 		_rebuild()
 		water_timer = 0.5

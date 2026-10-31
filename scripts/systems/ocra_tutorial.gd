@@ -6,6 +6,7 @@ var definition: Dictionary
 var authored_texts := true
 var facts: Dictionary = {}
 var counters: Dictionary = {}
+var variant := "explorer"
 
 func _init(custom_definition: Dictionary = {}) -> void:
 	definition = custom_definition if not custom_definition.is_empty() else Catalog.load_data().get("tutorial", {})
@@ -43,15 +44,15 @@ func current() -> Dictionary:
 	var position := index()
 	if position >= definition.get("steps", []).size():
 		return {}
-	return Texts.tutorial_step(definition.steps[position]) if authored_texts else definition.steps[position]
+	return Texts.tutorial_step(definition.steps[position], variant) if authored_texts else definition.steps[position]
 
-func message(id: String) -> Array:
+func message(id: String, mode: String = "explorer") -> Array:
 	if not id.begins_with("ocra/"):
 		return []
 	for step: Dictionary in definition.get("steps", []):
 		if id == "ocra/" + step.id:
-			if authored_texts and not Texts.message(id).is_empty():
-				return Texts.message(id)
+			if authored_texts and not Texts.message(id, mode).is_empty():
+				return Texts.message(id, mode)
 			return [65, step.title_it, step.hint_it]
 	return []
 

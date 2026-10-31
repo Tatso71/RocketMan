@@ -18,6 +18,9 @@ const HATCH_RECT := Rect2(0, -80, Grid.CELL_SIZE, 8)
 const PERSONAL_LIGHT_RADIUS_METRES := 3.0
 const Gear = preload("res://scripts/prototype/expedition_gear.gd")
 const ScannerPulses = preload("res://scripts/ui/scanner_pulse_view.gd")
+const ReservoirView = preload("res://scripts/ui/reservoir_view.gd")
+const CryoCrewView = preload("res://scripts/ui/cryo_crew_view.gd")
+@export_enum("explorer", "robbie") var variant := "explorer"
 const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
 const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "crystal": Color("55c5c6"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
@@ -72,6 +75,10 @@ var tutorial_ui: CanvasLayer
 var gear: Node2D
 var jetpack_meter: ProgressBar
 var scanner_view: Node2D
+var reservoir_view: Node2D
+
+func is_robbie() -> bool:
+	return variant == "robbie"
 
 func seeds() -> Dictionary:
 	return ship_state.seed_bank if ship_state != null else local_seed_bank
@@ -141,6 +148,8 @@ func drone_help_available() -> bool:
 	return drone_can_collect()
 
 func drone_can_collect() -> bool:
+	if is_robbie():
+		return true
 	return is_instance_valid(drone) and drone.mission == "follow" and drone.signal_connected() and drone.position.distance_to(player.position - Vector2(0, 32)) <= Grid.metres(3) and drone._clear(drone.position, player.position - Vector2(0, 32))
 
 func suit_integrity() -> float:
@@ -163,13 +172,13 @@ func _physics_process(delta: float) -> void:
 	outpost.advance(delta)
 	gear.advance(delta)
 	var danger := player_environment()
-	var damage := (12.0 if danger.submerged else 0.0) + (4.0 if danger.oil else 0.0) + clampf((float(danger.gas) - 0.03) / 0.22, 0, 1) * 18
+	var damage := (12.0 if danger.submerged else 0.0) + (4.0 if danger.oil else 0.0) + (HazardField.Fluids.KINDS.acid.damage if danger.acid else 0.0) + clampf((float(danger.gas) - 0.03) / 0.22, 0, 1) * 18
 	if damage > 0:
 		_set_suit(suit_integrity() - damage * delta)
 	if suit_integrity() <= 0:
 		return_home()
 		_set_suit(25)
-		_note("Richiamo di emergenza: tuta compromessa")
+		_note("Richiamo di emergenza: scocca compromessa" if is_robbie() else "Richiamo di emergenza: tuta compromessa")
 
 func active_tool() -> Resource:
 	var slot: int = ship_state.active_tool_slot if ship_state != null else standalone_slot
@@ -192,6 +201,7 @@ func configure(owner_campaign: Node, planet: Resource, ship: RefCounted) -> void
 	campaign = owner_campaign
 	planet_def = planet
 	ship_state = ship
+	variant = owner_campaign.model.variant
 	site = DigSite.new(planet.terrain_seed)
 	environment = HazardField.new(site)
 	field_cargo = ship.field_cargo
@@ -206,6 +216,8 @@ func controls_blocked() -> bool:
 	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open())))
 
 func _ready() -> void:
+	guide_state.variant = variant
+	guide_state.ocra.variant = variant
 	_register_input()
 	add_child(terrain)
 	_build_terrain()
@@ -234,6 +246,9 @@ func _ready() -> void:
 	scanner_view = ScannerPulses.new()
 	scanner_view.world = self
 	add_child(scanner_view)
+	reservoir_view = ReservoirView.new()
+	reservoir_view.world = self
+	add_child(reservoir_view)
 	camera = Camera2D.new()
 	camera.position = Vector2(0, -350)
 	camera.zoom = Vector2.ONE * target_zoom
@@ -480,6 +495,8 @@ func target_blocker(cell: Vector2i) -> String:
 	if ship_energy() < tool.energy_per_pulse:
 		return "Energia esaurita: ricarica in officina"
 	if tool.mode == "mine" and field_cargo.free_space(drone_can_collect()) <= 0:
+		if is_robbie():
+			return "Cargo pieno: rientra in un laboratorio per depositare"
 		return "Robbie pieno: Y per scaricare alla nave" if drone_can_collect() else "Aspetta Robbie nel tuo raggio per raccogliere"
 	return ""
 
@@ -539,6 +556,9 @@ func _mine_target() -> void:
 		elif "oil" in breaches:
 			guide_event("oil_leak")
 			_note("Petrolio in uscita! Evita il contatto con la tuta")
+		elif "acid" in breaches:
+			guide_event("acid_leak")
+			_note("Falda di acido aperta! Allontanati dal liquido corrosivo")
 	queue_redraw()
 
 func remove_mined_block(cell: Vector2i, kind: String) -> void:
@@ -611,6 +631,7 @@ func capture_state() -> Dictionary:
 	for cell: Vector2i in scanned:
 		readings.append([cell.x, cell.y])
 	var data := {"version": 1, "layout_version": site.layout_version, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	data.variant = variant
 	data.network = outpost.network.snapshot()
 	data.industry = outpost.industry.snapshot()
 	data.seed_bank = seeds().duplicate()
@@ -628,14 +649,17 @@ func save_run() -> bool:
 func load_run() -> bool:
 	if campaign != null:
 		return campaign.load_campaign()
-	var data: Dictionary = SaveManager.read_rocket_save()
+	var data: Dictionary = SaveManager.read_rocket_save(variant)
 	return restore_state(data)
 
 func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
+	if data.get("variant", "explorer") != variant:
+		_note("Questo salvataggio appartiene a un'altra variante")
+		return false
 	if data.get("version") != 1 or data.get("cell_metres") != Grid.CELL_METRES or data.get("terrain_seed", 0) != site.terrain_seed or not data.get("removed") is Array or not data.get("materials") is Dictionary or not data.get("ladders") is Array:
 		_note("Nessun salvataggio compatibile")
 		return false
-	if not Outpost.Fabrication.integer(data.get("layout_version", 0), 0, 1):
+	if not Outpost.Fabrication.integer(data.get("layout_version", 0), 0, DigSite.HazardLayout.CURRENT_VERSION):
 		return false
 	var next_site := DigSite.new(site.terrain_seed, int(data.get("layout_version", 0)))
 	next_site.restore(data.removed)
@@ -760,6 +784,10 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 		if outpost.buildings.structures.any(func(building: Dictionary): return building.id == "lamp"):
 			guide_state.facts.lamp_placed = true
 	field_cargo.drone_available = drone_can_collect()
+	guide_state.variant = variant
+	guide_state.ocra.variant = variant
+	if is_robbie():
+		drone.sync_controlled()
 	if guide_state.facts.get("mined", false) and int(guide_state.ocra.counters.get("mined_cells", 0)) == 0:
 		guide_state.ocra.counters["mined_cells"] = maxi(1, site.removed.size() - DigSite.new(site.terrain_seed, site.layout_version).removed.size())
 		guide_state.ocra.counters["mined"] = guide_state.ocra.counters["mined_cells"]
@@ -923,12 +951,16 @@ func _refresh_hud() -> void:
 	resources_label.text = "Robbie %d/%d   Jet %.0f%%" % [field_cargo.used(field_cargo.drone), field_cargo.drone_capacity, gear.charge()]
 	jetpack_meter.value = gear.charge()
 	drone_label.text = "ROBBIE / %s / %.0f m" % [drone.status, drone.range_metres]
+	if is_robbie():
+		drone_label.text = "ROBBIE / Controllo manuale / Criogenia 3 capsule stabili"
 	var depth := maxf(0, player.position.y / Grid.PIXELS_PER_METRE)
 	var room := "Sottosuolo" if player.position.y > 0 else ("Officina" if player.position.y > -200 else ("Zona abitativa" if player.position.y > -320 else "Cabina"))
 	location_label.text = "%s  |  Profondita %.1f m  |  Botola %s" % [room, depth, "aperta" if hatch_open else "chiusa"]
 	var danger := player_environment()
 	var risk := "Nessuna esposizione"
-	if danger.submerged:
+	if danger.acid:
+		risk = "ACIDO / Corrosione della tuta: torna all'asciutto"
+	elif danger.submerged:
 		risk = "SOMMERSO / Risali o raggiungi una zona asciutta"
 	elif float(danger.gas) >= 0.03:
 		risk = "GAS / Allontanati dalla nube"
@@ -937,7 +969,11 @@ func _refresh_hud() -> void:
 	elif danger.wet:
 		risk = "ACQUA / Movimento rallentato"
 	hazard_label.text = "TUTA %.0f%%  |  ENERGIA PERSONALE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk]
+	if is_robbie():
+		hazard_label.text = "SCOCCA %.0f%%  |  CARICA ROBBIE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk.replace("tuta", "scocca")]
 	hazard_label.modulate = Color("ffd777") if danger.wet or float(danger.gas) >= 0.03 else Color("d4e9df")
+	if danger.acid:
+		hazard_label.modulate = Color("e0f58a")
 	var capacity: float = ship_state.energy_capacity() if ship_state != null else 60
 	var load: float = outpost.network_load()
 	power_label.text = "BATTERIA NAVE %.1f / %.0f kWh\nRete %.2f kWh/min%s" % [ship_energy(), capacity, load * 60, " / %.1f min" % (ship_energy() / load / 60) if load > 0 else " / nessun consumo"]
@@ -970,7 +1006,6 @@ func _draw() -> void:
 	_draw_landscape()
 	_draw_terrain()
 	_draw_ship()
-	_draw_environment()
 	if show_grid:
 		_draw_metric_overlay()
 		if is_instance_valid(player) and active_tool().mode != "scan":
@@ -1012,7 +1047,7 @@ func _draw_terrain() -> void:
 			var light := _illumination(Grid.center(cell))
 			if kind.is_empty():
 				draw_rect(rect, darkness.lerp(Color("41444c"), light * 0.85))
-				if show_grid and light > 0.15:
+				if show_grid and light > 0.15 and environment.liquid_volume(cell) < 0.01 and float(environment.gas.get(cell, 0)) < 0.015:
 					draw_rect(rect, Color(0.65, 0.7, 0.73, light * 0.18), false, 1)
 				continue
 			var tint: Color = MATERIAL_COLORS[kind]
@@ -1040,38 +1075,6 @@ func _draw_terrain() -> void:
 				draw_circle(p + Vector2(20, 28), 1.5, Color("29353e"))
 			if show_grid and light > 0.2:
 				draw_rect(rect, Color(0.14, 0.12, 0.17, 0.3), false, 1)
-
-func _draw_environment() -> void:
-	for cell: Vector2i in environment.oil:
-		var light := _illumination(Grid.center(cell))
-		if light < 0.08:
-			continue
-		var rect := Grid.rect(cell)
-		var height := Grid.CELL_SIZE * float(environment.oil[cell])
-		var top := rect.end.y - height
-		draw_rect(Rect2(rect.position.x, top, Grid.CELL_SIZE, height), Color("030509").lerp(Color("78556c"), light))
-		draw_line(Vector2(rect.position.x + 2, top + 2), Vector2(rect.end.x - 2, top + 2), Color(0.62, 0.55, 0.78, light), 2)
-	for cell: Vector2i in environment.water:
-		var light := _illumination(Grid.center(cell))
-		if light < 0.12:
-			continue
-		var rect := Grid.rect(cell)
-		var amount := float(environment.water[cell])
-		var height := Grid.CELL_SIZE * amount
-		if height < 0.3:
-			continue
-		var top := rect.end.y - height
-		draw_rect(Rect2(rect.position.x, top, Grid.CELL_SIZE, height), Color(0.19, 0.65, 0.85, light * 0.65))
-		if float(environment.water.get(cell + Vector2i.UP, 0)) < 0.05:
-			draw_line(Vector2(rect.position.x, top + sin(ambient_time * 3 + cell.x) * 1.5), Vector2(rect.end.x, top), Color(0.6, 0.9, 0.98, light * 0.8), 1.5)
-	for cell: Vector2i in environment.gas:
-		var light := _illumination(Grid.center(cell))
-		var density := float(environment.gas[cell])
-		if light < 0.12 or density < 0.015:
-			continue
-		var p := Grid.to_world(cell)
-		var sway := sin(ambient_time * 2 + cell.x + cell.y) * 3
-		_polygon([p + Vector2(1, 15 + sway), p + Vector2(10, 4), p + Vector2(25, 7 + sway), p + Vector2(39, 16), p + Vector2(34, 35), p + Vector2(7, 37)], Color(0.72, 0.81, 0.31, minf(0.65, density * 2) * light))
 
 func _illumination(point: Vector2) -> float:
 	var hand := player.position - Vector2(0, 32) if is_instance_valid(player) else Vector2(0, -100)
@@ -1163,6 +1166,9 @@ func _draw_bedroom() -> void:
 	if is_instance_valid(rooms) and rooms.available("bedroom"):
 		draw_rect(ShipRooms.BEDROOM.grow(-5), Color(0.65, 1, 0.62, 0.12))
 		draw_rect(ShipRooms.BEDROOM.grow(-5), Color("b7ffb6"), false, 2)
+	if is_robbie():
+		CryoCrewView.draw_in(self)
+		return
 	draw_rect(Rect2(-138, -226, 117, 26), Color("49525b"))
 	draw_rect(Rect2(-138, -235, 117, 15), Color("e3e4cf"))
 	draw_rect(Rect2(-102, -235, 81, 19), Color("dba751"))

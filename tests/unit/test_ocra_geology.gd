@@ -6,7 +6,7 @@ const Layout = preload("res://scripts/data/hazard_layout.gd")
 const Geology = preload("res://scripts/data/ocra_geology.gd")
 
 func test_authored_pockets_are_disjoint_finite_sealed_and_outside_the_hatch() -> void:
-	var site := Site.new()
+	var site := Site.new(0, 1)
 	var occupied := {}
 	var totals := {"water": 0, "gas": 0, "oil": 0}
 	for pocket: Dictionary in site.pockets():
@@ -41,7 +41,7 @@ func test_legacy_layout_keeps_old_rock_and_only_two_pockets() -> void:
 	assert_int(Site.new(11).pockets().size()).is_equal(2)
 
 func test_oil_breach_flows_slowly_and_conserves_volume() -> void:
-	var site := Site.new()
+	var site := Site.new(0, 1)
 	var field := Field.new(site)
 	site.removed[Vector2i(6, 18)] = true
 	assert_array(field.detect_breaches()).contains(["oil"])

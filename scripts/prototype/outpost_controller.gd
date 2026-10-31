@@ -141,7 +141,7 @@ func environment_safe(building: Dictionary) -> bool:
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var cell := Vector2i(x, y)
-			if not Buildings.environment_safe(building.id, float(world.environment.water.get(cell, 0)), float(world.environment.gas.get(cell, 0)), float(world.environment.oil.get(cell, 0))):
+			if not Buildings.environment_safe(building.id, float(world.environment.water.get(cell, 0)), float(world.environment.gas.get(cell, 0)), float(world.environment.oil.get(cell, 0)), float(world.environment.acid.get(cell, 0))):
 				return false
 	return true
 

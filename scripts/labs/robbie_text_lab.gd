@@ -22,6 +22,7 @@ var preview_detail: Label
 var save_button: Button
 var reload_dialog: ConfirmationDialog
 var close_dialog: ConfirmationDialog
+var variant_picker: OptionButton
 
 func _ready() -> void:
 	var background := ColorRect.new()
@@ -41,6 +42,11 @@ func _ready() -> void:
 	var heading := UI.label("ROBBIE / TESTI", 22)
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
+	variant_picker = OptionButton.new()
+	variant_picker.add_item("Esploratore con Robbie")
+	variant_picker.add_item("Robbie protagonista")
+	variant_picker.item_selected.connect(func(_index): _filter())
+	header.add_child(variant_picker)
 	UI.button(header, "Ricarica", request_reload)
 	save_button = UI.button(header, "Salva testi", save_changes)
 	save_button.tooltip_text = "Salva il catalogo del progetto (Ctrl+S)"
@@ -179,7 +185,7 @@ func _filter() -> void:
 	filtered.clear()
 	var query := search.text.to_lower()
 	for id: String in entries:
-		var entry: Dictionary = entries[id]
+		var entry := Texts.for_variant(entries[id], "robbie" if variant_picker.selected == 1 else "explorer")
 		if not query.is_empty() and not (id + " " + entry.title + " " + entry.body).to_lower().contains(query):
 			continue
 		filtered.append(id)
@@ -200,7 +206,7 @@ func select_entry(id: String) -> void:
 	if index >= 0:
 		list.select(index)
 	updating = true
-	var entry: Dictionary = entries[id]
+	var entry := Texts.for_variant(entries[id], "robbie" if variant_picker.selected == 1 else "explorer")
 	identity.text = id
 	identity.tooltip_text = id
 	priority.value = entry.priority
@@ -219,7 +225,12 @@ func _preview() -> void:
 func _changed() -> void:
 	if updating or selected.is_empty():
 		return
-	entries[selected] = {"id": selected, "priority": int(priority.value), "title": title_edit.text, "body": body_edit.text, "detail": detail_edit.text}
+	entries[selected].priority = int(priority.value)
+	var copy := {"title": title_edit.text, "body": body_edit.text, "detail": detail_edit.text}
+	if variant_picker.selected == 1:
+		entries[selected].robbie = copy
+	else:
+		entries[selected].merge(copy, true)
 	dirty = true
 	save_button.disabled = false
 	feedback.text = "Modifiche non salvate"

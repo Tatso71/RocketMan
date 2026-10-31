@@ -1,6 +1,7 @@
 extends Node
 
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
+const Crew = preload("res://scripts/data/cryo_crew.gd")
 const CABIN := Rect2(-156, -434, 312, 114)
 const BEDROOM := Rect2(-156, -314, 312, 114)
 var world: Node2D
@@ -32,7 +33,7 @@ func _ready() -> void:
 	popup.id_pressed.connect(_cabin_action)
 	add_child(popup)
 	bed_window = Window.new()
-	bed_window.title = "Letto / Riposo"
+	bed_window.title = "Equipaggio / Criogenia" if world.is_robbie() else "Letto / Riposo"
 	bed_window.visible = false
 	bed_window.transient = true
 	bed_window.exclusive = true
@@ -50,12 +51,14 @@ func _ready() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 18)
 	panel.add_child(column)
-	column.add_child(UI.label("RIPOSO", 22))
+	column.add_child(UI.label("EQUIPAGGIO / CRIOSONNO" if world.is_robbie() else "RIPOSO", 22))
 	status = UI.label("", 17)
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(status)
 	rest_button = UI.button(column, "Riposa", func(): resting = true)
-	UI.button(column, "Alzati", _close_bed)
+	rest_button.visible = not world.is_robbie()
+	UI.button(column, "Chiudi" if world.is_robbie() else "Alzati", _close_bed)
 
 func handle_input(event: InputEvent) -> bool:
 	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT):
@@ -79,7 +82,7 @@ func open_bed() -> void:
 	world.mouse_mining = false
 	resting = false
 	world.guide_event("bed_inspected")
-	bed_window.popup_centered(Vector2i(440, 300))
+	bed_window.popup_centered(Vector2i(620, 410) if world.is_robbie() else Vector2i(440, 300))
 	_refresh()
 
 func _cabin_action(id: int) -> void:
@@ -102,6 +105,13 @@ func _close_bed() -> void:
 	bed_window.hide()
 
 func _refresh() -> void:
+	if world.is_robbie():
+		var lines: Array[String] = []
+		for member: Dictionary in Crew.MEMBERS:
+			lines.append("%s / SONNO PROFONDO\n%s\nParametri stabili" % [member.name, member.role])
+		status.text = "\n\n".join(lines)
+		rest_button.disabled = true
+		return
 	status.text = "Energia personale: %.0f / 100\nIntegrita tuta: %.0f / 100\n\n%s" % [world.crew_energy(), world.suit_integrity(), "Recupero in corso..." if resting else "Il riposo non ricarica la batteria della nave."]
 	rest_button.disabled = resting or (world.crew_energy() >= 100 and world.suit_integrity() >= 100)
 
@@ -111,7 +121,7 @@ func _process(delta: float) -> void:
 	if not available("bedroom"):
 		_close_bed()
 		return
-	if resting:
+	if resting and not world.is_robbie():
 		world._set_crew_energy(world.crew_energy() + delta * 20)
 		world._set_suit(world.suit_integrity() + delta * 20)
 		world.outpost.advance(delta)
