@@ -2,6 +2,8 @@
 
 Godot 4 exploration game about landing on unknown planets and building a home beneath a three-storey rocket. Target presentation: colorful low-poly 2.5D; the current playable geometry prototype is native 2D.
 
+For Aurora: [a message from Paolo and how to start experimenting](docs/team/per-aurora.md). Repository agents should read [AGENTS.md](AGENTS.md) first.
+
 ## Current slice
 
 - Three-floor rocket home: cockpit, living quarters, workshop
