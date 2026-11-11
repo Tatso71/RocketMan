@@ -14,3 +14,8 @@ extends Resource
 
 func effective_reach_metres() -> float:
 	return reach_metres + clampi(scanner_level, 1, 4) - 1 if mode == "scan" else reach_metres
+
+func identification_reach_metres() -> float:
+	if mode != "scan":
+		return 0.0
+	return minf(effective_reach_metres(), 2.5 + (clampi(scanner_level, 1, 4) - 1) * 1.5)

@@ -1,5 +1,7 @@
 # Industria, Condotti E Colture
 
+**Documento storico del prototipo a cubi.** Per regole correnti leggere [circuiti acqua](water-circuits.md) e [mappa di produzione](../design/mappa-produzione.md). Le sezioni sotto non descrivono piu' posa, componenti e pompe del runtime attivo.
+
 Tranche giocabile del prototipo, non implementazione dell'intera economia a 12 pianeti. Parametri e ricette: `design/v1/prototype_industry.json`. I dati sono validati da `industry_catalog.gd` e uniti al catalogo di fabbricazione gia utilizzato dal laboratorio.
 
 ## Unita

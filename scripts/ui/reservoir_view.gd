@@ -3,6 +3,7 @@ extends Node2D
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Fluids = preload("res://scripts/data/fluid_catalog.gd")
 var world: Node2D
+var concealed_cells: Dictionary = {}
 
 func _ready() -> void:
 	z_index = 2
@@ -13,6 +14,7 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not is_instance_valid(world.player):
 		return
+	concealed_cells = world.TerrainRenderer.hidden_pockets(world)
 	for kind: String in Fluids.LIQUID_IDS:
 		_draw_liquid(kind)
 	_draw_gas()
@@ -30,14 +32,36 @@ func _edge(start: Vector2, end: Vector2, color: Color, strength: float = 0.65) -
 	if light > 0.06:
 		draw_line(start, end, Color(color, light * strength), 1.7, true)
 
+static func bubble_marks(cell: Vector2i, rect: Rect2, time: float) -> Array[Dictionary]:
+	var marks: Array[Dictionary] = []
+	if rect.size.y < 8:
+		return marks
+	var seed_value := posmod(cell.x * 31 + cell.y * 17, 97)
+	for index in range(2):
+		var phase := fposmod(time * (0.22 + index * 0.05) + seed_value * 0.017 + index * 0.47, 1.0)
+		var radius := 1.3 + float(posmod(seed_value + index * 7, 11)) * 0.12
+		var x := rect.position.x + 9 + index * 19 + sin(time * 1.4 + seed_value + index) * 2
+		var y := lerpf(rect.end.y - 3, rect.position.y + 3, phase)
+		marks.append({"position": Vector2(x, y), "radius": radius, "alpha": sin(phase * PI) * 0.6})
+	return marks
+
 func _draw_liquid(kind: String) -> void:
 	var field: Dictionary = world.environment.get(kind)
 	var definition: Dictionary = Fluids.KINDS[kind]
 	for cell: Vector2i in field:
+		if concealed_cells.has(cell):
+			continue
 		var rect: Rect2 = world.environment.liquid_rect(cell, kind)
 		if rect.size.y < 0.3:
 			continue
 		_fill(rect, definition.color, 0.88 if kind == "oil" else 0.78)
+		if kind == "water":
+			for mark: Dictionary in bubble_marks(cell, rect, world.ambient_time):
+				var light: float = world._illumination(mark.position)
+				if light > 0.06:
+					var ink := Color(definition.edge, light * mark.alpha)
+					draw_arc(mark.position, mark.radius, 0, TAU, 12, ink, 0.9, true)
+					draw_circle(mark.position - Vector2(mark.radius * 0.3, mark.radius * 0.35), 0.5, ink)
 		var above := cell + Vector2i.UP
 		if float(field[cell]) < 0.99 or float(field.get(above, 0)) < 0.01:
 			if world.site.material(above).is_empty() and world.environment.liquid_volume(above) < 0.01:
@@ -64,6 +88,8 @@ func _draw_gas() -> void:
 	var field: Dictionary = world.environment.gas
 	var definition: Dictionary = Fluids.KINDS.gas
 	for cell: Vector2i in field:
+		if concealed_cells.has(cell):
+			continue
 		var density := float(field[cell])
 		if density < 0.015:
 			continue

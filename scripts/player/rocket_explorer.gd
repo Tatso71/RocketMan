@@ -1,35 +1,68 @@
 extends CharacterBody2D
 
 const Grid = preload("res://scripts/world/world_grid.gd")
+const ExplorerAnimation = preload("res://scripts/player/explorer_animation.gd")
+var animation := ExplorerAnimation.new()
 var world: Node2D
 var facing := 1.0
 var climbing := false
-var walk_time := 0.0
 var suppress_jet_until_release := false
 var jump_was_held := false
+var impact_flash := 0.0
+
+static func impact_energy_loss(downward_speed: float) -> float:
+	if not is_finite(downward_speed) or downward_speed <= 440:
+		return 0.0
+	# Kinetic energy above a safe impact; ordinary jumps return below 440 px/s.
+	return clampf((downward_speed * downward_speed - 440 * 440) / (2 * 900 * Grid.PIXELS_PER_METRE) * 8, 0, 50)
+
+func apply_landing_impact(downward_speed: float) -> void:
+	var loss := impact_energy_loss(downward_speed)
+	if loss <= 0:
+		return
+	world._set_crew_energy(world.crew_energy() - loss)
+	impact_flash = 0.9
+	self_modulate = Color("ff4242")
+	world._note("Impatto violento / Energia -%.0f%%" % loss)
+
+func advance_impact_flash(delta: float) -> void:
+	impact_flash = maxf(0, impact_flash - delta)
+	self_modulate = Color("ff4242") if impact_flash > 0 and fmod(impact_flash, 0.22) > 0.09 else Color.WHITE
+
+func body_size() -> Vector2:
+	return Vector2(Grid.ROBBIE_WIDTH_METRES, Grid.ROBBIE_HEIGHT_METRES) * Grid.PIXELS_PER_METRE if world.is_robbie() else Vector2(Grid.PLAYER_WIDTH_METRES, Grid.PLAYER_HEIGHT_METRES) * Grid.PIXELS_PER_METRE
+
+func body_center() -> Vector2:
+	return position - Vector2(0, body_size().y * 0.5)
+
+func body_rect_at(feet: Vector2) -> Rect2:
+	var size := body_size()
+	return Rect2(feet - Vector2(size.x * 0.5, size.y), size)
 
 func _ready() -> void:
+	# Actors are not terrain: flying companions and ore must not hit the suit.
+	collision_layer = 2
 	var collider := CollisionShape2D.new()
 	var capsule := CapsuleShape2D.new()
-	capsule.radius = Grid.metres(Grid.PLAYER_WIDTH_METRES) * 0.5
-	capsule.height = Grid.metres(Grid.PLAYER_HEIGHT_METRES)
+	capsule.radius = body_size().x * 0.5
+	capsule.height = body_size().y
 	collider.shape = capsule
 	collider.position.y = -capsule.height * 0.5
 	add_child(collider)
 
 func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
+		animation.stop_firing()
+		queue_redraw()
 		jump_was_held = Input.is_action_pressed("jump")
 		return
+	advance_impact_flash(delta)
 	var horizontal := Input.get_axis("move_left", "move_right")
 	var jump_held := Input.is_action_pressed("jump")
 	var jump_pressed := jump_held and not jump_was_held
 	jump_was_held = jump_held
 	if not jump_held:
 		suppress_jet_until_release = false
-	if jump_pressed and world.outpost.use_cube():
-		jump_pressed = false
-		suppress_jet_until_release = true
 	var vertical := Input.get_axis("climb_up", "climb_down")
 	var environment: Dictionary = world.player_environment()
 	var wet: bool = environment.wet
@@ -44,7 +77,7 @@ func _physics_process(delta: float) -> void:
 	if not suppress_jet_until_release and world.gear.thrust(delta):
 		climbing = false
 		velocity.x = horizontal * 190 * speed_factor
-		velocity.y = move_toward(velocity.y, -180, 700 * delta)
+		velocity.y = move_toward(velocity.y, -world.gear.jetpack_thrust_speed(), 700 * world.gear.thrust_multiplier * delta)
 	elif climbing:
 		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor
 		if jump_pressed:
@@ -58,33 +91,100 @@ func _physics_process(delta: float) -> void:
 		velocity.y = -330
 	if horizontal != 0:
 		facing = signf(horizontal)
+	var was_grounded := is_on_floor()
+	var downward_speed := velocity.y
 	move_and_slide()
-	walk_time += delta * absf(velocity.x) * 0.06
+	if is_on_floor() and not was_grounded:
+		apply_landing_impact(downward_speed)
+	world.gear.observe_ground_contact(is_on_floor(), wet, climbing)
+	animation.advance(delta, velocity, is_on_floor(), climbing, world.gear.flying)
 	queue_redraw()
+
+func mining_pulse() -> void:
+	animation.fire()
+	queue_redraw()
+
+func reset_animation() -> void:
+	animation.reset()
+	impact_flash = 0
+	self_modulate = Color.WHITE
+	queue_redraw()
+
+func _firing() -> bool:
+	return world.beam_time > 0 and world.active_tool().mode == "mine"
+
+func _visual_transform() -> Transform2D:
+	var pose := animation.pose()
+	return Transform2D(pose.lean, Vector2.ZERO).scaled_local(pose.scale * Vector2(facing, 1) * 1.35)
+
+func _weapon_transform() -> Transform2D:
+	var pose := animation.pose()
+	var shoulder := Vector2(7, -20 + pose.bob)
+	var angle := 0.25 if animation.state == "walk" else 0.08
+	if _firing():
+		var target: Vector2 = _visual_transform().affine_inverse() * (world.beam_target - position)
+		angle = (target - shoulder).angle() + 0.14
+	angle -= pose.recoil * 0.08
+	return Transform2D(angle, shoulder - Vector2(pose.recoil * 3, 0))
+
+func beam_origin() -> Vector2:
+	if world.is_robbie():
+		return position + _robot_transform() * (_robot_center() + Vector2(facing * 46, -2))
+	return position + _visual_transform() * (_weapon_transform() * Vector2(26, -5))
 
 func _draw() -> void:
 	if world.is_robbie():
 		_draw_robbie()
 		return
-	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE * 1.35)
-	var step := sin(walk_time) * 3 if is_on_floor() else 0.0
-	draw_rect(Rect2(-14, -29, 9, 20), Color("485c66"))
-	draw_rect(Rect2(-9, -23, 18, 18), Color("e9a43e"))
-	draw_rect(Rect2(-8, -7, 6, 7 + step), Color("273d48"))
-	draw_rect(Rect2(3, -7, 6, 7 - step), Color("273d48"))
-	draw_circle(Vector2(0, -31), 13, Color("f7c45c"))
-	draw_circle(Vector2(facing * 2, -31), 9, Color("25495c"))
-	draw_circle(Vector2(facing * 4, -33), 3, Color("8de2e5"))
-	draw_circle(Vector2(0, -43), 4, Color("fff3bf"))
-	draw_line(Vector2(facing * 8, -20), Vector2(facing * 18, -22), Color("f7c45c"), 6)
-	if not world.outpost.fabrication.carried().is_empty():
+	var pose := animation.pose()
+	var body := _visual_transform()
+	var weapon := _weapon_transform()
+	var rear_hand: Vector2 = weapon * Vector2(18, -2) if _firing() else pose.rear_hand
+	draw_set_transform_matrix(body)
+	_draw_leg(Vector2(-5, -9), pose.rear_foot, Color("314954"))
+	_draw_arm(Vector2(-7, -21 + pose.bob), rear_hand, Color("ba873b"))
+	draw_rect(Rect2(-14, -29 + pose.bob, 9, 20), Color("485c66"))
+	draw_rect(Rect2(-9, -23 + pose.bob, 18, 15), Color("e9a43e"))
+	draw_line(Vector2(-8, -10 + pose.bob), Vector2(8, -10 + pose.bob), Color("f7c45c"), 3)
+	_draw_leg(Vector2(5, -9), pose.front_foot, Color("273d48"))
+	draw_circle(Vector2(0, -31 + pose.bob), 13, Color("f7c45c"))
+	draw_circle(Vector2(2, -31 + pose.bob), 9, Color("25495c"))
+	draw_circle(Vector2(4, -33 + pose.bob), 3, Color("8de2e5"))
+	draw_circle(Vector2(0, -43 + pose.bob), 4, Color("fff3bf"))
+	var show_weapon := not animation.state.begins_with("climb") or _firing()
+	if not show_weapon or not world.outpost.fabrication.carried().is_empty():
+		_draw_arm(Vector2(7, -21 + pose.bob), pose.front_hand, Color("f7c45c"))
 		return
-	draw_colored_polygon(PackedVector2Array([Vector2(facing * 15, -29), Vector2(facing * 31, -29), Vector2(facing * 34, -25), Vector2(facing * 31, -20), Vector2(facing * 15, -20)]), Color("526e79"))
-	draw_line(Vector2(facing * 22, -24), Vector2(facing * 34, -25), world.active_tool().beam_color, 3)
+	var grip := weapon * Vector2(12, -2)
+	_draw_arm(Vector2(7, -21 + pose.bob), grip, Color("f7c45c"))
+	draw_set_transform_matrix(body * weapon)
+	draw_colored_polygon(PackedVector2Array([Vector2(7, -9), Vector2(23, -9), Vector2(26, -5), Vector2(23, 0), Vector2(7, 0)]), Color("526e79"))
+	draw_line(Vector2(14, -4), Vector2(26, -5), world.active_tool().beam_color, 3)
+	if _firing():
+		draw_circle(Vector2(26, -5), 2 + pose.recoil * 2, Color(world.active_tool().beam_color, 0.8))
+
+func _draw_leg(hip: Vector2, foot: Vector2, ink: Color) -> void:
+	var knee := hip.lerp(foot, 0.5) + Vector2(3, -1)
+	draw_line(hip, knee, ink, 6, true)
+	draw_line(knee, foot, ink, 5, true)
+	draw_line(foot - Vector2(2, 0), foot + Vector2(4, 0), Color("1d333e"), 3, true)
+
+func _draw_arm(shoulder: Vector2, hand: Vector2, ink: Color) -> void:
+	var elbow := shoulder.lerp(hand, 0.5) + Vector2(-2, 3)
+	draw_line(shoulder, elbow, ink, 5, true)
+	draw_line(elbow, hand, ink, 5, true)
+	draw_circle(hand, 2.7, Color("485c66"))
+
+func _robot_center() -> Vector2:
+	var pose := animation.pose()
+	return Vector2(-facing * pose.recoil * 2, -32 + sin(animation.clock * 4) * 1.5 + (1 - pose.scale.y) * 24)
+
+func _robot_transform() -> Transform2D:
+	return Transform2D(0, Vector2(0, 3.2)).scaled_local(Vector2.ONE * 0.6)
 
 func _draw_robbie() -> void:
-	var bob := sin(Time.get_ticks_msec() * 0.004) * 1.5
-	var center := Vector2(0, -32 + bob)
+	draw_set_transform_matrix(_robot_transform())
+	var center := _robot_center()
 	var ink := Color("78e4dc") if world.suit_integrity() > 25 else Color("ff7774")
 	draw_line(center + Vector2(-17, -17), center + Vector2(-17, -27), Color("799198"), 3)
 	draw_circle(center + Vector2(-17, -28), 3, ink)

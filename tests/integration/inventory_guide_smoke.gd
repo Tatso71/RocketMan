@@ -60,7 +60,7 @@ func _run() -> void:
 	root.add_child(world)
 	current_scene = world
 	Fixture.workshop(world)
-	world.local_store = {"soil": 12, "stone": 8, "copper": 6}
+	world.local_store = {"structural_component": 8, "electronic_component": 6, "copper": 6}
 	await frames(10)
 	world.player.set_physics_process(false)
 	world.drone.set_physics_process(false)
@@ -74,24 +74,24 @@ func _run() -> void:
 	check(ui.window.visible, "inventory opens aboard")
 	check(not ui.prepare_button.disabled, "prepare laboratory is available beside ship hold")
 	ui.prepare_lab()
-	check(world.field_cargo.available("stone", true) == 6 and world.field_cargo.available("copper", true) == 4, "prepare laboratory loads exact stone and copper")
-	check(world.field_cargo.backpack.is_empty() and world.field_cargo.used(world.field_cargo.drone) == 10, "recipe is physically carried entirely by Robbie")
-	check(world.local_store.stone == 2 and world.local_store.copper == 2, "preparation subtracts materials from local ship stock")
+	check(world.field_cargo.available("structural_component", true) == 4 and world.field_cargo.available("electronic_component", true) == 2, "prepare laboratory loads exact structural and electronic components")
+	check(world.field_cargo.backpack.is_empty() and world.field_cargo.used(world.field_cargo.drone) == 2, "compact components are physically carried by Robbie")
+	check(world.local_store.structural_component == 4 and world.local_store.electronic_component == 4, "preparation subtracts components from local ship stock")
 	check(not ui.prepare_blocker().is_empty(), "legacy recipe preparation cannot duplicate already carried materials")
 	await frames()
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(ui.window, ui.window.get_visible_rect()), "all inventory controls fit inside the window")
 	await screenshot("inventory-three-holds", ui.window)
 	ui.deposit()
-	var copper: int = world.local_store.copper
-	world.local_store.copper = 0
+	var copper: int = world.local_store.electronic_component
+	world.local_store.electronic_component = 0
 	var insufficient: Dictionary = world.local_store.duplicate()
 	ui.prepare_lab()
 	check(world.local_store == insufficient and world.field_cargo.used(world.field_cargo.backpack) == 0, "missing recipe ingredient prevents partial withdrawal")
-	world.local_store.copper = copper
+	world.local_store.electronic_component = copper
 	check(world.field_cargo.used(world.field_cargo.backpack) + world.field_cargo.used(world.field_cargo.drone) == 0, "unload all empties both nearby holds")
 	check(world.guide_state.facts.get("deposited", false), "deposit emits a semantic guide milestone")
-	world.field_cargo.collect("soil", 20, true)
+	world.field_cargo.collect("copper", 20, true)
 	ui.refresh()
 	var before: Dictionary = world.field_cargo.snapshot()
 	var stock: Dictionary = world.local_store.duplicate()
@@ -125,9 +125,9 @@ func _run() -> void:
 	ui.window.hide()
 	check(world.outpost.place("laboratory", Vector2i(-5, 1)), "cube placement does not require carried resources")
 	var site: Dictionary = world.outpost.buildings.structures.back()
-	check(world.outpost.funding_blocker(site).contains("6 pietra"), "cube funding identifies missing quantities")
-	world.field_cargo.collect("stone", 6, true)
-	world.field_cargo.collect("copper", 4, true)
+	check(world.outpost.funding_blocker(site).contains("4 componente strutturale"), "assembly identifies missing component quantities")
+	world.field_cargo.collect("structural_component", 4, true)
+	world.field_cargo.collect("electronic_component", 2, true)
 	check(world.outpost.funding_blocker(site).is_empty(), "laboratory cube can overlap the explorer")
 	check(world.outpost.fund_site(site), "fund laboratory while standing inside its footprint")
 	world.outpost.construction.activation_popup.hide()
@@ -147,7 +147,7 @@ func _run() -> void:
 	world.guide.request_help()
 	check(not world.guide_state.active_id.is_empty(), "manual help works while automatic hints are muted")
 	world.drone.position = Vector2(900, 0)
-	world.drone.status = "Limite segnale"
+	world.drone.status = "Percorso ostruito"
 	world.guide.request_help()
 	await frames()
 	check_layout()

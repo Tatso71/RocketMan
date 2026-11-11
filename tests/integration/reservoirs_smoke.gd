@@ -11,6 +11,7 @@ var failures := 0
 var capture := false
 
 func _initialize() -> void:
+	Layout.gas_pockets_enabled = true
 	_run.call_deferred()
 
 func check(value: bool, description: String) -> void:
@@ -70,15 +71,17 @@ func _run() -> void:
 		if y != 12:
 			Fixture.carve(world, Vector2i(-21, y))
 	world.player.position = Vector2(-860, 480)
-	world.drone.range_metres = 50
 	Fixture.support(world)
 	await frames()
 	var seal := Vector2i(-21, 12)
 	world.equip_tool(1)
 	world.target_cell = seal
 	world.mine_timer = 0
-	world._mine_target()
-	check(world.scanned.has(seal) and world.status_label.text.contains("Acido") and world.environment.released.is_empty(), "scanner identifies the acid area beyond its solid wall without releasing it")
+	world.scanner_view.pulses.clear()
+	world.scanner_view.emission_timer = 0
+	world.scanner_view.advance(0.01)
+	world.scanner_view.advance(1.79)
+	check(world.scanner_view.revealed.values().any(func(entry): return entry.kind == "acid") and world.environment.released.is_empty(), "passive scanner identifies the acid area beyond its solid wall without releasing it")
 	if capture:
 		world.camera.position = Vector2(-790, 530)
 		world.camera.zoom = Vector2.ONE * 1.35
@@ -141,7 +144,6 @@ func _run() -> void:
 			check(world.restore_state(pristine), "restore untouched basin before its inspection capture")
 			world.drone.water_alarm = false
 			world.drone.status = "Ti seguo"
-			world.drone.range_metres = 15
 			for x in range(pocket.origin.x - 2, pocket.origin.x):
 				for y in range(pocket.origin.y - 2, pocket.origin.y):
 					Fixture.carve(world, Vector2i(x, y))

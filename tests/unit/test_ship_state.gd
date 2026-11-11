@@ -30,12 +30,12 @@ func test_ship_has_three_floor_baseline_and_metric_module_footprints() -> void:
 
 func test_upgrade_pays_once_and_changes_derived_attribute() -> void:
 	var ship := Ship.new()
-	ship.resources = {"stone": 8, "copper": 6}
+	ship.resources = {"structural_component": 5, "electronic_component": 3}
 	assert_bool(ship.upgrade("cargo")).is_true()
 	assert_int(ship.modules.cargo).is_equal(2)
 	assert_int(ship.cargo_capacity()).is_equal(200)
-	assert_int(ship.resources.stone).is_equal(2)
-	assert_int(ship.resources.copper).is_equal(2)
+	assert_int(ship.resources.structural_component).is_equal(2)
+	assert_int(ship.resources.electronic_component).is_equal(2)
 	var before := ship.snapshot()
 	assert_bool(ship.upgrade("cargo")).is_false()
 	assert_dict(ship.snapshot()).is_equal(before)
@@ -49,7 +49,7 @@ func test_repair_and_supplies_do_not_charge_when_full() -> void:
 	assert_bool(ship.recharge()).is_false()
 	assert_dict(ship.resources).is_equal(original)
 	ship.hull = 90
-	ship.resources = {"soil": 2, "stone": 2, "copper": 1}
+	ship.resources = {"structural_component": 2, "electronic_component": 2}
 	assert_bool(ship.repair()).is_true()
 	assert_float(ship.hull).is_equal(100.0)
 	ship.fuel = 70
@@ -59,8 +59,8 @@ func test_repair_and_supplies_do_not_charge_when_full() -> void:
 func test_engine_upgrade_reduces_route_fuel_and_launcher_reserves_takeoff() -> void:
 	var ship := Ship.new()
 	var planet := Planets.find("ochre")
-	ship.resources.copper = 20
-	ship.resources.crystal = 10
+	ship.resources.structural_component = 20
+	ship.resources.electronic_component = 10
 	var old_cost := ship.route_cost(planet)
 	assert_bool(ship.upgrade("engine")).is_true()
 	assert_float(ship.route_cost(planet)).is_less(old_cost)
@@ -93,7 +93,7 @@ func test_restore_rejects_overfilled_cargo_and_nonfinite_stats() -> void:
 func test_digital_tool_unlocks_and_four_slot_limit_survive_save() -> void:
 	var ship := Ship.new()
 	ship.lab_research_unlocked = true
-	ship.resources = {"stone": 8, "copper": 6}
+	ship.resources = {"structural_component": 2, "electronic_component": 3}
 	assert_int(ship.tool_slots.size()).is_equal(4)
 	assert_bool(ship.upgrade("drill")).is_true()
 	assert_array(ship.tool_slots).contains(["resonator"])
@@ -128,12 +128,11 @@ func test_lab_unlocks_drone_upgrade_and_portable_cargo_survives_save() -> void:
 	var ship := Ship.new()
 	assert_bool(ship.upgrade("drill")).is_false()
 	ship.lab_research_unlocked = true
-	ship.resources.copper = 10
-	ship.resources.crystal = 2
-	ship.resources.stone = 8
+	ship.resources.structural_component = 4
+	ship.resources.electronic_component = 4
 	assert_bool(ship.upgrade("drone")).is_true()
 	assert_int(ship.field_cargo.drone_capacity).is_equal(28)
-	assert_float(ship.drone_range_metres()).is_equal(20.0)
+	assert_float(ship.power_link_range_metres()).is_equal(20.0)
 	ship.field_cargo.collect("soil", 10, true)
 	var loaded := Ship.new()
 	var data: Dictionary = JSON.parse_string(JSON.stringify(ship.snapshot()))

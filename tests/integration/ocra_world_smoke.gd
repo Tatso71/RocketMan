@@ -107,7 +107,7 @@ func _run() -> void:
 	check(world.drone.position.y < -80, "Robbie returns through the actual hatch without getting trapped")
 	world.player.position = Vector2(900, 800)
 	await frames(35)
-	check(world.drone.signal_connected() and world.drone.status == "Limite segnale", "radio limit remains enforced")
+	check(not world.drone.status.contains("segnale"), "distance alone never imposes a ship radio limit")
 	world.player.position = Vector2(140, 200)
 	var before_alarm: Vector2 = world.drone.position
 	await frames(10)
@@ -128,7 +128,7 @@ func _run() -> void:
 	world.queue_redraw()
 	await picture("ocra-tunnel-unlit-720p")
 	world.field_cargo.backpack.clear()
-	world.field_cargo.drone = {"stone": 6, "copper": 5, "soil": 1}
+	world.field_cargo.drone = {"structural_component": 4, "electronic_component": 3}
 	world.player.position = Vector2(-260, 400)
 	Fixture.support(world)
 	check(Fixture.build(world, "laboratory", Vector2i(-6, 7)), "field laboratory can be built in a real dry supported gallery")

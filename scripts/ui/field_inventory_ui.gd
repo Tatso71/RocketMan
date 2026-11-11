@@ -2,8 +2,10 @@ extends CanvasLayer
 
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 const NAMES := Cargo.NAMES
 const COLORS := Cargo.COLORS
+const ITEM_IDS := ["copper", "iron", "crystal", "silica", "cobalt", "structural_component", "electronic_component", "copper_ingot", "glass", "potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
 const ICONS := [preload("res://assets/ui/backpack.svg"), preload("res://assets/ui/drone.svg"), preload("res://assets/ui/storage.svg")]
 var world: Node2D
 var window: Window
@@ -150,11 +152,15 @@ func _build_compact() -> void:
 	var total_header := label("Totale", 13, Color("e8d388"))
 	total_header.hide()
 	grid.add_child(total_header)
-	for id: String in Cargo.ITEM_IDS:
-		var name_label := label(NAMES[id], 15, COLORS[id])
-		name_label.custom_minimum_size.x = 128
-		grid.add_child(name_label)
-		compact_rows[id] = [name_label]
+	for id: String in ITEM_IDS:
+		var compact_name: String = {"structural_component": "Strutture", "electronic_component": "Elettronica"}.get(id, NAMES[id])
+		var name_row := HBoxContainer.new()
+		name_row.custom_minimum_size.x = 156
+		grid.add_child(name_row)
+		name_row.add_child(ItemIcons.view(id, 22))
+		var name_label := label(compact_name, 15, COLORS[id])
+		name_row.add_child(name_label)
+		compact_rows[id] = [name_row]
 		for index in range(2):
 			var count := label("0", 13)
 			count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -244,15 +250,11 @@ func _build_window() -> void:
 		items.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		scroll.add_child(items)
 		var item_counts: Array[Label] = []
-		for id: String in Cargo.ITEM_IDS:
+		for id: String in ITEM_IDS:
 			var row := HBoxContainer.new()
 			row.custom_minimum_size.y = 28
 			items.add_child(row)
-			var swatch := ColorRect.new()
-			swatch.color = COLORS[id]
-			swatch.custom_minimum_size = Vector2(9, 9)
-			swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			row.add_child(swatch)
+			row.add_child(ItemIcons.view(id, 24))
 			var name_label := label(NAMES[id] + (" (4 posti)" if id == "lab_cube" else ""), 14)
 			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.add_child(name_label)
@@ -268,13 +270,14 @@ func _build_window() -> void:
 	column.add_child(recipe)
 	recipe.add_child(label("LABORATORIO", 14))
 	for id: String in Buildings.LAB_COST:
+		recipe.add_child(ItemIcons.view(id, 22))
 		var cost_label := label("", 14)
 		recipe.add_child(cost_label)
 		cost_labels.append(cost_label)
 	var recipe_spacer := Control.new()
 	recipe_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	recipe.add_child(recipe_spacer)
-	prepare_button = button(recipe, "Fabbrica cubo", open_fabrication)
+	prepare_button = button(recipe, "Produci componenti", open_fabrication)
 	prepare_button.tooltip_text = "Apri il banco del laboratorio vicino"
 	preparation_status = label("", 13, Color("b4c5c6"))
 	column.add_child(preparation_status)
@@ -282,9 +285,13 @@ func _build_window() -> void:
 	actions.add_theme_constant_override("separation", 8)
 	column.add_child(actions)
 	picker = OptionButton.new()
+	picker.expand_icon = true
+	picker.add_theme_constant_override("icon_max_width", 24)
 	picker.custom_minimum_size.x = 160
-	for id: String in Cargo.ITEM_IDS:
+	for id: String in ITEM_IDS:
 		picker.add_item(NAMES[id])
+		picker.set_item_icon(picker.item_count - 1, ItemIcons.texture(id))
+		picker.get_popup().set_item_icon_max_width(picker.item_count - 1, 22)
 	picker.item_selected.connect(func(index: int):
 		for hold in range(hold_scrolls.size()):
 			hold_scrolls[hold].ensure_control_visible(counts[hold][index])
@@ -303,7 +310,7 @@ func _build_window() -> void:
 	deposit_button.tooltip_text = "Deposita il carico di Robbie quando e vicino"
 	craft_button = button(actions, "Fabbrica luce", craft)
 	craft_button.visible = false
-	craft_button.tooltip_text = "Al laboratorio: 1 terra + 1 rame, con spazio per il kit"
+	craft_button.tooltip_text = "Montaggio dal menu contestuale"
 	feedback = label("", 14, Color("f0d281"))
 	feedback.custom_minimum_size.y = 22
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -319,7 +326,7 @@ func open_inventory() -> void:
 func lab_missing() -> Dictionary:
 	var missing := {}
 	for id: String in Buildings.LAB_COST:
-		var count: int = world.field_cargo.available(id, world.drone_help_available(), world.outpost.payment_cache())
+		var count: int = world.field_cargo.available(id, world.drone_help_available())
 		if count < int(Buildings.LAB_COST[id]):
 			missing[id] = int(Buildings.LAB_COST[id]) - count
 	return missing
@@ -336,14 +343,16 @@ func prepare_blocker() -> String:
 	var missing := lab_missing()
 	if missing.is_empty():
 		return "Materiali del laboratorio gia disponibili."
-	var total := 0
+	if not world.drone_help_available():
+		return "Attendi Robbie vicino al banco."
+	var simulated: Dictionary = world.field_cargo.drone.duplicate()
 	for id: String in missing:
-		total += int(missing[id])
 		if int(world.outpost.source_stock().get(id, 0)) < int(missing[id]):
 			return "Nel deposito manca %s." % NAMES[id].to_lower()
-	var space: int = world.field_cargo.free_space(world.drone_help_available())
-	if space < total:
-		return "Libera %d posti nel carico prima di prelevare." % (total - space)
+		simulated[id] = int(simulated.get(id, 0)) + int(missing[id])
+	var excess: int = world.field_cargo.used(simulated) - world.field_cargo.drone_capacity
+	if excess > 0:
+		return "Libera %d posti nel carico prima di prelevare." % excess
 	return ""
 
 func prepare_lab() -> void:
@@ -354,13 +363,13 @@ func prepare_lab() -> void:
 	var missing := lab_missing()
 	for id: String in missing:
 		world.field_cargo.withdraw(world.outpost.source_stock(), id, int(missing[id]), world.drone_help_available())
-	feedback.text = "Caricati i materiali: 6 pietra + 4 rame disponibili per il laboratorio."
+	feedback.text = "Componenti del laboratorio caricati."
 	refresh()
 
 func withdraw() -> void:
 	if not world.outpost.source_available():
 		return
-	var id: String = Cargo.ITEM_IDS[picker.selected]
+	var id: String = ITEM_IDS[picker.selected]
 	var ok: bool = world.field_cargo.withdraw(world.outpost.source_stock(), id, int(amount.value), world.drone_help_available())
 	feedback.text = "Prelevati %d: %s." % [int(amount.value), NAMES[id]] if ok else "Quantita non disponibile nel deposito o spazio nel carico insufficiente."
 	refresh()
@@ -369,19 +378,19 @@ func deposit() -> void:
 	if not world.outpost.source_available():
 		return
 	var transferred: int = world.field_cargo.deposit(world.outpost.source_stock(), storage_capacity(), world.drone_help_available())
-	feedback.text = "Scaricate %d unita nel deposito." % transferred if transferred > 0 else "Nessun trasferimento: carico vuoto o deposito pieno."
+	feedback.text = "Scaricati %d pezzi nel deposito." % transferred if transferred > 0 else "Nessun trasferimento: carico vuoto o deposito pieno."
 	if transferred > 0:
 		world.guide_event("deposited")
 	refresh()
 
 func craft() -> void:
-	feedback.text = "Luce fabbricata: kit aggiunto al carico." if world.outpost.craft_lamp() else "Servono un laboratorio vicino, 1 terra, 1 rame e spazio per il kit."
+	feedback.text = "Scegli Luce con clic destro sul punto di montaggio."
 	refresh()
 
 func eat() -> void:
 	if world.is_robbie():
 		return
-	var id: String = Cargo.ITEM_IDS[picker.selected]
+	var id: String = ITEM_IDS[picker.selected]
 	if id not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or world.crew_energy() >= 100 or not world.field_cargo.pay({id: 1}, true):
 		return
 	world._set_crew_energy(world.crew_energy() + 20)
@@ -397,7 +406,7 @@ func refresh() -> void:
 	var stocks: Array = [cargo.backpack, cargo.drone, world.outpost.source_stock()]
 	var limits: Array = [Cargo.PACK_CAPACITY, cargo.drone_capacity, storage_capacity()]
 	for id: String in compact_rows:
-		var visible_row := int(cargo.backpack.get(id, 0)) + int(cargo.drone.get(id, 0)) > 0 or id in ["soil", "stone", "copper"]
+		var visible_row := int(cargo.backpack.get(id, 0)) + int(cargo.drone.get(id, 0)) > 0 or id in ["copper", "iron", "crystal", "structural_component", "electronic_component"]
 		for widget: Control in compact_rows[id]:
 			widget.visible = visible_row
 		compact_rows[id][1].hide()
@@ -414,8 +423,8 @@ func refresh() -> void:
 		compact_titles[index].modulate = Color("ffb18e") if used == limits[index] else Color.WHITE
 		compact_bars[index].max_value = limits[index]
 		compact_bars[index].value = used
-		for item in range(Cargo.ITEM_IDS.size()):
-			compact_counts[item * 2 + index].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0))
+		for item in range(ITEM_IDS.size()):
+			compact_counts[item * 2 + index].text = str(stocks[index].get(ITEM_IDS[item], 0))
 			compact_counts[item * 2 + index].modulate = Color("829396") if index == 1 and not connected else Color.WHITE
 	delivery_button.disabled = world.drone.mission != "follow" or cargo.used(cargo.drone) == 0
 	if world.is_robbie():
@@ -440,23 +449,23 @@ func refresh() -> void:
 		capacities[index].text = "%d / %d unita%s" % [used, limits[index], "  PIENO" if used == limits[index] else ""] if index < 2 or source else "-- / --"
 		bars[index].max_value = limits[index]
 		bars[index].value = used if index < 2 or source else 0
-		for item in range(Cargo.ITEM_IDS.size()):
-			counts[index][item].text = str(stocks[index].get(Cargo.ITEM_IDS[item], 0)) if index < 2 or source else "--"
+		for item in range(ITEM_IDS.size()):
+			counts[index][item].text = str(stocks[index].get(ITEM_IDS[item], 0)) if index < 2 or source else "--"
 			counts[index][item].modulate = Color.WHITE if index != 1 or connected else Color("829396")
 	subtitles[0].text = "Sempre con te"
 	subtitles[1].text = "Carico disponibile" if connected else "In viaggio o fuori portata"
 	subtitles[2].text = ("Officina della nave" if world.aboard_workshop() else "Laboratorio vicino") if source else "Nessun deposito vicino"
 	availability.text = "Trasferimenti disponibili / " + subtitles[2].text if source else "Solo consultazione: raggiungi l'officina o un laboratorio per trasferire."
-	withdraw_button.disabled = not source or int(stocks[2].get(Cargo.ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(Cargo.ITEM_IDS[picker.selected], connected) < int(amount.value)
-	deposit_button.disabled = not source or cargo.used(stocks[2]) >= storage_capacity() or cargo.used(cargo.backpack) + (cargo.used(cargo.drone) if connected else 0) == 0
+	withdraw_button.disabled = not source or int(stocks[2].get(ITEM_IDS[picker.selected], 0)) < int(amount.value) or cargo.collectible(ITEM_IDS[picker.selected], connected) < int(amount.value)
+	deposit_button.disabled = not source or not ITEM_IDS.any(func(id: String): return cargo.available(id, connected) > 0 and cargo.room_for(stocks[2], id, storage_capacity()) > 0)
 	prepare_button.disabled = world.outpost.nearby_station().is_empty()
-	var item: String = Cargo.ITEM_IDS[picker.selected]
+	var item: String = ITEM_IDS[picker.selected]
 	eat_button.visible = not world.is_robbie()
 	eat_button.disabled = world.is_robbie() or item not in preload("res://scripts/data/industry_catalog.gd").CROP_IDS or cargo.available(item, true) <= 0 or world.crew_energy() >= 100
 	prepare_button.tooltip_text = "Apri fabbricazione al laboratorio" if not prepare_button.disabled else "Raggiungi un laboratorio"
-	preparation_status.text = "Cubi sul banco: %d / In mano: %d" % [world.outpost.fabrication.cubes.size() - (1 if world.outpost.fabrication.carried_id != 0 else 0), 1 if world.outpost.fabrication.carried_id != 0 else 0]
+	preparation_status.text = "Componenti compatti / 4 pezzi per unita di carico"
 	craft_button.disabled = not world.outpost.lamp_craft_blocker().is_empty()
-	craft_button.tooltip_text = world.outpost.lamp_craft_blocker() if craft_button.disabled else "1 terra + 1 rame / fabbrica nel laboratorio vicino"
+	craft_button.tooltip_text = "1 componente elettronico / montaggio sul posto"
 	var index := 0
 	for id: String in Buildings.LAB_COST:
 		var available: int = cargo.available(id, connected, stocks[2] if source else {})

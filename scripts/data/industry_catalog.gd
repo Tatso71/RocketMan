@@ -14,7 +14,7 @@ static func cost_valid(cost: Variant) -> bool:
 	if not cost is Dictionary or cost.is_empty():
 		return false
 	for id in cost:
-		if id not in ["soil", "stone", "copper", "copper_ingot", "glass"] or not positive(cost[id]) or cost[id] != floorf(cost[id]) or cost[id] > 120:
+		if id not in ["soil", "stone", "copper", "silica", "copper_ingot", "glass", "structural_component", "electronic_component"] or not positive(cost[id]) or cost[id] != floorf(cost[id]) or cost[id] > 120:
 			return false
 	return true
 

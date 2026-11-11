@@ -2,6 +2,9 @@ extends RefCounted
 
 const CURRENT_VERSION := 2
 
+# Temporary generation suspension; isolated QA may opt in to the retained gas systems.
+static var gas_pockets_enabled := false
+
 static func pockets(seed_value: int, layout_version: int = CURRENT_VERSION) -> Array:
 	var shift := posmod(seed_value, 3)
 	var result := [
@@ -27,6 +30,8 @@ static func pockets(seed_value: int, layout_version: int = CURRENT_VERSION) -> A
 				pocket.merge(shapes[pocket.id], true)
 				pocket.size = Vector2i(pocket.rows[0].length(), pocket.rows.size())
 		result.append({"id": "acid_west", "kind": "acid", "origin": Vector2i(-20, 11), "size": Vector2i(4, 4), "rows": [".##.", "####", "####", ".##."]})
+	if not gas_pockets_enabled:
+		result = result.filter(func(pocket: Dictionary) -> bool: return pocket.kind != "gas")
 	return result
 
 static func cells(pocket: Dictionary) -> Array[Vector2i]:

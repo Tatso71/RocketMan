@@ -1,6 +1,7 @@
 extends Node2D
 
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
+const Cargo = preload("res://scripts/systems/field_cargo.gd")
 var outpost: Node2D
 
 func _process(_delta: float) -> void:
@@ -15,7 +16,13 @@ func _draw() -> void:
 		var progress: float = float(job.elapsed) / float(job.seconds)
 		var point: Vector2 = outpost.station_output(station)
 		var paused: bool = not outpost.fabrication_pause_reason(job).is_empty()
-		_draw_cube(point, progress, job.id)
+		if job.id in ["structural_component", "electronic_component", "refined_electronics", "structural_alloy"]:
+			var kind: String = outpost.Components.recipe(job.id).output
+			for index in range(3):
+				var rect := Rect2(point + Vector2(-18 + index * 4, -15 - index * 8), Vector2(30, 6))
+				draw_rect(rect, Color(Cargo.COLORS[kind], 0.3 + progress * 0.7))
+		else:
+			_draw_cube(point, progress, job.id)
 		draw_string(ThemeDB.fallback_font, point + Vector2(-44, -82), outpost.recipe_definition(job.id).name_it, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Buildings.CUBE_COLORS.get(job.id, Color("ef816c")))
 		draw_rect(Rect2(point + Vector2(-28, -60), Vector2(56, 6)), Color("17252c"))
 		draw_rect(Rect2(point + Vector2(-28, -60), Vector2(56 * progress, 6)), Color("80e0d7"))

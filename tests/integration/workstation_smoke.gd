@@ -67,7 +67,7 @@ func _run() -> void:
 	campaign._process(10)
 	world = campaign.world
 	Fixture.workshop(world)
-	campaign.model.ship.resources = {"soil": 12, "stone": 12, "copper": 12, "crystal": 0}
+	campaign.model.ship.resources = {"structural_component": 12, "electronic_component": 12, "iron": 12, "copper": 12, "crystal": 0}
 	await frames()
 	world.player.set_physics_process(false)
 	world.drone.set_physics_process(false)
@@ -77,34 +77,34 @@ func _run() -> void:
 	check(not menu.is_open() and not world.controls_blocked(), "workstation windows start closed")
 	check(world.outpost.station_at(Vector2(-50, -140)).get("kind") == "ship", "ship laboratory is interactable from workshop")
 	await screenshot("workstation-ship-highlight-720p")
-	world.field_cargo.collect("soil", 4, true)
+	world.field_cargo.collect("copper", 4, true)
 	click(Vector2(-50, -140), MOUSE_BUTTON_RIGHT)
 	check(menu.popup.visible and world.controls_blocked(), "right click opens and pauses at the ship laboratory")
 	check(menu.popup.item_count == 6, "context popup has a title and all five actions")
 	await screenshot("workstation-context-actions", menu.popup)
-	var soil: int = campaign.model.ship.resources.soil
+	var soil: int = campaign.model.ship.resources.copper
 	menu.activate(0)
-	check(campaign.model.ship.resources.soil == soil + 4 and world.field_cargo.used(world.field_cargo.backpack) == 0, "deposit action unloads to the selected ship station")
+	check(campaign.model.ship.resources.copper == soil + 4 and world.field_cargo.used(world.field_cargo.backpack) == 0, "deposit action unloads to the selected ship station")
 	click(Vector2(-50, -140), MOUSE_BUTTON_RIGHT)
 	menu.activate(1)
 	check(ui.window.visible, "withdraw action opens the local material inventory")
-	ui.picker.select(1)
+	ui.picker.select(ui.ITEM_IDS.find("iron"))
 	ui.amount.value = 2
 	ui.withdraw_button.pressed.emit()
-	check(world.field_cargo.available("stone", true) == 2, "withdraw control transfers real local materials")
+	check(world.field_cargo.available("iron", true) == 2, "withdraw control transfers real local materials")
 	ui.window.hide()
 	click(Vector2(-50, -140), MOUSE_BUTTON_RIGHT)
 	menu.activate(2)
 	await frames()
 	var construction: Node = world.outpost.construction
-	check(construction.picker.visible and construction.resource_labels.size() == 2, "construction action opens the laboratory recipe table")
+	check(construction.picker.visible and construction.recipe_rows.has("structural_component") and construction.recipe_rows.has("electronic_component"), "production action opens the component recipe table")
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(construction.picker, construction.picker.get_visible_rect()), "construction tree fits at 720p")
 	await screenshot("workstation-construction", construction.picker)
 	construction._cancel_picker()
 	ui.open_inventory()
 	ui.prepare_lab()
-	check(world.field_cargo.available("stone", true) == 6 and world.field_cargo.available("copper", true) == 4, "construction menu prepares exact laboratory supplies")
+	check(world.field_cargo.available("structural_component", true) == 4 and world.field_cargo.available("electronic_component", true) == 2, "inventory prepares exact compact assembly supplies")
 	ui.window.hide()
 	campaign.model.ship.hull = 50
 	world._set_suit(50)
@@ -119,8 +119,8 @@ func _run() -> void:
 	menu.activate(4)
 	check(menu.rows[0].button.disabled, "ship tool-station upgrade respects laboratory research gate")
 	campaign.model.ship.lab_research_unlocked = true
-	campaign.model.ship.resources.stone = 20
-	campaign.model.ship.resources.copper = 20
+	campaign.model.ship.resources.structural_component = 20
+	campaign.model.ship.resources.electronic_component = 20
 	menu.refresh()
 	menu.rows[0].button.pressed.emit()
 	check(campaign.model.ship.laboratory_level == 2 and world.outpost.fabrication_seconds() < 5, "ship laboratory upgrade reduces actual production time")
@@ -142,7 +142,7 @@ func _run() -> void:
 	world.guide_state.dismiss()
 	Fixture.lab_room(world)
 	world.field_cargo.backpack.clear()
-	world.field_cargo.drone = {"stone": 6, "copper": 4}
+	world.field_cargo.drone = {"structural_component": 4, "electronic_component": 2}
 	Fixture.support(world)
 	world.set_hatch(true)
 	world.player.position = Vector2(-140, 160)
@@ -150,7 +150,7 @@ func _run() -> void:
 	await frames()
 	check(Fixture.build(world, "laboratory", Vector2i(-5, 1)), "field laboratory cube unfolds around the explorer")
 	var lab: Dictionary = world.outpost.buildings.labs()[0]
-	lab.stock = {"stone": 12, "copper": 12, "soil": 8}
+	lab.stock = {"structural_component": 12, "electronic_component": 12, "iron": 8, "copper": 12}
 	world.set_process(false)
 	world.camera.zoom = Vector2.ONE * 0.9
 	world.camera.position = Vector2(-80, 10)
@@ -175,14 +175,14 @@ func _run() -> void:
 	world._set_suit(40)
 	click(Vector2(-120, 100), MOUSE_BUTTON_RIGHT)
 	menu.activate(3)
-	var copper: int = lab.stock.copper
+	var copper: int = lab.stock.structural_component
 	menu.rows[0].button.pressed.emit()
-	check(world.suit_integrity() == 100 and lab.stock.copper == copper - 1, "field suit repair consumes local supplies")
+	check(world.suit_integrity() == 100 and lab.stock.structural_component == copper - 1, "field suit repair consumes a local structural component")
 	check(menu.rows[1].button.disabled, "underground lab cannot remotely repair ship hull")
 	menu.window.hide()
 	click(Vector2(-120, 100), MOUSE_BUTTON_RIGHT)
 	menu.activate(2)
-	check(construction.picker.visible and construction.recipe_rows.size() == 8 and not world.outpost.build_mode, "field station exposes structure and ammunition recipes without free world blueprints")
+	check(construction.picker.visible and construction.recipe_rows.size() == 5 and not world.outpost.build_mode, "field station exposes component and ammunition recipes without free world structures")
 	construction.picker.hide()
 	world.outpost.build_mode = false
 	# Keep the multi-station fixture dry; fluid behavior has a separate smoke test.

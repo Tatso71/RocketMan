@@ -4,6 +4,7 @@ const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Catalog = preload("res://scripts/data/industry_catalog.gd")
 const Network = preload("res://scripts/systems/utility_network.gd")
 const Grid = preload("res://scripts/world/world_grid.gd")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 var outpost: Node2D
 var window: Window
 var menu: PopupMenu
@@ -33,7 +34,7 @@ func _ready() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(root)
 	pipe_button = Button.new()
-	pipe_button.icon = preload("res://assets/design/icons/mod_pipe.svg")
+	pipe_button.icon = ItemIcons.texture("water_conduit")
 	pipe_button.expand_icon = true
 	pipe_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	pipe_button.position = Vector2(18, -92)
@@ -44,16 +45,17 @@ func _ready() -> void:
 	menu = PopupMenu.new()
 	menu.prefer_native_menu = false
 	for kind: String in Network.KINDS:
-		menu.add_item(Network.NAMES[kind] + " / 1 rame al metro")
+		menu.add_icon_item(ItemIcons.texture(kind + "_conduit"), Network.NAMES[kind] + (" / 1 elettronico al metro" if kind == "energy" else " / 1 strutturale al metro"))
+		menu.set_item_icon_max_width(menu.item_count - 1, 24)
 	menu.add_separator()
 	menu.add_item("Smonta scale e condotti", 3)
 	menu.add_item("Termina posa", 4)
-	menu.id_pressed.connect(func(id: int):
-		menu.hide()
-		mode = Network.KINDS[id] if id < 3 else ("remove" if id == 3 else "")
-		dragging = false
-		outpost.world.mouse_mining = false
-		outpost.world._note(Network.NAMES.get(mode, "Smontaggio" if mode == "remove" else "Posa terminata")))
+	menu.add_separator()
+	menu.add_icon_item(ItemIcons.texture("valve"), "Presa stagna / 2 strutturali + 1 elettronico", 10)
+	menu.set_item_icon_max_width(menu.item_count - 1, 24)
+	menu.add_icon_item(ItemIcons.texture("outlet"), "Terminale acqua / scarico o aspirazione", 11)
+	menu.set_item_icon_max_width(menu.item_count - 1, 24)
+	menu.id_pressed.connect(_choose_tool)
 	add_child(menu)
 	context_menu = PopupMenu.new()
 	context_menu.prefer_native_menu = false
@@ -117,12 +119,27 @@ func tool_active() -> bool:
 	return not mode.is_empty()
 
 func open_tools() -> void:
-	menu.popup_centered(Vector2i(350, 230))
+	menu.set_item_disabled(menu.get_item_index(10), not outpost.laboratory_unlocked())
+	menu.set_item_disabled(menu.get_item_index(11), not outpost.laboratory_unlocked())
+	menu.popup_centered(Vector2i(510, 320))
+
+func _choose_tool(id: int) -> void:
+	menu.hide()
+	mode = ""
+	dragging = false
+	outpost.world.mouse_mining = false
+	outpost.hydraulic_ui.reset()
+	if id in [10, 11]:
+		outpost.hydraulic_ui.begin("valve" if id == 10 else "outlet")
+		return
+	mode = Network.KINDS[id] if id >= 0 and id < 3 else ("remove" if id == 3 else "")
+	outpost.world._note(Network.NAMES.get(mode, "Smontaggio" if mode == "remove" else "Posa terminata"))
 
 func open_machine(building: Dictionary) -> void:
 	selected = building
 	mode = ""
 	dragging = false
+	outpost.hydraulic_ui.reset()
 	for child in rows.get_children():
 		rows.remove_child(child)
 		child.queue_free()
@@ -134,6 +151,9 @@ func open_machine(building: Dictionary) -> void:
 			var row := HBoxContainer.new()
 			row.add_theme_constant_override("separation", 14)
 			rows.add_child(row)
+			row.add_child(ItemIcons.view(id, 30))
+			if building.id == "greenhouse":
+				row.add_child(ItemIcons.view("seed_" + id, 24))
 			var label := UI.label("", 15)
 			label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -145,6 +165,12 @@ func open_machine(building: Dictionary) -> void:
 			feedback.text = "Prodotto ritirato" if outpost.industry.collect(selected, outpost) else "Prodotto non pronto o carico pieno"
 			refresh())
 		row_controls["collect"] = collect
+	if building.id == "pump":
+		var reverse := UI.button(rows, "Inverti ingresso / uscita", func():
+			feedback.text = "Ingresso e uscita invertiti" if outpost.hydraulics.reverse_pump(selected, outpost) else "Inversione non disponibile"
+			refresh())
+		reverse.tooltip_text = "Inverti le porte della pompa"
+		row_controls["reverse"] = reverse
 	feedback.text = ""
 	refresh()
 	window.popup_centered(Vector2i(800, 530))
@@ -169,7 +195,13 @@ func refresh() -> void:
 		progress.visible = true
 		progress.value = float(storage.energy) / float(data.converter.capacity) * 100
 	elif selected.id == "pump":
-		reserves.text = "Acqua conservata %.2f / %.0f u\n%s" % [storage.water, data.pump_capacity, "Drenaggio libero: acqua eliminata" if outpost.network.component("water", Network.port(selected, "water")).is_empty() else "Serbatoio collegato alla condotta acqua"]
+		var ports: Dictionary = outpost.hydraulics.pump_ports(selected)
+		var report: Dictionary = outpost.hydraulics.pump_report(selected, outpost)
+		status.text = report.get("status", "")
+		status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		reserves.text = "Acqua conservata %.2f / %.0f u\nPortata effettiva %.2f u/s  |  Trasferiti %.2f u\nIngresso [%d, %d]  /  Uscita [%d, %d]\nAssorbimento nominale %.3f kWh/s" % [storage.water, data.pump_capacity, float(report.get("rate", 0)), float(report.get("total", 0)), ports.input.x, ports.input.y, ports.output.x, ports.output.y, outpost.Buildings.power_draw(selected)]
+		progress.visible = true
+		progress.value = float(storage.water) / float(data.pump_capacity) * 100
 	else:
 		reserves.text = "Energia collegata %.2f kWh%s" % [outpost.industry.energy_available(selected, outpost), "  |  Acqua collegata %.2f u" % outpost.industry.water_available(selected, outpost) if selected.id == "greenhouse" else ""]
 		var current: String = storage.recipe if selected.id == "furnace" else storage.crop
@@ -315,7 +347,9 @@ func _draw() -> void:
 		_draw_machine(building, rect)
 		draw_set_transform(Vector2.ZERO)
 	for building: Dictionary in outpost.buildings.structures:
-		var kinds: Array = ["gas", "energy"] if building.id == "gas_converter" else (["water", "energy"] if building.id == "greenhouse" else (["energy"] if building.id == "furnace" else (["water"] if building.id == "pump" else [])))
+		if building.id == "pump" and building.get("state") != "planned":
+			_draw_pump_ports(building)
+		var kinds: Array = ["gas", "energy"] if building.id == "gas_converter" else (["water", "energy"] if building.id == "greenhouse" else (["energy"] if building.id == "furnace" else []))
 		for kind: String in kinds:
 			var point := Grid.center(Network.port(building, kind)) + Vector2(-6 if kind == "water" else (6 if kind == "energy" else 0), 0)
 			if outpost.world._illumination(point) > 0.1:
@@ -333,6 +367,25 @@ func _draw() -> void:
 		var cell := Grid.to_cell(outpost.world.get_global_mouse_position())
 		var valid: bool = outpost.reachable_cell(cell) if mode == "remove" else outpost.conduit_blocker(mode, cell).is_empty()
 		draw_rect(Grid.rect(cell).grow(-2), Color("8fe3b6") if valid else Color("f37e80"), false, 2)
+
+func _draw_pump_ports(building: Dictionary) -> void:
+	var ports: Dictionary = outpost.hydraulics.pump_ports(building)
+	var report: Dictionary = outpost.hydraulics.pump_report(building, outpost)
+	for role: String in ["input", "output"]:
+		var point := Grid.center(ports[role])
+		if outpost.world._illumination(point) <= 0.1:
+			continue
+		var ink := Color("8fd8f1") if role == "input" else Color("f2cd81")
+		draw_circle(point, 8, Color("162a30"))
+		draw_arc(point, 7, 0, TAU, 16, ink, 2)
+		var direction := Vector2.UP if role == "input" else Vector2.DOWN
+		var tip := point + direction * 4
+		draw_line(point - direction * 5, tip, ink, 2)
+		draw_line(tip, tip - direction * 4 + Vector2(3, 0), ink, 2)
+		draw_line(tip, tip - direction * 4 - Vector2(3, 0), ink, 2)
+		if float(report.get("rate", 0)) > 0:
+			var phase := fposmod(outpost.world.ambient_time * 1.8, 1.0)
+			draw_circle(point + direction * lerpf(-12, 12, phase), 2, Color("e0fbf6"))
 
 func _draw_machine(building: Dictionary, rect: Rect2) -> void:
 	var storage: Dictionary = outpost.industry.state(building)

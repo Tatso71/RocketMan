@@ -59,6 +59,6 @@ Questa sequenza fino al primo laboratorio e letta dal runtime da progression.ocr
 | return_ladder | Prepara la risalita | {"fact":"ladder"} | help |
 | laboratory_materials | Raccogli per il laboratorio | {"fact":"lab_materials_ready"} | inventory |
 | laboratory_room | Scava la stanza del laboratorio | {"fact":"lab_room_ready"} | help |
-| laboratory_cube | Fabbrica il cubo laboratorio | {"fact":"lab_cube_crafted"} | fabricate_lab |
-| carry_laboratory | Prendi il cubo pronto | {"fact":"lab_cube_carried"} | help |
-| deploy_laboratory | Apri il cubo nella stanza | {"fact":"lab_built"} | place_lab |
+| laboratory_cube | Produci i componenti | {"fact":"components_produced"} | fabricate_lab |
+| carry_laboratory | Carica i componenti | {"fact":"components_collected"} | fabricate_lab |
+| deploy_laboratory | Monta il laboratorio | {"fact":"lab_built"} | place_lab |

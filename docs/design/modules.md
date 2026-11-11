@@ -2,7 +2,7 @@
 
 Catalogo generato da [modules.json](../../design/v1/modules.json). Modificare il JSON e rieseguire `node tools/design/build.mjs`. Numeri di bilanciamento iniziali, da provare nel gioco.
 
-Le scale sono costruzione manuale immediata sul posto: 2 Terriccio, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
+Le scale sono costruzione manuale immediata e gratuita sul posto: zero materiali, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
 
 | ID | Modulo | Fase | Aperto X per Y m | Carico chiuso | kW | Deposito | Aggancio |
 | --- | --- | --- | --- | --- | --- | --- | --- |

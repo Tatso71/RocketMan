@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 const source=fs.readFileSync('tools/design/validate.mjs','utf8').replace("import fs from 'node:fs';",'');
 const fixtures=[
   ['valid instant ladder',null,null],
+  ['ladder material cost','recipes',data=>data.find(x=>x.id==='recipe_cube_ladder').inputs={res_soil:2}],
+  ['ladder rule material cost','rules',data=>data.manual_ladders.inputs={res_soil:2}],
   ['ladder recipe delay','recipes',data=>data.find(x=>x.id==='recipe_cube_ladder').seconds=5],
   ['ladder workshop dependency','recipes',data=>data.find(x=>x.id==='recipe_cube_ladder').station='mod_workshop'],
   ['ladder energy cost','recipes',data=>data.find(x=>x.id==='recipe_cube_ladder').energy_kwh=0.01],

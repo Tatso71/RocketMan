@@ -71,7 +71,7 @@ func refresh() -> void:
 	if tutorial.complete():
 		title.text = "Primo laboratorio attivo"
 		title.modulate = Color("a7e5b4")
-		detail.text = "Luci, pompa acqua e ventilatore gas sono sbloccati. Fabbrica i cubi al laboratorio."
+		detail.text = "Luci, pompa e ventilatore sbloccati. Produci componenti qui e monta nelle gallerie."
 		action.text = "Apri laboratorio" if not world.outpost.nearby_lab().is_empty() else "Riascolta Robbie"
 		return
 	if step.is_empty():
@@ -84,15 +84,17 @@ func refresh() -> void:
 	if step.action == "fabricate_lab" or step.id == "laboratory_materials":
 		var cargo: RefCounted = world.field_cargo
 		var source: Dictionary = world.outpost.source_stock() if world.aboard_workshop() else {}
-		var cost: Dictionary = world.outpost.lab_definition().get("cost", {})
-		stock.text = "Pietra %d / %d   Rame %d / %d" % [cargo.available("stone", world.drone_help_available(), source), cost.get("stone", 0), cargo.available("copper", world.drone_help_available(), source), cost.get("copper", 0)]
+		if step.id == "laboratory_materials":
+			stock.text = "Ferro %d/8  Rame %d/3\nCristallo %d/1" % [cargo.available("iron", world.drone_help_available(), source), cargo.available("copper", world.drone_help_available(), source), cargo.available("crystal", world.drone_help_available(), source)]
+		else:
+			stock.text = "Strutturali %d/4\nElettronici %d/2" % [cargo.available("structural_component", world.drone_help_available()), cargo.available("electronic_component", world.drone_help_available())]
 		action.text = "Apri officina" if step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
 	elif step.action == "place_lab":
 		var building: Dictionary = world.outpost.buildings.structures.filter(func(item: Dictionary): return item.id == "laboratory").front() if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory") else {}
 		if not building.is_empty():
-			stock.text = "Montaggio %.0f%%" % (float(building.progress) * 100) if building.state == "building" else "Cantiere precedente / trasferisci le materie mancanti"
+			stock.text = "Montaggio %.0f%%" % (float(building.progress) * 100) if building.state == "building" else "Progetto in attesa / clic destro per montare"
 		else:
-			stock.text = "Cubo in mano / Spazio per posare" if world.outpost.fabrication.carried_id != 0 else "Cubo posato / clic destro per attivare"
+			stock.text = "4 strutturali + 2 elettronici\nIngombro libero e pavimento stabile"
 		action.text = "Riascolta Robbie"
 	else:
 		action.text = "Apri inventario" if step.action == "inventory" else "Riascolta Robbie"

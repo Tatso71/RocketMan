@@ -9,6 +9,8 @@ const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
 const Network = preload("res://scripts/systems/utility_network.gd")
 const Industry = preload("res://scripts/systems/industry_state.gd")
+const WaterCircuit = preload("res://scripts/systems/water_circuit.gd")
+const Gear = preload("res://scripts/prototype/expedition_gear.gd")
 enum Phase {SELECT, FLIGHT, LANDING, DIGGING, TAKEOFF}
 const DURATIONS := {Phase.FLIGHT: 3.5, Phase.LANDING: 4.0, Phase.TAKEOFF: 2.5}
 var ship := Ship.new()
@@ -86,10 +88,10 @@ func takeoff() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "variant": variant, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
+	return {"version": 1, "economy_version": 2, "variant": variant, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
 
 func restore(data: Dictionary) -> bool:
-	if data.get("version") != 1 or not data.get("ship") is Dictionary or not data.get("outposts") is Dictionary:
+	if data.get("version") != 1 or data.get("economy_version") != 2 or not data.get("ship") is Dictionary or not data.get("outposts") is Dictionary:
 		return false
 	var next_variant = data.get("variant", "explorer")
 	if next_variant not in ["explorer", "robbie"]:
@@ -110,7 +112,7 @@ func restore(data: Dictionary) -> bool:
 		var outpost: Dictionary = data.outposts[planet_id]
 		if outpost.get("variant", "explorer") != next_variant:
 			return false
-		if outpost.get("version") != 1 or outpost.get("cell_metres") != 1.0 or not outpost.get("removed") is Array or not outpost.get("ladders") is Array or not outpost.get("materials") is Dictionary:
+		if outpost.get("version") != 1 or outpost.get("economy_version") != 2 or outpost.get("cell_metres") != 1.0 or not outpost.get("removed") is Array or not outpost.get("ladders") is Array or not outpost.get("materials") is Dictionary:
 			return false
 		if outpost.get("terrain_seed", 0) != Planets.find(planet_id).terrain_seed:
 			return false
@@ -125,6 +127,8 @@ func restore(data: Dictionary) -> bool:
 		if not Fabrication.integer(outpost.get("layout_version", 0), 0, DigSite.HazardLayout.CURRENT_VERSION):
 			return false
 		var terrain := DigSite.new(Planets.find(planet_id).terrain_seed, int(outpost.get("layout_version", 0)))
+		if outpost.has("scan_findings") and not terrain.valid_scan_findings(outpost.scan_findings):
+			return false
 		terrain.restore(outpost.removed)
 		var field := HazardField.new(terrain)
 		if not field.restore(outpost.get("hazards", {})):
@@ -132,7 +136,11 @@ func restore(data: Dictionary) -> bool:
 		var buildings := Buildings.new()
 		if not buildings.restore(outpost.get("buildings", []), terrain):
 			return false
+		if not Gear.valid(outpost.get("gear", {}), terrain, buildings):
+			return false
 		if not Network.new().restore(outpost.get("network", {}), terrain) or not Industry.new().restore(outpost.get("industry", {}), buildings, terrain):
+			return false
+		if not WaterCircuit.new().restore(outpost.get("hydraulics", {}), terrain, buildings):
 			return false
 		var fabrication := Fabrication.new()
 		if not fabrication.restore(outpost.get("fabrication", {})) or not fabrication.valid_world(terrain, buildings) or not Fabrication.integer(outpost.get("local_lab_level", 1), 1, 3):

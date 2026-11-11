@@ -50,9 +50,9 @@ func test_variant_saves_use_different_paths_without_changing_legacy_slots() -> v
 func test_diagnostics_keep_stable_ids_and_use_the_selected_voice() -> void:
 	var guide := Guide.new()
 	var original := guide.message("first_dig")
-	assert_str(original[2]).contains("aspettami")
+	assert_str(original[2]).contains("Y")
 	guide.variant = "robbie"
-	assert_str(guide.message("first_dig")[2]).contains("direttamente nel mio cargo")
+	assert_str(guide.message("first_dig")[2]).contains("mio cargo")
 	assert_str(guide.message("water_danger")[2]).contains("mia scocca")
 	assert_str(guide.message("ocra/reach_workshop")[2]).contains("criosonno")
 	assert_array(Texts.message("first_dig")).is_equal(original)

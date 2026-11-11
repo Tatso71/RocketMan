@@ -1,8 +1,10 @@
 extends RefCounted
 
-const ITEM_IDS := ["soil", "stone", "copper", "crystal", "lamp_kit", "lab_cube", "copper_ingot", "glass", "potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
-const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio", "copper_ingot": "Lingotto rame", "glass": "Vetro", "potato": "Patata", "ochre_tuber": "Tubero ocra", "verdant_leaf": "Verdura viridia", "frost_berry": "Bacca brina"}
-const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "crystal": Color("7be1da"), "lamp_kit": Color("fff3b2"), "lab_cube": Color("a7e5b4"), "copper_ingot": Color("e8a76c"), "glass": Color("a0dce4"), "potato": Color("e6d28b"), "ochre_tuber": Color("e4a57f"), "verdant_leaf": Color("a8db86"), "frost_berry": Color("c7acf0")}
+const ITEM_IDS := ["soil", "stone", "copper", "iron", "crystal", "silica", "cobalt", "structural_component", "electronic_component", "lamp_kit", "lab_cube", "copper_ingot", "glass", "potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
+const COMPONENT_IDS := ["structural_component", "electronic_component"]
+const STACK_SIZE := 4
+const NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "iron": "Ferro", "crystal": "Cristallo", "silica": "Quarzo", "cobalt": "Cobalto", "structural_component": "Componente strutturale", "electronic_component": "Componente elettronico", "lamp_kit": "Luce portatile", "lab_cube": "Cubo laboratorio", "copper_ingot": "Lingotto rame", "glass": "Vetro", "potato": "Patata", "ochre_tuber": "Tubero ocra", "verdant_leaf": "Verdura viridia", "frost_berry": "Bacca brina"}
+const COLORS := {"soil": Color("cf8272"), "stone": Color("adb0bb"), "copper": Color("edbf75"), "iron": Color("c9a6a0"), "crystal": Color("7be1da"), "silica": Color("ebe9d9"), "cobalt": Color("718feb"), "structural_component": Color("d5b879"), "electronic_component": Color("86d6bf"), "lamp_kit": Color("fff3b2"), "lab_cube": Color("a7e5b4"), "copper_ingot": Color("e8a76c"), "glass": Color("a0dce4"), "potato": Color("e6d28b"), "ochre_tuber": Color("e4a57f"), "verdant_leaf": Color("a8db86"), "frost_berry": Color("c7acf0")}
 const ITEM_UNITS := {"lab_cube": 4}
 const PACK_CAPACITY := 8
 var drone_capacity := 12
@@ -21,7 +23,7 @@ func enable_drone_only(capacity: int = 20) -> void:
 func unload_drone(stock: Dictionary, capacity: int) -> int:
 	var transferred := 0
 	for id: String in ITEM_IDS:
-		var amount := mini(maxi(0, capacity - used(stock)) / item_units(id), int(drone.get(id, 0)))
+		var amount := mini(room_for(stock, id, capacity), int(drone.get(id, 0)))
 		if amount > 0:
 			stock[id] = int(stock.get(id, 0)) + amount
 			drone[id] -= amount
@@ -31,16 +33,26 @@ func unload_drone(stock: Dictionary, capacity: int) -> int:
 func used(stock: Dictionary) -> int:
 	var total := 0
 	for id: String in ITEM_IDS:
-		total += int(stock.get(id, 0)) * item_units(id)
+		total += units_for(id, int(stock.get(id, 0)))
 	return total
+
+static func units_for(id: String, amount: int) -> int:
+	return ceili(float(amount) / STACK_SIZE) if id in COMPONENT_IDS else amount * item_units(id)
+
+func room_for(stock: Dictionary, id: String, capacity: int) -> int:
+	var free := maxi(0, capacity - used(stock))
+	if id in COMPONENT_IDS:
+		var count := int(stock.get(id, 0))
+		return free * STACK_SIZE + units_for(id, count) * STACK_SIZE - count
+	return free / item_units(id)
 
 static func item_units(id: String) -> int:
 	return ITEM_UNITS.get(id, 1)
 
 func collectible(id: String, with_drone: bool) -> int:
 	if drone_only:
-		return maxi(0, drone_capacity - used(drone)) / item_units(id) if with_drone and drone_available else 0
-	return (PACK_CAPACITY - used(backpack)) / item_units(id) + ((drone_capacity - used(drone)) / item_units(id) if with_drone else 0)
+		return room_for(drone, id, drone_capacity) if with_drone and drone_available else 0
+	return room_for(backpack, id, PACK_CAPACITY) + (room_for(drone, id, drone_capacity) if with_drone else 0)
 
 func free_space(with_drone: bool) -> int:
 	if drone_only:
@@ -53,10 +65,16 @@ func collect(id: String, amount: int = 1, with_drone: bool = false) -> bool:
 	if drone_only:
 		drone[id] = int(drone.get(id, 0)) + amount
 		return true
-	var pack_amount := mini(amount, (PACK_CAPACITY - used(backpack)) / item_units(id))
+	var pack_amount := mini(amount, room_for(backpack, id, PACK_CAPACITY))
 	backpack[id] = int(backpack.get(id, 0)) + pack_amount
 	if amount > pack_amount:
 		drone[id] = int(drone.get(id, 0)) + amount - pack_amount
+	return true
+
+func collect_drone(id: String, amount: int = 1) -> bool:
+	if id not in ITEM_IDS or amount <= 0 or room_for(drone, id, drone_capacity) < amount:
+		return false
+	drone[id] = int(drone.get(id, 0)) + amount
 	return true
 
 func available(id: String, with_drone: bool, cache: Dictionary = {}) -> int:
@@ -99,16 +117,14 @@ func withdraw(stock: Dictionary, id: String, amount: int, with_drone: bool) -> b
 	return true
 
 func deposit(stock: Dictionary, capacity: int, with_drone: bool) -> int:
-	var remaining := maxi(0, capacity - used(stock))
 	var transferred := 0
 	var sources := carried_sources(with_drone)
 	for source: Dictionary in sources:
 		for id: String in ITEM_IDS:
-			var amount := mini(remaining / item_units(id), int(source.get(id, 0)))
+			var amount := mini(room_for(stock, id, capacity), int(source.get(id, 0)))
 			if amount > 0:
 				stock[id] = int(stock.get(id, 0)) + amount
 				source[id] = int(source[id]) - amount
-				remaining -= amount * item_units(id)
 				transferred += amount * item_units(id)
 	return transferred
 
@@ -136,7 +152,7 @@ static func valid_stock(stock: Dictionary, capacity: int) -> bool:
 	var total := 0
 	for id in stock:
 		var value = stock[id]
-		if id not in ITEM_IDS or not (value is int or value is float) or not is_finite(float(value)) or float(value) != floorf(float(value)) or float(value) < 0 or float(value) > capacity:
+		if id not in ITEM_IDS or not (value is int or value is float) or not is_finite(float(value)) or float(value) != floorf(float(value)) or float(value) < 0 or float(value) > capacity * STACK_SIZE:
 			return false
-		total += int(value) * item_units(id)
+		total += units_for(id, int(value))
 	return total <= capacity

@@ -48,7 +48,7 @@ func test_lab_upgrade_limits_and_effects() -> void:
 	var lab := {"level": 1}
 	assert_int(Buildings.cache_capacity(lab)).is_equal(32)
 	assert_float(Buildings.light_range(lab)).is_equal(8.0)
-	assert_dict(Buildings.upgrade_cost(lab)).is_equal({"stone": 4, "copper": 3})
+	assert_dict(Buildings.upgrade_cost(lab)).is_equal({"structural_component": 4, "electronic_component": 2})
 	lab.level = 2
 	assert_int(Buildings.cache_capacity(lab)).is_equal(48)
 	assert_float(Buildings.light_range(lab)).is_equal(10.0)
@@ -117,8 +117,8 @@ func test_invalid_cube_states_do_not_replace_live_structures() -> void:
 		assert_str(buildings.structures[0].state).is_equal("planned")
 
 func test_power_rates_and_raw_material_costs() -> void:
-	assert_dict(Buildings.cost_for("laboratory")).is_equal({"stone": 6, "copper": 4})
-	assert_dict(Buildings.cost_for("lamp")).is_equal({"soil": 1, "copper": 1})
+	assert_dict(Buildings.cost_for("laboratory")).is_equal({"structural_component": 4, "electronic_component": 2})
+	assert_dict(Buildings.cost_for("lamp")).is_equal({"electronic_component": 1})
 	assert_float(Buildings.power_draw({"id": "laboratory", "level": 1})).is_equal(0.04)
 	assert_float(Buildings.power_draw({"id": "lamp"})).is_equal(0.008)
 
@@ -149,7 +149,7 @@ func test_pump_accepts_water_where_laboratory_cannot_be_built() -> void:
 	var buildings := Buildings.new()
 	assert_str(buildings.blocker("laboratory", Vector2i(-5, 1), site, field)).contains("sicura")
 	assert_str(buildings.blocker("pump", Vector2i(-5, 2), site, field)).is_empty()
-	assert_dict(Buildings.cost_for("pump")).is_equal({"stone": 3, "copper": 4})
+	assert_dict(Buildings.cost_for("pump")).is_equal({"structural_component": 2, "electronic_component": 2})
 	assert_float(Buildings.power_draw({"id": "pump", "state": "active"})).is_equal(0.03)
 
 func test_pump_statistics_and_dependencies_are_validated_on_restore() -> void:
@@ -182,7 +182,7 @@ func test_fan_accepts_gas_but_not_water_and_uses_real_power() -> void:
 	field.water[Vector2i(-5, 3)] = 1.0
 	assert_str(buildings.blocker("fan", Vector2i(-5, 2), site, field)).contains("sicura")
 	assert_vector(buildings.size_for("fan")).is_equal(Vector2i(2, 2))
-	assert_dict(Buildings.cost_for("fan")).is_equal({"stone": 2, "copper": 3})
+	assert_dict(Buildings.cost_for("fan")).is_equal({"structural_component": 1, "electronic_component": 2})
 	assert_float(Buildings.power_draw({"id": "fan", "state": "active"})).is_equal(0.02)
 	assert_float(Buildings.power_draw({"id": "fan", "state": "building"})).is_equal(0.05)
 

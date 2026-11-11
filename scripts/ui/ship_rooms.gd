@@ -2,12 +2,14 @@ extends Node
 
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Crew = preload("res://scripts/data/cryo_crew.gd")
+const VitalsMeters = preload("res://scripts/ui/vitals_meters.gd")
 const CABIN := Rect2(-156, -434, 312, 114)
 const BEDROOM := Rect2(-156, -314, 312, 114)
 var world: Node2D
 var popup: PopupMenu
 var bed_window: Window
 var status: Label
+var vitals_meters: HBoxContainer
 var rest_button: Button
 var resting := false
 
@@ -52,6 +54,8 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", 18)
 	panel.add_child(column)
 	column.add_child(UI.label("EQUIPAGGIO / CRIOSONNO" if world.is_robbie() else "RIPOSO", 22))
+	vitals_meters = VitalsMeters.new()
+	column.add_child(vitals_meters)
 	status = UI.label("", 17)
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -105,6 +109,8 @@ func _close_bed() -> void:
 	bed_window.hide()
 
 func _refresh() -> void:
+	vitals_meters.visible = not world.is_robbie()
+	vitals_meters.update_values(world.crew_energy(), world.suit_integrity(), world.is_robbie())
 	if world.is_robbie():
 		var lines: Array[String] = []
 		for member: Dictionary in Crew.MEMBERS:
@@ -112,7 +118,7 @@ func _refresh() -> void:
 		status.text = "\n\n".join(lines)
 		rest_button.disabled = true
 		return
-	status.text = "Energia personale: %.0f / 100\nIntegrita tuta: %.0f / 100\n\n%s" % [world.crew_energy(), world.suit_integrity(), "Recupero in corso..." if resting else "Il riposo non ricarica la batteria della nave."]
+	status.text = "Recupero in corso..." if resting else "Il riposo non ricarica la batteria della nave."
 	rest_button.disabled = resting or (world.crew_energy() >= 100 and world.suit_integrity() >= 100)
 
 func _process(delta: float) -> void:

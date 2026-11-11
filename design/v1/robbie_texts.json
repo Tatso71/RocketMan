@@ -19,47 +19,47 @@
     },
     {
       "id": "first_dig",
-      "robbie": {"body": "Pulse operativo. I materiali estratti entrano direttamente nel mio cargo. Quando e pieno devo tornare in un laboratorio e depositarli; Y funziona come deposito quando sono vicino al banco."},
+      "robbie": {"body": "Pulse operativo. Terra e pietra non occupano il mio cargo. I minerali cadono e rimbalzano: avvicinandomi li attiro col magnete. Se sono pieno restano al suolo; migliorando il modulo drone aumento il raggio magnetico."},
       "priority": 15,
       "title": "Il primo scavo",
-      "body": "Punta il terreno e usa Pulse. Tutti i materiali li porto io: aspettami entro 3 metri. Scendi abbastanza da liberare la botola, cosi posso uscire. Quando sono pieno, Y mi manda a scaricare alla nave e poi torno da te.",
+      "body": "Scava liberamente: terra e pietra non riempiono il carico. I minerali cadono al suolo: mi avvicino e li attiro col magnete. Se sono pieno, Y mi manda a depositare; tu puoi continuare a scavare e i frammenti restano li.",
       "detail": ""
     },
     {
       "id": "lab_plan",
       "priority": 20,
-      "title": "Il primo cubo creatore",
-      "body": "Raccogli 6 pietra e 4 rame e scava una stanza 4 x 3 con pavimento. Al laboratorio, clic destro e Costruisci: premi Crea quando tutte le risorse sono verdi. Il cubo compare sul banco.",
+      "title": "La prima officina sotterranea",
+      "body": "Raccogli 8 ferro, 3 rame e 1 cristallo. Al banco della nave produci 4 componenti strutturali e 2 elettronici, poi ritirali. Nella stanza 4 x 3 scegli il laboratorio dal menu di montaggio.",
       "detail": ""
     },
     {
       "id": "tutorial_collect",
-      "robbie": {"body": "Obiettivo: 6 pietra e 4 rame per il primo laboratorio. Il mio cargo e disponibile direttamente per costruire. La nave non ha scorte iniziali; la pietra inizia a 5 m."},
+      "robbie": {"body": "Obiettivo: 8 ferro, 3 rame e 1 cristallo. Al banco li trasformo in 4 componenti strutturali e 2 elettronici. Terra e pietra restano fuori dal cargo."},
       "priority": 65,
       "title": "Prima il laboratorio",
-      "body": "Servono 6 pietra e 4 rame per il laboratorio. I materiali sono nel mio carico: restiamo vicini per usarli. La nave parte senza materiali; la pietra inizia a 5 m. Y mi manda a scaricare alla nave e poi torno.",
+      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo. Con 2 selezioni lo scanner: le onde mostrano per poco i filoni nascosti. Poi torna a Pulse con 1. Porto io i minerali; al banco li trasformiamo nei componenti del laboratorio.",
       "detail": ""
     },
     {
       "id": "tutorial_excavate",
       "priority": 65,
       "title": "I materiali ci sono",
-      "body": "Hai le materie per il laboratorio! Ora libera una stanza larga 4 celle e alta 3, lasciando un pavimento solido. Ti avviso appena lo spazio e pronto per posare il cubo.",
+      "body": "Libera una stanza larga 4 celle e alta 3 con pavimento solido. Poi useremo i componenti preparati in officina per montare il laboratorio.",
       "detail": ""
     },
     {
       "id": "tutorial_place",
       "priority": 70,
       "title": "La stanza e abbastanza grande",
-      "body": "Qui entra un laboratorio! Prendi il cubo pronto al banco con Spazio, portalo qui e posalo con Spazio. Clic destro sul cubo per attivarlo. Se l'ingombro e rosso, riprendilo e spostalo.",
+      "body": "Qui entra un laboratorio! Clic destro nello spazio libero, scegli Laboratorio e sistema la sagoma. Il montaggio costa 4 strutturali e 2 elettronici nel mio carico. Senza componenti puoi lasciare il progetto in attesa.",
       "detail": ""
     },
     {
       "id": "tutorial_fund",
-      "robbie": {"body": "Le materie nel mio cargo sono disponibili. Quelle nella stiva richiedono un laboratorio vicino: nessun trasferimento a distanza."},
+      "robbie": {"body": "Il progetto richiede componenti nel mio cargo, non minerali grezzi o risorse di un deposito lontano. Li produco al banco e poi li ritiro."},
       "priority": 65,
-      "title": "Riempiamo il cubo",
-      "body": "Porto io le materie prime: avviciniamoci al cubo e confermiamo il trasferimento. Le materie nella stiva non sono disponibili a distanza.",
+      "title": "Componenti per il progetto",
+      "body": "Clic destro sul progetto per vedere cosa manca. Produci i componenti al banco, ritirali nel mio carico e torna qui per Monta. Nessun prelievo da depositi lontani.",
       "detail": ""
     },
     {
@@ -72,22 +72,22 @@
     {
       "id": "pump_plan",
       "priority": 40,
-      "title": "Pompa di drenaggio",
-      "body": "Fabbrica la pompa al laboratorio con 3 pietra e 4 rame. Prendi e posa il cubo con Spazio, poi clic destro per attivarlo. Occupa 2 x 2 m, puo stare nell'acqua e drena i passaggi vicini. Servono laboratorio acceso e batteria della nave.",
+      "title": "Pompa e circuito acqua",
+      "body": "La pompa occupa 2 x 2 m e costa 2 strutturali e 2 elettronici. Con T monta una presa stagna accanto alla parete della falda; R cambia orientamento. Collega i tubi all'ingresso della pompa e porta l'uscita alla serra o a uno scarico.",
       "detail": ""
     },
     {
       "id": "pump_built",
       "priority": 45,
       "title": "Pompa attiva",
-      "body": "La pompa sta drenando l'acqua vicina attraverso i passaggi aperti. Consuma la batteria della nave; non aspira attraverso la roccia e si ferma se il laboratorio non e alimentato.",
+      "body": "La pompa ha due porte separate: ingresso azzurro e uscita dorata. Clic destro sulla presa per perforare in tenuta e aprire la valvola; sulla pompa trovi portata, riserva e inversione. Serve energia dal laboratorio: l'acqua non scompare, va alla destinazione collegata.",
       "detail": ""
     },
     {
       "id": "fan_plan",
       "priority": 40,
       "title": "Ripuliamo il gas",
-      "body": "Fabbrica un ventilatore al laboratorio con 2 pietra e 3 rame. Spazio per prendere e posare il cubo, clic destro per attivarlo. Occupa 2 x 2 m e funziona nel gas, ma non sott'acqua. Pulisce solo passaggi aperti collegati ed e alimentato dal laboratorio.",
+      "body": "Monta il ventilatore con 1 componente strutturale e 2 elettronici. Occupa 2 x 2 m e puo funzionare nel gas ma non sott'acqua. Serve il collegamento a un laboratorio alimentato.",
       "detail": ""
     },
     {
@@ -102,28 +102,28 @@
       "robbie": {"body": "Cargo pieno. Devo tornare al laboratorio della nave o a un banco sotterraneo e depositare i materiali. Clic destro sul banco, Deposita materiali; vicino al banco posso usare anche Y."},
       "priority": 80,
       "title": "Carico pieno",
-      "body": "Il mio carico e pieno. Premi Y: torno alla nave, scarico nella stiva e poi ti raggiungo. Lascia libera la botola e aspettami prima di scavare ancora. Puoi anche depositare al laboratorio vicino col tasto destro.",
+      "body": "Il carico e pieno. Con Y torno alla nave a depositare e poi ti raggiungo. Tu puoi continuare a scavare: terra e pietra non occupano spazio e i minerali che non raccolgo rimangono a terra.",
       "detail": ""
     },
     {
       "id": "drone_unavailable",
       "priority": 70,
       "title": "Devo avvicinarmi",
-      "body": "Sono fuori dal tuo raggio di raccolta: aspettami entro 3 metri in un passaggio aperto. Libera la botola scendendo ancora, se sono rimasto nella nave. I materiali li porto soltanto io.",
+      "body": "Sono lontano: continuo a raccogliere i frammenti vicini al mio magnete, ma per usare i materiali che trasporto devi aspettarmi entro 3 metri in un passaggio aperto. Lascia libera la botola se sono ancora a bordo.",
       "detail": ""
     },
     {
-      "id": "signal_limit",
+      "id": "path_blocked",
       "priority": 75,
-      "title": "Limite del collegamento",
-      "body": "Sono al limite del segnale della nave e ti aspetto qui. I materiali del mio carico restano disponibili insieme ai tuoi. Potremo ampliare il mio raggio con la ricerca.",
+      "title": "Passaggio ostruito",
+      "body": "Non trovo un percorso sicuro per raggiungerti. Controlla la botola, apri un passaggio ed evita che acqua o altri liquidi lo blocchino. La distanza dalla nave non mi ferma.",
       "detail": ""
     },
     {
       "id": "build_resources",
       "priority": 45,
-      "title": "Fabbricazione del cubo",
-      "body": "Per creare il cubo servono 6 pietra e 4 rame, dal carico comune o dal deposito del laboratorio vicino. Il pagamento avviene solo al comando Crea. Il cubo si materializza sul banco: poi prendilo con Spazio.",
+      "title": "Produzione dei componenti",
+      "body": "Il banco trasforma 4 ferro in 2 strutturali, oppure 3 rame e 1 cristallo in 2 elettronici. Scegli i lotti e premi Crea: paghi una sola volta. Ritira l'uscita prima di tornare a montare.",
       "detail": ""
     },
     {
@@ -137,21 +137,21 @@
       "id": "lab_built",
       "priority": 55,
       "title": "Laboratorio attivo",
-      "body": "Il primo laboratorio e attivo: luci, pompa acqua e ventilatore gas sono sbloccati! Clic destro sul banco e Costruisci. Ogni cubo si fabbrica qui, si prende e si posa con Spazio, poi si attiva con clic destro. Le strutture usano la batteria della nave.",
+      "body": "Il primo laboratorio e attivo: luci, pompa e ventilatore sono sbloccati! Ora puoi produrre componenti anche qui. Portali dove servono e scegli una struttura dal menu di montaggio. Le macchine richiedono energia e collegamenti.",
       "detail": ""
     },
     {
       "id": "lamp_crafted",
       "priority": 50,
       "title": "Portiamo luce nelle gallerie",
-      "body": "Il cubo luce e pronto sul banco. Spazio per prenderlo, Spazio per posarlo e clic destro per attivarlo. Cerca un pavimento libero nel raggio del laboratorio: 8 metri di base, di piu con i potenziamenti.",
+      "body": "Per una luce basta 1 componente elettronico. Scegli Luce con clic destro su un pavimento libero nel raggio del laboratorio: 8 metri di base, ampliabili con i potenziamenti.",
       "detail": ""
     },
     {
       "id": "lamp_plan",
       "priority": 30,
-      "title": "Un cubo per fare luce",
-      "body": "Al laboratorio scegli Costruisci e Crea nella riga Luce: costa 1 terra e 1 rame. Prendi il cubo pronto con Spazio, portalo nelle gallerie e posalo con Spazio. Clic destro sul cubo lo trasforma nella luce: serve un laboratorio alimentato vicino.",
+      "title": "Illuminiamo le gallerie",
+      "body": "Produci componenti elettronici al banco. Ogni luce ne richiede uno: clic destro nel punto dove vuoi montarla, scegli Luce e sistema la sagoma. Serve un laboratorio alimentato vicino.",
       "detail": ""
     },
     {
@@ -216,14 +216,14 @@
       "id": "ladder_tip",
       "priority": 25,
       "title": "Non dimenticare la risalita",
-      "body": "Con B costruisci subito una scala: costa 2 terra, senza cubi ne attese. La monti tu, anche senza drone, laboratorio o batteria. Manteniamo sempre una via di ritorno!",
+      "body": "Con B posi una scala subito e gratuitamente. Puoi anche rimuoverla senza costi. Non serve carico, drone, laboratorio o batteria: manteniamo una via di ritorno!",
       "detail": ""
     },
     {
       "id": "tools",
       "priority": 20,
       "title": "Prima analizziamo",
-      "body": "Lo Scanner rivela il materiale del blocco e le sacche vicine. Alcune rocce richiedono strumenti migliori; i nuclei indistruttibili vanno aggirati.",
+      "body": "Con 2 selezioni lo scanner. Le onde rivelano temporaneamente filoni, rocce dure e sacche nel loro raggio. Punta un blocco per analizzarlo con precisione. Tornando a Pulse le tracce spariscono, ma le analisi restano memorizzate.",
       "detail": ""
     },
     {
@@ -281,67 +281,67 @@
     },
     {
       "id": "ocra/first_excavation",
-      "robbie": {"body": "Terreno intatto sotto la nave. Con Pulse inizio lo scavo; i materiali entrano nel mio cargo. Mantengo aperta una via per tornare all'officina."},
+      "robbie": {"body": "Terreno intatto sotto la nave. Con Pulse scavo senza caricare terra o pietra; raccolgo solo minerali utili. Mantengo una via di ritorno con scale gratuite."},
       "priority": 65,
       "title": "Scava le prime due celle",
-      "body": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Porto io tutti i materiali, se sono entro 3 metri. Scendi per liberarmi la botola. Quando sono pieno, Y mi manda a scaricare alla nave e poi torno. Ci servono 6 pietra e 4 rame.",
+      "body": "Scava sotto la nave con Pulse. Terra e pietra non occupano carico: puoi aprire liberamente i passaggi. Raccogliamo solo i minerali utili per produrre componenti in officina.",
       "detail": "Pulse / 2 celle da 1 metro"
     },
     {
       "id": "ocra/return_ladder",
       "priority": 65,
       "title": "Prepara la risalita",
-      "body": "Scendi nel primo spazio scavato con S, poi monta la scala con B. Costa 2 terra e compare subito: la costruisci tu, senza cubi, officina o batteria. Non scendiamo senza una via di ritorno.",
-      "detail": "Scendi nello scavo / B / 2 terra"
+      "body": "Scendi con S e posa una scala con B. Le scale sono immediate e gratuite, anche da rimuovere. Manteniamo sempre una via di ritorno.",
+      "detail": "B / scala immediata e gratuita"
     },
     {
       "id": "ocra/laboratory_materials",
-      "robbie": {"body": "Devo raccogliere 6 pietra e 4 rame nel mio cargo. La pietra inizia a 5 m. Se finisco lo spazio torno al banco, deposito e preparo il cubo laboratorio.", "detail": "Cargo Robbie / 6 pietra + 4 rame"},
+      "robbie": {"body": "Cerco 8 ferro, 3 rame e 1 cristallo. Rame e ferro sono subito a sinistra della scala; i cristalli poco oltre, sullo stesso lato. Con 2 vedo le icone dello scanner: mi avvicino ai segnali grigi per identificarli. Con 1 torno a scavare.", "detail": "8 ferro + 3 rame + 1 cristallo"},
       "priority": 65,
       "title": "Raccogli per il laboratorio",
-      "body": "Ci servono 6 pietra e 4 rame nel mio carico o nel deposito del banco. La pietra inizia a 5 metri. Se mi riempio di terra, premi Y: la scarico alla nave e torno da te. Le mie capacita di trasporto si possono potenziare.",
-      "detail": "6 pietra + 4 rame / Carico Robbie e deposito locale"
+      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo. Cerca a sinistra della scala: prima rame e ferro, poi cristalli poco oltre. Con 2 vedi le icone dello scanner; avvicinati ai segnali grigi e passa il mouse per identificarli. Con 1 scavi, io raccolgo col magnete.",
+      "detail": "8 ferro + 3 rame + 1 cristallo"
     },
     {
       "id": "ocra/laboratory_room",
       "priority": 65,
       "title": "Scava la stanza del laboratorio",
-      "body": "Prima di trasportare il cubo, libera uno spazio largo 4 celle e alto 3, con pavimento continuo. Puoi restare nella stanza quando il laboratorio si apre. Se ci riempiamo, torna al banco e deposita il materiale.",
+      "body": "Libera uno spazio largo 4 celle e alto 3, con pavimento continuo. Scavare terra e pietra non riempie il carico. Qui monteremo il laboratorio con i componenti preparati in officina.",
       "detail": "Stanza 4 x 3 m / pavimento continuo"
     },
     {
       "id": "ocra/laboratory_cube",
       "priority": 65,
-      "title": "Fabbrica il cubo laboratorio",
-      "body": "Rientra nel laboratorio della nave, clic destro sul banco e Costruisci. Nella riga Laboratorio trovi livello, tempo e risorse: quando sono tutte verdi premi Crea. Il cubo si materializza sul banco; puoi chiudere il pannello mentre lavora.",
-      "detail": "Laboratorio / clic destro / Costruisci / Crea"
+      "title": "Produci i componenti",
+      "body": "Rientra al banco della nave. Clic destro e Produci componenti: ordina 2 lotti strutturali e 1 elettronico. Otterrai 4 strutturali e 2 elettronici. Le risorse si pagano una sola volta all'avvio.",
+      "detail": "Banco / 2 lotti strutturali + 1 elettronico"
     },
     {
       "id": "ocra/carry_laboratory",
       "priority": 65,
-      "title": "Prendi il cubo pronto",
-      "body": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, separato dal carico di Robbie. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
-      "detail": "Cubo sul banco / avvicinati e premi Spazio"
+      "title": "Carica i componenti",
+      "body": "Premi Ritira componenti nel pannello del banco. Per il primo laboratorio servono 4 strutturali e 2 elettronici nel mio carico. Sono compatti: occupano solo due unita. Completa prima eventuali lotti mancanti.",
+      "detail": "Ritira / 4 strutturali + 2 elettronici"
     },
     {
       "id": "ocra/deploy_laboratory",
       "priority": 65,
-      "title": "Apri il cubo nella stanza",
-      "body": "Porta il cubo nella stanza e premi Spazio per posarlo. Poi clic destro sul cubo e Attiva laboratorio. Se il tratteggio e rosso, leggi l'errore, riprendilo con Spazio e spostalo. Quando tutto entra il cubo si apre, senza chiedere altri materiali.",
-      "detail": "Spazio: posa / clic destro sul cubo: attiva"
+      "title": "Monta il laboratorio",
+      "body": "Nella stanza scavata fai clic destro e scegli Laboratorio. Sistema la sagoma sul pavimento e clicca per montare. Consuma 4 strutturali e 2 elettronici trasportati. Senza materiali resta un progetto in attesa: clic destro sul progetto per Monta o Annulla.",
+      "detail": "Clic destro / Laboratorio / monta nella stanza"
     },
     {
       "id": "furnace_built",
       "priority": 55,
       "title": "La nostra fornace",
-      "body": "Qui possiamo fondere rame in lingotti e pietra in vetro. Il banco prende le materie dal carico comune; l'ordine resta caricato anche se manca energia. Porta gas a un convertitore con i tubi gialli, poi collega l'uscita alla fornace con un cavo. Clic destro sulla macchina per ordinare e ritirare.",
+      "body": "Fondi rame in lingotti e quarzo in vetro: al laboratorio diventano una ricetta elettronica piu efficiente. La fornace richiede energia dal convertitore, collegato al gas con tubi e alla macchina con un cavo. Non e necessaria per i componenti base.",
       "detail": ""
     },
     {
       "id": "gas_converter_built",
       "priority": 55,
       "title": "Dal gas all'energia",
-      "body": "Il convertitore consuma il gas reale della sacca, non lo crea. Collega l'ingresso giallo alla sacca con tubi gas e l'uscita arancio alla fornace o serra con cavi energia. Si ferma quando l'accumulatore e pieno o il gas finisce. T apre i condotti: ogni metro costa 1 rame.",
+      "body": "Il convertitore usa il gas reale della falda. Porta un tubo gas all'ingresso e un cavo energia verso le macchine. T apre i condotti: un componente strutturale per metro di tubo, un elettronico per metro di cavo.",
       "detail": ""
     },
     {
@@ -369,22 +369,22 @@
       "id": "drone_delivery",
       "priority": 75,
       "title": "Consegna in corso",
-      "body": "Vado alla nave, scarico e torno da te. Aspettami: senza di me non puoi raccogliere materiali. Lascia aperta e libera la botola; se la stiva e piena tornero con il materiale rimasto.",
+      "body": "Vado alla nave, scarico e torno da te. Puoi continuare a scavare: i minerali rimangono a terra finche torno a raccoglierli. Lascia libera la botola; se la stiva e piena torno con il carico rimasto.",
       "detail": "Y / Invio alla nave e ritorno automatico"
     },
     {
       "id": "bomb_tool",
       "priority": 65,
       "title": "Bombe numerate",
-      "body": "Parti con 4 bombe pronte. Con 3 le selezioni e con un click ne posi una. Quando finiscono, al laboratorio scegli Costruisci e Bomba: 1 pietra e 2 rame ciascuna. Allontanati almeno 4 metri e premi Enter: scoppiano nell'ordine dei numeri. Le strutture colpite richiedono riparazione.",
+      "body": "Parti con quattro bombe pronte. Con 3 le selezioni, con un clic le posi. Al banco ne produci altre con 1 componente strutturale e 1 elettronico. Allontanati almeno 4 metri e premi Enter: scoppiano nell'ordine dei numeri e possono danneggiare le strutture.",
       "detail": "Raggio esplosione 2 m / Sicurezza 4 m"
     },
     {
       "id": "jetpack_tool",
       "priority": 65,
       "title": "Batteria del jetpack",
-      "body": "Con 4 selezioni il jetpack. Mantieni Spazio o W per volare: la sua batteria dura 5 secondi di spinta. Per ricaricare entra nell'area del laboratorio della nave o di uno sotterraneo acceso, integro e alimentato. La ricarica consuma la batteria della nave.",
-      "detail": "Jetpack 100% / Ricarica automatica nei laboratori"
+      "body": "Con 4 selezioni il jetpack. Tieni Spazio o W per volare: hai cinque secondi di spinta. Quando atterri su un pavimento solido torna subito al 100%, senza consumare la nave. Le scale e l'acqua non lo ricaricano.",
+      "detail": "5 secondi di spinta / Ricarica toccando terra"
     }
   ]
 }

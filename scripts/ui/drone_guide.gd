@@ -2,12 +2,13 @@ extends CanvasLayer
 
 const Guide = preload("res://scripts/systems/drone_guide_state.gd")
 const InventoryUI = preload("res://scripts/ui/field_inventory_ui.gd")
+const MaterialSpeech = preload("res://scripts/ui/material_speech.gd")
 var world: Node2D
 var state: RefCounted
 var bubble: PanelContainer
 var tail: Polygon2D
 var heading: Label
-var speech: Label
+var speech: MaterialSpeech
 var auto_toggle: CheckButton
 var current_id := ""
 var last_message_id := ""
@@ -48,9 +49,7 @@ func _ready() -> void:
 	var close := InventoryUI.button(header, "x", state.dismiss)
 	close.custom_minimum_size = Vector2(24, 24)
 	close.tooltip_text = "Chiudi il messaggio"
-	speech = InventoryUI.label("", 16, Color("223933"))
-	speech.custom_minimum_size = Vector2(300, 0)
-	speech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	speech = MaterialSpeech.new()
 	column.add_child(speech)
 	var controls := HBoxContainer.new()
 	controls.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
@@ -91,6 +90,8 @@ func context() -> String:
 		return "gas_danger"
 	if world.drone.mission != "follow":
 		return "drone_delivery"
+	if not world.is_robbie() and world.drone.status == "Percorso ostruito":
+		return "path_blocked"
 	if world.active_tool().mode == "bomb" and "bomb_tool" not in state.seen:
 		return "bomb_tool"
 	if world.active_tool().mode == "jetpack" and "jetpack_tool" not in state.seen:
@@ -108,8 +109,6 @@ func context() -> String:
 		return "ocra/" + step.id
 	if world.rooms.available("bedroom") and "bed_rest" not in state.seen:
 		return "bed_rest"
-	if world.drone.status == "Limite segnale":
-		return "signal_limit"
 	if world.field_cargo.free_space(world.drone_can_collect()) <= 0:
 		return "cargo_full" if world.drone_can_collect() else "drone_unavailable"
 	if not world.outpost.laboratory_unlocked() and state.facts.get("mined", false):
@@ -223,11 +222,10 @@ func _update_bubble() -> void:
 	last_message_title = shown_title
 	var viewport := get_viewport().get_visible_rect().size
 	var point: Vector2 = world.drone.get_global_transform_with_canvas() * Vector2.ZERO
-	var actor: Vector2 = world.player.get_global_transform_with_canvas() * Vector2(0, -32)
-	var body := Rect2(actor - Vector2(24, 45), Vector2(48, 90))
+	var body: Rect2 = world.player.get_global_transform_with_canvas() * world.player.body_rect_at(Vector2.ZERO).grow(10)
 	var size := bubble.size.max(bubble.get_combined_minimum_size())
 	var safe := Rect2(Vector2(16, 76), viewport - Vector2(32, 186))
-	var radio := not safe.has_point(point) or current_id == "signal_limit"
+	var radio := not safe.has_point(point)
 	heading.text = "ROBBIE / " + ("RADIO" if radio else shown_title.to_upper())
 	var bubble_style := bubble.get_theme_stylebox("panel") as StyleBoxFlat
 	bubble_style.border_color = Color("ef6666") if current_id in ["water_danger", "gas_danger", "oil_danger", "acid_danger"] else Color("589d95")

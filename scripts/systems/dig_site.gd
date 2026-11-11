@@ -7,13 +7,26 @@ const CELL := Grid.CELL_SIZE
 const LEFT := -24
 const RIGHT := 24
 const DEPTH := 24
-const COST := {"soil": 1, "stone": 2, "copper": 2, "crystal": 3, "bedrock": 99, "anchor": 0}
+const COST := {"soil": 1, "stone": 2, "copper": 2, "iron": 2, "crystal": 3, "silica": 2, "cobalt": 4, "bedrock": 99, "anchor": 0}
 const RESOURCE_YIELDS := {"bedrock": "stone"}
 const ANCHORS := [Vector2i(-6, 6), Vector2i(-5, 6), Vector2i(-4, 6), Vector2i(7, 7), Vector2i(7, 8)]
 var removed: Dictionary = {}
 var damage: Dictionary = {}
 var terrain_seed := 0
 var layout_version := HazardLayout.CURRENT_VERSION
+
+func valid_scan_findings(data: Variant) -> bool:
+	if not data is Array or data.size() > (RIGHT - LEFT) * DEPTH:
+		return false
+	var cells := {}
+	for entry in data:
+		if not entry is Dictionary:
+			return false
+		var cell = Grid.decode_cell(entry.get("cell"))
+		if not cell is Vector2i or not contains(cell) or cells.has(cell) or entry.get("kind") not in COST.keys() + ["water", "gas", "oil", "acid"]:
+			return false
+		cells[cell] = true
+	return true
 
 func _init(seed_value: int = 0, version: int = HazardLayout.CURRENT_VERSION) -> void:
 	terrain_seed = seed_value
@@ -43,6 +56,10 @@ func material(cell: Vector2i) -> String:
 		var ore := Geology.ore(cell)
 		if not ore.is_empty():
 			return ore
+		if layout_version >= 2:
+			var component_ore: String = Geology.component_ore(cell)
+			if not component_ore.is_empty():
+				return component_ore
 	if cell.y >= 15:
 		return "bedrock"
 	var sample := posmod(cell.x * 37 + cell.y * 73 + terrain_seed, 29)
@@ -50,7 +67,16 @@ func material(cell: Vector2i) -> String:
 		return "crystal"
 	if cell.y > 1 and sample < 8:
 		return "copper"
+	if cell.y > 1 and sample < 12:
+		return "iron"
+	if cell.y > 5 and sample < 15:
+		return "silica"
+	if cell.y > 9 and sample > 26:
+		return "cobalt"
 	return "soil" if cell.y < 5 else "stone"
+
+static func resource_yield(kind: String) -> String:
+	return kind if kind in ["copper", "iron", "crystal", "silica", "cobalt"] else ""
 
 func exposed(cell: Vector2i) -> bool:
 	for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:

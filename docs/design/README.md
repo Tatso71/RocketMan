@@ -1,5 +1,9 @@
 # RocketMan Specifica di contenuti e sistemi
 
+Per sapere **cosa si costruisce con cosa nel prototipo attuale**, consulta la [mappa di produzione](mappa-produzione.md): ingredienti, risultati, postazioni, tempi, energia, sblocchi e indice inverso. E' generata dalle ricette runtime; le idee future sono separate. I [dati strutturati](../../design/generated/production-map.json) preparano la futura guida del computer di bordo, non ancora implementata.
+
+Aggiornamento runtime del 10 novembre 2026: il prototipo attivo usa [scavo libero e componenti](../../docs/superpowers/specs/2026-11-10-scavo-libero-componenti-design.md), con ricette in `design/v1/prototype_components.json`. Terra e pietra non sono risorse di carico; il laboratorio produce componenti e le strutture si montano sul posto. Le vecchie ricette di cubi nei cataloghi completi restano proposte storiche, non il contratto della partita attuale. Le scale sono gratuite anche nel catalogo completo.
+
 Versione 1.0 del 24 ottobre 2026. Destinatario: AI incaricata di implementare il gioco. I cataloghi definiscono il progetto completo; non attestano che le funzionalità siano già presenti nel runtime. Le quantità sono valori iniziali di bilanciamento.
 
 ## Ordine di lettura per l AI
@@ -20,8 +24,8 @@ node tools/design/validate.mjs
 | Sistema | Decisione |
 | --- | --- |
 | Universo | 12 pianeti persistenti, con difficoltà progressiva e rami che si incontrano |
-| Moduli | Cubi trasportabili che si aprono in uno spazio X per Y già scavato |
-| Scale | Eccezione ai cubi: costruzione immediata sul posto con 2 terriccio, senza officina, laboratorio, Robbie o energia |
+| Moduli | Nel prototipo attuale: componenti lavorati in laboratorio, poi montaggio in uno spazio X per Y gia scavato; vecchi cubi conservati solo nei cataloghi storici |
+| Scale | Costruzione e rimozione immediate e gratuite, senza officina, laboratorio, Robbie o energia |
 | Personaggio | 30 livelli, esperienza da scoperte e capacità passive; cura e tuta distinte |
 | Astronave | 10 livelli di sviluppo, tre piani iniziali, upgrade interni e moduli esterni visibili |
 | Robbie | Cura, batterie, segnale, accessori e trasporti automatici su percorsi esplorati |
@@ -63,7 +67,7 @@ node tools/design/validate.mjs
 
 Le icone e le superfici sono asset originali utilizzabili nel prototipo. I materiali Godot collegano le superfici SVG e i parametri metallicità e ruvidità. La tavola 3D è una reference: modelli animati, rig e mappe PBR definitive restano attività di produzione.
 
-Prima integrazione runtime: il tutorial fino al laboratorio su Ocra legge `progression.json:ocra_tutorial`. Per aggiungere compiti di Robbie, messaggi e condizioni vedere [la guida di authoring](../technical/robbie-tutorial-authoring.md). La fabbricazione e il trasporto del cubo laboratorio sono attivi; questo non implica l'implementazione degli altri moduli o dei 12 pianeti.
+Integrazione runtime: il tutorial fino al laboratorio su Ocra legge `progression.json:ocra_tutorial`. Per aggiungere compiti di Robbie, messaggi e condizioni vedere [la guida di authoring](../technical/robbie-tutorial-authoring.md). Sono attivi produzione a lotti dei componenti e montaggio locale; fabbricazione e trasporto dei cubi appartengono al prototipo precedente. Questo non implica l'implementazione di tutti i moduli proposti o dei 12 pianeti.
 
 ## Risultati di verifica e limiti
 
