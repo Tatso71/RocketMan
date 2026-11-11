@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 const NAMES := Cargo.NAMES
 const COLORS := Cargo.COLORS
 const ITEM_IDS := ["copper", "iron", "crystal", "silica", "cobalt", "structural_component", "electronic_component", "copper_ingot", "glass", "potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
@@ -153,10 +154,13 @@ func _build_compact() -> void:
 	grid.add_child(total_header)
 	for id: String in ITEM_IDS:
 		var compact_name: String = {"structural_component": "Strutture", "electronic_component": "Elettronica"}.get(id, NAMES[id])
+		var name_row := HBoxContainer.new()
+		name_row.custom_minimum_size.x = 156
+		grid.add_child(name_row)
+		name_row.add_child(ItemIcons.view(id, 22))
 		var name_label := label(compact_name, 15, COLORS[id])
-		name_label.custom_minimum_size.x = 128
-		grid.add_child(name_label)
-		compact_rows[id] = [name_label]
+		name_row.add_child(name_label)
+		compact_rows[id] = [name_row]
 		for index in range(2):
 			var count := label("0", 13)
 			count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -250,11 +254,7 @@ func _build_window() -> void:
 			var row := HBoxContainer.new()
 			row.custom_minimum_size.y = 28
 			items.add_child(row)
-			var swatch := ColorRect.new()
-			swatch.color = COLORS[id]
-			swatch.custom_minimum_size = Vector2(9, 9)
-			swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			row.add_child(swatch)
+			row.add_child(ItemIcons.view(id, 24))
 			var name_label := label(NAMES[id] + (" (4 posti)" if id == "lab_cube" else ""), 14)
 			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.add_child(name_label)
@@ -270,6 +270,7 @@ func _build_window() -> void:
 	column.add_child(recipe)
 	recipe.add_child(label("LABORATORIO", 14))
 	for id: String in Buildings.LAB_COST:
+		recipe.add_child(ItemIcons.view(id, 22))
 		var cost_label := label("", 14)
 		recipe.add_child(cost_label)
 		cost_labels.append(cost_label)
@@ -284,9 +285,13 @@ func _build_window() -> void:
 	actions.add_theme_constant_override("separation", 8)
 	column.add_child(actions)
 	picker = OptionButton.new()
+	picker.expand_icon = true
+	picker.add_theme_constant_override("icon_max_width", 24)
 	picker.custom_minimum_size.x = 160
 	for id: String in ITEM_IDS:
 		picker.add_item(NAMES[id])
+		picker.set_item_icon(picker.item_count - 1, ItemIcons.texture(id))
+		picker.get_popup().set_item_icon_max_width(picker.item_count - 1, 22)
 	picker.item_selected.connect(func(index: int):
 		for hold in range(hold_scrolls.size()):
 			hold_scrolls[hold].ensure_control_visible(counts[hold][index])

@@ -107,7 +107,7 @@ func _run() -> void:
 	check(world.drone.position.y < -80, "Robbie returns through the actual hatch without getting trapped")
 	world.player.position = Vector2(900, 800)
 	await frames(35)
-	check(world.drone.signal_connected() and world.drone.status == "Limite segnale", "radio limit remains enforced")
+	check(not world.drone.status.contains("segnale"), "distance alone never imposes a ship radio limit")
 	world.player.position = Vector2(140, 200)
 	var before_alarm: Vector2 = world.drone.position
 	await frames(10)

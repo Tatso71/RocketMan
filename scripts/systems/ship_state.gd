@@ -64,7 +64,8 @@ func drill_power() -> int:
 func drone_capacity() -> int:
 	return 20 + 8 * (int(modules.drone) - 1)
 
-func drone_range_metres() -> float:
+func power_link_range_metres() -> float:
+	# Installation links only: companion travel and pickup have no ship radius.
 	return 15.0 + 5.0 * (int(modules.drone) - 1)
 
 func upgrade_blocker(id: String) -> String:

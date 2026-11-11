@@ -15,6 +15,19 @@ var damage: Dictionary = {}
 var terrain_seed := 0
 var layout_version := HazardLayout.CURRENT_VERSION
 
+func valid_scan_findings(data: Variant) -> bool:
+	if not data is Array or data.size() > (RIGHT - LEFT) * DEPTH:
+		return false
+	var cells := {}
+	for entry in data:
+		if not entry is Dictionary:
+			return false
+		var cell = Grid.decode_cell(entry.get("cell"))
+		if not cell is Vector2i or not contains(cell) or cells.has(cell) or entry.get("kind") not in COST.keys() + ["water", "gas", "oil", "acid"]:
+			return false
+		cells[cell] = true
+	return true
+
 func _init(seed_value: int = 0, version: int = HazardLayout.CURRENT_VERSION) -> void:
 	terrain_seed = seed_value
 	layout_version = version

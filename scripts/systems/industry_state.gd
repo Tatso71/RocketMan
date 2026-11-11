@@ -41,28 +41,23 @@ func energy_available(building: Dictionary, outpost: Node2D) -> float:
 
 func water_available(building: Dictionary, outpost: Node2D) -> float:
 	var result := 0.0
-	for pump: Dictionary in linked(building, "water", "pump", outpost):
+	for pump: Dictionary in outpost.hydraulics.pumps_for(building, outpost):
 		result += float(state(pump).water)
 	return result
 
 func _consume(building: Dictionary, kind: String, amount: float, outpost: Node2D) -> void:
+	if kind == "water":
+		outpost.hydraulics.withdraw(building, amount, outpost)
+		return
 	var supplier := "gas_converter" if kind == "energy" else "pump"
-	for source: Dictionary in linked(building, kind, supplier, outpost):
+	var sources: Array = linked(building, kind, supplier, outpost)
+	for source: Dictionary in sources:
 		var storage := state(source)
 		var taken := minf(amount, float(storage[kind]))
 		storage[kind] = maxf(0, float(storage[kind]) - taken)
 		amount -= taken
 		if amount <= 0.000001:
 			break
-
-func pump_budget(pump: Dictionary, outpost: Node2D, budget: float) -> float:
-	if outpost.network.component("water", Network.port(pump, "water")).is_empty():
-		return budget
-	return minf(budget, maxf(0, float(Catalog.load_data().pump_capacity) - float(state(pump).water)))
-
-func capture_water(pump: Dictionary, outpost: Node2D, volume: float) -> void:
-	if not outpost.network.component("water", Network.port(pump, "water")).is_empty():
-		state(pump).water = minf(Catalog.load_data().pump_capacity, float(state(pump).water) + volume)
 
 func status(building: Dictionary, outpost: Node2D) -> String:
 	if not outpost.Buildings.is_active(building):
@@ -193,7 +188,7 @@ func _step(delta: float, outpost: Node2D, active: Array) -> void:
 		var duration := minf(delta, maxf(0, float(definition.seconds) - float(storage.elapsed)))
 		duration = minf(duration, energy_available(building, outpost) / float(definition.power))
 		if building.id == "greenhouse":
-			duration = minf(duration, water_available(building, outpost) * float(definition.seconds) / float(definition.water))
+			duration = minf(duration, outpost.hydraulics.deliverable(building, outpost) * float(definition.seconds) / float(definition.water))
 		if duration <= 0.000001:
 			continue
 		_consume(building, "energy", duration * float(definition.power), outpost)

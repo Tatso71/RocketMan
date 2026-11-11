@@ -2,12 +2,14 @@ extends SceneTree
 
 const Fixture = preload("res://tests/fixtures/dig_site_fixture.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
+const Layout = preload("res://scripts/data/hazard_layout.gd")
 var campaign: Node2D
 var world: Node2D
 var failures := 0
 var capture := false
 
 func _initialize() -> void:
+	Layout.gas_pockets_enabled = true
 	_run.call_deferred()
 
 func check(value: bool, description: String) -> void:
@@ -183,7 +185,7 @@ func _run() -> void:
 	check(is_equal_approx(world.outpost.power_report(world.outpost.buildings.labs()[0]).load, load), "meter follows a device supplied by another operational laboratory")
 	world.outpost.buildings.structures.erase(second_lab)
 	world.outpost.advance(1)
-	check(is_equal_approx(water_before - total(world.environment.water), 0.7), "new cube-built pump removes finite water at declared rate")
+	check(is_equal_approx(water_before, total(world.environment.water)), "a pump without an inlet circuit never deletes nearby water")
 	check(is_equal_approx(gas_before - total(world.environment.gas), 0.35), "new cube-built fan removes finite gas at declared rate")
 	check(world.environment.gas[Vector2i(-6, 5)] == 0.5, "fan cannot pull gas through a solid floor")
 	var lab: Dictionary = world.outpost.buildings.labs()[0]
@@ -208,7 +210,7 @@ func _run() -> void:
 	gas_before = total(world.environment.gas)
 	world.outpost.advance(1)
 	check(world.ship_energy() == 0, "utility network clamps consumption at zero battery")
-	check(is_equal_approx(water_before - total(world.environment.water), 0.7 * 0.007 / load) and is_equal_approx(gas_before - total(world.environment.gas), 0.35 * 0.007 / load), "both environmental effects are bounded by actual powered runtime")
+	check(is_equal_approx(water_before, total(world.environment.water)) and is_equal_approx(gas_before - total(world.environment.gas), 0.35 * 0.007 / load), "disconnected pump conserves water and fan effects are bounded by actual powered runtime")
 	world._set_ship_energy(30)
 	world.player.position = Vector2(-120, 160)
 	world.camera.position = Vector2(-100, 25)

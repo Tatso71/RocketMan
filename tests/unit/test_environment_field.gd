@@ -2,6 +2,16 @@ extends GdUnitTestSuite
 
 const Site = preload("res://scripts/systems/dig_site.gd")
 const Field = preload("res://scripts/systems/environment_field.gd")
+const Layout = preload("res://scripts/data/hazard_layout.gd")
+
+var previous_gas_pockets_enabled: bool
+
+func before() -> void:
+	previous_gas_pockets_enabled = Layout.gas_pockets_enabled
+	Layout.gas_pockets_enabled = true
+
+func after() -> void:
+	Layout.gas_pockets_enabled = previous_gas_pockets_enabled
 
 func _amount(field: Dictionary) -> float:
 	var result := 0.0

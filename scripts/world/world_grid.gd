@@ -10,6 +10,8 @@ const ROCKET_FLOORS := [-8, -5, -2]
 const ROCKET_CEILING := -11
 const PLAYER_HEIGHT_METRES := 1.6
 const PLAYER_WIDTH_METRES := 0.6
+const ROBBIE_HEIGHT_METRES := 0.8
+const ROBBIE_WIDTH_METRES := 0.5
 
 static func to_cell(point: Vector2) -> Vector2i:
 	return Vector2i(floori(point.x / CELL_SIZE), floori(point.y / CELL_SIZE))

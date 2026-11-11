@@ -5,12 +5,14 @@ const Grid = preload("res://scripts/world/world_grid.gd")
 const Network = preload("res://scripts/systems/utility_network.gd")
 const Industry = preload("res://scripts/systems/industry_state.gd")
 const Catalog = preload("res://scripts/data/industry_catalog.gd")
+const Layout = preload("res://scripts/data/hazard_layout.gd")
 var campaign: Node2D
 var world: Node2D
 var failures := 0
 var capture := false
 
 func _initialize() -> void:
+	Layout.gas_pockets_enabled = true
 	_run.call_deferred()
 
 func check(value: bool, description: String) -> void:
@@ -186,10 +188,22 @@ func _run() -> void:
 	world.outpost.advance(5)
 	check(world.seeds().potato == 2 and world.outpost.industry.state(machine("greenhouse")).elapsed == 0, "no water means no free growth or seed repayment")
 	await lay_line("water", -9, 1)
-	world.environment.water = {Vector2i(-12, 4): 1.0, Vector2i(-11, 4): 1.0, Vector2i(-12, 5): 1.0, Vector2i(-11, 5): 1.0}
+	for cell: Vector2i in [Vector2i(-15, 4), Vector2i(-14, 4), Vector2i(-15, 5), Vector2i(-14, 5)]:
+		Fixture.carve(world, cell)
+	world.environment.water = {Vector2i(-15, 4): 1.0, Vector2i(-14, 4): 1.0, Vector2i(-15, 5): 1.0, Vector2i(-14, 5): 1.0}
+	world.player.position = Vector2(-460, 240)
+	Fixture.support(world)
+	give({"structural_component": 5, "electronic_component": 1})
+	check(world.outpost.hydraulics.place("valve", Vector2i(-12, 5), Vector2i.LEFT, world.outpost), "sealed intake mounts without removing its rock anchor")
+	for x in range(-12, -9):
+		check(world.outpost.place_conduit("water", Vector2i(x, 5)), "connect actual valve to separate pump inlet")
+	check(world.outpost.hydraulics.drill(world.outpost.hydraulics.valves[0], world.outpost) and world.outpost.hydraulics.toggle(world.outpost.hydraulics.valves[0], world.outpost), "perforate and open the sealed intake")
 	world.player.position = Vector2(140, 240)
 	world.drone.position = Vector2(60, 170)
-	world.outpost.advance(20)
+	for tick in range(100):
+		# Advance the water cavity while unrelated gas hazards remain frozen, as in this fixture's other steps.
+		world.environment.water = world.environment._step_liquid(world.environment.water, {}, world.environment.Fluids.KINDS.water.fall, world.environment.Fluids.KINDS.water.spread)
+		world.outpost.advance(0.2)
 	check(world.outpost.industry.state(machine("greenhouse")).elapsed > 19.9, "pumped finite water irrigates crop through actual connected tubes")
 	var tank: float = world.outpost.industry.state(machine("pump")).water
 	check(absf(tank + volume(world.environment.water) + 20.0 * 2.0 / 45.0 - 4.0) < 0.001, "pump storage, remaining source and irrigation conserve four water volumes")
@@ -208,6 +222,8 @@ func _run() -> void:
 	check(world.seeds().potato == 2 and world.outpost.industry.state(machine("greenhouse")).elapsed > 19.9, "crop and global seed count survive halfway save/load")
 	world.camera.position = Vector2(-40, 135)
 	world.camera.zoom = Vector2.ONE * 0.9
+	# Gas conversion is tested above; do not vent that fixture's exposed gas into the farm during live panel simulation.
+	world.environment.gas.clear()
 	world.outpost.industry_ui.open_machine(machine("greenhouse"))
 	await picture("greenhouse-growing-720p", world.outpost.industry_ui.window)
 	var progress_before: float = world.outpost.industry.state(machine("greenhouse")).elapsed

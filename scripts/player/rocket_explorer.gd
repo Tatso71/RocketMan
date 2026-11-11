@@ -8,14 +8,44 @@ var facing := 1.0
 var climbing := false
 var suppress_jet_until_release := false
 var jump_was_held := false
+var impact_flash := 0.0
+
+static func impact_energy_loss(downward_speed: float) -> float:
+	if not is_finite(downward_speed) or downward_speed <= 440:
+		return 0.0
+	# Kinetic energy above a safe impact; ordinary jumps return below 440 px/s.
+	return clampf((downward_speed * downward_speed - 440 * 440) / (2 * 900 * Grid.PIXELS_PER_METRE) * 8, 0, 50)
+
+func apply_landing_impact(downward_speed: float) -> void:
+	var loss := impact_energy_loss(downward_speed)
+	if loss <= 0:
+		return
+	world._set_crew_energy(world.crew_energy() - loss)
+	impact_flash = 0.9
+	self_modulate = Color("ff4242")
+	world._note("Impatto violento / Energia -%.0f%%" % loss)
+
+func advance_impact_flash(delta: float) -> void:
+	impact_flash = maxf(0, impact_flash - delta)
+	self_modulate = Color("ff4242") if impact_flash > 0 and fmod(impact_flash, 0.22) > 0.09 else Color.WHITE
+
+func body_size() -> Vector2:
+	return Vector2(Grid.ROBBIE_WIDTH_METRES, Grid.ROBBIE_HEIGHT_METRES) * Grid.PIXELS_PER_METRE if world.is_robbie() else Vector2(Grid.PLAYER_WIDTH_METRES, Grid.PLAYER_HEIGHT_METRES) * Grid.PIXELS_PER_METRE
+
+func body_center() -> Vector2:
+	return position - Vector2(0, body_size().y * 0.5)
+
+func body_rect_at(feet: Vector2) -> Rect2:
+	var size := body_size()
+	return Rect2(feet - Vector2(size.x * 0.5, size.y), size)
 
 func _ready() -> void:
 	# Actors are not terrain: flying companions and ore must not hit the suit.
 	collision_layer = 2
 	var collider := CollisionShape2D.new()
 	var capsule := CapsuleShape2D.new()
-	capsule.radius = Grid.metres(Grid.PLAYER_WIDTH_METRES) * 0.5
-	capsule.height = Grid.metres(Grid.PLAYER_HEIGHT_METRES)
+	capsule.radius = body_size().x * 0.5
+	capsule.height = body_size().y
 	collider.shape = capsule
 	collider.position.y = -capsule.height * 0.5
 	add_child(collider)
@@ -26,6 +56,7 @@ func _physics_process(delta: float) -> void:
 		queue_redraw()
 		jump_was_held = Input.is_action_pressed("jump")
 		return
+	advance_impact_flash(delta)
 	var horizontal := Input.get_axis("move_left", "move_right")
 	var jump_held := Input.is_action_pressed("jump")
 	var jump_pressed := jump_held and not jump_was_held
@@ -60,7 +91,11 @@ func _physics_process(delta: float) -> void:
 		velocity.y = -330
 	if horizontal != 0:
 		facing = signf(horizontal)
+	var was_grounded := is_on_floor()
+	var downward_speed := velocity.y
 	move_and_slide()
+	if is_on_floor() and not was_grounded:
+		apply_landing_impact(downward_speed)
 	world.gear.observe_ground_contact(is_on_floor(), wet, climbing)
 	animation.advance(delta, velocity, is_on_floor(), climbing, world.gear.flying)
 	queue_redraw()
@@ -71,6 +106,8 @@ func mining_pulse() -> void:
 
 func reset_animation() -> void:
 	animation.reset()
+	impact_flash = 0
+	self_modulate = Color.WHITE
 	queue_redraw()
 
 func _firing() -> bool:
@@ -92,7 +129,7 @@ func _weapon_transform() -> Transform2D:
 
 func beam_origin() -> Vector2:
 	if world.is_robbie():
-		return position + _robot_center() + Vector2(facing * 46, -2)
+		return position + _robot_transform() * (_robot_center() + Vector2(facing * 46, -2))
 	return position + _visual_transform() * (_weapon_transform() * Vector2(26, -5))
 
 func _draw() -> void:
@@ -142,7 +179,11 @@ func _robot_center() -> Vector2:
 	var pose := animation.pose()
 	return Vector2(-facing * pose.recoil * 2, -32 + sin(animation.clock * 4) * 1.5 + (1 - pose.scale.y) * 24)
 
+func _robot_transform() -> Transform2D:
+	return Transform2D(0, Vector2(0, 3.2)).scaled_local(Vector2.ONE * 0.6)
+
 func _draw_robbie() -> void:
+	draw_set_transform_matrix(_robot_transform())
 	var center := _robot_center()
 	var ink := Color("78e4dc") if world.suit_integrity() > 25 else Color("ff7774")
 	draw_line(center + Vector2(-17, -17), center + Vector2(-17, -27), Color("799198"), 3)

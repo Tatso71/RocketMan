@@ -11,7 +11,7 @@ static func all() -> Array:
 		_module("drill", "Banco strumenti", "+1 potenza per livello. Sblocca Risonatore (II) e Plasma (III).", {"structural_component": 2, "electronic_component": 3}, Vector2i(1, 2), 60),
 		_module("landing_gear", "Carrelli", "Riduce l'usura da atterraggio", {"structural_component": 3, "electronic_component": 1}, Vector2i(2, 2), 250),
 		_module("habitat", "Supporto vitale", "+60 min di riserva nominale e +1 posto equipaggio", {"structural_component": 2, "electronic_component": 4}, Vector2i(3, 3), 400),
-		_module("drone", "Drone assistente", "+5 m segnale, +8 carico e +0.35 m magnete per livello", {"structural_component": 4, "electronic_component": 4}, Vector2i(1, 1), 40)
+		_module("drone", "Drone assistente", "+8 carico, +0.35 m magnete e +5 m rete impianti per livello; seguito senza limite", {"structural_component": 4, "electronic_component": 4}, Vector2i(1, 1), 40)
 	]
 
 static func find(id: String) -> Resource:

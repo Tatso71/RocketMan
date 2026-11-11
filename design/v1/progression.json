@@ -132,7 +132,7 @@
       {
         "id": "laboratory_materials",
         "title_it": "Raccogli per il laboratorio",
-        "hint_it": "Per il primo laboratorio raccogliamo 8 ferro, 3 rame e 1 cristallo. I filoni vicini alla nave contengono tutto il necessario. Pulse li puo scavare; terra e pietra non riempiono il carico.",
+        "hint_it": "Per il primo laboratorio raccogliamo 8 ferro, 3 rame e 1 cristallo. Con 2 lo scanner rivela temporaneamente i filoni nascosti vicino alla nave; con 1 torni a Pulse per scavarli. Terra e pietra non riempiono il carico.",
         "detail_it": "8 ferro + 3 rame + 1 cristallo",
         "action": "inventory",
         "complete_when": {"fact": "lab_materials_ready"}

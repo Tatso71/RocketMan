@@ -5,6 +5,15 @@ const Field = preload("res://scripts/systems/environment_field.gd")
 const Layout = preload("res://scripts/data/hazard_layout.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 
+var previous_gas_pockets_enabled: bool
+
+func before() -> void:
+	previous_gas_pockets_enabled = Layout.gas_pockets_enabled
+	Layout.gas_pockets_enabled = true
+
+func after() -> void:
+	Layout.gas_pockets_enabled = previous_gas_pockets_enabled
+
 func volume(field: Dictionary) -> float:
 	var total := 0.0
 	for amount in field.values():

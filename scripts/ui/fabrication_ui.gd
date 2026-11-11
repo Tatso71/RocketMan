@@ -3,8 +3,7 @@ extends Node
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Catalog = preload("res://scripts/data/component_catalog.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
-const PLATE = preload("res://assets/design/icons/res_plate.svg")
-const CIRCUIT = preload("res://assets/design/icons/res_circuit.svg")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 var outpost: Node2D
 var picker: Window
 var activation_popup: PopupMenu
@@ -95,12 +94,7 @@ func _sync_recipes() -> void:
 		var name_row := HBoxContainer.new()
 		name_row.custom_minimum_size.x = 205
 		recipe_grid.add_child(name_row)
-		var icon := TextureRect.new()
-		icon.texture = preload("res://assets/ui/bomb.svg") if id == "bomb" else (PLATE if definition.output == "structural_component" else CIRCUIT)
-		icon.custom_minimum_size = Vector2(26, 26)
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		name_row.add_child(icon)
+		name_row.add_child(ItemIcons.view(definition.output, 26))
 		var title := UI.label(definition.name_it, 15, Cargo.COLORS.get(definition.output, Color("ef816c")))
 		title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		title.custom_minimum_size.x = 168
@@ -119,8 +113,11 @@ func _sync_recipes() -> void:
 		recipe_grid.add_child(ingredients)
 		var labels := {}
 		for resource: String in definition.cost:
+			var ingredient_row := HBoxContainer.new()
+			ingredients.add_child(ingredient_row)
+			ingredient_row.add_child(ItemIcons.view(resource, 22))
 			labels[resource] = UI.label("", 14)
-			ingredients.add_child(labels[resource])
+			ingredient_row.add_child(labels[resource])
 		var energy := UI.label("", 13)
 		recipe_grid.add_child(energy)
 		var button := UI.button(recipe_grid, "Crea", _start_craft.bind(id))

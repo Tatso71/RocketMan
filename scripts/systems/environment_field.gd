@@ -129,10 +129,10 @@ func _clean(field: Dictionary) -> Dictionary:
 			result[cell] = clampf(float(field[cell]), 0, 1)
 	return result
 
-func exposure(feet: Vector2) -> Dictionary:
-	var head := feet - Vector2(0, Grid.metres(1.4))
+func exposure(feet: Vector2, height_metres: float = Grid.PLAYER_HEIGHT_METRES) -> Dictionary:
+	var head := feet - Vector2(0, Grid.metres(height_metres * 0.875))
 	var head_cell := Grid.to_cell(head)
-	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(0.8))), "submerged": _in_liquid(head, water), "oil": _in_liquid(feet - Vector2(0, 4), oil) or _in_liquid(head, oil), "acid": _in_liquid(feet - Vector2(0, 4), acid) or _in_liquid(head, acid), "gas": float(gas.get(head_cell, 0))}
+	return {"wet": _wet(feet - Vector2(0, 4)) or _wet(feet - Vector2(0, Grid.metres(height_metres * 0.5))), "submerged": _in_liquid(head, water), "oil": _in_liquid(feet - Vector2(0, 4), oil) or _in_liquid(head, oil), "acid": _in_liquid(feet - Vector2(0, 4), acid) or _in_liquid(head, acid), "gas": float(gas.get(head_cell, 0))}
 
 func liquid_volume(cell: Vector2i) -> float:
 	return float(water.get(cell, 0)) + float(acid.get(cell, 0)) + float(oil.get(cell, 0))

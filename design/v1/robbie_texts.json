@@ -37,7 +37,7 @@
       "robbie": {"body": "Obiettivo: 8 ferro, 3 rame e 1 cristallo. Al banco li trasformo in 4 componenti strutturali e 2 elettronici. Terra e pietra restano fuori dal cargo."},
       "priority": 65,
       "title": "Prima il laboratorio",
-      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo. Bastano per produrre al banco 4 componenti strutturali e 2 elettronici, necessari al primo laboratorio. Porto io i minerali utili; lo scavo comune non riempie il carico.",
+      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo. Con 2 selezioni lo scanner: le onde mostrano per poco i filoni nascosti. Poi torna a Pulse con 1. Porto io i minerali; al banco li trasformiamo nei componenti del laboratorio.",
       "detail": ""
     },
     {
@@ -72,15 +72,15 @@
     {
       "id": "pump_plan",
       "priority": 40,
-      "title": "Pompa di drenaggio",
-      "body": "La pompa occupa 2 x 2 m e costa 2 componenti strutturali e 2 elettronici. Sceglila con clic destro nel punto di montaggio. Puo stare nell'acqua e drena i passaggi vicini: serve un laboratorio alimentato.",
+      "title": "Pompa e circuito acqua",
+      "body": "La pompa occupa 2 x 2 m e costa 2 strutturali e 2 elettronici. Con T monta una presa stagna accanto alla parete della falda; R cambia orientamento. Collega i tubi all'ingresso della pompa e porta l'uscita alla serra o a uno scarico.",
       "detail": ""
     },
     {
       "id": "pump_built",
       "priority": 45,
       "title": "Pompa attiva",
-      "body": "La pompa sta drenando l'acqua vicina attraverso i passaggi aperti. Consuma la batteria della nave; non aspira attraverso la roccia e si ferma se il laboratorio non e alimentato.",
+      "body": "La pompa ha due porte separate: ingresso azzurro e uscita dorata. Clic destro sulla presa per perforare in tenuta e aprire la valvola; sulla pompa trovi portata, riserva e inversione. Serve energia dal laboratorio: l'acqua non scompare, va alla destinazione collegata.",
       "detail": ""
     },
     {
@@ -113,10 +113,10 @@
       "detail": ""
     },
     {
-      "id": "signal_limit",
+      "id": "path_blocked",
       "priority": 75,
-      "title": "Limite del collegamento",
-      "body": "Sono al limite del segnale della nave e ti aspetto qui. I materiali del mio carico restano disponibili insieme ai tuoi. Potremo ampliare il mio raggio con la ricerca.",
+      "title": "Passaggio ostruito",
+      "body": "Non trovo un percorso sicuro per raggiungerti. Controlla la botola, apri un passaggio ed evita che acqua o altri liquidi lo blocchino. La distanza dalla nave non mi ferma.",
       "detail": ""
     },
     {
@@ -223,7 +223,7 @@
       "id": "tools",
       "priority": 20,
       "title": "Prima analizziamo",
-      "body": "Lo Scanner rivela il materiale del blocco e le sacche vicine. Alcune rocce richiedono strumenti migliori; i nuclei indistruttibili vanno aggirati.",
+      "body": "Con 2 selezioni lo scanner. Le onde rivelano temporaneamente filoni, rocce dure e sacche nel loro raggio. Punta un blocco per analizzarlo con precisione. Tornando a Pulse le tracce spariscono, ma le analisi restano memorizzate.",
       "detail": ""
     },
     {
@@ -296,10 +296,10 @@
     },
     {
       "id": "ocra/laboratory_materials",
-      "robbie": {"body": "Raccolgo 8 ferro, 3 rame e 1 cristallo nel cargo. Li trasformero in componenti al banco della nave. Terra e pietra non occupano spazio.", "detail": "8 ferro + 3 rame + 1 cristallo"},
+      "robbie": {"body": "Cerco 8 ferro, 3 rame e 1 cristallo. Rame e ferro sono subito a sinistra della scala; i cristalli poco oltre, sullo stesso lato. Con 2 vedo le icone dello scanner: mi avvicino ai segnali grigi per identificarli. Con 1 torno a scavare.", "detail": "8 ferro + 3 rame + 1 cristallo"},
       "priority": 65,
       "title": "Raccogli per il laboratorio",
-      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo nei filoni vicini alla nave. Pulse puo scavarli: bastano per i componenti del primo laboratorio. Io porto solo i minerali utili.",
+      "body": "Raccogliamo 8 ferro, 3 rame e 1 cristallo. Cerca a sinistra della scala: prima rame e ferro, poi cristalli poco oltre. Con 2 vedi le icone dello scanner; avvicinati ai segnali grigi e passa il mouse per identificarli. Con 1 scavi, io raccolgo col magnete.",
       "detail": "8 ferro + 3 rame + 1 cristallo"
     },
     {

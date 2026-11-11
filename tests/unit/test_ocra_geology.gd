@@ -5,6 +5,15 @@ const Field = preload("res://scripts/systems/environment_field.gd")
 const Layout = preload("res://scripts/data/hazard_layout.gd")
 const Geology = preload("res://scripts/data/ocra_geology.gd")
 
+var previous_gas_pockets_enabled: bool
+
+func before() -> void:
+	previous_gas_pockets_enabled = Layout.gas_pockets_enabled
+	Layout.gas_pockets_enabled = true
+
+func after() -> void:
+	Layout.gas_pockets_enabled = previous_gas_pockets_enabled
+
 func test_authored_pockets_are_disjoint_finite_sealed_and_outside_the_hatch() -> void:
 	var site := Site.new(0, 1)
 	var occupied := {}

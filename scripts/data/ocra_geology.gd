@@ -29,6 +29,9 @@ static func ore(cell: Vector2i) -> String:
 	return ""
 
 static func component_ore(cell: Vector2i) -> String:
+	# Keep crystals on the same early route as copper and iron, before deep hazards.
+	if cell in [Vector2i(-5, 2), Vector2i(-5, 3), Vector2i(-4, 4)]:
+		return "crystal"
 	if cell.y in [2, 3] and cell.x >= -4 and cell.x <= -1:
 		return "iron"
 	if cell.y == 1 and cell.x >= -4 and cell.x <= -2:

@@ -147,7 +147,7 @@ func _run() -> void:
 	world.guide.request_help()
 	check(not world.guide_state.active_id.is_empty(), "manual help works while automatic hints are muted")
 	world.drone.position = Vector2(900, 0)
-	world.drone.status = "Limite segnale"
+	world.drone.status = "Percorso ostruito"
 	world.guide.request_help()
 	await frames()
 	check_layout()

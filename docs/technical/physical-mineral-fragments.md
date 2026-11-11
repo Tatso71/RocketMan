@@ -2,7 +2,9 @@
 
 Useful minerals always spawn a fragment; common soil and stone still yield nothing. `ExpeditionGear.drops` retains stable source-cell IDs and material types for persistence. A matching `ore_fragment.gd` CharacterBody2D supplies gravity, a 4 px collision radius, restitution 0.38 and horizontal impact damping. The terrain stays on collision layer 1; actors use layer 2 so the companion and fragments do not collide with the explorer.
 
-The magnet belongs to Robbie, not the human's inventory-access radius. It works during follow/manual control, within ship signal range, with cargo space and a clear terrain ray. Base radius is 2 m, plus 0.35 m per drone module upgrade. Fragments accelerate towards Robbie and are credited once on arrival. Full cargo and delivery missions leave fragments on the floor.
+New valuable drops yielding two or three pieces emit a world-space `mining_yield_popup.gd` x2/x3 badge at the source cell. It rises 28 px and fades over 1.1 seconds, with a dark font outline. Shared `spawn_ore` covers mining and blasts; its outstanding-drop guard prevents duplicate feedback. Badges are cosmetic, not saved, and cleared on restore without replay. Single yields and common terrain have no badge.
+
+The magnet belongs to Robbie, not the human's inventory-access radius. It works during follow/manual control, with cargo space and a clear terrain ray, regardless of distance or depth from the ship. Base radius is 2 m, plus 0.35 m per drone module upgrade. Fragments accelerate towards Robbie and are credited once on arrival. Full cargo and delivery missions leave fragments on the floor. Companion navigation includes all explored safe cells; installation power-link reach is a separate constraint.
 
 Companion navigation approaches reachable nearby ore before returning to its ordinary following formation. Graph routes may temporarily pass the explorer in narrow shafts; resting goals still preserve personal space. Terrain and liquid exclusions remain physical/path constraints, not visual shortcuts or teleportation.
 

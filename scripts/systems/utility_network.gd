@@ -3,7 +3,7 @@ extends RefCounted
 const Grid = preload("res://scripts/world/world_grid.gd")
 const KINDS := ["water", "gas", "energy"]
 const NAMES := {"water": "Tubo acqua", "gas": "Tubo gas", "energy": "Cavo energia"}
-const COLORS := {"water": Color("72ccea"), "gas": Color("dcda77"), "energy": Color("ef9d70")}
+const COLORS := {"water": Color("55b8ff"), "gas": Color("68d879"), "energy": Color("ef6268")}
 const OFFSETS := [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 var cells := {"water": {}, "gas": {}, "energy": {}}
 var dirty := true

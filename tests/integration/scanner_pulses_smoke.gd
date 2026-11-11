@@ -92,7 +92,8 @@ func _run() -> void:
 	check(not view.pulses.has(first) and view.pulses.size() <= 3, "fully faded rings are removed instead of accumulating")
 	view.advance(60)
 	check(view.pulses.size() <= 3, "a stalled frame cannot create unbounded catch-up rings")
-	check(world.ship_energy() == energy and world.crew_energy() == crew and world.site.snapshot() == terrain and world.scanned == scans and world._illumination(Grid.center(Vector2i(-3, 4))) == light, "visual sonar does not consume energy, reveal, excavate or illuminate terrain")
+	check(world.ship_energy() == energy and world.crew_energy() == crew and world.site.snapshot() == terrain and world._illumination(Grid.center(Vector2i(-3, 4))) == light, "geological sonar does not consume energy, excavate or illuminate terrain")
+	check(world.scanned.size() > scans.size(), "sonar now records actual local geological discoveries")
 	world.controls_locked = true
 	view.advance(0.1)
 	check(view.pulses.is_empty(), "locked controls clear the scanner overlay")
@@ -113,8 +114,14 @@ func _run() -> void:
 	check(world.can_reach(Vector2i(4, 2)), "level-II scanner targeting uses the same five-metre range as its waves")
 	world.target_cell = Vector2i(4, 2)
 	world.mine_timer = 0
+	var before_click: Dictionary = world.scanned.duplicate()
 	world._mine_target()
-	check(world.scanned.has(Vector2i(4, 2)) and not world.site.material(Vector2i(4, 2)).is_empty(), "targeted scanning still identifies without destroying a block")
+	check(world.scanned == before_click and world.beam_time == 0, "scanner clicks no longer fire or perform point analysis")
+	view.pulses.clear()
+	view.emission_timer = 0
+	view.advance(0.01)
+	view.advance(1.79)
+	check(world.scanned.has(Vector2i(4, 2)) and not world.site.material(Vector2i(4, 2)).is_empty(), "level-II passive wave identifies the farther material without mining")
 	for level in range(1, 5):
 		scanner.scanner_level = level
 		view.pulses.clear()
@@ -131,12 +138,13 @@ func _run() -> void:
 		for size: Vector2i in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 			root.size = size
 			view.pulses.clear()
+			view.revealed.clear()
 			var baseline := await picture("scanner-baseline-%dp" % size.y)
 			view.emission_timer = 0
 			view.advance(0.8)
 			var visible := await picture("scanner-waves-%dp" % size.y)
 			var transform: Transform2D = root.get_final_transform() * world.get_global_transform_with_canvas()
-			var changes := changed_pixels(baseline, visible, transform * (world.player.position - Vector2(0, 32)), Grid.metres(4) * transform.get_scale().x)
+			var changes := changed_pixels(baseline, visible, transform * (world.player.position - Vector2(0, 32)), (Grid.metres(4) + Grid.CELL_SIZE * 0.71) * transform.get_scale().x)
 			check(changes.x > 100 and changes.y == 0, "native %dp pixels show rings only inside the scanner range (%d inside, %d outside)" % [size.y, changes.x, changes.y])
 			view.pulses.clear()
 			view.pulses.append({"origin": world.player.position - Vector2(0, 32), "age": 1.7, "max_radius": Grid.metres(4), "color": scanner.beam_color})

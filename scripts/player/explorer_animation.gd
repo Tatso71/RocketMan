@@ -101,10 +101,10 @@ func pose() -> Dictionary:
 		rear_foot = Vector2(-6, -2 - sin(clock * 9))
 		lean = _velocity.x / 190.0 * 0.12
 	elif state == "fall":
-		front_foot = Vector2(8, -1)
-		rear_foot = Vector2(-7, -3)
-		front_hand = Vector2(16, -22)
-		rear_hand = Vector2(-16, -22)
+		front_foot = Vector2(9, -6)
+		rear_foot = Vector2(-5, -3)
+		front_hand = Vector2(13, -15)
+		rear_hand = Vector2(-10, -15)
 	elif state == "land":
 		var squash := sin((1.0 - _landing / LAND_DURATION) * PI) * _impact
 		# Start the compression on the contact frame, then recover around the feet.

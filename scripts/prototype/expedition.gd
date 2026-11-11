@@ -3,6 +3,7 @@ extends Node2D
 const State = preload("res://scripts/systems/expedition_state.gd")
 const Planets = preload("res://scripts/data/planet_catalog.gd")
 const Modules = preload("res://scripts/data/ship_module_catalog.gd")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 const Exterior = preload("res://scripts/prototype/rocket_exterior.gd")
 const Home = preload("res://scenes/prototype/rocket_home.tscn")
 const PHASE_NAMES := ["Scelta del pianeta", "Volo interplanetario", "Atterraggio verticale", "Esplorazione e scavo", "Decollo"]
@@ -33,8 +34,13 @@ var charge_button: Button
 var feedback := ""
 var variant_controls: HBoxContainer
 var variant_buttons: Array[Button] = []
+var departure_checkpoint := {}
 
 func _ready() -> void:
+	# Opt-in playtest supplies; normal campaigns and loaded saves keep their economy.
+	if OS.is_debug_build() and "--construction-test" in OS.get_cmdline_user_args():
+		model.ship.field_cargo.collect_drone("structural_component", 24)
+		model.ship.field_cargo.collect_drone("electronic_component", 40)
 	exterior = Exterior.new()
 	add_child(exterior)
 	_build_interface()
@@ -43,10 +49,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var previous: int = model.phase
+	var previous_hull: float = model.ship.hull
 	if not ship_menu.visible:
 		model.advance(delta)
 	if model.phase != previous:
-		_sync_phase()
+		if not _sync_phase():
+			model.ship.hull = previous_hull
+			_recover_arrival()
 	_refresh_interface()
 	if ship_menu.visible:
 		_refresh_ship_menu()
@@ -78,6 +87,7 @@ func _sync_phase() -> bool:
 	if model.phase == State.Phase.DIGGING:
 		world.outpost.fabrication.import_state(model.ship.fabrication)
 		model.ship.fabrication = world.outpost.Fabrication.new()
+		departure_checkpoint.clear()
 	_refresh_interface()
 	planet_list.select(_selected_index())
 	return true
@@ -104,22 +114,42 @@ func select_variant(index: int) -> void:
 	_refresh_interface()
 
 func depart() -> bool:
+	var checkpoint := _departure_state()
 	if not model.depart():
 		_notify(model.ship.flight_blocker(Planets.find(model.selected_planet)))
 		return false
+	departure_checkpoint = checkpoint
 	feedback = ""
 	_sync_phase()
 	return true
 
 func arrive_immediately() -> bool:
+	var checkpoint := _departure_state()
 	if not model.arrive_immediately():
 		var planet := Planets.find(model.selected_planet)
 		var reason: String = model.ship.flight_blocker(planet) if planet != null else "Destinazione non disponibile"
 		_notify(reason if not reason.is_empty() else "Viaggio non disponibile")
 		return false
+	departure_checkpoint = checkpoint
 	feedback = ""
-	_sync_phase()
+	if not _sync_phase():
+		_recover_arrival()
+		return false
 	return true
+
+func _departure_state() -> Dictionary:
+	return {"fuel": model.ship.fuel, "energy": model.ship.energy, "hull": model.ship.hull, "active_planet": model.active_planet}
+
+func _recover_arrival() -> void:
+	for stat: String in ["fuel", "energy", "hull"]:
+		if departure_checkpoint.has(stat):
+			model.ship.set(stat, departure_checkpoint[stat])
+	model.active_planet = departure_checkpoint.get("active_planet", model.active_planet)
+	model.phase = State.Phase.SELECT
+	model.progress = 0.0
+	departure_checkpoint.clear()
+	_sync_phase()
+	_notify("Avamposto non valido: arrivo annullato, partita conservata")
 
 func request_takeoff() -> bool:
 	if not is_instance_valid(world) or model.phase != State.Phase.DIGGING:
@@ -164,6 +194,7 @@ func load_campaign() -> bool:
 		_notify("Dati dell'avamposto non validi: partita attuale conservata")
 		return false
 	ship_menu.hide()
+	departure_checkpoint.clear()
 	_notify("Spedizione caricata")
 	return true
 
@@ -380,8 +411,12 @@ func _build_ship_menu() -> void:
 	title.text = "MODULI"
 	right.add_child(title)
 	module_picker = OptionButton.new()
+	module_picker.expand_icon = true
+	module_picker.add_theme_constant_override("icon_max_width", 24)
 	for definition: Resource in Modules.all():
 		module_picker.add_item(definition.display_name)
+		module_picker.set_item_icon(module_picker.item_count - 1, ItemIcons.texture("module_" + definition.module_id))
+		module_picker.get_popup().set_item_icon_max_width(module_picker.item_count - 1, 24)
 	right.add_child(module_picker)
 	module_details = Label.new()
 	module_details.custom_minimum_size = Vector2(370, 146)
@@ -393,10 +428,14 @@ func _build_ship_menu() -> void:
 	service_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	right.add_child(service_status)
 	discard_picker = OptionButton.new()
+	discard_picker.expand_icon = true
+	discard_picker.add_theme_constant_override("icon_max_width", 24)
 	for id: String in model.ship.RESOURCE_IDS:
 		if id in ["soil", "stone", "lamp_kit", "lab_cube"]:
 			continue
 		discard_picker.add_item(RESOURCE_NAMES[id])
+		discard_picker.set_item_icon(discard_picker.item_count - 1, ItemIcons.texture(id))
+		discard_picker.get_popup().set_item_icon_max_width(discard_picker.item_count - 1, 22)
 		discard_picker.set_item_metadata(discard_picker.item_count - 1, id)
 	right.add_child(discard_picker)
 	_button(right, "Espelli 1 unita", _discard)

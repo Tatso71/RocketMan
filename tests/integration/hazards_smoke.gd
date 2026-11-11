@@ -1,12 +1,14 @@
 extends SceneTree
 
 const Fixture = preload("res://tests/fixtures/dig_site_fixture.gd")
+const Layout = preload("res://scripts/data/hazard_layout.gd")
 
 var world: Node2D
 var failures := 0
 var capture := false
 
 func _initialize() -> void:
+	Layout.gas_pockets_enabled = true
 	_run.call_deferred()
 
 func check(condition: bool, description: String) -> void:
@@ -41,7 +43,13 @@ func pulse(cell: Vector2i, slot: int = 0) -> void:
 	world.equip_tool(slot)
 	world.target_cell = cell
 	world.mine_timer = 0
-	world._mine_target()
+	if slot == 1:
+		world.scanner_view.pulses.clear()
+		world.scanner_view.emission_timer = 0
+		world.scanner_view.advance(0.01)
+		world.scanner_view.advance(1.79)
+	else:
+		world._mine_target()
 	await frames()
 
 func excavate(cell: Vector2i) -> void:
@@ -83,7 +91,7 @@ func _run() -> void:
 	await excavate(Vector2i(-6, 2))
 	await pulse(Vector2i(-7, 2), 1)
 	check(world.scanned.has(Vector2i(-7, 2)), "scanner marks gas-side wall before breach")
-	check(world.status_label.text.contains("Gas"), "scanner gives explicit gas warning")
+	check(world.scanner_view.revealed.values().any(func(entry): return entry.kind == "gas"), "passive scanner reveals the sealed gas anomaly in isolated QA")
 	check(world.environment.released.is_empty(), "scanning cannot release a pocket")
 	await picture("hazards-gas-scan-1080p")
 	await excavate(Vector2i(-7, 2))
@@ -132,7 +140,7 @@ func _run() -> void:
 	await excavate(Vector2i(1, 3))
 	await excavate(Vector2i(1, 2))
 	await pulse(Vector2i(2, 3), 1)
-	check(world.status_label.text.contains("Acqua"), "scanner recognizes sealed water beyond the wall")
+	check(world.scanner_view.revealed.values().any(func(entry): return entry.kind == "water"), "passive scanner recognizes sealed water beyond the wall")
 	await excavate(Vector2i(2, 3))
 	check(world.environment.released.has("water_east"), "water breach triggers an infiltration warning")
 	world._physics_process(0.2)

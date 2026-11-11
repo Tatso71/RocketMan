@@ -48,6 +48,7 @@ func _run() -> void:
 		await physics_frame
 	check(world.gear.drops.get(Vector2i(-4, 1)) == "copper", "valuable ore remains on the ground when cargo cannot collect")
 	var saved: Dictionary = JSON.parse_string(JSON.stringify(world.capture_state()))
+	var expected_ore: int = saved.gear.drops[0].get("amount", 1)
 	check(world.restore_state(saved), "loose ore survives a world save/load")
 	world.field_cargo.drone.clear()
 	world.player.position = Vector2(-140, 40)
@@ -56,8 +57,8 @@ func _run() -> void:
 	for tick in range(90):
 		await physics_frame
 		world.gear.advance(1.0 / 60)
-	check(world.gear.drops.is_empty() and world.field_cargo.drone.get("copper", 0) == 1, "Robbie collects preserved ore exactly once")
+	check(world.gear.drops.is_empty() and world.field_cargo.drone.get("copper", 0) == expected_ore, "Robbie collects every preserved piece exactly once")
 	world.gear.advance(0.01)
-	check(world.field_cargo.drone.get("copper", 0) == 1, "ore is not duplicated on later ticks")
+	check(world.field_cargo.drone.get("copper", 0) == expected_ore, "ore is not duplicated on later ticks")
 	print("Free digging smoke: %d failures" % failures)
 	quit(1 if failures else 0)

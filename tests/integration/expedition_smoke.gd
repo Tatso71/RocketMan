@@ -100,7 +100,9 @@ func _run() -> void:
 	world.equip_tool(1)
 	world.mine_timer = 0
 	world._mine_target()
-	check(world.scanned.has(world.target_cell), "scanner records cell composition without mining")
+	check(world.beam_time == 0, "scanner click emits no extraction beam")
+	world.scanner_view.advance(1.8)
+	check(world.scanned.has(world.target_cell), "passive scanner wave records nearby composition without mining")
 	check(not world.site.material(world.target_cell).is_empty(), "scanner leaves terrain intact")
 	check(world.equip_tool(3) and world.active_tool().mode == "jetpack", "fourth equipment slot selects the jetpack")
 	world.equip_tool(0)
@@ -186,13 +188,15 @@ func _run() -> void:
 	previous.set_physics_process(false)
 	var model_before: Dictionary = campaign.model.snapshot()
 	var world_before: Dictionary = previous.capture_state()
-	for malformed: String in ["missing_economy", "other_economy", "invalid_gear"]:
+	for malformed: String in ["missing_economy", "other_economy", "invalid_scans", "invalid_gear"]:
 		var invalid: Dictionary = model_before.duplicate(true)
 		invalid.outposts[campaign.model.active_planet] = world_before.duplicate(true)
 		if malformed == "missing_economy":
 			invalid.outposts[campaign.model.active_planet].erase("economy_version")
 		elif malformed == "other_economy":
 			invalid.outposts[campaign.model.active_planet].economy_version = 1
+		elif malformed == "invalid_scans":
+			invalid.outposts[campaign.model.active_planet].scan_findings = [{"cell": [0, 1], "kind": "unknown"}]
 		else:
 			invalid.outposts[campaign.model.active_planet].gear.ammo = 99
 		root.get_node("SaveManager").write_campaign_save(invalid)

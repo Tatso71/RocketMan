@@ -1,9 +1,15 @@
 # Expedition, Ship and Digital Tools
 
-Lamp power update: lamps use a nearby operational field laboratory for funding, construction progress and active consumption; their own direct ship-radius requirement is removed. Laboratory ship reach/power, pumps/fans and manual industrial conduits are unchanged. Cosmetic automatic leads connect the ship outlet (0, -80 px) to funded labs and the supplying lab to funded lamps. They are not extra paid network cells, do not collide, hide behind rock/darkness and rebuild from the current source after restore. Assembly popups expose the current funding blocker as a live, wrapped status line.
-
 Date: 2026-10-24
 Status: Playable foundation, not final simulation or balance
+
+Runtime update, 11 November 2026: companion Robbie no longer has a distance/depth limit from the ship. Following and local magnetic pickup work across explored safe passages; Y can unload and return from deep expeditions. Only actual obstacles/hazardous liquids block travel. Installation power-link reach remains a separate constraint. Later historical sections describe earlier cube/signal proposals; the README and current code take precedence.
+
+Lamp power update: lamps use a rooted field-laboratory network for funding, construction progress and active consumption; their own direct ship-radius requirement is removed. Active, enabled, healthy and environmentally safe lamps relay at most 8 m to the next light. The first link retains the source lab's upgradeable radius. A multi-source breadth-first resolver prefers the nearest directly reachable lab, then shortest-hop relay paths; unreachable cycles never provide power. Cached topology keys track live eligibility, range and dictionary identity, including same-frame changes and full restores. One source lab owns each light's consumption. Only active lamps relay, not unpaid/assembling projects. Disabled/damaged intermediates interrupt branches unless an alternate rooted path exists.
+
+Laboratory ship reach/power, pumps/fans and manual industrial conduits are unchanged. Cosmetic automatic leads connect the ship outlet (0, -80 px) to funded labs and each actual parent to the next funded lamp. They use red orthogonal paths, turn muted when unpowered, add no paid network cells or collider, hide behind rock/darkness and rebuild from the current source after restore. Assembly popups expose the live funding blocker, including the need for a reachable lab or an energized upstream lamp.
+
+Eligibility snapshots are shared within each synchronous power, lighting, simulation or drawing pass (including nested calls), then discarded. Standalone queries still check live eligibility and object identities. Simulation closes its snapshot before battery debit and reevaluates lighting afterward, so exhausted sources cannot leave lamps illuminated. The 200-structure regression reduces safety checks from 40,000/40,000/79,800 for load/lighting/reports to 400 each; this is an operation-count check, not a frame-rate benchmark.
 
 ## Ocra Onboarding Update
 

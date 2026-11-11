@@ -5,6 +5,7 @@ const DigSite = preload("res://scripts/systems/dig_site.gd")
 const Explorer = preload("res://scripts/player/rocket_explorer.gd")
 const InventoryModel = preload("res://scripts/systems/inventory.gd")
 const Tools = preload("res://scripts/data/digital_tool_catalog.gd")
+const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 const HazardField = preload("res://scripts/systems/environment_field.gd")
 const FieldCargo = preload("res://scripts/systems/field_cargo.gd")
 const Drone = preload("res://scripts/player/support_drone.gd")
@@ -21,9 +22,10 @@ const ScannerPulses = preload("res://scripts/ui/scanner_pulse_view.gd")
 const ReservoirView = preload("res://scripts/ui/reservoir_view.gd")
 const CryoCrewView = preload("res://scripts/ui/cryo_crew_view.gd")
 const TerrainRenderer = preload("res://scripts/ui/terrain_renderer.gd")
+const VitalsMeters = preload("res://scripts/ui/vitals_meters.gd")
 @export_enum("explorer", "robbie") var variant := "explorer"
 @export var organic_terrain := true
-const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "iron": "Ferro", "crystal": "Cristallo", "silica": "Quarzo", "cobalt": "Cobalto", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
+const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "iron": "Ferro", "crystal": "Cristallo", "silica": "Quarzo", "cobalt": "Cobalto", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile", "water": "Acqua", "gas": "Gas", "oil": "Petrolio", "acid": "Acido"}
 const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "iron": Color("a58f89"), "crystal": Color("55c5c6"), "silica": Color("c6c8b1"), "cobalt": Color("536fbb"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
 var environment := HazardField.new(site)
@@ -40,6 +42,7 @@ var target_cell := Vector2i.ZERO
 var mouse_aim := false
 var mine_timer := 0.0
 var message_time := 0.0
+var scanner_readout_active := false
 var ambient_time := 0.0
 var resources_label: Label
 var location_label: Label
@@ -60,6 +63,7 @@ var metric_label: Label
 var mouse_mining := false
 var local_suit := 100.0
 var hazard_label: Label
+var vitals_meters: HBoxContainer
 var field_cargo := FieldCargo.new()
 var local_store: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0, "lamp_kit": 0}
 var drone: CharacterBody2D
@@ -77,6 +81,7 @@ var tutorial_ui: CanvasLayer
 var gear: Node2D
 var jetpack_meter: ProgressBar
 var scanner_view: Node2D
+var debug_scanner: Resource
 var reservoir_view: Node2D
 
 func is_robbie() -> bool:
@@ -149,7 +154,7 @@ func drone_help_available() -> bool:
 func drone_can_collect() -> bool:
 	if is_robbie():
 		return true
-	return is_instance_valid(drone) and drone.mission == "follow" and drone.position.distance_to(player.position - Vector2(0, 32)) <= Grid.metres(3) and drone._clear(drone.position, player.position - Vector2(0, 32))
+	return is_instance_valid(drone) and drone.mission == "follow" and drone.position.distance_to(player_center()) <= Grid.metres(3) and drone._clear(drone.position, player_center())
 
 func suit_integrity() -> float:
 	return ship_state.suit_integrity if ship_state != null else local_suit
@@ -161,7 +166,10 @@ func _set_suit(value: float) -> void:
 		local_suit = clampf(value, 0, 100)
 
 func player_environment() -> Dictionary:
-	return environment.exposure(player.position)
+	return environment.exposure(player.position, player.body_size().y / Grid.PIXELS_PER_METRE)
+
+func player_center() -> Vector2:
+	return player.body_center()
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or controls_blocked():
@@ -182,7 +190,25 @@ func _physics_process(delta: float) -> void:
 func active_tool() -> Resource:
 	var slot: int = ship_state.active_tool_slot if ship_state != null else standalone_slot
 	var slots: Array = ship_state.tool_slots if ship_state != null else ["pulse", "scanner", "bomb", "jetpack"]
-	return Tools.find(slots[slot])
+	var tool: Resource = Tools.find(slots[slot])
+	return debug_scanner if tool != null and tool.mode == "scan" and debug_scanner != null else tool
+
+func _scanner_level_shortcut(event: InputEvent) -> bool:
+	if not event is InputEventKey or not event.pressed or event.echo or event.ctrl_pressed or event.alt_pressed or event.meta_pressed or active_tool().mode != "scan":
+		return false
+	var key: int = event.keycode if event.keycode != 0 else event.physical_keycode
+	var change := 1 if key in [KEY_PLUS, KEY_EQUAL, KEY_KP_ADD] or event.unicode == 43 else (-1 if key in [KEY_MINUS, KEY_KP_SUBTRACT] or event.unicode == 45 else 0)
+	if change == 0: return false
+	if debug_scanner == null:
+		debug_scanner = active_tool().duplicate()
+	debug_scanner.scanner_level = clampi(debug_scanner.scanner_level + change, 1, 4)
+	scanner_view.pulses.clear()
+	scanner_view.revealed.clear()
+	scanner_view.emission_timer = 0
+	scanner_view.queue_redraw()
+	_refresh_hud()
+	_note("Scanner %s / Raggio %.1f m" % [["I", "II", "III", "IV"][debug_scanner.scanner_level - 1], debug_scanner.effective_reach_metres()])
+	return true
 
 func equip_tool(slot: int) -> bool:
 	var slots: Array = ship_state.tool_slots if ship_state != null else ["pulse", "scanner", "bomb", "jetpack"]
@@ -217,6 +243,8 @@ func controls_blocked() -> bool:
 		return true
 	if is_instance_valid(outpost) and is_instance_valid(outpost.industry_ui) and outpost.industry_ui.is_open():
 		return true
+	if is_instance_valid(outpost) and is_instance_valid(outpost.hydraulic_ui) and outpost.hydraulic_ui.is_open():
+		return true
 	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open()) or (is_instance_valid(outpost.assembly) and outpost.assembly.is_open())))
 
 func _ready() -> void:
@@ -237,7 +265,6 @@ func _ready() -> void:
 	add_child(player)
 	drone = Drone.new()
 	drone.world = self
-	drone.range_metres = ship_state.drone_range_metres() if ship_state != null else 15
 	drone.position = Vector2(-140, -380)
 	drone.z_index = 6
 	add_child(drone)
@@ -350,7 +377,7 @@ func on_ladder(feet: Vector2) -> bool:
 	# Keep a grip until the feet clear the floor, so either side is a safe exit.
 	if hatch_open and absf(feet.x - HATCH_RECT.get_center().x) < 22 and feet.y >= HATCH_RECT.position.y - 4 and feet.y <= HATCH_RECT.end.y:
 		return true
-	var torso := feet - Vector2(0, Grid.metres(0.8))
+	var torso := feet - Vector2(0, player.body_size().y * 0.5)
 	for point in [torso, feet - Vector2(0, 4)]:
 		var cell := Grid.to_cell(point)
 		if ladders.has(cell) and absf(feet.x - Grid.center(cell).x) < 22:
@@ -366,6 +393,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if controls_blocked():
 		return
+	if _scanner_level_shortcut(event):
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("send_drone"):
 		drone.send_to_ship()
 		get_viewport().set_input_as_handled()
@@ -374,7 +404,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		gear.detonate()
 		get_viewport().set_input_as_handled()
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not outpost.build_mode and not outpost.industry_ui.tool_active() and drone.hit_test(event.position):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not outpost.build_mode and not outpost.industry_ui.tool_active() and not outpost.hydraulic_tool_active() and drone.hit_test(event.position):
 		mouse_mining = false
 		guide.repeat_last()
 		get_viewport().set_input_as_handled()
@@ -462,8 +492,8 @@ func _process(delta: float) -> void:
 		var aim := Vector2(Input.get_joy_axis(pads[0], JOY_AXIS_RIGHT_X), Input.get_joy_axis(pads[0], JOY_AXIS_RIGHT_Y)) if not pads.is_empty() else Vector2.ZERO
 		if aim.length() < 0.3:
 			aim = Vector2(player.facing, Input.get_axis("climb_up", "climb_down"))
-		target_cell = Grid.to_cell(player.position - Vector2(0, 32) + aim.normalized() * 60)
-	if (Input.is_action_pressed("mine") or mouse_mining) and mine_timer <= 0 and not controls_blocked() and not outpost.build_mode and not outpost.industry_ui.tool_active():
+		target_cell = Grid.to_cell(player_center() + aim.normalized() * 60)
+	if (Input.is_action_pressed("mine") or mouse_mining) and active_tool().mode in ["mine", "bomb"] and mine_timer <= 0 and not controls_blocked() and not outpost.build_mode and not outpost.industry_ui.tool_active() and not outpost.hydraulic_tool_active():
 		_mine_target()
 	if player.position.y > Grid.metres(site.DEPTH + 1):
 		return_home()
@@ -471,7 +501,7 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func can_reach(cell: Vector2i) -> bool:
-	var hand := player.position - Vector2(0, Grid.metres(0.8))
+	var hand := player_center()
 	if hand.distance_to(Grid.center(cell)) > Grid.metres(active_tool().effective_reach_metres()):
 		return false
 	# Cast against the same physics rectangles used by movement: no mining through walls.
@@ -504,14 +534,19 @@ func target_blocker(cell: Vector2i) -> String:
 	return ""
 
 func _mine_target() -> void:
+	var tool := active_tool()
+	if tool.mode != "mine":
+		beam_time = 0.0
+		beam_tool = null
+		mouse_mining = false
+		if tool.mode != "bomb":
+			return
 	if mine_timer > 0:
 		return
 	mine_timer = 0.22
 	if active_tool().mode == "bomb":
 		gear.place_bomb(target_cell)
 		mouse_mining = false
-		return
-	if active_tool().mode == "jetpack":
 		return
 	if site.material(target_cell).is_empty() and ladders.has(target_cell) and active_tool().mode == "mine":
 		var reason := target_blocker(target_cell)
@@ -528,30 +563,21 @@ func _mine_target() -> void:
 	if not blocker.is_empty():
 		_note(blocker)
 		return
-	var tool := active_tool()
 	beam_time = 0.24
-	_set_crew_energy(crew_energy() - (1.0 if tool.mode == "mine" else 0.15))
+	_set_crew_energy(crew_energy() - 1.0)
 	beam_target = Grid.center(target_cell)
 	beam_tool = tool
 	player.facing = 1 if beam_target.x >= player.position.x else -1
 	if tool.mode == "mine":
 		player.mining_pulse()
 	_set_ship_energy(ship_energy() - tool.energy_per_pulse)
-	if tool.mode == "scan":
-		scanned[target_cell] = site.material(target_cell)
-		var kind := site.material(target_cell)
-		var warning := environment.reading(target_cell)
-		var resistance := "Indistruttibile" if kind == "anchor" else "Resistenza %d" % site.COST[kind]
-		_note("%s / %s%s" % [MATERIAL_NAMES[kind], resistance, " / " + warning if not warning.is_empty() else ""])
-		return
 	var power: int = tool.power + (ship_state.drill_power() - 1 if ship_state != null else 0)
 	var collected := site.mine(target_cell, power, "bedrock" in tool.materials)
 	if not collected.is_empty():
 		remove_mined_block(target_cell, collected)
 		var resource_id: String = site.resource_yield(collected)
 		if not resource_id.is_empty():
-			gear.drops[target_cell] = resource_id
-		scanned.erase(target_cell)
+			gear.spawn_ore(target_cell, resource_id)
 		guide_event("mined")
 		_note("Scavo libero" if resource_id.is_empty() else ("%s a terra / Robbie lo raccogliera" % MATERIAL_NAMES[resource_id] if gear.drops.has(target_cell) else "+1 " + MATERIAL_NAMES[resource_id]))
 		var breaches := environment.detect_breaches()
@@ -575,12 +601,15 @@ func remove_mined_block(cell: Vector2i, kind: String) -> void:
 		terrain.remove_child(body)
 		body.queue_free()
 		blocks.erase(cell)
-	scanned.erase(cell)
+	if is_instance_valid(outpost):
+		outpost.hydraulics.synchronize(outpost)
+	if is_instance_valid(scanner_view):
+		scanner_view.revealed.erase(cell)
 	navigation_revision += 1
 	gear.burst(Grid.center(cell), MATERIAL_COLORS.get(kind, Color("b9ada0")))
 
 func set_hatch(open: bool, notify: bool = true) -> void:
-	var body := Rect2(player.position - Vector2(12, 64), Vector2(24, 64))
+	var body: Rect2 = player.body_rect_at(player.position)
 	if not open and body.intersects(HATCH_RECT):
 		_note("Passaggio occupato")
 		return
@@ -603,7 +632,7 @@ func place_ladder_at(cell: Vector2i) -> bool:
 	if cell.y < 0 or not site.contains(cell) or not site.material(cell).is_empty() or ladders.has(cell):
 		_note("Qui non puoi aggiungere una scala")
 		return false
-	if Grid.center(cell).distance_to(player.position - Vector2(0, 32)) > Grid.metres(1.5):
+	if Grid.center(cell).distance_to(player_center()) > Grid.metres(1.5):
 		_note("Scala fuori portata")
 		return false
 	ladders[cell] = true
@@ -633,6 +662,7 @@ func return_home() -> void:
 	player.reset_animation()
 
 func capture_state() -> Dictionary:
+	outpost.hydraulics.synchronize(outpost)
 	var saved_ladders: Array = []
 	for cell: Vector2i in ladders:
 		saved_ladders.append([cell.x, cell.y])
@@ -643,9 +673,13 @@ func capture_state() -> Dictionary:
 	data.variant = variant
 	data.network = outpost.network.snapshot()
 	data.industry = outpost.industry.snapshot()
+	data.hydraulics = outpost.hydraulics.snapshot()
 	data.seed_bank = seeds().duplicate()
 	data.gear = gear.snapshot()
 	data.drone_mission = drone.mission
+	data.scan_findings = []
+	for cell: Vector2i in scanned:
+		data.scan_findings.append({"cell": [cell.x, cell.y], "kind": scanned[cell]})
 	return data
 
 func save_run() -> bool:
@@ -670,6 +704,13 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 		return false
 	if not Outpost.Fabrication.integer(data.get("layout_version", 0), 0, DigSite.HazardLayout.CURRENT_VERSION):
 		return false
+	var next_findings := {}
+	if data.has("scan_findings"):
+		if not site.valid_scan_findings(data.scan_findings):
+			return false
+		for entry in data.scan_findings:
+			var cell = Grid.decode_cell(entry.get("cell"))
+			next_findings[cell] = entry.kind
 	var next_site := DigSite.new(site.terrain_seed, int(data.get("layout_version", 0)))
 	next_site.restore(data.removed)
 	var next_environment := HazardField.new(next_site)
@@ -683,6 +724,9 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	var next_network := Outpost.Network.new()
 	var next_industry := Outpost.Industry.new()
 	if not next_network.restore(data.get("network", {}), next_site) or not next_industry.restore(data.get("industry", {}), next_buildings, next_site):
+		return false
+	var next_hydraulics := Outpost.WaterCircuit.new()
+	if not next_hydraulics.restore(data.get("hydraulics", {}), next_site, next_buildings):
 		return false
 	if not Gear.valid(data.get("gear", {}), next_site, next_buildings) or data.get("drone_mission", "follow") not in ["follow", "outbound", "returning"]:
 		return false
@@ -715,6 +759,8 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	outpost.buildings = next_buildings
 	outpost.network = next_network
 	outpost.industry = next_industry
+	outpost.hydraulics = next_hydraulics
+	outpost.hydraulic_ui.reset()
 	gear.restore(data.get("gear", {}), restore_inventory)
 	drone.mission = data.get("drone_mission", "follow")
 	drone.has_resting_goal = false
@@ -738,11 +784,15 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	outpost.preview_fixed = false
 	navigation_revision += 1
 	scanned.clear()
+	scanner_view.revealed.clear()
+	scanner_view.pulses.clear()
 	if data.get("scanned", []) is Array:
 		for entry in data.get("scanned", []):
 			var cell = Grid.decode_cell(entry)
 			if cell is Vector2i and not site.material(cell).is_empty():
 				scanned[cell] = site.material(cell)
+	if data.has("scan_findings"):
+		scanned = next_findings
 	# Rebuild only cell bodies; planet boundaries are persistent nodes.
 	for y in range(site.DEPTH):
 		for x in range(site.LEFT, site.RIGHT):
@@ -782,7 +832,7 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	var drone_point = data.get("drone_position")
 	if drone_point is Array and drone_point.size() == 2 and (drone_point[0] is int or drone_point[0] is float) and (drone_point[1] is int or drone_point[1] is float):
 		var candidate := Vector2(float(drone_point[0]), float(drone_point[1]))
-		if candidate.is_finite() and candidate.distance_to(Vector2(0, -80)) <= Grid.metres(drone.range_metres) and drone._free(Grid.to_cell(candidate)):
+		if candidate.is_finite() and drone._free(Grid.to_cell(candidate)):
 			drone.position = candidate
 	if not data.has("drone_guide"):
 		# Older saves infer milestones from the restored outpost, not tutorial text.
@@ -807,10 +857,11 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	return true
 
 func _safe_position(point: Vector2) -> bool:
-	if not point.is_finite() or point.x < Grid.metres(site.LEFT + 1) or point.x > Grid.metres(site.RIGHT - 1) or point.y < -376 or point.y > Grid.metres(site.DEPTH - 1):
+	var minimum_feet: float = Grid.metres(Grid.ROCKET_CEILING) + player.body_size().y
+	if not point.is_finite() or point.x < Grid.metres(site.LEFT + 1) or point.x > Grid.metres(site.RIGHT - 1) or point.y < minimum_feet or point.y > Grid.metres(site.DEPTH - 1):
 		return false
 	# Validate the restored model, not physics bodies pending their next server sync.
-	var body := Rect2(point - Vector2(12, 64), Vector2(24, 64)).grow(-0.5)
+	var body: Rect2 = player.body_rect_at(point).grow(-0.5)
 	var first := Grid.to_cell(body.position)
 	var last := Grid.to_cell(body.end)
 	for y in range(first.y, last.y + 1):
@@ -833,6 +884,7 @@ func _safe_position(point: Vector2) -> bool:
 
 func _note(message: String) -> void:
 	message_time = 3.0
+	scanner_readout_active = false
 	if is_instance_valid(status_label):
 		status_label.text = message
 
@@ -848,21 +900,24 @@ func _build_hud() -> void:
 	top.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	top.offset_bottom = 60
 	root.add_child(top)
+	vitals_meters = VitalsMeters.new()
+	vitals_meters.position = Vector2(22, 70)
+	root.add_child(vitals_meters)
 	hazard_label = Label.new()
-	hazard_label.position = Vector2(22, 76)
-	hazard_label.add_theme_font_size_override("font_size", 14)
+	hazard_label.position = Vector2(22, 100)
+	hazard_label.add_theme_font_size_override("font_size", 13)
 	hazard_label.add_theme_constant_override("outline_size", 5)
 	hazard_label.add_theme_color_override("font_outline_color", Color("17212a"))
 	root.add_child(hazard_label)
 	drone_label = Label.new()
-	drone_label.position = Vector2(22, 104)
-	drone_label.add_theme_font_size_override("font_size", 14)
+	drone_label.position = Vector2(22, 121)
+	drone_label.add_theme_font_size_override("font_size", 13)
 	drone_label.add_theme_color_override("font_outline_color", Color("17212a"))
 	drone_label.add_theme_constant_override("outline_size", 4)
 	root.add_child(drone_label)
 	power_label = Label.new()
-	power_label.position = Vector2(22, 132)
-	power_label.add_theme_font_size_override("font_size", 14)
+	power_label.position = Vector2(22, 142)
+	power_label.add_theme_font_size_override("font_size", 13)
 	power_label.add_theme_color_override("font_outline_color", Color("17212a"))
 	power_label.add_theme_constant_override("outline_size", 4)
 	root.add_child(power_label)
@@ -914,15 +969,18 @@ func _build_hud() -> void:
 	bottom.add_child(metric_label)
 	var hotbar := HBoxContainer.new()
 	hotbar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	hotbar.offset_left = -282
-	hotbar.offset_right = 282
+	hotbar.offset_left = -337
+	hotbar.offset_right = 337
 	hotbar.offset_top = -90
 	hotbar.offset_bottom = -46
 	hotbar.add_theme_constant_override("separation", 6)
 	root.add_child(hotbar)
 	for slot in range(Tools.SLOT_COUNT):
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(135, 42)
+		button.custom_minimum_size = Vector2(164, 42)
+		button.add_theme_font_size_override("font_size", 15)
+		button.expand_icon = true
+		button.add_theme_constant_override("icon_max_width", 24)
 		button.pressed.connect(equip_tool.bind(slot))
 		hotbar.add_child(button)
 		tool_buttons.append(button)
@@ -959,7 +1017,7 @@ func _button(parent: Node, text: String, tip: String, callback: Callable) -> voi
 func _refresh_hud() -> void:
 	resources_label.text = "Robbie %d/%d   Jet %.0f%%" % [field_cargo.used(field_cargo.drone), field_cargo.drone_capacity, gear.charge()]
 	jetpack_meter.value = gear.charge()
-	drone_label.text = "ROBBIE / %s / Segnale %.0f m / Magnete %.2f m" % [drone.status, drone.range_metres, gear.magnet_range_metres()]
+	drone_label.text = "ROBBIE / %s / Magnete %.2f m" % [drone.status, gear.magnet_range_metres()]
 	if is_robbie():
 		drone_label.text = "ROBBIE / Controllo manuale / Criogenia 3 capsule stabili"
 	var depth := maxf(0, player.position.y / Grid.PIXELS_PER_METRE)
@@ -977,9 +1035,8 @@ func _refresh_hud() -> void:
 		risk = "PETROLIO / Tuta contaminata: torna all'asciutto"
 	elif danger.wet:
 		risk = "ACQUA / Movimento rallentato"
-	hazard_label.text = "TUTA %.0f%%  |  ENERGIA PERSONALE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk]
-	if is_robbie():
-		hazard_label.text = "SCOCCA %.0f%%  |  CARICA ROBBIE %.0f%%  |  %s" % [suit_integrity(), crew_energy(), risk.replace("tuta", "scocca")]
+	vitals_meters.update_values(crew_energy(), suit_integrity(), is_robbie())
+	hazard_label.text = risk.replace("tuta", "scocca") if is_robbie() else risk
 	hazard_label.modulate = Color("ffd777") if danger.wet or float(danger.gas) >= 0.03 else Color("d4e9df")
 	if danger.acid:
 		hazard_label.modulate = Color("e0f58a")
@@ -989,11 +1046,16 @@ func _refresh_hud() -> void:
 	power_label.modulate = Color("ffb18e") if ship_energy() < 5 else Color("d4e9df")
 	var tool := active_tool()
 	metric_label.text = "1 CELLA = 1 m  |  %s / %.1f m" % [tool.display_name, tool.effective_reach_metres()]
+	if tool.mode == "scan":
+		metric_label.text = "1 CELLA = 1 m  |  Scanner %s / %.1f m" % [["I", "II", "III", "IV"][tool.scanner_level - 1], tool.effective_reach_metres()]
 	var slots: Array = ship_state.tool_slots if ship_state != null else ["pulse", "scanner", "bomb", "jetpack"]
 	var active: int = ship_state.active_tool_slot if ship_state != null else standalone_slot
 	for slot in range(tool_buttons.size()):
 		var definition := Tools.find(slots[slot])
+		tool_buttons[slot].icon = ItemIcons.texture(slots[slot])
 		tool_buttons[slot].text = "%d  %s" % [slot + 1, definition.display_name if definition != null else "Vuoto"]
+		if definition != null and definition.mode == "scan" and tool.mode == "scan":
+			tool_buttons[slot].text += " " + ["I", "II", "III", "IV"][tool.scanner_level - 1]
 		tool_buttons[slot].disabled = definition == null
 		tool_buttons[slot].modulate = definition.beam_color if slot == active else Color("ccd9d8")
 		tool_buttons[slot].tooltip_text = "%.1f m / %.2f kWh per impulso" % [definition.effective_reach_metres(), definition.energy_per_pulse] if definition != null else "Nessuno strumento assegnato"
@@ -1002,14 +1064,20 @@ func _refresh_hud() -> void:
 			tool_buttons[slot].tooltip_text = "Click: posa una bomba pronta / Enter: detona da almeno 4 m / Fabbrica al laboratorio"
 		elif definition != null and definition.mode == "jetpack":
 			tool_buttons[slot].text = "4  Jetpack %.0f%%" % gear.charge()
-			tool_buttons[slot].tooltip_text = "Mantieni Spazio o W / Ricarica automatica dentro un laboratorio alimentato"
-	if message_time <= 0:
+			tool_buttons[slot].tooltip_text = "Mantieni Spazio o W / Ricarica automatica toccando un pavimento solido"
+		elif definition != null and definition.mode == "scan":
+			tool_buttons[slot].tooltip_text = "Scanner passivo / %.1f m / Nessun raggio di estrazione" % definition.effective_reach_metres()
+	if active_tool().mode == "scan" and is_instance_valid(scanner_view):
+		var reading: Dictionary = scanner_view.aimed_identity(target_cell)
+		var title := "Segnale non identificato" if scanner_view.reveal_strength(target_cell) > 0 else "Nessun segnale"
+		if not reading.is_empty():
+			title = reading.name + " / " + reading.detail
+		status_label.text = "%s / [%d, %d] m" % [title, target_cell.x, target_cell.y]
+		scanner_readout_active = true
+	elif message_time <= 0 or scanner_readout_active:
 		var blocker := target_blocker(target_cell)
-		status_label.text = blocker if not blocker.is_empty() else ("%s / [%d, %d] m" % [MATERIAL_NAMES.get(scanned.get(target_cell, ""), "Blocco non analizzato"), target_cell.x, target_cell.y])
-		if scanned.has(target_cell):
-			var warning := environment.reading(target_cell)
-			if not warning.is_empty():
-				status_label.text = warning
+		status_label.text = blocker if not blocker.is_empty() else "Blocco non analizzato / [%d, %d] m" % [target_cell.x, target_cell.y]
+		scanner_readout_active = false
 
 func _draw() -> void:
 	_draw_landscape()
@@ -1017,11 +1085,11 @@ func _draw() -> void:
 	_draw_ship()
 	if show_grid:
 		_draw_metric_overlay()
-		if is_instance_valid(player) and active_tool().mode != "scan":
-			draw_arc(player.position - Vector2(0, 32), Grid.metres(active_tool().effective_reach_metres()), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
+		if is_instance_valid(player) and active_tool().mode == "mine":
+			draw_arc(player_center(), Grid.metres(active_tool().effective_reach_metres()), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
 	for cell: Vector2i in ladders:
 		_ladder(Grid.to_world(cell) + Vector2(20, 0), 40)
-	if site.contains(target_cell) and (not site.material(target_cell).is_empty() or ladders.has(target_cell)):
+	if active_tool().mode == "mine" and site.contains(target_cell) and (not site.material(target_cell).is_empty() or ladders.has(target_cell)):
 		var available := target_blocker(target_cell).is_empty() if is_instance_valid(player) else false
 		draw_rect(Grid.rect(target_cell).grow(-1), active_tool().beam_color if available else Color("ff6265"), false, 2.5)
 		var damage := float(site.damage.get(target_cell, 0))
@@ -1029,7 +1097,7 @@ func _draw() -> void:
 			var origin := Grid.to_world(target_cell)
 			draw_line(origin + Vector2(8, 4), origin + Vector2(22, 22), Color("2b252f"), 2)
 			draw_line(origin + Vector2(22, 22), origin + Vector2(14, 36), Color("2b252f"), 2)
-	if beam_time > 0 and beam_tool != null:
+	if beam_time > 0 and beam_tool != null and beam_tool.mode == "mine" and active_tool().mode == "mine":
 		_draw_beam()
 
 func _draw_landscape() -> void:
@@ -1051,6 +1119,7 @@ func _draw_terrain() -> void:
 
 func _draw_terrain_legacy() -> void:
 	var darkness := Color("030509")
+	var concealed := TerrainRenderer.hidden_pockets(self)
 	# Keep the void beyond the finite dig-site boundary underground, not sky blue.
 	draw_rect(Rect2(-4000, 0, 8000, 3000), darkness)
 	draw_rect(Rect2(Grid.to_world(Vector2i(site.LEFT, 0)), Grid.to_world(Vector2i(site.RIGHT - site.LEFT, site.DEPTH))), darkness)
@@ -1059,15 +1128,16 @@ func _draw_terrain_legacy() -> void:
 			var cell := Vector2i(x, y)
 			var rect := Grid.rect(cell)
 			var kind := site.material(cell)
+			if concealed.has(cell):
+				kind = "stone"
 			var light := _illumination(Grid.center(cell))
 			if kind.is_empty():
 				draw_rect(rect, darkness.lerp(Color("41444c"), light * 0.85))
 				if show_grid and light > 0.15 and environment.liquid_volume(cell) < 0.01 and float(environment.gas.get(cell, 0)) < 0.015:
 					draw_rect(rect, Color(0.65, 0.7, 0.73, light * 0.18), false, 1)
 				continue
-			var tint: Color = MATERIAL_COLORS[kind]
-			if planet_def != null and kind == "soil":
-				tint = planet_def.rock_color
+			var host: Color = planet_def.rock_color if planet_def != null else Color("a45148")
+			var tint := host.lerp(Color("746b7a"), TerrainRenderer.geology(rect.get_center(), site.terrain_seed))
 			var variation := float(posmod(x * 13 + y * 23, 9)) * 0.012
 			tint = tint.lightened(variation)
 			tint = darkness.lerp(tint, light)
@@ -1076,23 +1146,11 @@ func _draw_terrain_legacy() -> void:
 			if light > 0.12:
 				_polygon([p, p + Vector2(40, 0), p + Vector2(29, 13), p + Vector2(7, 8)], tint.lightened(light * 0.1))
 				_polygon([p + Vector2(40, 0), p + Vector2(40, 40), p + Vector2(27, 34), p + Vector2(29, 13)], tint.darkened(light * 0.13))
-			if light > 0.3 and (kind == "copper" or kind == "crystal"):
-				var ore := Color("8ae8df") if kind == "crystal" else Color("e9b66d")
-				_polygon([p + Vector2(9, 29), p + Vector2(13, 12), p + Vector2(22, 7), p + Vector2(27, 24), p + Vector2(20, 32)], ore)
-				_polygon([p + Vector2(22, 7), p + Vector2(27, 24), p + Vector2(20, 32), p + Vector2(18, 17)], ore.darkened(0.2))
-			if light > 0.2 and kind == "anchor":
-				draw_rect(rect.grow(-5), tint.lightened(0.18), false, 3)
-				draw_line(p + Vector2(9, 9), p + Vector2(31, 31), Color("a7b9b6"), 3)
-				draw_line(p + Vector2(31, 9), p + Vector2(9, 31), Color("a7b9b6"), 3)
-			if light > 0.2 and scanned.has(cell) and not environment.reading(cell).is_empty():
-				_polygon([p + Vector2(20, 6), p + Vector2(34, 32), p + Vector2(6, 32)], Color("e8c56e"))
-				draw_line(p + Vector2(20, 14), p + Vector2(20, 23), Color("29353e"), 3)
-				draw_circle(p + Vector2(20, 28), 1.5, Color("29353e"))
 			if show_grid and light > 0.2:
 				draw_rect(rect, Color(0.14, 0.12, 0.17, 0.3), false, 1)
 
 func _illumination(point: Vector2) -> float:
-	var hand := player.position - Vector2(0, 32) if is_instance_valid(player) else Vector2(0, -100)
+	var hand := player_center() if is_instance_valid(player) else Vector2(0, -100)
 	var reach := Grid.metres(PERSONAL_LIGHT_RADIUS_METRES)
 	var depth := smoothstep(Grid.metres(2), Grid.metres(16), hand.y)
 	reach *= lerpf(1, 0.42, depth)

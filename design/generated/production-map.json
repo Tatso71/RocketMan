@@ -1,0 +1,1677 @@
+{
+	"nodes": {
+		"acid": {
+			"category": "reservoir",
+			"icon": "assets/ui/items/acid.svg",
+			"name": "Acido"
+		},
+		"bomb": {
+			"category": "consumable",
+			"icon": "assets/ui/items/bomb.svg",
+			"name": "Bomba"
+		},
+		"cobalt": {
+			"category": "raw",
+			"icon": "assets/ui/items/cobalt.svg",
+			"name": "Cobalto"
+		},
+		"copper": {
+			"category": "raw",
+			"icon": "assets/ui/items/copper.svg",
+			"name": "Rame"
+		},
+		"copper_ingot": {
+			"category": "semifinished",
+			"icon": "assets/ui/items/copper_ingot.svg",
+			"name": "Lingotto rame"
+		},
+		"crystal": {
+			"category": "raw",
+			"icon": "assets/ui/items/crystal.svg",
+			"name": "Cristallo"
+		},
+		"electronic_component": {
+			"category": "component",
+			"icon": "assets/ui/items/electronic_component.svg",
+			"name": "Componente elettronico"
+		},
+		"energy_conduit": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/energy_conduit.svg",
+			"name": "Cavo energia"
+		},
+		"fan": {
+			"category": "structure",
+			"icon": "assets/ui/items/fan.svg",
+			"name": "Ventilatore gas"
+		},
+		"frost_berry": {
+			"category": "food",
+			"icon": "assets/ui/items/frost_berry.svg",
+			"name": "Bacca brina"
+		},
+		"furnace": {
+			"category": "structure",
+			"icon": "assets/ui/items/furnace.svg",
+			"name": "Fornace"
+		},
+		"gas": {
+			"category": "reservoir",
+			"icon": "assets/ui/items/gas.svg",
+			"name": "Gas"
+		},
+		"gas_conduit": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/gas_conduit.svg",
+			"name": "Tubo gas"
+		},
+		"gas_converter": {
+			"category": "structure",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"name": "Convertitore gas"
+		},
+		"glass": {
+			"category": "semifinished",
+			"icon": "assets/ui/items/glass.svg",
+			"name": "Vetro"
+		},
+		"greenhouse": {
+			"category": "structure",
+			"icon": "assets/ui/items/greenhouse.svg",
+			"name": "Serra"
+		},
+		"hull_integrity": {
+			"category": "state",
+			"icon": "assets/ui/items/module_hull.svg",
+			"name": "Integrita' scafo"
+		},
+		"iron": {
+			"category": "raw",
+			"icon": "assets/ui/items/iron.svg",
+			"name": "Ferro"
+		},
+		"laboratory": {
+			"category": "structure",
+			"icon": "assets/ui/items/laboratory.svg",
+			"name": "Laboratorio"
+		},
+		"laboratory_level_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/laboratory.svg",
+			"name": "Laboratorio L2"
+		},
+		"laboratory_level_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/laboratory.svg",
+			"name": "Laboratorio L3"
+		},
+		"ladder": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/ladder.svg",
+			"name": "Scala"
+		},
+		"lamp": {
+			"category": "structure",
+			"icon": "assets/ui/items/lamp.svg",
+			"name": "Luce"
+		},
+		"local_energy": {
+			"category": "energy",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"name": "Energia locale [kWh]"
+		},
+		"module_battery_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_battery.svg",
+			"name": "Accumulatori L2"
+		},
+		"module_battery_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_battery.svg",
+			"name": "Accumulatori L3"
+		},
+		"module_cargo_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_cargo.svg",
+			"name": "Stiva L2"
+		},
+		"module_cargo_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_cargo.svg",
+			"name": "Stiva L3"
+		},
+		"module_drill_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_drill.svg",
+			"name": "Banco strumenti L2"
+		},
+		"module_drill_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_drill.svg",
+			"name": "Banco strumenti L3"
+		},
+		"module_drone_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_drone.svg",
+			"name": "Drone assistente L2"
+		},
+		"module_drone_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_drone.svg",
+			"name": "Drone assistente L3"
+		},
+		"module_engine_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_engine.svg",
+			"name": "Propulsori L2"
+		},
+		"module_engine_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_engine.svg",
+			"name": "Propulsori L3"
+		},
+		"module_habitat_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_habitat.svg",
+			"name": "Supporto vitale L2"
+		},
+		"module_habitat_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_habitat.svg",
+			"name": "Supporto vitale L3"
+		},
+		"module_hull_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_hull.svg",
+			"name": "Scafo L2"
+		},
+		"module_hull_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_hull.svg",
+			"name": "Scafo L3"
+		},
+		"module_landing_gear_2": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_landing_gear.svg",
+			"name": "Carrelli L2"
+		},
+		"module_landing_gear_3": {
+			"category": "upgrade",
+			"icon": "assets/ui/items/module_landing_gear.svg",
+			"name": "Carrelli L3"
+		},
+		"ochre_tuber": {
+			"category": "food",
+			"icon": "assets/ui/items/ochre_tuber.svg",
+			"name": "Tubero ocra"
+		},
+		"oil": {
+			"category": "reservoir",
+			"icon": "assets/ui/items/oil.svg",
+			"name": "Petrolio"
+		},
+		"outlet": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/outlet.svg",
+			"name": "Terminale di scarico"
+		},
+		"potato": {
+			"category": "food",
+			"icon": "assets/ui/items/potato.svg",
+			"name": "Patata"
+		},
+		"pump": {
+			"category": "structure",
+			"icon": "assets/ui/items/pump.svg",
+			"name": "Pompa acqua"
+		},
+		"repaired_fan": {
+			"category": "state",
+			"icon": "assets/ui/items/fan.svg",
+			"name": "Ripristino: Ventilatore gas"
+		},
+		"repaired_furnace": {
+			"category": "state",
+			"icon": "assets/ui/items/furnace.svg",
+			"name": "Ripristino: Fornace"
+		},
+		"repaired_gas_converter": {
+			"category": "state",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"name": "Ripristino: Convertitore gas"
+		},
+		"repaired_greenhouse": {
+			"category": "state",
+			"icon": "assets/ui/items/greenhouse.svg",
+			"name": "Ripristino: Serra"
+		},
+		"repaired_laboratory": {
+			"category": "state",
+			"icon": "assets/ui/items/laboratory.svg",
+			"name": "Ripristino: Laboratorio"
+		},
+		"repaired_lamp": {
+			"category": "state",
+			"icon": "assets/ui/items/lamp.svg",
+			"name": "Ripristino: Luce"
+		},
+		"repaired_pump": {
+			"category": "state",
+			"icon": "assets/ui/items/pump.svg",
+			"name": "Ripristino: Pompa acqua"
+		},
+		"repaired_ship_workshop": {
+			"category": "state",
+			"icon": "assets/ui/items/laboratory.svg",
+			"name": "Officina di bordo riparata"
+		},
+		"seed_frost_berry": {
+			"category": "seed",
+			"icon": "assets/ui/items/seed_frost_berry.svg",
+			"name": "Semi di bacca brina"
+		},
+		"seed_ochre_tuber": {
+			"category": "seed",
+			"icon": "assets/ui/items/seed_ochre_tuber.svg",
+			"name": "Semi di tubero ocra"
+		},
+		"seed_potato": {
+			"category": "seed",
+			"icon": "assets/ui/items/seed_potato.svg",
+			"name": "Semi di patata"
+		},
+		"seed_verdant_leaf": {
+			"category": "seed",
+			"icon": "assets/ui/items/seed_verdant_leaf.svg",
+			"name": "Semi di verdura viridia"
+		},
+		"ship_energy": {
+			"category": "energy",
+			"icon": "assets/ui/items/module_battery.svg",
+			"name": "Energia nave [kWh]"
+		},
+		"ship_fuel": {
+			"category": "utility",
+			"icon": "assets/ui/items/ship_fuel.svg",
+			"name": "Carburante nave"
+		},
+		"silica": {
+			"category": "raw",
+			"icon": "assets/ui/items/silica.svg",
+			"name": "Quarzo"
+		},
+		"stored_water": {
+			"category": "utility",
+			"icon": "assets/ui/items/water.svg",
+			"name": "Acqua nel serbatoio"
+		},
+		"structural_component": {
+			"category": "component",
+			"icon": "assets/ui/items/structural_component.svg",
+			"name": "Componente strutturale"
+		},
+		"valve": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/valve.svg",
+			"name": "Presa stagna"
+		},
+		"verdant_leaf": {
+			"category": "food",
+			"icon": "assets/ui/items/verdant_leaf.svg",
+			"name": "Verdura viridia"
+		},
+		"water": {
+			"category": "reservoir",
+			"icon": "assets/ui/items/water.svg",
+			"name": "Acqua"
+		},
+		"water_conduit": {
+			"category": "infrastructure",
+			"icon": "assets/ui/items/water_conduit.svg",
+			"name": "Tubo acqua"
+		}
+	},
+	"planned": [
+		{
+			"id": "tool_fabrication",
+			"name": "Fabbricazione dei singoli tool",
+			"note": "Ricette e costi da definire. Pulse, Scanner e Jetpack sono iniziali; Risonatore e Plasma si ottengono dal Banco strumenti.",
+			"status": "planned"
+		},
+		{
+			"id": "scanner_upgrades",
+			"name": "Potenziamenti acquistabili dello scanner",
+			"note": "Proposta approvata: raggi 4/5/6/7 m e tracce solo sull'onda / 3 / 7 / 12 s. Acquisto e nuova curva non ancora implementati: oggi la persistenza e' 2 + 0.7 s per livello.",
+			"status": "planned"
+		},
+		{
+			"id": "oil_processing",
+			"name": "Lavorazione del petrolio",
+			"note": "Petrolio e acido sono pericoli fisici, non ingredienti di ricette attuali. Nessun costo futuro inventato.",
+			"status": "planned"
+		},
+		{
+			"id": "onboard_encyclopedia",
+			"name": "Enciclopedia del computer di bordo",
+			"note": "Usare gli stessi dati generati per cercare ingredienti, prodotti, stazioni, sblocchi e impieghi. La schermata nel gioco non esiste ancora.",
+			"status": "planned"
+		},
+		{
+			"id": "ship_fluid_tanks",
+			"name": "Serbatoi della nave e bocchettoni",
+			"note": "Serbatoi inizialmente vuoti e separati per acqua/gas/altri fluidi; carico e scarico fisici per trasportare risorse fra pianeti. Non implementati in questa tranche.",
+			"status": "planned"
+		},
+		{
+			"id": "construction_volumes",
+			"name": "Pavimenti e volumi costruibili",
+			"note": "Possibilita' di creare appoggi e passaggi dopo scavi estesi; decisioni rinviate dal giocatore.",
+			"status": "planned"
+		},
+		{
+			"id": "water_filters",
+			"name": "Filtri per purificare l'acqua",
+			"note": "Fondamentali per le coltivazioni: le serre richiederanno acqua adatta all'irrigazione, non soltanto una quantita' disponibile; l'acqua contaminata dovra' essere filtrata. Modulo separato dalla pompa e collegato ai tubi prima dell'utilizzo o dello stoccaggio. Contaminanti, soglie di qualita', ricette, consumi e manutenzione da definire; nessuna purificazione attiva nel runtime attuale.",
+			"status": "planned"
+		}
+	],
+	"raw_extraction": {
+		"common_rock_cargo": false,
+		"material": "same_as_mined_ore",
+		"pickup": "physical_fragments_robbie_magnet",
+		"pieces_percent": {
+			"1": 65,
+			"2": 25,
+			"3": 10
+		}
+	},
+	"recipes": [
+		{
+			"energy": {
+				"local_energy": 2.4
+			},
+			"group": "refining",
+			"icon": "assets/ui/items/copper_ingot.svg",
+			"id": "smelt_copper_ingot",
+			"inputs": {
+				"copper": 2
+			},
+			"name": "Lingotto di rame",
+			"notes": "Fornace collegata a un convertitore gas tramite cavo; ritirare il prodotto.",
+			"outputs": {
+				"copper_ingot": 1
+			},
+			"seconds": 12.0,
+			"station": "Fornace",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"local_energy": 2.0
+			},
+			"group": "refining",
+			"icon": "assets/ui/items/glass.svg",
+			"id": "smelt_glass",
+			"inputs": {
+				"silica": 2
+			},
+			"name": "Vetro",
+			"notes": "Fornace collegata a un convertitore gas tramite cavo; ritirare il prodotto.",
+			"outputs": {
+				"glass": 1
+			},
+			"seconds": 10.0,
+			"station": "Fornace",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.01
+			},
+			"group": "production",
+			"icon": "assets/ui/items/structural_component.svg",
+			"id": "fabricate_structural_component",
+			"inputs": {
+				"iron": 4
+			},
+			"name": "Componenti strutturali",
+			"notes": "Disponibile dal laboratorio iniziale della nave.",
+			"outputs": {
+				"structural_component": 2
+			},
+			"seconds": 2.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.01
+			},
+			"group": "production",
+			"icon": "assets/ui/items/electronic_component.svg",
+			"id": "fabricate_electronic_component",
+			"inputs": {
+				"copper": 3,
+				"crystal": 1
+			},
+			"name": "Componenti elettronici",
+			"notes": "Disponibile dal laboratorio iniziale della nave.",
+			"outputs": {
+				"electronic_component": 2
+			},
+			"seconds": 2.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.01
+			},
+			"group": "production",
+			"icon": "assets/ui/items/electronic_component.svg",
+			"id": "fabricate_refined_electronics",
+			"inputs": {
+				"copper_ingot": 2,
+				"glass": 1
+			},
+			"name": "Elettronica da vetro e lingotti",
+			"notes": "Dopo il primo laboratorio da campo.",
+			"outputs": {
+				"electronic_component": 4
+			},
+			"seconds": 2.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.01
+			},
+			"group": "production",
+			"icon": "assets/ui/items/structural_component.svg",
+			"id": "fabricate_structural_alloy",
+			"inputs": {
+				"cobalt": 1,
+				"iron": 2
+			},
+			"name": "Strutture in lega di cobalto",
+			"notes": "Dopo il primo laboratorio da campo.",
+			"outputs": {
+				"structural_component": 4
+			},
+			"seconds": 2.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.01
+			},
+			"group": "production",
+			"icon": "assets/ui/items/bomb.svg",
+			"id": "fabricate_bomb",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Bomba",
+			"notes": "Scorte bombe: massimo 4.",
+			"outputs": {
+				"bomb": 1
+			},
+			"seconds": 2.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.3
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/laboratory.svg",
+			"id": "assemble_laboratory",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 4
+			},
+			"name": "Laboratorio",
+			"notes": "4 x 3 m; componenti nel carico accessibile. Disponibile dall'inizio.",
+			"outputs": {
+				"laboratory": 1
+			},
+			"seconds": 5.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/laboratory.svg",
+			"id": "repair_laboratory",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Ripara Laboratorio",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_laboratory": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.05
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/lamp.svg",
+			"id": "assemble_lamp",
+			"inputs": {
+				"electronic_component": 1
+			},
+			"name": "Luce",
+			"notes": "1 x 1 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"lamp": 1
+			},
+			"seconds": 2.5,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/lamp.svg",
+			"id": "repair_lamp",
+			"inputs": {
+				"electronic_component": 1
+			},
+			"name": "Ripara Luce",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_lamp": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.32
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/pump.svg",
+			"id": "assemble_pump",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 2
+			},
+			"name": "Pompa acqua",
+			"notes": "2 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"pump": 1
+			},
+			"seconds": 4.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/pump.svg",
+			"id": "repair_pump",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Ripara Pompa acqua",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_pump": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.2
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/fan.svg",
+			"id": "assemble_fan",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 1
+			},
+			"name": "Ventilatore gas",
+			"notes": "2 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"fan": 1
+			},
+			"seconds": 4.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/fan.svg",
+			"id": "repair_fan",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Ripara Ventilatore gas",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_fan": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.3
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/furnace.svg",
+			"id": "assemble_furnace",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 3
+			},
+			"name": "Fornace",
+			"notes": "3 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"furnace": 1
+			},
+			"seconds": 5.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/furnace.svg",
+			"id": "repair_furnace",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Ripara Fornace",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_furnace": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.24
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"id": "assemble_gas_converter",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 2
+			},
+			"name": "Convertitore gas",
+			"notes": "2 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"gas_converter": 1
+			},
+			"seconds": 4.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"id": "repair_gas_converter",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Ripara Convertitore gas",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_gas_converter": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.36
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/greenhouse.svg",
+			"id": "assemble_greenhouse",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 4
+			},
+			"name": "Serra",
+			"notes": "4 x 3 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"greenhouse": 1
+			},
+			"seconds": 6.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/greenhouse.svg",
+			"id": "repair_greenhouse",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Ripara Serra",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_greenhouse": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/ladder.svg",
+			"id": "place_ladder",
+			"inputs": {
+
+			},
+			"name": "Posa scala",
+			"notes": "Posa e rimozione immediate e gratuite; restano i vincoli geometrici.",
+			"outputs": {
+				"ladder": 1
+			},
+			"seconds": 0.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/water_conduit.svg",
+			"id": "place_water_conduit",
+			"inputs": {
+				"structural_component": 1
+			},
+			"name": "Tubo acqua",
+			"notes": "Costo per segmento di 1 m; posa immediata, non una lavorazione in laboratorio.",
+			"outputs": {
+				"water_conduit": 1
+			},
+			"seconds": 0.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/gas_conduit.svg",
+			"id": "place_gas_conduit",
+			"inputs": {
+				"structural_component": 1
+			},
+			"name": "Tubo gas",
+			"notes": "Costo per segmento di 1 m; posa immediata, non una lavorazione in laboratorio.",
+			"outputs": {
+				"gas_conduit": 1
+			},
+			"seconds": 0.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/energy_conduit.svg",
+			"id": "place_energy_conduit",
+			"inputs": {
+				"electronic_component": 1
+			},
+			"name": "Cavo energia",
+			"notes": "Costo per segmento di 1 m; posa immediata, non una lavorazione in laboratorio.",
+			"outputs": {
+				"energy_conduit": 1
+			},
+			"seconds": 0.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/valve.svg",
+			"id": "place_valve",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Monta presa stagna",
+			"notes": "Dopo il primo laboratorio; occupa 1 x 1 m libero. Perfora un solo blocco con il tool compatibile senza rimuoverlo. Apertura manuale; scollegare il tubo la chiude.",
+			"outputs": {
+				"valve": 1
+			},
+			"seconds": 0.0,
+			"station": "Faccia di una roccia",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "infrastructure",
+			"icon": "assets/ui/items/outlet.svg",
+			"id": "configure_outlet",
+			"inputs": {
+
+			},
+			"name": "Configura terminale acqua",
+			"notes": "Terminale chiuso inizialmente; orientabile verso una cella libera. Clic destro: scarico oppure aspirazione da una vasca. Cambiare ruolo lo richiude. Scaricare versa acqua fisica, che puo' traboccare. Non e' un nuovo macchinario.",
+			"outputs": {
+				"outlet": 1
+			},
+			"seconds": 0.0,
+			"station": "Su tubo acqua gia' posato",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "utilities",
+			"icon": "assets/ui/items/gas_converter.svg",
+			"id": "convert_gas",
+			"inputs": {
+				"gas": 1
+			},
+			"name": "Converti gas in energia locale",
+			"notes": "Processo continuo: gas da una falda collegata con tubi; accumulo massimo 12 kWh. Non ricarica automaticamente la nave.",
+			"outputs": {
+				"local_energy": 12.0
+			},
+			"seconds": 25.0,
+			"station": "Convertitore gas",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.0428571428571429
+			},
+			"group": "utilities",
+			"icon": "assets/ui/items/water.svg",
+			"id": "pump_water",
+			"inputs": {
+				"water": 1
+			},
+			"name": "Recupera acqua",
+			"notes": "Presa stagna perforata e aperta, tubo fino all'ingresso; uscita separata verso serra o scarico. Buffer 8 u; aspirazione e sollevamento entro 6 m dalla pompa. Nessun drenaggio per raggio.",
+			"outputs": {
+				"stored_water": 1
+			},
+			"seconds": 1.42857142857143,
+			"station": "Pompa acqua",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "utilities",
+			"icon": "assets/ui/items/water.svg",
+			"id": "gravity_water",
+			"inputs": {
+				"water": 1
+			},
+			"name": "Trasferisci acqua per gravita'",
+			"notes": "Acqua spostata, non creata. Percorso sotto il livello della presa e scarico piu' basso. Cella ricevente piena o contaminata ferma il trasferimento.",
+			"outputs": {
+				"water": 1
+			},
+			"seconds": 2.85714285714286,
+			"station": "Presa e scarico collegati",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"ship_energy": 0.0571428571428571
+			},
+			"group": "utilities",
+			"icon": "assets/ui/items/gas.svg",
+			"id": "vent_gas",
+			"inputs": {
+				"gas": 1
+			},
+			"name": "Rimuovi gas pericoloso",
+			"notes": "Rimuove il gas dall'ambiente: non produce carburante o energia.",
+			"outputs": {
+
+			},
+			"seconds": 2.85714285714286,
+			"station": "Ventilatore gas",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"local_energy": 0.9
+			},
+			"group": "agriculture",
+			"icon": "assets/ui/items/potato.svg",
+			"id": "grow_potato",
+			"inputs": {
+				"seed_potato": 1,
+				"stored_water": 2.0
+			},
+			"name": "Patata",
+			"notes": "Nave: 3 semi di patata iniziali.",
+			"outputs": {
+				"potato": 3.0,
+				"seed_potato": 2.0
+			},
+			"seconds": 45.0,
+			"station": "Serra",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"local_energy": 1.0
+			},
+			"group": "agriculture",
+			"icon": "assets/ui/items/ochre_tuber.svg",
+			"id": "grow_ochre_tuber",
+			"inputs": {
+				"seed_ochre_tuber": 1,
+				"stored_water": 2.5
+			},
+			"name": "Tubero ocra",
+			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"outputs": {
+				"ochre_tuber": 3.0,
+				"seed_ochre_tuber": 2.0
+			},
+			"seconds": 50.0,
+			"station": "Serra",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"local_energy": 0.8
+			},
+			"group": "agriculture",
+			"icon": "assets/ui/items/verdant_leaf.svg",
+			"id": "grow_verdant_leaf",
+			"inputs": {
+				"seed_verdant_leaf": 1,
+				"stored_water": 3.0
+			},
+			"name": "Verdura viridia",
+			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"outputs": {
+				"seed_verdant_leaf": 2.0,
+				"verdant_leaf": 3.0
+			},
+			"seconds": 40.0,
+			"station": "Serra",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+				"local_energy": 1.2
+			},
+			"group": "agriculture",
+			"icon": "assets/ui/items/frost_berry.svg",
+			"id": "grow_frost_berry",
+			"inputs": {
+				"seed_frost_berry": 1,
+				"stored_water": 1.5
+			},
+			"name": "Bacca brina",
+			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"outputs": {
+				"frost_berry": 3.0,
+				"seed_frost_berry": 2.0
+			},
+			"seconds": 60.0,
+			"station": "Serra",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_hull.svg",
+			"id": "upgrade_module_hull_2",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 4
+			},
+			"name": "Scafo 1 > 2",
+			"notes": "+40 integrita massima per livello",
+			"outputs": {
+				"module_hull_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_hull.svg",
+			"id": "upgrade_module_hull_3",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 8
+			},
+			"name": "Scafo 2 > 3",
+			"notes": "+40 integrita massima per livello",
+			"outputs": {
+				"module_hull_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_engine.svg",
+			"id": "upgrade_module_engine_2",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 3
+			},
+			"name": "Propulsori 1 > 2",
+			"notes": "Riduce del 12% il costo delle rotte per livello",
+			"outputs": {
+				"module_engine_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_engine.svg",
+			"id": "upgrade_module_engine_3",
+			"inputs": {
+				"electronic_component": 8,
+				"structural_component": 6
+			},
+			"name": "Propulsori 2 > 3",
+			"notes": "Riduce del 12% il costo delle rotte per livello",
+			"outputs": {
+				"module_engine_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_cargo.svg",
+			"id": "upgrade_module_cargo_2",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 3
+			},
+			"name": "Stiva 1 > 2",
+			"notes": "+80 unita di carico per livello",
+			"outputs": {
+				"module_cargo_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_cargo.svg",
+			"id": "upgrade_module_cargo_3",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 6
+			},
+			"name": "Stiva 2 > 3",
+			"notes": "+80 unita di carico per livello",
+			"outputs": {
+				"module_cargo_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_battery.svg",
+			"id": "upgrade_module_battery_2",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 1
+			},
+			"name": "Accumulatori 1 > 2",
+			"notes": "+40 kWh di capacita per livello",
+			"outputs": {
+				"module_battery_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_battery.svg",
+			"id": "upgrade_module_battery_3",
+			"inputs": {
+				"electronic_component": 8,
+				"structural_component": 2
+			},
+			"name": "Accumulatori 2 > 3",
+			"notes": "+40 kWh di capacita per livello",
+			"outputs": {
+				"module_battery_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_drill.svg",
+			"id": "upgrade_module_drill_2",
+			"inputs": {
+				"electronic_component": 3,
+				"structural_component": 2
+			},
+			"name": "Banco strumenti 1 > 2",
+			"notes": "+1 potenza per livello. Sblocca Risonatore (II) e Plasma (III). Richiede il primo laboratorio da campo.",
+			"outputs": {
+				"module_drill_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_drill.svg",
+			"id": "upgrade_module_drill_3",
+			"inputs": {
+				"electronic_component": 6,
+				"structural_component": 4
+			},
+			"name": "Banco strumenti 2 > 3",
+			"notes": "+1 potenza per livello. Sblocca Risonatore (II) e Plasma (III). Richiede il primo laboratorio da campo.",
+			"outputs": {
+				"module_drill_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_landing_gear.svg",
+			"id": "upgrade_module_landing_gear_2",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 3
+			},
+			"name": "Carrelli 1 > 2",
+			"notes": "Riduce l'usura da atterraggio",
+			"outputs": {
+				"module_landing_gear_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_landing_gear.svg",
+			"id": "upgrade_module_landing_gear_3",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 6
+			},
+			"name": "Carrelli 2 > 3",
+			"notes": "Riduce l'usura da atterraggio",
+			"outputs": {
+				"module_landing_gear_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_habitat.svg",
+			"id": "upgrade_module_habitat_2",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 2
+			},
+			"name": "Supporto vitale 1 > 2",
+			"notes": "+60 min di riserva nominale e +1 posto equipaggio",
+			"outputs": {
+				"module_habitat_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_habitat.svg",
+			"id": "upgrade_module_habitat_3",
+			"inputs": {
+				"electronic_component": 8,
+				"structural_component": 4
+			},
+			"name": "Supporto vitale 2 > 3",
+			"notes": "+60 min di riserva nominale e +1 posto equipaggio",
+			"outputs": {
+				"module_habitat_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_drone.svg",
+			"id": "upgrade_module_drone_2",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 4
+			},
+			"name": "Drone assistente 1 > 2",
+			"notes": "+8 carico, +0.35 m magnete e +5 m rete impianti per livello; seguito senza limite Richiede il primo laboratorio da campo.",
+			"outputs": {
+				"module_drone_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/module_drone.svg",
+			"id": "upgrade_module_drone_3",
+			"inputs": {
+				"electronic_component": 8,
+				"structural_component": 8
+			},
+			"name": "Drone assistente 2 > 3",
+			"notes": "+8 carico, +0.35 m magnete e +5 m rete impianti per livello; seguito senza limite Richiede il primo laboratorio da campo.",
+			"outputs": {
+				"module_drone_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/laboratory.svg",
+			"id": "upgrade_laboratory_level_2",
+			"inputs": {
+				"electronic_component": 2,
+				"structural_component": 4
+			},
+			"name": "Laboratorio 1 > 2",
+			"notes": "Potenzia la singola postazione. Il laboratorio di bordo richiede prima il primo laboratorio da campo.",
+			"outputs": {
+				"laboratory_level_2": 1
+			},
+			"seconds": 0.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "upgrade",
+			"icon": "assets/ui/items/laboratory.svg",
+			"id": "upgrade_laboratory_level_3",
+			"inputs": {
+				"electronic_component": 4,
+				"structural_component": 8
+			},
+			"name": "Laboratorio 2 > 3",
+			"notes": "Potenzia la singola postazione. Il laboratorio di bordo richiede prima il primo laboratorio da campo.",
+			"outputs": {
+				"laboratory_level_3": 1
+			},
+			"seconds": 0.0,
+			"station": "Laboratorio di bordo o da campo",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/module_hull.svg",
+			"id": "repair_hull",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Ripara scafo",
+			"notes": "Il recupero e' limitato dall'integrita' massima.",
+			"outputs": {
+				"hull_integrity": 25.0
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "service",
+			"icon": "assets/ui/items/ship_fuel.svg",
+			"id": "refuel_ship",
+			"inputs": {
+				"electronic_component": 1
+			},
+			"name": "Rifornisci nave",
+			"notes": "Ricetta provvisoria del prototipo: il petrolio non viene ancora usato per il carburante.",
+			"outputs": {
+				"ship_fuel": 20.0
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "service",
+			"icon": "assets/ui/items/module_battery.svg",
+			"id": "recharge_ship",
+			"inputs": {
+
+			},
+			"name": "Ricarica batteria nave",
+			"notes": "Servizio provvisorio senza ingredienti; non e' ancora una filiera energetica definitiva.",
+			"outputs": {
+				"ship_energy": 15.0
+			},
+			"seconds": 0.0,
+			"station": "Officina della nave",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/laboratory.svg",
+			"id": "repair_ship_workshop",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 3
+			},
+			"name": "Ripara officina di bordo",
+			"notes": "",
+			"outputs": {
+				"repaired_ship_workshop": 1
+			},
+			"seconds": 0.0,
+			"station": "Officina danneggiata",
+			"status": "implemented"
+		}
+	],
+	"runtime_flags": {
+		"local_industry_supply": "paused_without_natural_gas",
+		"natural_gas_pockets": false
+	},
+	"scope": "current_playable_prototype",
+	"used_by": {
+		"cobalt": [
+			"fabricate_structural_alloy"
+		],
+		"copper": [
+			"smelt_copper_ingot",
+			"fabricate_electronic_component"
+		],
+		"copper_ingot": [
+			"fabricate_refined_electronics"
+		],
+		"crystal": [
+			"fabricate_electronic_component"
+		],
+		"electronic_component": [
+			"fabricate_bomb",
+			"assemble_laboratory",
+			"repair_laboratory",
+			"assemble_lamp",
+			"repair_lamp",
+			"assemble_pump",
+			"repair_pump",
+			"assemble_fan",
+			"repair_fan",
+			"assemble_furnace",
+			"repair_furnace",
+			"assemble_gas_converter",
+			"repair_gas_converter",
+			"assemble_greenhouse",
+			"repair_greenhouse",
+			"place_energy_conduit",
+			"place_valve",
+			"upgrade_module_hull_2",
+			"upgrade_module_hull_3",
+			"upgrade_module_engine_2",
+			"upgrade_module_engine_3",
+			"upgrade_module_cargo_2",
+			"upgrade_module_cargo_3",
+			"upgrade_module_battery_2",
+			"upgrade_module_battery_3",
+			"upgrade_module_drill_2",
+			"upgrade_module_drill_3",
+			"upgrade_module_landing_gear_2",
+			"upgrade_module_landing_gear_3",
+			"upgrade_module_habitat_2",
+			"upgrade_module_habitat_3",
+			"upgrade_module_drone_2",
+			"upgrade_module_drone_3",
+			"upgrade_laboratory_level_2",
+			"upgrade_laboratory_level_3",
+			"repair_hull",
+			"refuel_ship",
+			"repair_ship_workshop"
+		],
+		"gas": [
+			"convert_gas",
+			"vent_gas"
+		],
+		"glass": [
+			"fabricate_refined_electronics"
+		],
+		"iron": [
+			"fabricate_structural_component",
+			"fabricate_structural_alloy"
+		],
+		"local_energy": [
+			"smelt_copper_ingot",
+			"smelt_glass",
+			"grow_potato",
+			"grow_ochre_tuber",
+			"grow_verdant_leaf",
+			"grow_frost_berry"
+		],
+		"seed_frost_berry": [
+			"grow_frost_berry"
+		],
+		"seed_ochre_tuber": [
+			"grow_ochre_tuber"
+		],
+		"seed_potato": [
+			"grow_potato"
+		],
+		"seed_verdant_leaf": [
+			"grow_verdant_leaf"
+		],
+		"ship_energy": [
+			"fabricate_structural_component",
+			"fabricate_electronic_component",
+			"fabricate_refined_electronics",
+			"fabricate_structural_alloy",
+			"fabricate_bomb",
+			"assemble_laboratory",
+			"assemble_lamp",
+			"assemble_pump",
+			"assemble_fan",
+			"assemble_furnace",
+			"assemble_gas_converter",
+			"assemble_greenhouse",
+			"pump_water",
+			"vent_gas"
+		],
+		"silica": [
+			"smelt_glass"
+		],
+		"stored_water": [
+			"grow_potato",
+			"grow_ochre_tuber",
+			"grow_verdant_leaf",
+			"grow_frost_berry"
+		],
+		"structural_component": [
+			"fabricate_bomb",
+			"assemble_laboratory",
+			"repair_laboratory",
+			"assemble_pump",
+			"repair_pump",
+			"assemble_fan",
+			"repair_fan",
+			"assemble_furnace",
+			"repair_furnace",
+			"assemble_gas_converter",
+			"repair_gas_converter",
+			"assemble_greenhouse",
+			"repair_greenhouse",
+			"place_water_conduit",
+			"place_gas_conduit",
+			"place_valve",
+			"upgrade_module_hull_2",
+			"upgrade_module_hull_3",
+			"upgrade_module_engine_2",
+			"upgrade_module_engine_3",
+			"upgrade_module_cargo_2",
+			"upgrade_module_cargo_3",
+			"upgrade_module_battery_2",
+			"upgrade_module_battery_3",
+			"upgrade_module_drill_2",
+			"upgrade_module_drill_3",
+			"upgrade_module_landing_gear_2",
+			"upgrade_module_landing_gear_3",
+			"upgrade_module_habitat_2",
+			"upgrade_module_habitat_3",
+			"upgrade_module_drone_2",
+			"upgrade_module_drone_3",
+			"upgrade_laboratory_level_2",
+			"upgrade_laboratory_level_3",
+			"repair_hull",
+			"repair_ship_workshop"
+		],
+		"water": [
+			"pump_water",
+			"gravity_water"
+		]
+	},
+	"version": 1
+}

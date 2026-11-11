@@ -1,20 +1,20 @@
 extends CharacterBody2D
 
 const Grid = preload("res://scripts/world/world_grid.gd")
-const BASE := Vector2(0, -80)
 const PERSONAL_SPACE := 70.0
 const FOLLOW_DISTANCE := 96.0
 const MIN_CLEARANCE := 42.0
 var world: Node2D
 var graph := AStar2D.new()
+var navigation_components := {}
 var revision := -1
-var range_metres := 15.0
 var route := PackedVector2Array()
 var route_timer := 0.0
 var clock := 0.0
 var status := "Collegato"
 var water_alarm := false
 var water_timer := 0.0
+var had_navigation_liquids := false
 var resting_goal := Vector2.ZERO
 var has_resting_goal := false
 var clearance := CircleShape2D.new()
@@ -43,9 +43,6 @@ func _ready() -> void:
 func _id(cell: Vector2i) -> int:
 	return (cell.y + 11) * (world.site.RIGHT - world.site.LEFT) + cell.x - world.site.LEFT
 
-func signal_connected() -> bool:
-	return world.is_robbie() or position.distance_to(BASE) <= Grid.metres(range_metres) + 1
-
 func aboard() -> bool:
 	return position.y < -80 and absf(position.x) < 152
 
@@ -58,9 +55,16 @@ func hit_test(viewport_point: Vector2) -> bool:
 func _free(cell: Vector2i) -> bool:
 	if cell.y >= 0:
 		return world.site.contains(cell) and world.site.material(cell).is_empty() and not world.environment._wet(Grid.center(cell) + Vector2(0, 10))
-	if cell.y >= -2:
-		return cell.x == 0
-	return cell.y >= -11 and cell.x >= -4 and cell.x < 4
+	if cell.y < -11 or cell.x < world.site.LEFT or cell.x >= world.site.RIGHT:
+		return false
+	# Air below/around the hull connects the hatch to independent surface shafts.
+	# Sweeps ignore initial overlaps, so reject occupied aerial nodes explicitly.
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = clearance
+	query.transform = Transform2D(0, Grid.center(cell))
+	query.collision_mask = 1
+	query.exclude = [get_rid(), world.player.get_rid()]
+	return get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
 
 func _clear(from: Vector2, to: Vector2) -> bool:
 	var query := PhysicsShapeQueryParameters2D.new()
@@ -74,7 +78,7 @@ func _clear(from: Vector2, to: Vector2) -> bool:
 
 func _actor_clearance() -> Rect2:
 	# Only the body plus drone radius blocks paths; comfort is a soft path cost.
-	return Rect2(world.player.position - Vector2(22, 74), Vector2(44, 84))
+	return world.player.body_rect_at(world.player.position).grow(10)
 
 func send_to_ship() -> bool:
 	if world.is_robbie():
@@ -112,11 +116,12 @@ func _route_clear(from: Vector2, to: Vector2) -> bool:
 
 func _rebuild() -> void:
 	graph.clear()
+	navigation_components.clear()
 	for y in range(-11, world.site.DEPTH):
 		for x in range(world.site.LEFT, world.site.RIGHT):
 			var cell := Vector2i(x, y)
 			var center := Grid.center(cell)
-			if _free(cell) and center.distance_to(BASE) <= Grid.metres(range_metres):
+			if _free(cell):
 				graph.add_point(_id(cell), center)
 	for y in range(-11, world.site.DEPTH):
 		for x in range(world.site.LEFT, world.site.RIGHT):
@@ -127,53 +132,77 @@ func _rebuild() -> void:
 				var neighbor: Vector2i = cell + offset
 				if neighbor.x < world.site.RIGHT and neighbor.y < world.site.DEPTH and graph.has_point(_id(neighbor)) and _clear(Grid.center(cell), Grid.center(neighbor)):
 					graph.connect_points(_id(cell), _id(neighbor))
+	# Connectivity changes only with the graph, not with comfort weights each replan.
+	for id in graph.get_point_ids():
+		if navigation_components.has(id):
+			continue
+		var pending := [id]
+		navigation_components[id] = id
+		var head := 0
+		while head < pending.size():
+			var current: int = pending[head]
+			head += 1
+			for neighbor in graph.get_point_connections(current):
+				if not navigation_components.has(neighbor):
+					navigation_components[neighbor] = id
+					pending.append(neighbor)
+	had_navigation_liquids = not world.environment.water.is_empty() or not world.environment.oil.is_empty() or not world.environment.acid.is_empty()
 	revision = world.navigation_revision
 
 func follow_goal() -> Vector2:
-	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	var torso: Vector2 = world.player_center()
+	var start := graph.get_closest_point(position)
+	var component: int = navigation_components.get(start, -1)
 	# Approach fallen ore rather than permanently hovering behind its magnet range.
 	var ore_goal: Variant = null
 	var ore_score := INF
 	if world.field_cargo.used(world.field_cargo.drone) < world.field_cargo.drone_capacity:
-		var source := graph.get_closest_point(position)
 		for cell: Vector2i in world.gear.drops:
-			var ore: Vector2 = world.gear.fragment_position(cell)
-			if ore.distance_to(torso) > Grid.metres(4.5):
-				continue
-			var destination := graph.get_closest_point(ore)
-			if destination < 0:
-				continue
-			var point := graph.get_point_position(destination)
-			if point.distance_to(ore) > Grid.metres(world.gear.magnet_range_metres()) - 12 or _actor_clearance().has_point(point) or graph.get_id_path(source, destination).is_empty():
-				continue
-			if point.distance_to(position) < ore_score:
-				ore_score = point.distance_to(position)
-				ore_goal = point
+			for ore: Vector2 in world.gear.fragment_positions(cell):
+				if ore.distance_to(torso) > Grid.metres(4.5):
+					continue
+				var destination := graph.get_closest_point(ore)
+				if destination < 0:
+					continue
+				var point := graph.get_point_position(destination)
+				if point.distance_to(ore) > Grid.metres(world.gear.magnet_range_metres()) - 12 or _actor_clearance().has_point(point) or navigation_components.get(destination, -2) != component:
+					continue
+				if point.distance_to(position) < ore_score:
+					ore_score = point.distance_to(position)
+					ore_goal = point
 	if ore_goal is Vector2:
 		has_resting_goal = false
 		return ore_goal
 	var desired := torso + Vector2(-world.player.facing * FOLLOW_DISTANCE, -40)
 	# Keep a comfortable resting place when the explorer only turns around.
-	if has_resting_goal and resting_goal.distance_to(BASE) <= Grid.metres(range_metres) and resting_goal.distance_to(torso) >= MIN_CLEARANCE + 8 and resting_goal.distance_to(torso) <= Grid.metres(2.8) and not _actor_clearance().has_point(resting_goal) and _clear(torso, resting_goal) and _free(Grid.to_cell(resting_goal)):
+	if has_resting_goal and resting_goal.distance_to(torso) >= MIN_CLEARANCE + 8 and resting_goal.distance_to(torso) <= Grid.metres(2.8) and not _actor_clearance().has_point(resting_goal) and _clear(torso, resting_goal) and _free(Grid.to_cell(resting_goal)):
 		return resting_goal
 	var best := position
 	var score := INF
-	var start := graph.get_closest_point(position)
+	var best_visible := false
 	for id in graph.get_point_ids():
+		if navigation_components.get(id, -2) != component:
+			continue
 		var point := graph.get_point_position(id)
 		var distance := point.distance_to(torso)
 		if distance < MIN_CLEARANCE or distance > Grid.metres(4.5) or _actor_clearance().has_point(point):
 			continue
 		var candidate := point.distance_to(desired) + maxf(0, PERSONAL_SPACE - distance) * 8
-		if candidate < score and not graph.get_id_path(start, id).is_empty():
+		if candidate >= score and best_visible:
+			continue
+		# A nearby resting point across a floor/corner leaves the magnet behind a wall.
+		# Keep indirect goals only as a fallback while approaching a distant tunnel.
+		var visible := _route_clear(point, torso)
+		if (visible and not best_visible) or (visible == best_visible and candidate < score):
 			score = candidate
 			best = point
+			best_visible = visible
 	resting_goal = best
 	has_resting_goal = score < INF
 	return best
 
 func sync_controlled() -> void:
-	position = world.player.position - Vector2(0, 32)
+	position = world.player_center()
 	velocity = Vector2.ZERO
 	mission = "follow"
 	status = "Controllo manuale"
@@ -204,7 +233,7 @@ func _physics_process(delta: float) -> void:
 		has_resting_goal = false
 		route_timer = 0
 		world._note("Robbie: scaricate %d unita / Torno da te%s" % [unloaded, " / Stiva piena" if world.field_cargo.used(world.field_cargo.drone) > 0 else ""])
-	if mission == "returning" and position.distance_to(world.player.position - Vector2(0, 32)) <= 112 and _clear(position, world.player.position - Vector2(0, 32)):
+	if mission == "returning" and position.distance_to(world.player_center()) <= 112 and _clear(position, world.player_center()):
 		mission = "follow"
 		has_resting_goal = false
 		route_timer = 0
@@ -213,33 +242,26 @@ func _physics_process(delta: float) -> void:
 		water_alarm = false
 		revision = -1
 	water_timer -= delta
-	var current_range: float = world.ship_state.drone_range_metres() if world.ship_state != null else 15
-	if revision != world.navigation_revision or range_metres != current_range or ((not world.environment.water.is_empty() or not world.environment.oil.is_empty() or not world.environment.acid.is_empty()) and water_timer <= 0):
-		range_metres = current_range
+	if revision != world.navigation_revision or ((had_navigation_liquids or not world.environment.water.is_empty() or not world.environment.oil.is_empty() or not world.environment.acid.is_empty()) and water_timer <= 0):
 		_rebuild()
 		water_timer = 0.5
 		route_timer = 0
 	route_timer -= delta
 	if route_timer <= 0 and graph.get_point_count() > 0:
 		route_timer = 0.2
-		for id in graph.get_point_ids():
-			graph.set_point_disabled(id, false)
 		var start := graph.get_closest_point(position)
-		var torso: Vector2 = world.player.position - Vector2(0, 32)
+		var torso: Vector2 = world.player_center()
 		for id in graph.get_point_ids():
 			# The body itself is excluded; personal space outside it is only a cost.
 			graph.set_point_disabled(id, false)
 			var proximity := graph.get_point_position(id).distance_to(torso)
 			graph.set_point_weight_scale(id, 1 + maxf(0, PERSONAL_SPACE - proximity) / 10)
 		var goal := follow_goal()
-		var outside: bool = torso.distance_to(BASE) > Grid.metres(range_metres)
-		if outside:
-			goal = BASE + (torso - BASE).limit_length(Grid.metres(range_metres - 0.7))
 		if mission == "outbound":
 			goal = UNLOAD_POINT
 		var end := graph.get_closest_point(goal)
 		route = graph.get_point_path(start, end)
-		status = "Limite segnale" if outside else ("Percorso ostruito" if route.is_empty() else "Ti seguo")
+		status = "Percorso ostruito" if route.is_empty() or goal.distance_to(torso) > Grid.metres(4.5) else "Ti seguo"
 		if mission != "follow":
 			status = ("Alla nave per scaricare" if mission == "outbound" else "Rientro verso di te") if not route.is_empty() else "Passaggio ostruito / Libera la botola"
 		# Never return to the centre of the start cell on every route refresh.
@@ -256,7 +278,7 @@ func _physics_process(delta: float) -> void:
 			route.remove_at(0)
 		elif _route_clear(position, route[0]):
 			desired_velocity = (route[0] - position).normalized() * minf(SPEED, position.distance_to(route[0]) * 4)
-	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	var torso: Vector2 = world.player_center()
 	var distance := position.distance_to(torso)
 	var comfort := PERSONAL_SPACE
 	if has_resting_goal and world.player.velocity.length() < 1:
