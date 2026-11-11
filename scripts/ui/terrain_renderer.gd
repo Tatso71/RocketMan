@@ -192,6 +192,9 @@ static func draw(world: Node2D) -> void:
 	_draw_rocks(world, cached_batch(cache, rock_cells, world.site.terrain_seed), lighting)
 	# Decorate after all air cells, so their backgrounds cannot erase the silhouette.
 	for entry: Dictionary in exposed_edges:
+		if world.site.exposed(entry.cell) and not world.site.pure_vein(entry.cell).is_empty():
+			var kind: String = world.site.material(entry.cell)
+			world.draw_colored_polygon(PackedVector2Array(cache.cells[entry.cell].points.slice(0, 4)), Color(Cargo.COLORS[kind], entry.light * 0.38))
 		_draw_edges(world, entry.cell, cache.cells[entry.cell].base, entry.light, hidden)
 	for entry: Dictionary in grid_cells:
 		world.draw_rect(entry.rect, Color(0.65, 0.7, 0.73, entry.light * 0.2), false, 1)

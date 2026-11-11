@@ -728,7 +728,7 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	var next_hydraulics := Outpost.WaterCircuit.new()
 	if not next_hydraulics.restore(data.get("hydraulics", {}), next_site, next_buildings):
 		return false
-	if not Gear.valid(data.get("gear", {}), next_site, next_buildings) or data.get("drone_mission", "follow") not in ["follow", "outbound", "returning"]:
+	if not Gear.valid(data.get("gear", {}), next_site, next_buildings) or data.get("drone_mission", "follow") not in outpost.logistics.MISSIONS:
 		return false
 	if restore_inventory and not Outpost.Industry.Catalog.seeds_valid(data.get("seed_bank", Outpost.Industry.Catalog.initial_seeds())):
 		return false
@@ -763,6 +763,7 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	outpost.hydraulic_ui.reset()
 	gear.restore(data.get("gear", {}), restore_inventory)
 	drone.mission = data.get("drone_mission", "follow")
+	if outpost.logistics.enabled(): outpost.logistics.reset()
 	drone.has_resting_goal = false
 	drone.revision = -1
 	outpost.industry_ui.window.hide()
@@ -1097,6 +1098,9 @@ func _draw() -> void:
 			var origin := Grid.to_world(target_cell)
 			draw_line(origin + Vector2(8, 4), origin + Vector2(22, 22), Color("2b252f"), 2)
 			draw_line(origin + Vector2(22, 22), origin + Vector2(14, 36), Color("2b252f"), 2)
+			var fraction := clampf(damage / maxf(1, site.mining_cost(target_cell)), 0, 1)
+			draw_rect(Rect2(origin + Vector2(4, 32), Vector2(32, 3)), Color("17242a"))
+			draw_rect(Rect2(origin + Vector2(4, 32), Vector2(32 * fraction, 3)), active_tool().beam_color)
 	if beam_time > 0 and beam_tool != null and beam_tool.mode == "mine" and active_tool().mode == "mine":
 		_draw_beam()
 

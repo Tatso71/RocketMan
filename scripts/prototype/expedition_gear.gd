@@ -8,6 +8,7 @@ const BOMB_CAPACITY := 4
 const BLAST_RADIUS := Grid.CELL_SIZE * 2.0
 const SAFE_DISTANCE := Grid.CELL_SIZE * 4.0
 const MAX_BOMBS := 24
+const MAX_ORE_UNITS := 12
 var world: Node2D
 var bombs: Array = []
 var drops: Dictionary = {}
@@ -26,7 +27,8 @@ func spawn_ore(cell: Vector2i, material: String) -> void:
 		return
 	_clear_fragment_group(cell)
 	drops[cell] = resource
-	drop_amounts[cell] = yield_for_roll(randi_range(0, 99))
+	var rich: int = world.site.ore_yield_amount(cell)
+	drop_amounts[cell] = rich if rich > 0 else yield_for_roll(randi_range(0, 99))
 	_ensure_fragment_group(cell)
 	if drop_amounts[cell] > 1:
 		var badge := YieldPopup.new()
@@ -49,12 +51,13 @@ func _clear_fragment_group(cell: Vector2i) -> void:
 	extra_fragments.erase(cell)
 	drop_amounts.erase(cell)
 
-func _add_fragment(cell: Vector2i, point: Vector2, motion: Vector2, age: float = 0.0) -> void:
+func _add_fragment(cell: Vector2i, point: Vector2, motion: Vector2, age: float = 0.0, units: int = 1) -> void:
 	var body := Fragment.new()
 	body.ore_id = drops[cell]
 	body.position = point
 	body.velocity = motion
 	body.age = age
+	body.set_meta("units", units)
 	add_child(body)
 	if not fragments.has(cell):
 		fragments[cell] = body
@@ -66,10 +69,17 @@ func _add_fragment(cell: Vector2i, point: Vector2, motion: Vector2, age: float =
 func _ensure_fragment_group(cell: Vector2i) -> void:
 	var amount: int = drop_amounts.get(cell, 1)
 	drop_amounts[cell] = amount
-	for index in range(_fragment_group(cell).size(), amount):
-		var spread := float(index) - float(amount - 1) * 0.5
+	var bodies := _fragment_group(cell)
+	var remaining := amount
+	for body in bodies: remaining -= int(body.get_meta("units", 1))
+	var count := mini(3 - bodies.size(), remaining)
+	if count <= 0: return
+	for index in range(count):
+		var units := ceili(float(remaining) / (count - index))
+		remaining -= units
+		var spread := float(index) - float(count - 1) * 0.5
 		var motion := Vector2(float(posmod(cell.x * 31 + cell.y * 17, 81)) - 40 + spread * 30, -85 - float(index) * 12)
-		_add_fragment(cell, Grid.center(cell) + Vector2(spread * 8, 0), motion)
+		_add_fragment(cell, Grid.center(cell) + Vector2(spread * 8, 0), motion, 0, units)
 
 func _collect_fragment(cell: Vector2i, body: CharacterBody2D) -> void:
 	var bodies := _fragment_group(cell)
@@ -84,7 +94,9 @@ func _collect_fragment(cell: Vector2i, body: CharacterBody2D) -> void:
 	else:
 		fragments[cell] = bodies.pop_front()
 		extra_fragments[cell] = bodies
-		drop_amounts[cell] = bodies.size() + 1
+		var units := int(fragments[cell].get_meta("units", 1))
+		for remaining in bodies: units += int(remaining.get_meta("units", 1))
+		drop_amounts[cell] = units
 
 func fragment_position(cell: Vector2i) -> Vector2:
 	return fragments[cell].position if fragments.has(cell) else Grid.center(cell)
@@ -110,7 +122,7 @@ func _advance_fragments(delta: float) -> void:
 	for cell: Vector2i in drops.keys():
 		_ensure_fragment_group(cell)
 		var target: Vector2 = world.player_center() if world.is_robbie() else world.drone.position
-		var available: bool = world.is_robbie() or (world.drone.mission == "follow" and not world.drone.water_alarm)
+		var available: bool = world.is_robbie() or (world.drone.mission in ["follow", "collecting"] and not world.drone.water_alarm)
 		for body: CharacterBody2D in _fragment_group(cell):
 			var attracted := false
 			if available and body.age > 0.2 and body.position.distance_to(target) <= Grid.metres(magnet_range_metres()) and world.field_cargo.room_for(world.field_cargo.drone, drops[cell], world.field_cargo.drone_capacity) > 0:
@@ -118,9 +130,14 @@ func _advance_fragments(delta: float) -> void:
 				attracted = get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
 			body.advance(delta, target if attracted else null)
 			body.modulate = Color.WHITE * world._illumination(body.position)
-			if attracted and body.position.distance_to(target) < 16 and world.field_cargo.collect_drone(drops[cell], 1):
-				world.guide_event("collected_" + str(drops[cell]))
-				_collect_fragment(cell, body)
+			if attracted and body.position.distance_to(target) < 16:
+				var units := int(body.get_meta("units", 1))
+				var taken := mini(units, world.field_cargo.room_for(world.field_cargo.drone, drops[cell], world.field_cargo.drone_capacity))
+				if taken > 0 and world.field_cargo.collect_drone(drops[cell], taken):
+					for unit in range(taken): world.guide_event("collected_" + str(drops[cell]))
+					body.set_meta("units", units - taken)
+					drop_amounts[cell] -= taken
+					if taken == units: _collect_fragment(cell, body)
 var next_number := 1
 var firing := false
 var fuse := 0.0
@@ -430,11 +447,12 @@ func snapshot() -> Dictionary:
 	return {"bombs": saved, "next_number": next_number, "drops": resources, "charge": charge(), "workshop_damaged": workshop_damaged(), "ammo": ammo()}
 
 func _piece_snapshot(body: CharacterBody2D) -> Dictionary:
-	return {"position": [body.position.x, body.position.y], "velocity": [body.velocity.x, body.velocity.y]}
+	return {"position": [body.position.x, body.position.y], "velocity": [body.velocity.x, body.velocity.y], "units": int(body.get_meta("units", 1))}
 
 static func _valid_piece(piece: Variant, site: RefCounted, require_motion: bool) -> bool:
 	if not piece is Dictionary or (require_motion and (not piece.has("position") or not piece.has("velocity"))):
 		return false
+	if not Buildings.Cargo.valid_stock({"copper": piece.get("units", 1)}, MAX_ORE_UNITS) or float(piece.get("units", 1)) < 1: return false
 	for key: String in ["position", "velocity"]:
 		if not piece.has(key):
 			continue
@@ -483,13 +501,16 @@ static func valid(data: Variant, site: RefCounted, buildings: RefCounted) -> boo
 			return false
 		var amount = entry.get("amount", 1)
 		var extras = entry.get("extra_pieces", [])
-		if not (amount is int or amount is float) or not is_finite(float(amount)) or amount != floorf(float(amount)) or amount < 1 or amount > 3:
+		if not (amount is int or amount is float) or not is_finite(float(amount)) or amount != floorf(float(amount)) or amount < 1 or amount > MAX_ORE_UNITS:
 			return false
-		if not extras is Array or extras.size() != int(amount) - 1 or not _valid_piece(entry, site, int(amount) > 1):
+		if not extras is Array or extras.size() > 2 or not _valid_piece(entry, site, int(amount) > 1):
 			return false
+		var units := int(entry.get("units", 1))
 		for piece in extras:
 			if not _valid_piece(piece, site, true):
 				return false
+			units += int(piece.get("units", 1))
+		if units != int(amount): return false
 		cells.append(cell)
 	return true
 
@@ -519,9 +540,9 @@ func restore(data: Dictionary, restore_shared: bool) -> void:
 		drop_amounts[cell] = int(entry.get("amount", 1))
 		if entry.has("position"):
 			var motion := Vector2(float(entry.velocity[0]), float(entry.velocity[1])) if entry.has("velocity") else Vector2.ZERO
-			_add_fragment(cell, Vector2(float(entry.position[0]), float(entry.position[1])), motion, 0.25)
+			_add_fragment(cell, Vector2(float(entry.position[0]), float(entry.position[1])), motion, 0.25, int(entry.get("units", 1)))
 			for piece: Dictionary in entry.get("extra_pieces", []):
-				_add_fragment(cell, Vector2(float(piece.position[0]), float(piece.position[1])), Vector2(float(piece.velocity[0]), float(piece.velocity[1])), 0.25)
+				_add_fragment(cell, Vector2(float(piece.position[0]), float(piece.position[1])), Vector2(float(piece.velocity[0]), float(piece.velocity[1])), 0.25, int(piece.get("units", 1)))
 	next_number = int(data.get("next_number", 1))
 	if restore_shared and world.ship_state == null:
 		set_ammo(int(data.get("ammo", BOMB_CAPACITY)))

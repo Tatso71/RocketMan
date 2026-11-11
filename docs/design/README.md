@@ -2,6 +2,8 @@
 
 Per sapere **cosa si costruisce con cosa nel prototipo attuale**, consulta la [mappa di produzione](mappa-produzione.md): ingredienti, risultati, postazioni, tempi, energia, sblocchi e indice inverso. E' generata dalle ricette runtime; le idee future sono separate. I [dati strutturati](../../design/generated/production-map.json) preparano la futura guida del computer di bordo, non ancora implementata.
 
+Direzione attuale: [scavo manuale, logistica automatica e futura squadra di Robbie](robbie-logistica-futura.md). Filoni puri e assistente automatico sono nel prototipo; la fabbricazione di piu assistenti resta da sviluppare.
+
 Aggiornamento runtime del 10 novembre 2026: il prototipo attivo usa [scavo libero e componenti](../../docs/superpowers/specs/2026-11-10-scavo-libero-componenti-design.md), con ricette in `design/v1/prototype_components.json`. Terra e pietra non sono risorse di carico; il laboratorio produce componenti e le strutture si montano sul posto. Le vecchie ricette di cubi nei cataloghi completi restano proposte storiche, non il contratto della partita attuale. Le scale sono gratuite anche nel catalogo completo.
 
 Versione 1.0 del 24 ottobre 2026. Destinatario: AI incaricata di implementare il gioco. I cataloghi definiscono il progetto completo; non attestano che le funzionalità siano già presenti nel runtime. Le quantità sono valori iniziali di bilanciamento.

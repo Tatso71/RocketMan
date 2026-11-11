@@ -14,6 +14,7 @@ var removed: Dictionary = {}
 var damage: Dictionary = {}
 var terrain_seed := 0
 var layout_version := HazardLayout.CURRENT_VERSION
+var _pure_vein_cells: Dictionary = {}
 
 func valid_scan_findings(data: Variant) -> bool:
 	if not data is Array or data.size() > (RIGHT - LEFT) * DEPTH:
@@ -32,11 +33,35 @@ func _init(seed_value: int = 0, version: int = HazardLayout.CURRENT_VERSION) -> 
 	terrain_seed = seed_value
 	layout_version = version
 	_add_pocket_cavities()
+	_add_pure_veins()
 
 func _add_pocket_cavities() -> void:
 	for pocket: Dictionary in pockets():
 		for cell: Vector2i in HazardLayout.cells(pocket):
 			removed[cell] = true
+
+func _add_pure_veins() -> void:
+	var cavities := {}
+	for pocket: Dictionary in pockets():
+		for cell: Vector2i in HazardLayout.cells(pocket):
+			cavities[cell] = true
+	for vein: Dictionary in Geology.pure_veins(terrain_seed):
+		for cell: Vector2i in HazardLayout.cells(vein):
+			if contains(cell) and not indestructible(cell) and not cavities.has(cell):
+				_pure_vein_cells[cell] = vein
+
+# Geological identity survives excavation so deferred fragment payouts remain exact.
+func pure_vein(cell: Vector2i) -> Dictionary:
+	return _pure_vein_cells.get(cell, {}).duplicate(true)
+
+func mining_cost(cell: Vector2i) -> int:
+	var kind := material(cell)
+	if kind.is_empty():
+		return 0
+	return Geology.PURE_VEIN_COST if _pure_vein_cells.has(cell) else int(COST[kind])
+
+func ore_yield_amount(cell: Vector2i) -> int:
+	return Geology.PURE_VEIN_YIELD if _pure_vein_cells.has(cell) else 0
 
 func indestructible(cell: Vector2i) -> bool:
 	return cell in ANCHORS or cell.y == DEPTH - 1 or (terrain_seed == 0 and layout_version >= 1 and Geology.protected(cell))
@@ -52,6 +77,8 @@ func material(cell: Vector2i) -> String:
 		return ""
 	if indestructible(cell):
 		return "anchor"
+	if _pure_vein_cells.has(cell):
+		return _pure_vein_cells[cell].kind
 	if terrain_seed == 0 and layout_version >= 1:
 		var ore := Geology.ore(cell)
 		if not ore.is_empty():
@@ -90,7 +117,7 @@ func mine(cell: Vector2i, power: int = 1, allow_bedrock: bool = false) -> String
 	if kind.is_empty() or kind == "anchor" or power <= 0 or (kind == "bedrock" and not allow_bedrock) or not exposed(cell):
 		return ""
 	damage[cell] = int(damage.get(cell, 0)) + power
-	if int(damage[cell]) < int(COST[kind]):
+	if int(damage[cell]) < mining_cost(cell):
 		return ""
 	removed[cell] = true
 	damage.erase(cell)

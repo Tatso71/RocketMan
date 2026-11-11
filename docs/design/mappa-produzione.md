@@ -14,19 +14,23 @@ Materie prime -> Componenti -> Strutture, consumabili e potenziamenti
 
 **Materie prime:** ferro, rame, cristalli, quarzo e cobalto. **Semilavorati:** lingotti di rame e vetro. **Componenti:** strutturali ed elettronici, versatili e impilabili (4 pezzi per unita' di carico). Terra e pietra comuni non entrano nel carico o nelle ricette.
 
-Il laboratorio di bordo e' gia' funzionante e parte senza scorte minerali. Produce componenti; il personaggio li monta sul posto. Non si trasportano cubi di stanze gia' scelte. Le scale sono l'eccezione gratuita e immediata.
+Il laboratorio di bordo e' gia' funzionante e parte senza scorte minerali. Nella modalita umano Robbie gestisce produzione, consegna e montaggio; nella variante Robbie pilotabile queste operazioni restano manuali. Non si trasportano cubi di stanze gia' scelte. Le scale sono gratuite e immediate.
 
 ## Il primo laboratorio
 
-Raccogli **8 ferro + 3 rame + 1 cristallo**, produci **2 lotti strutturali + 1 elettronico**, ritira **4 componenti strutturali + 2 elettronici** e monta il laboratorio in uno spazio valido di **4 x 3 m**. Lo scanner trova i filoni nascosti e Robbie raccoglie i frammenti.
+Scava i depositi iniziali di **8 ferro + 3 rame + 1 cristallo** e prepara una stanza supportata di **4 x 3 m**. Posa il progetto: Robbie raccoglie, torna alla nave, produce **4 strutturali + 2 elettronici**, li consegna e monta il laboratorio. Puoi continuare a scavare. Nella variante Robbie pilotabile ordini e ritiri manualmente i componenti al banco.
 
 Dopo il primo laboratorio da campo si sbloccano luci, pompe, ventilatori, fornaci, convertitori e serre, oltre alle ricette avanzate dei due componenti. I consumi della rete si aggiungono all'energia specifica riportata nelle tabelle.
 
+## Logistica automatica
+
+Nella modalita umano Robbie raccoglie i frammenti e torna fisicamente alla nave quando il carico e' pieno o la raccolta si interrompe brevemente. Il banco di bordo produce automaticamente i componenti necessari ai progetti, mantenendo una piccola scorta di 4 strutturali e 2 elettronici quando ci sono ingredienti. Robbie consegna ai cantieri e resta sul posto durante il montaggio; il personaggio puo continuare a scavare altrove. Non occorrono ordini di scarico, produzione o prelievo. Le ricette e i tempi delle tabelle restano invariati. Nella variante Robbie pilotabile il flusso resta manuale.
+
 ## Raccolta dalla roccia
 
-Ogni blocco di minerale prezioso produce pezzi dello stesso materiale: **1 pezzo nel 65%**, **2 pezzi nel 25%**, **3 pezzi nel 10%** dei casi. I frammenti cadono e rimbalzano; Robbie li raccoglie singolarmente col magnete. Quelli che non entrano nel carico restano al suolo e si conservano nel salvataggio. Terra e pietra non producono carico.
+I depositi dispersi producono pezzi dello stesso minerale: **1 pezzo nel 65%**, **2 pezzi nel 25%**, **3 pezzi nel 10%** dei casi. I nuovi filoni puri sono regioni irregolari solide e finite: ogni blocco richiede **10 punti di scavo** e rende **12 unita**, rappresentate da un massimo di tre frammenti fisici. La raccolta parziale conserva la quantita restante al suolo e nei salvataggi. Terra e pietra non producono carico.
 
-Su Ocra rame e ferro si trovano subito a sinistra della scala della nave; tre blocchi di cristallo sono presenti poco oltre sullo stesso percorso, oltre ai cristalli a destra. Non serve attraversare una falda o raggiungere il sottosuolo profondo per il primo laboratorio.
+Su Ocra rame e ferro si trovano subito a sinistra della scala della nave; tre blocchi di cristallo sono presenti poco oltre sullo stesso percorso, oltre ai cristalli a destra. Non serve attraversare una falda o raggiungere il sottosuolo profondo per il primo laboratorio. Questi depositi iniziali restano piu' teneri dei filoni puri.
 
 **Playtest: sacche di gas sospese.** Nei nuovi mondi non c'e' gas naturale, quindi la filiera energetica locale di convertitori, fornaci e serre e' in attesa di alimentazione. Le ricette sotto descrivono i sistemi implementati, non una nuova fonte gratuita di energia. Pompe e valvole acqua usano ancora la rete del laboratorio.
 
@@ -158,7 +162,7 @@ Indice inverso: le tabelle sopra contengono i costi; questo elenco indica dove v
 ## Vincoli importanti
 
 - Il tempo dei lotti e' riferito a un laboratorio L1; i livelli superiori accelerano la produzione. Ingredienti ed energia del lotto si pagano all'avvio; output e avanzamento non si perdono chiudendo il menu.
-- Il montaggio usa solo componenti nel carico accessibile, non scorte remote della nave. Un progetto senza componenti resta in attesa e non fornisce servizi.
+- Il montaggio consuma i componenti reali consegnati sul posto. Il totale informativo del deposito non e' un pagamento a distanza. Robbie deve raggiungere fisicamente il cantiere e rimanere presente durante il proprio lavoro; supporto, sicurezza ed energia restano obbligatori.
 - La fornace usa energia locale del convertitore, non direttamente la batteria della nave. La serra richiede anche acqua conservata dalla pompa: servono collegamenti reali.
 - Il laboratorio e i dispositivi alimentati dalla nave continuano a consumare durante l'uso: l'energia di montaggio non e' il loro intero costo di vita.
 - Le riparazioni elencate sono riparazioni di installazioni/scafo. La manutenzione di tuta e Robbie e il riposo non sono nuove ricette di costruzione.
@@ -171,6 +175,7 @@ Indice inverso: le tabelle sopra contengono i costi; questo elenco indica dove v
 - **Enciclopedia del computer di bordo:** Usare gli stessi dati generati per cercare ingredienti, prodotti, stazioni, sblocchi e impieghi. La schermata nel gioco non esiste ancora.
 - **Serbatoi della nave e bocchettoni:** Serbatoi inizialmente vuoti e separati per acqua/gas/altri fluidi; carico e scarico fisici per trasportare risorse fra pianeti. Non implementati in questa tranche.
 - **Pavimenti e volumi costruibili:** Possibilita' di creare appoggi e passaggi dopo scavi estesi; decisioni rinviate dal giocatore.
+- **Fabbricazione di altri Robbie:** Futura squadra con incarichi e carichi separati. Il ciclo automatico attuale usa solo Robbie assistente dell'umano; costi, sblocchi e ricette degli ulteriori robot non sono ancora definiti.
 - **Filtri per purificare l'acqua:** Fondamentali per le coltivazioni: le serre richiederanno acqua adatta all'irrigazione, non soltanto una quantita' disponibile; l'acqua contaminata dovra' essere filtrata. Modulo separato dalla pompa e collegato ai tubi prima dell'utilizzo o dello stoccaggio. Contaminanti, soglie di qualita', ricette, consumi e manutenzione da definire; nessuna purificazione attiva nel runtime attuale.
 
 ## Come tenere aggiornata la mappa

@@ -12,6 +12,24 @@ const VEINS := [
 	{"kind": "crystal", "center": Vector2i(-18, 19), "radius": Vector2(2, 2)}
 ]
 const MASSIFS := [Rect2i(-20, 7, 4, 2), Rect2i(10, 8, 5, 1), Rect2i(-11, 14, 5, 2), Rect2i(12, 17, 4, 3)]
+const PURE_VEIN_COST := 10
+const PURE_VEIN_YIELD := 12
+# Solid masks, separate from the dispersed deposits and the early tutorial route.
+const PURE_VEINS := [
+	{"id": "pure_copper_west", "kind": "copper", "origin": Vector2i(-23, 4), "rows": [".##.", "####", ".###"]},
+	{"id": "pure_iron_east", "kind": "iron", "origin": Vector2i(17, 4), "rows": ["..##.", ".####", "####.", ".##.."]},
+	{"id": "pure_crystal_west", "kind": "crystal", "origin": Vector2i(-23, 18), "rows": [".###.", "#####", ".###.", "..##."]},
+	{"id": "pure_silica_east", "kind": "silica", "origin": Vector2i(18, 14), "rows": [".###.", "#####", "####.", ".##.."]},
+	{"id": "pure_cobalt_deep", "kind": "cobalt", "origin": Vector2i(16, 20), "rows": ["..###.", "######", ".####."]}
+]
+
+static func pure_veins(seed_value: int) -> Array:
+	var result := PURE_VEINS.duplicate(true)
+	var shift := 0 if seed_value == 0 else posmod(seed_value, 3) - 1
+	for vein: Dictionary in result:
+		vein.origin += Vector2i(shift, 0)
+		vein.size = Vector2i(vein.rows[0].length(), vein.rows.size())
+	return result
 
 static func protected(cell: Vector2i) -> bool:
 	for massif: Rect2i in MASSIFS:

@@ -117,7 +117,7 @@ func plan(id: String, origin: Vector2i) -> Dictionary:
 func snapshot() -> Array:
 	var result: Array = []
 	for building: Dictionary in structures:
-		result.append({"id": building.id, "origin": [building.origin.x, building.origin.y], "stock": building.stock.duplicate(), "level": int(building.get("level", 1)), "state": building.get("state", "active"), "progress": float(building.get("progress", 1.0)), "enabled": building.get("enabled", true), "drained": float(building.get("drained", 0)), "damaged": building.get("damaged", false)})
+		result.append({"id": building.id, "origin": [building.origin.x, building.origin.y], "stock": building.stock.duplicate(), "level": int(building.get("level", 1)), "state": building.get("state", "active"), "progress": float(building.get("progress", 1.0)), "enabled": building.get("enabled", true), "drained": float(building.get("drained", 0)), "damaged": building.get("damaged", false), "automatic": building.get("automatic", false)})
 	return result
 
 func restore(data: Variant, site: RefCounted) -> bool:
@@ -159,6 +159,7 @@ func restore(data: Variant, site: RefCounted) -> bool:
 		var normalized := {}
 		if not item.get("damaged", false) is bool:
 			return false
+		if not item.get("automatic", false) is bool: return false
 		var drained = item.get("drained", 0.0)
 		if not (drained is int or drained is float) or not is_finite(float(drained)) or drained < 0 or (item.id not in ["pump", "fan"] and drained != 0):
 			return false
@@ -170,7 +171,7 @@ func restore(data: Variant, site: RefCounted) -> bool:
 				continue
 			state = "active"
 			progress = 1.0
-		next.append({"id": item.id, "origin": origin, "stock": normalized, "level": int(level), "state": state, "progress": float(progress), "enabled": item.get("enabled", true), "drained": float(drained), "damaged": item.get("damaged", false)})
+		next.append({"id": item.id, "origin": origin, "stock": normalized, "level": int(level), "state": state, "progress": float(progress), "enabled": item.get("enabled", true), "drained": float(drained), "damaged": item.get("damaged", false), "automatic": item.get("automatic", false)})
 	if next.any(func(item: Dictionary): return item.id in DEVICE_IDS and is_active(item)) and not next.any(func(item: Dictionary): return item.id == "laboratory" and item.get("state", "active") == "active"):
 		return false
 	structures = next

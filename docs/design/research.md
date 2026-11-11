@@ -57,8 +57,8 @@ Questa sequenza fino al primo laboratorio e letta dal runtime da progression.ocr
 | open_hatch | Apri la botola | {"fact":"hatch_opened"} | help |
 | first_excavation | Scava le prime due celle | {"counter":"mined_cells","at_least":2} | help |
 | return_ladder | Prepara la risalita | {"fact":"ladder"} | help |
-| laboratory_materials | Raccogli per il laboratorio | {"fact":"lab_materials_ready"} | inventory |
+| laboratory_materials | Minerali per il laboratorio | {"fact":"lab_materials_ready"} | inventory |
 | laboratory_room | Scava la stanza del laboratorio | {"fact":"lab_room_ready"} | help |
-| laboratory_cube | Produci i componenti | {"fact":"components_produced"} | fabricate_lab |
-| carry_laboratory | Carica i componenti | {"fact":"components_collected"} | fabricate_lab |
-| deploy_laboratory | Monta il laboratorio | {"fact":"lab_built"} | place_lab |
+| laboratory_cube | Preparazione dei componenti | {"fact":"components_produced"} | fabricate_lab |
+| carry_laboratory | Trasporto dei componenti | {"fact":"components_collected"} | fabricate_lab |
+| deploy_laboratory | Progetto del laboratorio | {"fact":"lab_built"} | place_lab |

@@ -216,8 +216,11 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	clock += delta
+	var automated: bool = is_instance_valid(world.outpost) and world.outpost.logistics.enabled()
+	if automated:
+		world.outpost.logistics.advance(delta)
 	var danger: Dictionary = world.player_environment()
-	if mission == "follow" and (danger.submerged or danger.oil or danger.acid):
+	if mission in ["follow", "collecting"] and (danger.submerged or danger.oil or danger.acid):
 		water_alarm = true
 		status = "Allarme: stai subendo danni"
 		velocity = Vector2.ZERO
@@ -225,7 +228,7 @@ func _physics_process(delta: float) -> void:
 		route_timer = 0
 		queue_redraw()
 		return
-	if mission == "outbound" and position.distance_to(UNLOAD_POINT) < 12:
+	if not automated and mission == "outbound" and position.distance_to(UNLOAD_POINT) < 12:
 		var stock: Dictionary = world.ship_state.resources if world.ship_state != null else world.local_store
 		var capacity: int = world.ship_state.cargo_capacity() if world.ship_state != null else 120
 		var unloaded: int = world.field_cargo.unload_drone(stock, capacity)
@@ -233,7 +236,7 @@ func _physics_process(delta: float) -> void:
 		has_resting_goal = false
 		route_timer = 0
 		world._note("Robbie: scaricate %d unita / Torno da te%s" % [unloaded, " / Stiva piena" if world.field_cargo.used(world.field_cargo.drone) > 0 else ""])
-	if mission == "returning" and position.distance_to(world.player_center()) <= 112 and _clear(position, world.player_center()):
+	if not automated and mission == "returning" and position.distance_to(world.player_center()) <= 112 and _clear(position, world.player_center()):
 		mission = "follow"
 		has_resting_goal = false
 		route_timer = 0
@@ -256,7 +259,7 @@ func _physics_process(delta: float) -> void:
 			graph.set_point_disabled(id, false)
 			var proximity := graph.get_point_position(id).distance_to(torso)
 			graph.set_point_weight_scale(id, 1 + maxf(0, PERSONAL_SPACE - proximity) / 10)
-		var goal := follow_goal()
+		var goal: Vector2 = world.outpost.logistics.goal() if automated and mission != "follow" else follow_goal()
 		if mission == "outbound":
 			goal = UNLOAD_POINT
 		var end := graph.get_closest_point(goal)
@@ -264,6 +267,7 @@ func _physics_process(delta: float) -> void:
 		status = "Percorso ostruito" if route.is_empty() or goal.distance_to(torso) > Grid.metres(4.5) else "Ti seguo"
 		if mission != "follow":
 			status = ("Alla nave per scaricare" if mission == "outbound" else "Rientro verso di te") if not route.is_empty() else "Passaggio ostruito / Libera la botola"
+		if automated and not route.is_empty(): status = world.outpost.logistics.status
 		# Never return to the centre of the start cell on every route refresh.
 		if route.size() > 1 and _route_clear(position, route[1]):
 			route.remove_at(0)
@@ -283,7 +287,7 @@ func _physics_process(delta: float) -> void:
 	var comfort := PERSONAL_SPACE
 	if has_resting_goal and world.player.velocity.length() < 1:
 		comfort = clampf(resting_goal.distance_to(torso) - 2, MIN_CLEARANCE, PERSONAL_SPACE)
-	if distance < comfort and desired_velocity.is_zero_approx():
+	if mission in ["follow", "returning"] and distance < comfort and desired_velocity.is_zero_approx():
 		var away := (position - torso).normalized()
 		if away.is_zero_approx():
 			away = Vector2(-world.player.facing, -1).normalized()

@@ -1,4 +1,15 @@
 {
+	"automatic_logistics": {
+		"component_buffer": {
+			"electronic_component": 2,
+			"structural_component": 4
+		},
+		"construction": "worker_on_site",
+		"controlled_robbie": "manual",
+		"delivery": "physical_worker",
+		"processor": "ship_workshop",
+		"variant": "explorer"
+	},
 	"nodes": {
 		"acid": {
 			"category": "reservoir",
@@ -369,6 +380,12 @@
 			"status": "planned"
 		},
 		{
+			"id": "additional_robbie",
+			"name": "Fabbricazione di altri Robbie",
+			"note": "Futura squadra con incarichi e carichi separati. Il ciclo automatico attuale usa solo Robbie assistente dell'umano; costi, sblocchi e ricette degli ulteriori robot non sono ancora definiti.",
+			"status": "planned"
+		},
+		{
 			"id": "water_filters",
 			"name": "Filtri per purificare l'acqua",
 			"note": "Fondamentali per le coltivazioni: le serre richiederanno acqua adatta all'irrigazione, non soltanto una quantita' disponibile; l'acqua contaminata dovra' essere filtrata. Modulo separato dalla pompa e collegato ai tubi prima dell'utilizzo o dello stoccaggio. Contaminanti, soglie di qualita', ricette, consumi e manutenzione da definire; nessuna purificazione attiva nel runtime attuale.",
@@ -383,6 +400,12 @@
 			"1": 65,
 			"2": 25,
 			"3": 10
+		},
+		"pure_blocks": {
+			"finite": true,
+			"max_physical_bundles": 3,
+			"mining_strength": 10,
+			"ore_units": 12
 		}
 	},
 	"recipes": [
