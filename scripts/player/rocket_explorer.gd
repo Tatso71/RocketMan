@@ -1,10 +1,11 @@
 extends CharacterBody2D
 
 const Grid = preload("res://scripts/world/world_grid.gd")
+const ExplorerAnimation = preload("res://scripts/player/explorer_animation.gd")
+var animation := ExplorerAnimation.new()
 var world: Node2D
 var facing := 1.0
 var climbing := false
-var walk_time := 0.0
 var suppress_jet_until_release := false
 var jump_was_held := false
 
@@ -21,6 +22,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if world.controls_blocked():
+		animation.stop_firing()
+		queue_redraw()
 		jump_was_held = Input.is_action_pressed("jump")
 		return
 	var horizontal := Input.get_axis("move_left", "move_right")
@@ -59,32 +62,88 @@ func _physics_process(delta: float) -> void:
 		facing = signf(horizontal)
 	move_and_slide()
 	world.gear.observe_ground_contact(is_on_floor(), wet, climbing)
-	walk_time += delta * absf(velocity.x) * 0.06
+	animation.advance(delta, velocity, is_on_floor(), climbing, world.gear.flying)
 	queue_redraw()
+
+func mining_pulse() -> void:
+	animation.fire()
+	queue_redraw()
+
+func reset_animation() -> void:
+	animation.reset()
+	queue_redraw()
+
+func _firing() -> bool:
+	return world.beam_time > 0 and world.active_tool().mode == "mine"
+
+func _visual_transform() -> Transform2D:
+	var pose := animation.pose()
+	return Transform2D(pose.lean, Vector2.ZERO).scaled_local(pose.scale * Vector2(facing, 1) * 1.35)
+
+func _weapon_transform() -> Transform2D:
+	var pose := animation.pose()
+	var shoulder := Vector2(7, -20 + pose.bob)
+	var angle := 0.25 if animation.state == "walk" else 0.08
+	if _firing():
+		var target: Vector2 = _visual_transform().affine_inverse() * (world.beam_target - position)
+		angle = (target - shoulder).angle() + 0.14
+	angle -= pose.recoil * 0.08
+	return Transform2D(angle, shoulder - Vector2(pose.recoil * 3, 0))
+
+func beam_origin() -> Vector2:
+	if world.is_robbie():
+		return position + _robot_center() + Vector2(facing * 46, -2)
+	return position + _visual_transform() * (_weapon_transform() * Vector2(26, -5))
 
 func _draw() -> void:
 	if world.is_robbie():
 		_draw_robbie()
 		return
-	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE * 1.35)
-	var step := sin(walk_time) * 3 if is_on_floor() else 0.0
-	draw_rect(Rect2(-14, -29, 9, 20), Color("485c66"))
-	draw_rect(Rect2(-9, -23, 18, 18), Color("e9a43e"))
-	draw_rect(Rect2(-8, -7, 6, 7 + step), Color("273d48"))
-	draw_rect(Rect2(3, -7, 6, 7 - step), Color("273d48"))
-	draw_circle(Vector2(0, -31), 13, Color("f7c45c"))
-	draw_circle(Vector2(facing * 2, -31), 9, Color("25495c"))
-	draw_circle(Vector2(facing * 4, -33), 3, Color("8de2e5"))
-	draw_circle(Vector2(0, -43), 4, Color("fff3bf"))
-	draw_line(Vector2(facing * 8, -20), Vector2(facing * 18, -22), Color("f7c45c"), 6)
-	if not world.outpost.fabrication.carried().is_empty():
+	var pose := animation.pose()
+	var body := _visual_transform()
+	var weapon := _weapon_transform()
+	var rear_hand: Vector2 = weapon * Vector2(18, -2) if _firing() else pose.rear_hand
+	draw_set_transform_matrix(body)
+	_draw_leg(Vector2(-5, -9), pose.rear_foot, Color("314954"))
+	_draw_arm(Vector2(-7, -21 + pose.bob), rear_hand, Color("ba873b"))
+	draw_rect(Rect2(-14, -29 + pose.bob, 9, 20), Color("485c66"))
+	draw_rect(Rect2(-9, -23 + pose.bob, 18, 15), Color("e9a43e"))
+	draw_line(Vector2(-8, -10 + pose.bob), Vector2(8, -10 + pose.bob), Color("f7c45c"), 3)
+	_draw_leg(Vector2(5, -9), pose.front_foot, Color("273d48"))
+	draw_circle(Vector2(0, -31 + pose.bob), 13, Color("f7c45c"))
+	draw_circle(Vector2(2, -31 + pose.bob), 9, Color("25495c"))
+	draw_circle(Vector2(4, -33 + pose.bob), 3, Color("8de2e5"))
+	draw_circle(Vector2(0, -43 + pose.bob), 4, Color("fff3bf"))
+	var show_weapon := not animation.state.begins_with("climb") or _firing()
+	if not show_weapon or not world.outpost.fabrication.carried().is_empty():
+		_draw_arm(Vector2(7, -21 + pose.bob), pose.front_hand, Color("f7c45c"))
 		return
-	draw_colored_polygon(PackedVector2Array([Vector2(facing * 15, -29), Vector2(facing * 31, -29), Vector2(facing * 34, -25), Vector2(facing * 31, -20), Vector2(facing * 15, -20)]), Color("526e79"))
-	draw_line(Vector2(facing * 22, -24), Vector2(facing * 34, -25), world.active_tool().beam_color, 3)
+	var grip := weapon * Vector2(12, -2)
+	_draw_arm(Vector2(7, -21 + pose.bob), grip, Color("f7c45c"))
+	draw_set_transform_matrix(body * weapon)
+	draw_colored_polygon(PackedVector2Array([Vector2(7, -9), Vector2(23, -9), Vector2(26, -5), Vector2(23, 0), Vector2(7, 0)]), Color("526e79"))
+	draw_line(Vector2(14, -4), Vector2(26, -5), world.active_tool().beam_color, 3)
+	if _firing():
+		draw_circle(Vector2(26, -5), 2 + pose.recoil * 2, Color(world.active_tool().beam_color, 0.8))
+
+func _draw_leg(hip: Vector2, foot: Vector2, ink: Color) -> void:
+	var knee := hip.lerp(foot, 0.5) + Vector2(3, -1)
+	draw_line(hip, knee, ink, 6, true)
+	draw_line(knee, foot, ink, 5, true)
+	draw_line(foot - Vector2(2, 0), foot + Vector2(4, 0), Color("1d333e"), 3, true)
+
+func _draw_arm(shoulder: Vector2, hand: Vector2, ink: Color) -> void:
+	var elbow := shoulder.lerp(hand, 0.5) + Vector2(-2, 3)
+	draw_line(shoulder, elbow, ink, 5, true)
+	draw_line(elbow, hand, ink, 5, true)
+	draw_circle(hand, 2.7, Color("485c66"))
+
+func _robot_center() -> Vector2:
+	var pose := animation.pose()
+	return Vector2(-facing * pose.recoil * 2, -32 + sin(animation.clock * 4) * 1.5 + (1 - pose.scale.y) * 24)
 
 func _draw_robbie() -> void:
-	var bob := sin(Time.get_ticks_msec() * 0.004) * 1.5
-	var center := Vector2(0, -32 + bob)
+	var center := _robot_center()
 	var ink := Color("78e4dc") if world.suit_integrity() > 25 else Color("ff7774")
 	draw_line(center + Vector2(-17, -17), center + Vector2(-17, -27), Color("799198"), 3)
 	draw_circle(center + Vector2(-17, -28), 3, ink)

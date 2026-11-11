@@ -192,6 +192,11 @@ func equip_tool(slot: int) -> bool:
 		ship_state.active_tool_slot = slot
 	else:
 		standalone_slot = slot
+	beam_time = 0.0
+	beam_tool = null
+	mouse_mining = false
+	if player != null:
+		player.animation.stop_firing()
 	_note(active_tool().display_name)
 	mine_timer = 0
 	return true
@@ -438,6 +443,9 @@ func _process(delta: float) -> void:
 		return
 	ambient_time += delta
 	beam_time = maxf(0, beam_time - delta)
+	if controls_blocked():
+		beam_time = 0.0
+		beam_tool = null
 	mine_timer -= delta
 	message_time -= delta
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -513,6 +521,8 @@ func _mine_target() -> void:
 			beam_time = 0.24
 			beam_tool = active_tool()
 			beam_target = Grid.center(target_cell)
+			player.facing = 1 if beam_target.x >= player.position.x else -1
+			player.mining_pulse()
 		return
 	var blocker := target_blocker(target_cell)
 	if not blocker.is_empty():
@@ -524,6 +534,8 @@ func _mine_target() -> void:
 	beam_target = Grid.center(target_cell)
 	beam_tool = tool
 	player.facing = 1 if beam_target.x >= player.position.x else -1
+	if tool.mode == "mine":
+		player.mining_pulse()
 	_set_ship_energy(ship_energy() - tool.energy_per_pulse)
 	if tool.mode == "scan":
 		scanned[target_cell] = site.material(target_cell)
@@ -611,10 +623,14 @@ func remove_ladder_at(cell: Vector2i) -> bool:
 	return true
 
 func return_home() -> void:
+	beam_time = 0.0
+	beam_tool = null
+	mouse_mining = false
 	player.position = Vector2(-60, -80)
 	player.velocity = Vector2.ZERO
 	player.climbing = false
 	_note("Rientro in officina")
+	player.reset_animation()
 
 func capture_state() -> Dictionary:
 	var saved_ladders: Array = []
@@ -1086,7 +1102,7 @@ func _illumination(point: Vector2) -> float:
 	return maxf(light, built_light)
 
 func _draw_beam() -> void:
-	var start := player.position + Vector2(player.facing * 46, -34)
+	var start: Vector2 = player.beam_origin()
 	var direction := (beam_target - start).normalized()
 	var normal := Vector2(-direction.y, direction.x)
 	var points := PackedVector2Array()
