@@ -2,13 +2,13 @@
 
 Catalogo generato da [recipes.json](../../design/v1/recipes.json). Modificare il JSON e rieseguire `node tools/design/build.mjs`. Numeri di bilanciamento iniziali, da provare nel gioco.
 
-Le scale sono costruzione manuale immediata sul posto: 2 Terriccio, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
+Le scale sono costruzione manuale immediata e gratuita sul posto: zero materiali, zero secondi e zero energia. Nessun cubo, officina, laboratorio, Robbie o segnale; l'output e direttamente la scala attiva nel mondo, non un oggetto nello zaino. L'ID storico recipe_cube_ladder resta stabile, ma non indica un cubo.
 
-## Prototipo giocabile: cubi di servizio
+## Riferimento storico: cubi di servizio
 
-Da progression.prototype_fabrication: luce, pompa acqua e ventilatore gas si sbloccano dopo il primo laboratorio completato, con materiali comuni e cubi fisici. Queste tre ricette semplificate appartengono alla tranche attuale; il catalogo completo sotto resta il progetto della successiva economia planetaria.
+Le ricette di progression.prototype_fabrication qui sotto documentano il precedente prototipo, non la partita attuale. Dal 10 novembre il runtime usa [prototype_components.json](../../design/v1/prototype_components.json): produzione di componenti in laboratorio e montaggio sul posto. Vedere il [README corrente](../../README.md#first-laboratory) per costi e comandi. Anche il catalogo completo successivo resta una proposta, non il contratto runtime.
 
-| Oggetto | Ingredienti | Secondi L1 | kWh fabbricazione | Secondi apertura |
+| Oggetto | Ingredienti storici | Secondi L1 | kWh fabbricazione | Secondi apertura |
 | --- | --- | --- | --- | --- |
 | Luce | 1 Terriccio + 1 Rame | 2.5 | 0.004 | 2.5 |
 | Pompa acqua | 3 Pietra + 4 Rame | 4 | 0.008 | 4 |
@@ -53,7 +53,7 @@ Da progression.prototype_fabrication: luce, pompa acqua e ventilatore gas si sbl
 | recipe_dark_lens | Banco fotonico | Esplorazione profonda | 1 Silicato oscuro + 1 Lente prismatica | 1 Lente notturna | 15 | 0.03 |
 | recipe_atlas_chip | Banco fotonico | Esplorazione profonda | 1 Perla mnemonica + 1 Circuito di precisione | 1 Matrice cartografica | 15 | 0.03 |
 | recipe_concord_matrix | Banco fotonico | Atlante concorde | 1 Reticolo concorde + 1 Matrice cartografica + 1 Superconduttore | 1 Matrice concorde | 20 | 0.04 |
-| recipe_cube_ladder | Sul campo | Dotazione iniziale | 2 Terriccio | 1 Scala di emergenza | 0 | 0 |
+| recipe_cube_ladder | Sul campo | Dotazione iniziale | — | 1 Scala di emergenza | 0 | 0 |
 | recipe_cube_lab | Officina di bordo | Dotazione iniziale | 6 Pietra + 4 Rame | 1 Laboratorio da campo | 5 | 0.01 |
 | recipe_cube_light | Laboratorio da campo | Ricerca sul campo | 1 Terriccio + 1 Rame | 1 Luce da galleria | 5 | 0.01 |
 | recipe_cube_crate | Officina di bordo | Ricerca sul campo | 4 Pietra + 2 Rame | 1 Deposito locale | 8 | 0.02 |

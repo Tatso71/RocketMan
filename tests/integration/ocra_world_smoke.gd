@@ -128,7 +128,7 @@ func _run() -> void:
 	world.queue_redraw()
 	await picture("ocra-tunnel-unlit-720p")
 	world.field_cargo.backpack.clear()
-	world.field_cargo.drone = {"stone": 6, "copper": 5, "soil": 1}
+	world.field_cargo.drone = {"structural_component": 4, "electronic_component": 3}
 	world.player.position = Vector2(-260, 400)
 	Fixture.support(world)
 	check(Fixture.build(world, "laboratory", Vector2i(-6, 7)), "field laboratory can be built in a real dry supported gallery")

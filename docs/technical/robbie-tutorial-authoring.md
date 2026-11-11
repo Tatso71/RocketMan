@@ -2,6 +2,8 @@
 
 Il tutorial di Ocra fino al primo laboratorio e definito in `design/v1/progression.json`, sezione `ocra_tutorial`. I testi effettivi dei balloon e degli obiettivi sono centralizzati in `design/v1/robbie_texts.json`. Il runtime legge direttamente questi dati; non modificare l'HTML generato per cambiare il gioco.
 
+Dal 10 novembre il percorso usa raccolta di 8 ferro, 3 rame e 1 cristallo, produzione al banco di 4 componenti strutturali e 2 elettronici, ritiro nel carico di Robbie e montaggio del laboratorio nella stanza 4 x 3 m. Gli ID storici delle tappe `laboratory_cube` e `carry_laboratory` restano stabili per il catalogo testi, ma significano produzione e ritiro dei componenti: le condizioni reali sono `components_produced` e `components_collected`, non eventi di pickup di un cubo. Le scale sono gratuite. I costi di produzione/montaggio sono in `prototype_components.json`, non nelle vecchie ricette di cubi del design completo.
+
 ## Laboratorio Dei Testi
 
 Aprire `scenes/labs/robbie_text_lab.tscn` in Godot e premere F6. La scena e indipendente dalla partita: non avvia il tutorial e non tocca i salvataggi. A sinistra ricerca ed elenco; al centro titolo, priorita, balloon e dettaglio obiettivo; a destra anteprima dal vivo, scorrevole anche per testi lunghi. Per i messaggi normali il dettaglio obiettivo non e utilizzato.

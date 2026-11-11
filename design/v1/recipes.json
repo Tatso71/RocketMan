@@ -747,9 +747,7 @@
     "stage": 0,
     "station": null,
     "research": "tech_start",
-    "inputs": {
-      "res_soil": 2
-    },
+    "inputs": {},
     "outputs": {
       "mod_ladder": 1
     },

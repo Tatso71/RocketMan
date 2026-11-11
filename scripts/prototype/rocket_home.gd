@@ -20,9 +20,11 @@ const Gear = preload("res://scripts/prototype/expedition_gear.gd")
 const ScannerPulses = preload("res://scripts/ui/scanner_pulse_view.gd")
 const ReservoirView = preload("res://scripts/ui/reservoir_view.gd")
 const CryoCrewView = preload("res://scripts/ui/cryo_crew_view.gd")
+const TerrainRenderer = preload("res://scripts/ui/terrain_renderer.gd")
 @export_enum("explorer", "robbie") var variant := "explorer"
-const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "crystal": "Cristallo", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
-const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "crystal": Color("55c5c6"), "bedrock": Color("454750"), "anchor": Color("465761")}
+@export var organic_terrain := true
+const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "iron": "Ferro", "crystal": "Cristallo", "silica": "Quarzo", "cobalt": "Cobalto", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile"}
+const MATERIAL_COLORS := {"soil": Color("a45148"), "stone": Color("746b7a"), "copper": Color("bb8162"), "iron": Color("a58f89"), "crystal": Color("55c5c6"), "silica": Color("c6c8b1"), "cobalt": Color("536fbb"), "bedrock": Color("454750"), "anchor": Color("465761")}
 var site := DigSite.new()
 var environment := HazardField.new(site)
 var inventory := InventoryModel.new()
@@ -33,7 +35,7 @@ var blocks: Dictionary = {}
 var ladders: Dictionary = {}
 var hatch: StaticBody2D
 var hatch_open := false
-var show_grid := true
+var show_grid := false
 var target_cell := Vector2i.ZERO
 var mouse_aim := false
 var mine_timer := 0.0
@@ -96,22 +98,19 @@ func observe_tutorial(room_ready: bool = false) -> void:
 		tutorial.mark("hatch_opened")
 	if guide_state.facts.get("ladder", false) or ladders.keys().any(func(cell: Vector2i): return cell.y >= 0):
 		tutorial.mark("ladder")
-	if outpost.lab_cube_count() > 0:
-		tutorial.mark("lab_cube_crafted")
+	var source: Dictionary = outpost.fabrication_stock()
+	if field_cargo.can_pay({"iron": 8, "copper": 3, "crystal": 1}, drone_help_available(), source) or field_cargo.can_pay(Buildings.LAB_COST, drone_help_available(), source) or (int(tutorial.counters.get("collected_iron", 0)) >= 8 and int(tutorial.counters.get("collected_copper", 0)) >= 3 and int(tutorial.counters.get("collected_crystal", 0)) >= 1):
 		tutorial.mark("lab_materials_ready")
-	if outpost.fabrication.jobs.any(func(job: Dictionary): return job.id == "laboratory"):
-		tutorial.mark("lab_materials_ready")
-	if outpost.fabrication.carried_id != 0:
-		tutorial.mark("lab_cube_carried")
-	if field_cargo.can_pay(outpost.lab_definition().get("cost", {}), true, outpost.fabrication_stock()):
-		tutorial.mark("lab_materials_ready")
+	if field_cargo.can_pay(Buildings.LAB_COST, drone_help_available()):
+		tutorial.mark("components_collected")
 	if room_ready:
 		tutorial.mark("lab_room_ready")
 	for building: Dictionary in outpost.buildings.structures:
 		if building.id == "laboratory":
 			tutorial.mark("lab_room_ready")
 			if building.get("state") != "planned":
-				tutorial.mark("lab_cube_crafted")
+				tutorial.mark("components_produced")
+				tutorial.mark("components_collected")
 				tutorial.mark("lab_materials_ready")
 			if Buildings.is_active(building):
 				tutorial.mark("lab_built")
@@ -213,7 +212,7 @@ func controls_blocked() -> bool:
 		return true
 	if is_instance_valid(outpost) and is_instance_valid(outpost.industry_ui) and outpost.industry_ui.is_open():
 		return true
-	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open())))
+	return controls_locked or (is_instance_valid(reset_dialog) and reset_dialog.visible) or (is_instance_valid(rooms) and rooms.is_open()) or (is_instance_valid(outpost) and ((is_instance_valid(outpost.cargo_window) and outpost.cargo_window.visible) or (is_instance_valid(outpost.station_menu) and outpost.station_menu.is_open()) or (is_instance_valid(outpost.construction) and outpost.construction.is_open()) or (is_instance_valid(outpost.assembly) and outpost.assembly.is_open())))
 
 func _ready() -> void:
 	guide_state.variant = variant
@@ -476,7 +475,7 @@ func target_blocker(cell: Vector2i) -> String:
 	if active_tool().mode == "bomb":
 		return gear.placement_blocker(cell)
 	if active_tool().mode == "jetpack":
-		return "Jetpack %.0f%% / Mantieni Spazio o W / Ricarica nei laboratori" % gear.charge()
+		return "Jetpack %.0f%% / Spazio o W / Ricarica toccando terra" % gear.charge()
 	if not outpost.fabrication.carried().is_empty():
 		return "Posa il cubo con Spazio prima di usare lo strumento"
 	if site.material(cell).is_empty():
@@ -494,10 +493,6 @@ func target_blocker(cell: Vector2i) -> String:
 		return "Materiale incompatibile: serve un altro strumento"
 	if ship_energy() < tool.energy_per_pulse:
 		return "Energia esaurita: ricarica in officina"
-	if tool.mode == "mine" and field_cargo.free_space(drone_can_collect()) <= 0:
-		if is_robbie():
-			return "Cargo pieno: rientra in un laboratorio per depositare"
-		return "Robbie pieno: Y per scaricare alla nave" if drone_can_collect() else "Aspetta Robbie nel tuo raggio per raccogliere"
 	return ""
 
 func _mine_target() -> void:
@@ -541,11 +536,12 @@ func _mine_target() -> void:
 	var collected := site.mine(target_cell, power, "bedrock" in tool.materials)
 	if not collected.is_empty():
 		remove_mined_block(target_cell, collected)
-		var resource_id: String = site.RESOURCE_YIELDS.get(collected, collected)
-		field_cargo.collect(resource_id, 1, drone_can_collect())
+		var resource_id: String = site.resource_yield(collected)
+		if not resource_id.is_empty():
+			gear.drops[target_cell] = resource_id
 		scanned.erase(target_cell)
 		guide_event("mined")
-		_note("+1 " + MATERIAL_NAMES[resource_id])
+		_note("Scavo libero" if resource_id.is_empty() else ("%s a terra / Robbie lo raccogliera" % MATERIAL_NAMES[resource_id] if gear.drops.has(target_cell) else "+1 " + MATERIAL_NAMES[resource_id]))
 		var breaches := environment.detect_breaches()
 		if "gas" in breaches:
 			guide_event("gas_leak")
@@ -598,9 +594,6 @@ func place_ladder_at(cell: Vector2i) -> bool:
 	if Grid.center(cell).distance_to(player.position - Vector2(0, 32)) > Grid.metres(1.5):
 		_note("Scala fuori portata")
 		return false
-	if not field_cargo.pay({"soil": 2}, drone_help_available(), outpost.payment_cache()):
-		_note("Servono 2 unita di terra per una scala")
-		return false
 	ladders[cell] = true
 	guide_event("ladder")
 	_note("Scala installata: 1 m")
@@ -630,7 +623,7 @@ func capture_state() -> Dictionary:
 	var readings: Array = []
 	for cell: Vector2i in scanned:
 		readings.append([cell.x, cell.y])
-	var data := {"version": 1, "layout_version": site.layout_version, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
+	var data := {"version": 1, "economy_version": 2, "layout_version": site.layout_version, "cell_metres": Grid.CELL_METRES, "terrain_seed": site.terrain_seed, "removed": site.snapshot(), "ladders": saved_ladders, "scanned": readings, "hazards": environment.snapshot(), "buildings": outpost.buildings.snapshot(), "fabrication": outpost.fabrication.snapshot(), "local_lab_level": outpost.local_lab_level, "field_cargo": field_cargo.snapshot(), "drone_guide": guide_state.snapshot(), "store": local_store.duplicate(), "drone_position": [drone.position.x, drone.position.y], "suit_integrity": suit_integrity(), "crew_energy": crew_energy(), "ship_energy": ship_energy(), "materials": inventory.materials.duplicate(), "player": [player.position.x, player.position.y], "hatch_open": hatch_open}
 	data.variant = variant
 	data.network = outpost.network.snapshot()
 	data.industry = outpost.industry.snapshot()
@@ -656,7 +649,7 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 	if data.get("variant", "explorer") != variant:
 		_note("Questo salvataggio appartiene a un'altra variante")
 		return false
-	if data.get("version") != 1 or data.get("cell_metres") != Grid.CELL_METRES or data.get("terrain_seed", 0) != site.terrain_seed or not data.get("removed") is Array or not data.get("materials") is Dictionary or not data.get("ladders") is Array:
+	if data.get("version") != 1 or data.get("economy_version") != 2 or data.get("cell_metres") != Grid.CELL_METRES or data.get("terrain_seed", 0) != site.terrain_seed or not data.get("removed") is Array or not data.get("materials") is Dictionary or not data.get("ladders") is Array:
 		_note("Nessun salvataggio compatibile")
 		return false
 	if not Outpost.Fabrication.integer(data.get("layout_version", 0), 0, DigSite.HazardLayout.CURRENT_VERSION):
@@ -950,7 +943,7 @@ func _button(parent: Node, text: String, tip: String, callback: Callable) -> voi
 func _refresh_hud() -> void:
 	resources_label.text = "Robbie %d/%d   Jet %.0f%%" % [field_cargo.used(field_cargo.drone), field_cargo.drone_capacity, gear.charge()]
 	jetpack_meter.value = gear.charge()
-	drone_label.text = "ROBBIE / %s / %.0f m" % [drone.status, drone.range_metres]
+	drone_label.text = "ROBBIE / %s / Segnale %.0f m / Magnete %.2f m" % [drone.status, drone.range_metres, gear.magnet_range_metres()]
 	if is_robbie():
 		drone_label.text = "ROBBIE / Controllo manuale / Criogenia 3 capsule stabili"
 	var depth := maxf(0, player.position.y / Grid.PIXELS_PER_METRE)
@@ -1035,6 +1028,12 @@ func _draw_landscape() -> void:
 	draw_rect(Rect2(-3000, -6, 6000, 16), Color("d98b72"))
 
 func _draw_terrain() -> void:
+	if organic_terrain:
+		TerrainRenderer.draw(self)
+	else:
+		_draw_terrain_legacy()
+
+func _draw_terrain_legacy() -> void:
 	var darkness := Color("030509")
 	# Keep the void beyond the finite dig-site boundary underground, not sky blue.
 	draw_rect(Rect2(-4000, 0, 8000, 3000), darkness)

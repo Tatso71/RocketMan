@@ -77,50 +77,17 @@ func screenshot(name: String, viewport: Viewport = null) -> void:
 	check(target.get_texture().get_image().save_png("res://reports/utility-" + name + ".png") == OK, name + " screenshot")
 
 func make_and_deploy(id: String, feet: Vector2) -> void:
-	await stand(Vector2(-120, 160))
-	world.camera.position = Vector2(-100, 25)
-	world.camera.zoom = Vector2.ONE * 0.9
-	world.outpost.selected_station = {"kind": "laboratory", "building": world.outpost.buildings.labs()[0]}
-	await frames()
-	var ui: Node = world.outpost.construction
-	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
-	check(ui.recipe_rows.has(id) and not ui.recipe_rows[id].button.disabled, id + " recipe is creatable at field bench")
-	var before := {}
-	for resource: String in world.outpost.recipe_definition(id).cost:
-		before[resource] = world.outpost.fabrication_amount(resource)
-	ui.recipe_rows[id].button.pressed.emit()
-	check(world.outpost.fabrication.jobs.size() == 1 and world.outpost.fabrication.jobs[0].id == id, id + " button starts correct paid cube job")
-	for resource: String in before:
-		check(before[resource] - world.outpost.fabrication_amount(resource) == world.outpost.recipe_definition(id).cost[resource], id + " charges exactly one " + resource + " payment")
-	var seconds: float = world.outpost.fabrication.jobs[0].seconds
-	world.outpost.advance_fabrication(seconds * 0.5)
-	ui.picker.hide()
-	await screenshot(id + "-materializing-720p")
-	await reload_world()
-	world.camera.position = Vector2(-100, 25)
-	world.camera.zoom = Vector2.ONE * 0.9
-	check(world.outpost.fabrication.jobs[0].id == id and is_equal_approx(world.outpost.fabrication.jobs[0].elapsed, seconds * 0.5), id + " retains type and progress halfway through fabrication")
-	world.outpost.advance_fabrication(seconds)
-	check(world.outpost.fabrication.cubes.size() == 1 and world.outpost.fabrication.cubes[0].id == id, id + " materializes the correct physical cube")
-	check(world.outpost.lab_cube_count() == 0, id + " is never mistaken for a laboratory cube")
-	await screenshot(id + "-ready-cube-720p")
-	check(world.outpost.use_cube() and world.outpost.fabrication.carried().id == id, id + " pickup uses the shared Space workflow")
-	if id == "pump":
-		world.outpost.use_cube()
-		var bad: Dictionary = world.outpost.fabrication.cubes[0]
-		check(not world.outpost.activate_cube(bad) and world.outpost.build_mode, "overlapping pump activation keeps cube with red footprint")
-		check(world.outpost.use_cube() and world.outpost.fabrication.carried().id == "pump", "invalid pump cube can be recovered with Space")
 	await stand(feet)
-	world.outpost.use_cube()
-	check(world.outpost.fabrication.carried_id == 0, id + " can be dropped before activation")
-	var cube: Dictionary = world.outpost.fabrication.cubes[0]
-	var cargo: Dictionary = world.field_cargo.snapshot()
-	world.outpost.construction.open_cube(cube, Vector2(430, 230))
-	check(world.outpost.construction.activation_popup.get_item_text(1).to_lower().contains(Buildings.NAMES[id].to_lower()), id + " activation popup names the right object")
-	world.outpost.construction.activation_popup.id_pressed.emit(0)
-	check(world.outpost.fabrication.cubes.is_empty() and world.outpost.buildings.structures.back().id == id, id + " activates into the correct structure without a free blueprint")
-	check(world.field_cargo.snapshot() == cargo, id + " deployment never pays raw resources twice")
+	world.camera.position = Vector2(-100, 25)
+	world.camera.zoom = Vector2.ONE * 0.9
+	world.field_cargo.drone = Buildings.cost_for(id)
+	Fixture.support(world)
+	await frames()
+	var origin: Vector2i = world.outpost.placement_origin(id, world.Grid.to_cell(feet - Vector2(0, 1)))
+	check(world.outpost.place(id, origin), id + " plan fits the intended metric footprint")
 	var unfolding: Dictionary = world.outpost.buildings.structures.back()
+	check(world.outpost.fund_site(unfolding), id + " begins assembly from carried components")
+	check(world.field_cargo.used(world.field_cargo.drone) == 0, id + " consumes the exact component recipe once")
 	var duration: float = world.outpost.recipe_definition(id).deployment_seconds
 	var gas_before := total(world.environment.gas)
 	world.outpost.advance(duration * 0.5)
@@ -148,26 +115,24 @@ func _run() -> void:
 	Fixture.workshop(world)
 	await frames()
 	freeze()
-	world.field_cargo.drone = {"stone": 6, "copper": 4}
+	world.field_cargo.drone = {"structural_component": 4, "electronic_component": 2}
 	world.inventory.materials = world.field_cargo.drone
 	Fixture.support(world)
 	world.outpost.selected_station = {"kind": "ship"}
 	var ui: Node = world.outpost.construction
 	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
-	check(ui.recipe_rows.keys() == ["laboratory", "bomb"], "only laboratory and ammunition recipes are visible before the first laboratory")
+	check(ui.recipe_rows.keys() == ["structural_component", "electronic_component", "bomb"], "base component and ammunition recipes are visible before the first laboratory")
 	var cargo: Dictionary = world.field_cargo.snapshot()
 	for id: String in Buildings.DEVICE_IDS:
 		check(not world.outpost.fabricate_cube(id), id + " cannot be fabricated by bypassing the locked UI")
 	check(world.field_cargo.snapshot() == cargo, "locked device requests never consume resources")
-	ui.craft_button.pressed.emit()
 	ui.picker.hide()
-	world.outpost.advance_fabrication(6)
-	check(world.outpost.use_cube(), "fabricate and pick up the first laboratory cube")
 	Fixture.lab_room(world)
 	world.set_hatch(true)
 	world.player.position = Vector2(-100, 160)
-	world.outpost.use_cube()
-	check(world.outpost.activate_cube(world.outpost.fabrication.cubes[0]), "deploy actual first laboratory cube")
+	Fixture.support(world)
+	check(world.outpost.place("laboratory", Vector2i(-5, 1)), "plan the first laboratory")
+	check(world.outpost.fund_site(world.outpost.buildings.structures.back()), "assemble the first lab from transported components")
 	check(not world.outpost.recipe_visible("fan"), "an unfinished first laboratory does not unlock devices")
 	world.outpost.advance(6)
 	check(world.outpost.has_lab() and world.outpost.recipe_visible("fan"), "only completed laboratory unlocks utility recipes")
@@ -177,12 +142,12 @@ func _run() -> void:
 	world.environment.water.clear()
 	world.player.position = Vector2(-120, 160)
 	Fixture.support(world)
-	world.field_cargo.drone = {"soil": 1, "copper": 1}
+	world.field_cargo.drone = {"iron": 4, "copper": 3}
 	world.inventory.materials = world.field_cargo.drone
 	world.outpost.selected_station = {"kind": "laboratory", "building": world.outpost.buildings.labs()[0]}
 	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
-	check(ui.recipe_rows.size() == 8 and not ui.recipe_rows.lamp.button.disabled and ui.recipe_rows.pump.button.disabled, "recipe rows independently reflect affordability after unlock")
-	check(ui.recipe_rows.lamp.resources.copper.modulate == Color("a7e5b4") and ui.recipe_rows.pump.resources.stone.modulate == Color("ff7e85"), "per-device ingredient colors use nearby Robbie's cargo")
+	check(ui.recipe_rows.size() == 5 and not ui.recipe_rows.structural_component.button.disabled and ui.recipe_rows.electronic_component.button.disabled, "component rows independently reflect affordability after unlock")
+	check(ui.recipe_rows.structural_component.resources.iron.modulate == Color("a7e5b4") and ui.recipe_rows.electronic_component.resources.crystal.modulate == Color("ff7e85"), "ingredient colors use nearby Robbie's actual minerals")
 	await frames()
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(ui.picker, ui.picker.get_visible_rect()), "all four recipe rows fit at 720p")
@@ -192,7 +157,7 @@ func _run() -> void:
 	world.camera.zoom = Vector2.ONE * 0.9
 	await make_and_deploy("lamp", Vector2(-220, 160))
 	check(world.outpost.light_at(Vector2(-220, 140)) > 0.99, "new lamp illuminates its surroundings")
-	world.outpost.buildings.labs()[0].stock = {"stone": 8, "copper": 10}
+	world.outpost.buildings.labs()[0].stock = {"iron": 8, "copper": 10}
 	await make_and_deploy("pump", Vector2(100, 160))
 	await make_and_deploy("fan", Vector2(-260, 160))
 	world.environment.water = {Vector2i(1, 3): 1.0, Vector2i(2, 3): 1.0}
@@ -298,18 +263,19 @@ func _run() -> void:
 	ui.picker.hide()
 	Fixture.workshop(world)
 	world.outpost.selected_station = {"kind": "ship"}
-	campaign.model.ship.resources = {"soil": 1, "stone": 2, "copper": 4}
-	check(world.outpost.fabricate_cube("lamp"), "ship laboratory also exposes unlocked utility recipes")
+	campaign.model.ship.resources = {"iron": 8, "copper": 3, "crystal": 1}
+	world.field_cargo.drone.clear()
+	Fixture.support(world)
+	check(world.outpost.fabricate_components("structural_component", 2), "ship bench produces a compact cargo for travel")
 	world.outpost.advance_fabrication(5)
-	world.outpost.use_cube()
-	check(world.outpost.fabrication.carried().id == "lamp", "carry a lamp aboard for travel")
-	check(world.outpost.fabricate_cube("fan"), "fabricate another type while carrying an earlier cube")
-	world.outpost.advance_fabrication(5)
+	check(world.outpost.collect_fabrication_output() == 4, "four structural components enter Robbie's cargo")
+	check(world.outpost.fabricate_components("electronic_component"), "ship can start another production order before departure")
+	world.outpost.advance_fabrication(1)
 	world.player.position = Vector2(-60, -320)
 	world.drone.position = Vector2(-140, -380)
 	world.set_hatch(false)
 	check(campaign.request_takeoff(), "utilities travel aboard under normal safety checks")
-	check(campaign.model.ship.fabrication.carried().id == "lamp" and campaign.model.ship.fabrication.cubes.any(func(cube: Dictionary): return cube.id == "fan"), "ship factory retains both carried and ready utility types")
+	check(campaign.model.ship.field_cargo.available("structural_component", true) == 4 and campaign.model.ship.fabrication.jobs[0].id == "electronic_component", "ship retains carried components and its paid bench job")
 	check(campaign.save_campaign() and campaign.load_campaign(), "utility types survive an in-flight campaign save")
 	campaign._process(10)
 	campaign.model.choose("frost")
@@ -318,6 +284,6 @@ func _run() -> void:
 	campaign._process(10)
 	world = campaign.world
 	freeze()
-	check(world.outpost.fabrication.carried().id == "lamp" and world.outpost.fabrication.output_at(["ship"]).id == "fan", "landing imports utility types once without converting them into labs")
+	check(world.field_cargo.available("structural_component", true) == 4 and world.outpost.fabrication.jobs[0].id == "electronic_component", "landing imports cargo and paid component work exactly once")
 	print("UTILITY CUBES SMOKE: %d failures" % failures)
 	quit(0 if failures == 0 else 1)

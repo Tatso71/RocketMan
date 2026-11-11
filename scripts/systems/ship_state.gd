@@ -8,7 +8,7 @@ const Fabrication = preload("res://scripts/systems/fabrication_state.gd")
 const IndustryCatalog = preload("res://scripts/data/industry_catalog.gd")
 const RESOURCE_IDS := FieldCargo.ITEM_IDS
 var modules: Dictionary = {"hull": 1, "engine": 1, "cargo": 1, "battery": 1, "drill": 1, "landing_gear": 1, "habitat": 1, "drone": 1}
-var resources: Dictionary = {"soil": 0, "stone": 0, "copper": 0, "crystal": 0, "lamp_kit": 0}
+var resources: Dictionary = {}
 var laboratory_level := 1
 var fabrication := Fabrication.new()
 var field_cargo := FieldCargo.new()
@@ -27,6 +27,8 @@ var bomb_ammo := 4
 var workshop_damaged := false
 
 func _init() -> void:
+	for id: String in RESOURCE_IDS:
+		resources[id] = 0
 	field_cargo.enable_drone_only(drone_capacity())
 
 func hull_capacity() -> float:
@@ -113,13 +115,13 @@ func upgrade(id: String) -> bool:
 	return true
 
 func repair() -> bool:
-	if hull >= hull_capacity() or not _pay({"stone": 2, "copper": 1}):
+	if hull >= hull_capacity() or not _pay({"structural_component": 2, "electronic_component": 1}):
 		return false
 	hull = minf(hull_capacity(), hull + 25)
 	return true
 
 func refuel() -> bool:
-	if fuel >= fuel_capacity() or not _pay({"soil": 2}):
+	if fuel >= fuel_capacity() or not _pay({"electronic_component": 1}):
 		return false
 	fuel = minf(fuel_capacity(), fuel + 20)
 	return true
@@ -153,7 +155,7 @@ func restore(data: Dictionary) -> bool:
 		next.modules[definition.module_id] = int(level)
 	for id: String in RESOURCE_IDS:
 		var amount = data.resources.get(id, 0)
-		if not _integer(amount, 0, next.cargo_capacity()):
+		if not _integer(amount, 0, next.cargo_capacity() * FieldCargo.STACK_SIZE):
 			return false
 		next.resources[id] = int(amount)
 	if next.cargo_used() > next.cargo_capacity():

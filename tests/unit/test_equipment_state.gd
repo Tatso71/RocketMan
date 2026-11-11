@@ -83,7 +83,7 @@ func test_damaged_installations_disable_services_without_losing_stock() -> void:
 	lab.stock.copper = 4
 	lab.damaged = true
 	assert_bool(Buildings.is_active(lab)).is_false()
-	assert_dict(Buildings.repair_cost(lab)).is_equal({"stone": 3, "copper": 2})
+	assert_dict(Buildings.repair_cost(lab)).is_equal({"structural_component": 2, "electronic_component": 1})
 	var loaded := Buildings.new()
 	assert_bool(loaded.restore(JSON.parse_string(JSON.stringify(buildings.snapshot())), site)).is_true()
 	assert_bool(loaded.structures[0].damaged).is_true()

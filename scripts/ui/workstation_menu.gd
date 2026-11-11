@@ -2,7 +2,7 @@ extends Node
 
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const ACTION_NAMES := ["Deposita materiali", "Preleva materiali", "Costruisci", "Ripara", "Potenzia laboratorio"]
+const ACTION_NAMES := ["Deposita materiali", "Preleva materiali", "Produci componenti", "Ripara", "Potenzia laboratorio"]
 var outpost: Node2D
 var popup: PopupMenu
 var window: Window
@@ -136,7 +136,7 @@ func hull_blocker() -> String:
 		return "Manutenzione dello scafo disponibile nella spedizione"
 	if ship.hull >= ship.hull_capacity():
 		return "Scafo gia integro"
-	return "" if ship.can_afford({"stone": 2, "copper": 1}) else "Servono 2 pietra + 1 rame nella stiva"
+	return "" if ship.can_afford({"structural_component": 2, "electronic_component": 1}) else "Servono 2 strutturali + 1 elettronico nella stiva"
 
 func _perform(action: String) -> void:
 	if not outpost.station_available(outpost.selected_station):
@@ -161,27 +161,27 @@ func refresh() -> void:
 		var text := ""
 		match item.key:
 			"laboratory":
-				text = "Cubo creatore / 6 pietra + 4 rame da trasferire sul posto"
+				text = "Montaggio / 4 strutturali + 2 elettronici trasportati"
 			"supplies":
-				text = "Preleva dalla stiva la pietra e il rame mancanti"
+				text = "Ritira i componenti dal deposito locale"
 				reason = outpost.cargo_ui.prepare_blocker()
 			"lamp":
-				text = "Cubo creatore / 1 terra + 1 rame da trasferire sul posto"
+				text = "Montaggio / 1 componente elettronico"
 			"place_lamp":
 				text = "1 kit luce nel carico / pavimento libero"
 				reason = "Fabbrica prima una luce" if outpost.world.field_cargo.available("lamp_kit", outpost.world.drone_help_available(), outpost.payment_cache()) <= 0 else ""
 			"suit":
-				text = "Tuta %.0f%% / %s" % [outpost.world.suit_integrity(), "ripristino gratuito a bordo" if aboard else "2 terra + 1 rame / ripristino al 100%"]
+				text = "Tuta %.0f%% / %s" % [outpost.world.suit_integrity(), "ripristino gratuito a bordo" if aboard else "1 componente strutturale / ripristino al 100%"]
 				reason = outpost.suit_repair_blocker()
 			"hull":
-				text = "2 pietra + 1 rame dalla stiva / +25 integrita"
+				text = "2 strutturali + 1 elettronico dalla stiva / +25 integrita"
 				reason = hull_blocker()
 			"upgrade":
 				if aboard:
 					var level: int = outpost.station_level()
-					text = "Laboratorio / livello %d di 3 / tempo cubo %.1f s" % [level, outpost.fabrication_seconds()]
+					text = "Laboratorio / livello %d di 3 / produzione %.1f s per lotto" % [level, 2.0 / (1.0 + 0.5 * (level - 1))]
 					if level < 3:
-						text += "\nProssimo livello: produzione piu rapida\nCosto: %s" % cost_text({"stone": 4 * level, "copper": 3 * level})
+						text += "\nProssimo livello: produzione piu rapida\nCosto: %s" % cost_text({"structural_component": 4 * level, "electronic_component": 2 * level})
 				elif not aboard:
 					var lab: Dictionary = outpost.selected_station.building
 					text = "Livello %d di 3 / deposito %d unita / luci %.0f m\nAlimentazione dalla nave: %.2f kWh/min" % [lab.get("level", 1), Buildings.cache_capacity(lab), Buildings.light_range(lab), Buildings.power_draw(lab) * 60]

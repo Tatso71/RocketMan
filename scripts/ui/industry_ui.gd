@@ -44,7 +44,7 @@ func _ready() -> void:
 	menu = PopupMenu.new()
 	menu.prefer_native_menu = false
 	for kind: String in Network.KINDS:
-		menu.add_item(Network.NAMES[kind] + " / 1 rame al metro")
+		menu.add_item(Network.NAMES[kind] + (" / 1 elettronico al metro" if kind == "energy" else " / 1 strutturale al metro"))
 	menu.add_separator()
 	menu.add_item("Smonta scale e condotti", 3)
 	menu.add_item("Termina posa", 4)

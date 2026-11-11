@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "stack_size": 4,
+  "recipes": {
+    "structural_component": {"name_it": "Componenti strutturali", "cost": {"iron": 4}, "output": "structural_component", "amount": 2, "seconds": 2, "energy": 0.01, "advanced": false},
+    "electronic_component": {"name_it": "Componenti elettronici", "cost": {"copper": 3, "crystal": 1}, "output": "electronic_component", "amount": 2, "seconds": 2, "energy": 0.01, "advanced": false},
+    "refined_electronics": {"name_it": "Elettronica da vetro e lingotti", "cost": {"copper_ingot": 2, "glass": 1}, "output": "electronic_component", "amount": 4, "seconds": 2, "energy": 0.01, "advanced": true},
+    "structural_alloy": {"name_it": "Strutture in lega di cobalto", "cost": {"iron": 2, "cobalt": 1}, "output": "structural_component", "amount": 4, "seconds": 2, "energy": 0.01, "advanced": true},
+    "bomb": {"name_it": "Bomba", "cost": {"structural_component": 1, "electronic_component": 1}, "output": "bomb", "amount": 1, "seconds": 2, "energy": 0.01, "advanced": false}
+  },
+  "assembly": {
+    "laboratory": {"structural_component": 4, "electronic_component": 2},
+    "lamp": {"electronic_component": 1},
+    "pump": {"structural_component": 2, "electronic_component": 2},
+    "fan": {"structural_component": 1, "electronic_component": 2},
+    "furnace": {"structural_component": 3, "electronic_component": 1},
+    "gas_converter": {"structural_component": 2, "electronic_component": 2},
+    "greenhouse": {"structural_component": 4, "electronic_component": 2}
+  }
+}

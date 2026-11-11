@@ -53,25 +53,34 @@ func _process(delta: float) -> void:
 	_animate_exterior()
 	queue_redraw()
 
-func _sync_phase() -> void:
+func _sync_phase() -> bool:
+	var next_world: Node2D
+	if model.phase == State.Phase.DIGGING:
+		var previous_transform := get_viewport().canvas_transform
+		next_world = Home.instantiate()
+		next_world.configure(self, Planets.find(model.active_planet), model.ship)
+		add_child(next_world)
+		if model.outposts.has(model.active_planet) and not next_world.restore_state(model.outposts[model.active_planet], false):
+			remove_child(next_world)
+			next_world.queue_free()
+			if is_instance_valid(world):
+				world.camera.make_current()
+			get_viewport().canvas_transform = previous_transform
+			return false
 	if is_instance_valid(world):
 		remove_child(world)
 		world.queue_free()
-		world = null
+	world = next_world
 	screen.visible = model.phase != State.Phase.DIGGING
 	exterior.visible = model.phase in [State.Phase.FLIGHT, State.Phase.LANDING, State.Phase.TAKEOFF]
 	if model.phase != State.Phase.DIGGING:
 		get_viewport().canvas_transform = Transform2D.IDENTITY
 	if model.phase == State.Phase.DIGGING:
-		world = Home.instantiate()
-		world.configure(self, Planets.find(model.active_planet), model.ship)
-		add_child(world)
-		if model.outposts.has(model.active_planet):
-			world.restore_state(model.outposts[model.active_planet], false)
 		world.outpost.fabrication.import_state(model.ship.fabrication)
 		model.ship.fabrication = world.outpost.Fabrication.new()
 	_refresh_interface()
 	planet_list.select(_selected_index())
+	return true
 
 func _selected_index() -> int:
 	var planets := model.available_planets()
@@ -144,11 +153,17 @@ func save_campaign() -> bool:
 
 func load_campaign() -> bool:
 	var data: Dictionary = SaveManager.read_campaign_save(model.variant)
-	if not model.restore(data):
+	var next_model := State.new()
+	if not next_model.restore(data):
 		_notify("Nessuna spedizione compatibile da caricare")
 		return false
+	var previous_model := model
+	model = next_model
+	if not _sync_phase():
+		model = previous_model
+		_notify("Dati dell'avamposto non validi: partita attuale conservata")
+		return false
 	ship_menu.hide()
-	_sync_phase()
 	_notify("Spedizione caricata")
 	return true
 
@@ -352,9 +367,9 @@ func _build_ship_menu() -> void:
 	ship_stats.add_theme_font_size_override("font_size", 16)
 	left.add_child(ship_stats)
 	repair_button = _button(left, "Ripara (+25 scafo)", func(): _service("repair"))
-	repair_button.tooltip_text = "Costo: 2 pietra + 1 rame"
+	repair_button.tooltip_text = "Costo: 2 componenti strutturali + 1 elettronico"
 	fuel_button = _button(left, "Rifornisci (+20 u)", func(): _service("refuel"))
-	fuel_button.tooltip_text = "Costo: 2 terra (conversione provvisoria)"
+	fuel_button.tooltip_text = "Costo: 1 componente elettronico (conversione provvisoria)"
 	charge_button = _button(left, "Ricarica solare (+15 kWh)", func(): _service("recharge"))
 	charge_button.tooltip_text = "Ricarica di emergenza disponibile in orbita o in officina"
 	var right := VBoxContainer.new()
@@ -379,13 +394,16 @@ func _build_ship_menu() -> void:
 	right.add_child(service_status)
 	discard_picker = OptionButton.new()
 	for id: String in model.ship.RESOURCE_IDS:
+		if id in ["soil", "stone", "lamp_kit", "lab_cube"]:
+			continue
 		discard_picker.add_item(RESOURCE_NAMES[id])
+		discard_picker.set_item_metadata(discard_picker.item_count - 1, id)
 	right.add_child(discard_picker)
 	_button(right, "Espelli 1 unita", _discard)
 	_button(right, "Chiudi", _close_ship_menu)
 
 func _refresh_ship_menu() -> void:
-	ship_stats.text = _ship_summary() + "\n\nTerra %d   Pietra %d\nRame %d   Cristalli %d" % [model.ship.resources.soil, model.ship.resources.stone, model.ship.resources.copper, model.ship.resources.crystal]
+	ship_stats.text = _ship_summary() + "\n\nStrutturali %d   Elettronici %d\nRame %d   Ferro %d   Cristalli %d" % [model.ship.resources.get("structural_component", 0), model.ship.resources.get("electronic_component", 0), model.ship.resources.get("copper", 0), model.ship.resources.get("iron", 0), model.ship.resources.get("crystal", 0)]
 	var definition: Resource = Modules.all()[module_picker.selected]
 	var cost: Dictionary = model.ship.upgrade_cost(definition.module_id)
 	var price: Array[String] = []
@@ -397,8 +415,8 @@ func _refresh_ship_menu() -> void:
 	upgrade_button.tooltip_text = model.ship.upgrade_blocker(definition.module_id)
 	var can_service := _can_service()
 	upgrade_button.disabled = upgrade_button.disabled or not can_service
-	repair_button.disabled = not can_service or model.ship.hull >= model.ship.hull_capacity() or not model.ship.can_afford({"stone": 2, "copper": 1})
-	fuel_button.disabled = not can_service or model.ship.fuel >= model.ship.fuel_capacity() or not model.ship.can_afford({"soil": 2})
+	repair_button.disabled = not can_service or model.ship.hull >= model.ship.hull_capacity() or not model.ship.can_afford({"structural_component": 2, "electronic_component": 1})
+	fuel_button.disabled = not can_service or model.ship.fuel >= model.ship.fuel_capacity() or not model.ship.can_afford({"electronic_component": 1})
 	charge_button.disabled = not can_service or model.ship.energy >= model.ship.energy_capacity()
 
 func _service(action: String) -> void:
@@ -417,7 +435,7 @@ func _upgrade() -> void:
 	_refresh_ship_menu()
 
 func _discard() -> void:
-	var id: String = model.ship.RESOURCE_IDS[discard_picker.selected]
+	var id: String = discard_picker.get_selected_metadata()
 	if int(model.ship.resources.get(id, 0)) > 0:
 		model.ship.resources[id] = int(model.ship.resources[id]) - 1
 		service_status.text = "Espulsa 1 unita di " + RESOURCE_NAMES[id]

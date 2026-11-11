@@ -75,10 +75,8 @@ func _clear(from: Vector2, to: Vector2) -> bool:
 	return sweep[0] >= 0.999
 
 func _actor_clearance() -> Rect2:
-	# In ladder shafts reserve only the actual body plus the drone's collision radius.
-	if absf(world.player.position.x - 20) < 24 or absf(world.player.position.x - 100) < 20:
-		return Rect2(world.player.position - Vector2(24, 76), Vector2(48, 88))
-	return Rect2(world.player.position - Vector2(43, 83), Vector2(86, 102))
+	# Only the body plus drone radius blocks paths; comfort is a soft path cost.
+	return Rect2(world.player.position - Vector2(22, 74), Vector2(44, 84))
 
 func send_to_ship() -> bool:
 	if world.is_robbie():
@@ -111,15 +109,7 @@ func _route_clear(from: Vector2, to: Vector2) -> bool:
 	for index in range(samples + 1):
 		if world.environment._wet(from.lerp(to, float(index) / samples) + Vector2(0, 10)):
 			return false
-	var actor := _actor_clearance()
-	if actor.has_point(from):
-		return not actor.has_point(to)
-	if actor.has_point(to):
-		return false
-	var corners := [actor.position, Vector2(actor.end.x, actor.position.y), actor.end, Vector2(actor.position.x, actor.end.y)]
-	for index in range(4):
-		if Geometry2D.segment_intersects_segment(from, to, corners[index], corners[(index + 1) % 4]) != null:
-			return false
+	# The companion may pass the explorer in a narrow shaft, but never rest on them.
 	return true
 
 func _rebuild() -> void:
@@ -143,6 +133,27 @@ func _rebuild() -> void:
 
 func follow_goal() -> Vector2:
 	var torso: Vector2 = world.player.position - Vector2(0, 32)
+	# Approach fallen ore rather than permanently hovering behind its magnet range.
+	var ore_goal: Variant = null
+	var ore_score := INF
+	if world.field_cargo.used(world.field_cargo.drone) < world.field_cargo.drone_capacity:
+		var source := graph.get_closest_point(position)
+		for cell: Vector2i in world.gear.drops:
+			var ore: Vector2 = world.gear.fragment_position(cell)
+			if ore.distance_to(torso) > Grid.metres(4.5):
+				continue
+			var destination := graph.get_closest_point(ore)
+			if destination < 0:
+				continue
+			var point := graph.get_point_position(destination)
+			if point.distance_to(ore) > Grid.metres(world.gear.magnet_range_metres()) - 12 or _actor_clearance().has_point(point) or graph.get_id_path(source, destination).is_empty():
+				continue
+			if point.distance_to(position) < ore_score:
+				ore_score = point.distance_to(position)
+				ore_goal = point
+	if ore_goal is Vector2:
+		has_resting_goal = false
+		return ore_goal
 	var desired := torso + Vector2(-world.player.facing * FOLLOW_DISTANCE, -40)
 	# Keep a comfortable resting place when the explorer only turns around.
 	if has_resting_goal and resting_goal.distance_to(BASE) <= Grid.metres(range_metres) and resting_goal.distance_to(torso) >= MIN_CLEARANCE + 8 and resting_goal.distance_to(torso) <= Grid.metres(2.8) and not _actor_clearance().has_point(resting_goal) and _clear(torso, resting_goal) and _free(Grid.to_cell(resting_goal)):
@@ -153,7 +164,7 @@ func follow_goal() -> Vector2:
 	for id in graph.get_point_ids():
 		var point := graph.get_point_position(id)
 		var distance := point.distance_to(torso)
-		if distance < MIN_CLEARANCE or distance > Grid.metres(3.2) or not _clear(torso, point):
+		if distance < MIN_CLEARANCE or distance > Grid.metres(4.5) or _actor_clearance().has_point(point):
 			continue
 		var candidate := point.distance_to(desired) + maxf(0, PERSONAL_SPACE - distance) * 8
 		if candidate < score and not graph.get_id_path(start, id).is_empty():
@@ -219,12 +230,12 @@ func _physics_process(delta: float) -> void:
 		var torso: Vector2 = world.player.position - Vector2(0, 32)
 		for id in graph.get_point_ids():
 			# The body itself is excluded; personal space outside it is only a cost.
-			graph.set_point_disabled(id, id != start and _actor_clearance().has_point(graph.get_point_position(id)))
+			graph.set_point_disabled(id, false)
 			var proximity := graph.get_point_position(id).distance_to(torso)
 			graph.set_point_weight_scale(id, 1 + maxf(0, PERSONAL_SPACE - proximity) / 10)
 		var goal := follow_goal()
 		var outside: bool = torso.distance_to(BASE) > Grid.metres(range_metres)
-		if outside or not has_resting_goal:
+		if outside:
 			goal = BASE + (torso - BASE).limit_length(Grid.metres(range_metres - 0.7))
 		if mission == "outbound":
 			goal = UNLOAD_POINT
@@ -252,7 +263,7 @@ func _physics_process(delta: float) -> void:
 	var comfort := PERSONAL_SPACE
 	if has_resting_goal and world.player.velocity.length() < 1:
 		comfort = clampf(resting_goal.distance_to(torso) - 2, MIN_CLEARANCE, PERSONAL_SPACE)
-	if distance < comfort:
+	if distance < comfort and desired_velocity.is_zero_approx():
 		var away := (position - torso).normalized()
 		if away.is_zero_approx():
 			away = Vector2(-world.player.facing, -1).normalized()

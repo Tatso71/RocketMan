@@ -9,6 +9,8 @@ var suppress_jet_until_release := false
 var jump_was_held := false
 
 func _ready() -> void:
+	# Actors are not terrain: flying companions and ore must not hit the suit.
+	collision_layer = 2
 	var collider := CollisionShape2D.new()
 	var capsule := CapsuleShape2D.new()
 	capsule.radius = Grid.metres(Grid.PLAYER_WIDTH_METRES) * 0.5
@@ -27,9 +29,6 @@ func _physics_process(delta: float) -> void:
 	jump_was_held = jump_held
 	if not jump_held:
 		suppress_jet_until_release = false
-	if jump_pressed and world.outpost.use_cube():
-		jump_pressed = false
-		suppress_jet_until_release = true
 	var vertical := Input.get_axis("climb_up", "climb_down")
 	var environment: Dictionary = world.player_environment()
 	var wet: bool = environment.wet
@@ -44,7 +43,7 @@ func _physics_process(delta: float) -> void:
 	if not suppress_jet_until_release and world.gear.thrust(delta):
 		climbing = false
 		velocity.x = horizontal * 190 * speed_factor
-		velocity.y = move_toward(velocity.y, -180, 700 * delta)
+		velocity.y = move_toward(velocity.y, -world.gear.jetpack_thrust_speed(), 700 * world.gear.thrust_multiplier * delta)
 	elif climbing:
 		velocity = Vector2(horizontal * 145, vertical * 150) * speed_factor
 		if jump_pressed:
@@ -59,6 +58,7 @@ func _physics_process(delta: float) -> void:
 	if horizontal != 0:
 		facing = signf(horizontal)
 	move_and_slide()
+	world.gear.observe_ground_contact(is_on_floor(), wet, climbing)
 	walk_time += delta * absf(velocity.x) * 0.06
 	queue_redraw()
 

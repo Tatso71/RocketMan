@@ -80,7 +80,7 @@ func _run() -> void:
 	world.drone.position = Vector2(-260, 100)
 	await frames(4)
 	world.field_cargo.drone_available = true
-	check(world.field_cargo.collect("stone", 8, true) and world.field_cargo.collect("copper", 8, true), "prepare finite explosive and repair materials in Robbie")
+	check(world.field_cargo.collect("structural_component", 8, true) and world.field_cargo.collect("electronic_component", 8, true), "prepare finite repair components in Robbie")
 	world.equip_tool(2)
 	check(world.gear.place_bomb(Vector2i(-5, 4)), "first paid one-cell bomb is placed")
 	await frames(3)
@@ -123,30 +123,30 @@ func _run() -> void:
 	world.field_cargo.drone_available = true
 	world.gear.repair_target = lab
 	world.gear.repair_ship = false
-	var before: int = world.field_cargo.drone.stone
-	check(world.gear.repair_selected() and not lab.damaged and world.field_cargo.drone.stone == before - 3, "repair consumes required materials once and restores operation")
+	var before: int = world.field_cargo.drone.structural_component
+	check(world.gear.repair_selected() and not lab.damaged and world.field_cargo.drone.structural_component == before - 2, "repair consumes required components once and restores operation")
 	check(not world.gear.repair_selected(), "intact installation cannot charge a duplicate repair")
 	world.return_home()
 	world.gear.set_charge(10)
 	world.local_energy = 10
 	world.gear.flying = false
 	world.gear.advance(1)
-	check(is_equal_approx(world.gear.charge(), 35) and world.local_energy < 10, "standing inside the ship lab recharges the separate jetpack battery using ship energy")
+	check(is_equal_approx(world.gear.charge(), 10) and world.local_energy == 10, "laboratory proximity no longer spends ship energy on the jetpack")
 	world.local_energy = 0
 	world.gear.advance(1)
-	check(is_equal_approx(world.gear.charge(), 35), "empty supply battery cannot recharge the jetpack for free")
+	check(is_equal_approx(world.gear.charge(), 10), "ship battery does not control jetpack recharge")
 	world.local_energy = 20
 	world.outpost.cargo_ui.open_inventory()
 	world.gear._process(1)
-	check(is_equal_approx(world.gear.charge(), 60), "passive jetpack charging continues while consulting a laboratory menu")
+	check(is_equal_approx(world.gear.charge(), 10), "opening a laboratory menu does not manufacture jetpack charge")
 	world.outpost.cargo_ui.window.hide()
 	world.gear.set_charge(35)
 	world.player.position = Vector2(-320, 200)
 	world.gear.advance(1)
-	check(is_equal_approx(world.gear.charge(), 60), "standing inside an operational underground lab also recharges")
+	check(is_equal_approx(world.gear.charge(), 35), "underground bench proximity is not a landing")
 	lab.damaged = true
 	world.gear.advance(1)
-	check(is_equal_approx(world.gear.charge(), 60), "damaged lab cannot recharge the jetpack")
+	check(is_equal_approx(world.gear.charge(), 35), "damaged laboratory does not change airborne jetpack charge")
 	world.player.position = Vector2(20, 180)
 	world.player.velocity = Vector2.ZERO
 	world.player.climbing = false
@@ -174,7 +174,7 @@ func _run() -> void:
 	world._mine_target()
 	world.mine_timer = 0
 	world._mine_target()
-	check(world.gear.particle_bursts > bursts and world.field_cargo.used(world.field_cargo.drone) > 0 and world.field_cargo.backpack.is_empty(), "normal mining also emits debris and credits Robbie rather than a backpack")
+	check(world.gear.particle_bursts > bursts and (not world.gear.drops.is_empty() or world.field_cargo.used(world.field_cargo.drone) > 0) and world.field_cargo.backpack.is_empty(), "normal mining emits debris and preserves ore for magnetic pickup, never a backpack")
 	root.size = Vector2i(1920, 1080)
 	world.camera.position = Vector2(-180, 120)
 	await picture("equipment-cargo-1080p")
@@ -189,8 +189,8 @@ func _run() -> void:
 	world.player.position = Vector2(-60, 0)
 	world.drone.position = Vector2(-60, -50)
 	world.field_cargo.drone_available = true
-	world.field_cargo.collect("stone", 5, true)
-	world.field_cargo.collect("copper", 4, true)
+	world.field_cargo.collect("structural_component", 5, true)
+	world.field_cargo.collect("electronic_component", 4, true)
 	world.equip_tool(2)
 	await frames(4)
 	check(world.gear.place_bomb(Vector2i(0, 0)), "bomb can be placed beside the lower ship collar")
@@ -224,12 +224,12 @@ func _run() -> void:
 	await frames(8)
 	Input.action_press("jump")
 	await frames(6)
-	check(world.outpost.fabrication.carried_id != 0 and absf(world.player.position.y + 80) < 1 and world.gear.charge() == 80, "Space picks up a cube without accidentally engaging the jetpack")
+	check(world.outpost.fabrication.carried_id == 0 and world.player.position.y < -81, "Space now flies rather than picking up a historical cube")
 	Input.action_release("jump")
 	await frames(4)
 	Input.action_press("jump")
 	await frames(6)
-	check(world.outpost.fabrication.carried_id == 0 and absf(world.player.position.y + 80) < 1 and world.gear.charge() == 80, "Space drops a cube without launching the explorer")
+	check(world.outpost.fabrication.carried_id == 0 and world.gear.charge() < 100, "historical cubes cannot intercept the jetpack controls")
 	Input.action_release("jump")
 	print("EQUIPMENT SMOKE: %d failures" % failures)
 	quit(0 if failures == 0 else 1)

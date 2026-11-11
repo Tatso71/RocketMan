@@ -101,11 +101,14 @@ func _run() -> void:
 			break
 		world.mine_timer = 0
 		world._mine_target()
-	check(world.site.material(world.target_cell).is_empty() and world.field_cargo.used(world.field_cargo.drone) == 1 and world.drone_can_collect(), "mined resources enter the protagonist's cargo without waiting for a companion")
+	for tick in range(90):
+		await physics_frame
+		world.gear.advance(1.0 / 60)
+	check(world.site.material(world.target_cell).is_empty() and world.field_cargo.used(world.field_cargo.drone) == 1 and world.drone_can_collect(), "the controlled Robbie magnet collects mined resources without a companion")
 	check(not world.drone.send_to_ship() and world.drone.mission == "follow", "Y never sends the controlled character away autonomously")
 	world.return_home()
 	world.outpost.selected_station = {"kind": "ship"}
-	check(world.drone.send_to_ship() and world.field_cargo.used(world.field_cargo.drone) == 0 and world.ship_state.resources.soil == 1, "Y at a laboratory deposits the robot's actual cargo into its local storage")
+	check(world.drone.send_to_ship() and world.field_cargo.used(world.field_cargo.drone) == 0 and world.ship_state.resources.crystal == 1, "Y at a laboratory deposits the robot's actual cargo into its local storage")
 	world._refresh_hud()
 	check(world.hazard_label.text.contains("SCOCCA") and world.hazard_label.text.contains("CARICA ROBBIE"), "HUD identifies robot integrity and charge instead of a human suit")
 	var saves: Node = root.get_node("SaveManager")

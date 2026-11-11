@@ -86,10 +86,10 @@ func takeoff() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "variant": variant, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
+	return {"version": 1, "economy_version": 2, "variant": variant, "phase": phase, "selected_planet": selected_planet, "active_planet": active_planet, "progress": progress, "ship": ship.snapshot(), "outposts": outposts.duplicate(true)}
 
 func restore(data: Dictionary) -> bool:
-	if data.get("version") != 1 or not data.get("ship") is Dictionary or not data.get("outposts") is Dictionary:
+	if data.get("version") != 1 or data.get("economy_version") != 2 or not data.get("ship") is Dictionary or not data.get("outposts") is Dictionary:
 		return false
 	var next_variant = data.get("variant", "explorer")
 	if next_variant not in ["explorer", "robbie"]:
@@ -110,7 +110,7 @@ func restore(data: Dictionary) -> bool:
 		var outpost: Dictionary = data.outposts[planet_id]
 		if outpost.get("variant", "explorer") != next_variant:
 			return false
-		if outpost.get("version") != 1 or outpost.get("cell_metres") != 1.0 or not outpost.get("removed") is Array or not outpost.get("ladders") is Array or not outpost.get("materials") is Dictionary:
+		if outpost.get("version") != 1 or outpost.get("economy_version") != 2 or outpost.get("cell_metres") != 1.0 or not outpost.get("removed") is Array or not outpost.get("ladders") is Array or not outpost.get("materials") is Dictionary:
 			return false
 		if outpost.get("terrain_seed", 0) != Planets.find(planet_id).terrain_seed:
 			return false

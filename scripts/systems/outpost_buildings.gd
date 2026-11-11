@@ -2,15 +2,16 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
+const Components = preload("res://scripts/data/component_catalog.gd")
 const LAB_SIZE := Vector2i(4, 3)
-const LAB_COST := {"stone": 6, "copper": 4}
+static var LAB_COST: Dictionary = Components.assembly_cost("laboratory")
 const CACHE_CAPACITY := 32
-const LAMP_RECIPE := {"soil": 1, "copper": 1}
-const PUMP_COST := {"stone": 3, "copper": 4}
+static var LAMP_RECIPE: Dictionary = Components.assembly_cost("lamp")
+static var PUMP_COST: Dictionary = Components.assembly_cost("pump")
 const PUMP_SIZE := Vector2i(2, 2)
 const PUMP_RATE := 0.7
 const PUMP_RADIUS := 3
-const FAN_COST := {"stone": 2, "copper": 3}
+static var FAN_COST: Dictionary = Components.assembly_cost("fan")
 const FAN_RATE := 0.35
 const FAN_RADIUS := 3
 const CUBE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse"]
@@ -33,15 +34,7 @@ static func repair_cost(building: Dictionary) -> Dictionary:
 	return cost
 
 static func cost_for(id: String) -> Dictionary:
-	if id in INDUSTRIAL_IDS:
-		return IndustryCatalog.load_data().recipes[id].cost.duplicate()
-	if id == "ladder":
-		return {"soil": 2}
-	if id == "pump":
-		return PUMP_COST.duplicate()
-	if id == "fan":
-		return FAN_COST.duplicate()
-	return LAB_COST.duplicate() if id == "laboratory" else LAMP_RECIPE.duplicate()
+	return {} if id == "ladder" else Components.assembly_cost(id)
 
 static func build_seconds(id: String) -> float:
 	if id in INDUSTRIAL_IDS:
@@ -71,7 +64,7 @@ static func light_range(building: Dictionary) -> float:
 
 static func upgrade_cost(building: Dictionary) -> Dictionary:
 	var level := int(building.get("level", 1))
-	return {"stone": 4 * level, "copper": 3 * level} if level < MAX_LAB_LEVEL else {}
+	return {"structural_component": 4 * level, "electronic_component": 2 * level} if level < MAX_LAB_LEVEL else {}
 
 func size_for(id: String) -> Vector2i:
 	return SIZES.get(id, Vector2i.ONE)

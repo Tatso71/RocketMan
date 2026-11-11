@@ -116,7 +116,7 @@
       {
         "id": "first_excavation",
         "title_it": "Scava le prime due celle",
-        "hint_it": "Punta la terra sotto la nave e usa Pulse con il clic sinistro. Ogni blocco va nel tuo zaino o nel mio carico. I nostri materiali contano sempre insieme; la nave parte senza scorte. Raccogliamo 6 pietra e 4 rame per il laboratorio.",
+        "hint_it": "Scava sotto la nave con Pulse. Terra e pietra non occupano carico: puoi aprire liberamente i passaggi. Raccogliamo solo i minerali utili per produrre componenti in officina.",
         "detail_it": "Pulse / 2 celle da 1 metro",
         "action": "help",
         "complete_when": {"counter": "mined_cells", "at_least": 2}
@@ -124,48 +124,48 @@
       {
         "id": "return_ladder",
         "title_it": "Prepara la risalita",
-        "hint_it": "Scendi nel primo spazio scavato con S, poi monta la scala con B. Costa 2 terra e compare subito: la costruisci tu, senza cubi, officina o batteria. Non scendiamo senza una via di ritorno.",
-        "detail_it": "Scendi nello scavo / B / 2 terra",
+        "hint_it": "Scendi con S e posa una scala con B. Le scale sono immediate e gratuite, anche da rimuovere. Manteniamo sempre una via di ritorno.",
+        "detail_it": "B / scala immediata e gratuita",
         "action": "help",
         "complete_when": {"fact": "ladder"}
       },
       {
         "id": "laboratory_materials",
         "title_it": "Raccogli per il laboratorio",
-        "hint_it": "Ci servono 6 pietra e 4 rame: il tuo zaino e il mio carico si sommano sempre. La pietra inizia a 5 metri. Se ci riempiamo di terra, risali al banco e deposita: il deposito locale puo alimentare la fabbricazione. Nella nave non ci sono scorte regalate.",
-        "detail_it": "6 pietra + 4 rame / zaino e Robbie insieme",
+        "hint_it": "Per il primo laboratorio raccogliamo 8 ferro, 3 rame e 1 cristallo. I filoni vicini alla nave contengono tutto il necessario. Pulse li puo scavare; terra e pietra non riempiono il carico.",
+        "detail_it": "8 ferro + 3 rame + 1 cristallo",
         "action": "inventory",
         "complete_when": {"fact": "lab_materials_ready"}
       },
       {
         "id": "laboratory_room",
         "title_it": "Scava la stanza del laboratorio",
-        "hint_it": "Prima di trasportare il cubo, libera uno spazio largo 4 celle e alto 3, con pavimento continuo. Puoi restare nella stanza quando il laboratorio si apre. Se ci riempiamo, torna al banco e deposita il materiale.",
+        "hint_it": "Libera una stanza larga 4 celle e alta 3, lasciando un pavimento continuo. Scavare terra e pietra non consuma spazio nel carico. Qui monteremo il laboratorio usando componenti preparati al banco.",
         "detail_it": "Stanza 4 x 3 m / pavimento continuo",
         "action": "help",
         "complete_when": {"fact": "lab_room_ready"}
       },
       {
         "id": "laboratory_cube",
-        "title_it": "Fabbrica il cubo laboratorio",
-        "hint_it": "Rientra nel laboratorio della nave, clic destro sul banco e Costruisci. Nella riga Laboratorio trovi livello, tempo e risorse: quando sono tutte verdi premi Crea. Il cubo si materializza sul banco; puoi chiudere il pannello mentre lavora.",
-        "detail_it": "Laboratorio / clic destro / Costruisci / Crea",
+        "title_it": "Produci i componenti",
+        "hint_it": "Rientra al banco della nave. Clic destro e Produci componenti: ordina 2 lotti strutturali e 1 elettronico. Otterrai 4 strutturali e 2 elettronici. Le risorse si pagano una sola volta all'avvio.",
+        "detail_it": "Banco / 2 lotti strutturali + 1 elettronico",
         "action": "fabricate_lab",
-        "complete_when": {"fact": "lab_cube_crafted"}
+        "complete_when": {"fact": "components_produced"}
       },
       {
         "id": "carry_laboratory",
-        "title_it": "Prendi il cubo pronto",
-        "hint_it": "Il cubo e pronto sul banco! Avvicinati e premi Spazio per prenderlo. Lo porterai in mano, senza occupare lo zaino. Prima di scavare ancora devi posarlo di nuovo con Spazio.",
-        "detail_it": "Cubo sul banco / avvicinati e premi Spazio",
-        "action": "help",
-        "complete_when": {"fact": "lab_cube_carried"}
+        "title_it": "Carica i componenti",
+        "hint_it": "Nel pannello del banco premi Ritira componenti. Servono 4 strutturali e 2 elettronici nel carico di Robbie: occupano solo due unita. Se manca qualcosa, completa prima la produzione.",
+        "detail_it": "Ritira / 4 strutturali + 2 elettronici",
+        "action": "fabricate_lab",
+        "complete_when": {"fact": "components_collected"}
       },
       {
         "id": "deploy_laboratory",
-        "title_it": "Apri il cubo nella stanza",
-        "hint_it": "Porta il cubo nella stanza e premi Spazio per posarlo. Poi clic destro sul cubo e Attiva laboratorio. Se il tratteggio e rosso, leggi l'errore, riprendilo con Spazio e spostalo. Quando tutto entra il cubo si apre, senza chiedere altri materiali.",
-        "detail_it": "Spazio: posa / clic destro sul cubo: attiva",
+        "title_it": "Monta il laboratorio",
+        "hint_it": "Nella stanza scavata fai clic destro e scegli Laboratorio. Sistema la sagoma 4 x 3 sul pavimento e clicca per montare. Il montaggio consuma i componenti che portiamo; senza materiali resta un progetto in attesa, non una stanza gratuita.",
+        "detail_it": "Clic destro nello spazio libero / Laboratorio / monta",
         "action": "place_lab",
         "complete_when": {"fact": "lab_built"}
       }

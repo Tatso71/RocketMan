@@ -86,7 +86,7 @@ func _run() -> void:
 	var invalid: Dictionary = world.capture_state()
 	invalid.gear.ammo = 5
 	check(not world.restore_state(invalid) and world.gear.ammo() == 0, "invalid ammunition is rejected without refilling the magazine")
-	world.local_store = {"stone": 4, "copper": 8}
+	world.local_store = {"structural_component": 4, "electronic_component": 4}
 	world.outpost.selected_station = {"kind": "ship"}
 	var ui: Node = world.outpost.construction
 	ui.open_picker(Vector2i.ZERO, Vector2.ZERO, true)
@@ -103,15 +103,15 @@ func _run() -> void:
 	check(world.restore_state(JSON.parse_string(JSON.stringify(saved))) and world.outpost.fabrication.jobs[0].elapsed == 0.75, "partial bomb fabrication resumes after save/load")
 	world.outpost.advance_fabrication(1.3)
 	check(world.gear.ammo() == 1 and world.outpost.fabrication.jobs.is_empty() and world.outpost.fabrication.cubes.is_empty(), "a finished bomb replenishes the magazine without creating a room cube")
-	check(world.local_store.stone == 3 and world.local_store.copper == 6, "one crafted bomb costs one stone and two copper exactly once")
+	check(world.local_store.structural_component == 3 and world.local_store.electronic_component == 3, "one crafted bomb costs one structural and one electronic component exactly once")
 	for index in range(3):
 		check(world.outpost.fabricate_cube("bomb"), "start another finite bomb recipe")
 		world.outpost.advance_fabrication(2.1)
-	check(world.gear.ammo() == 4 and world.local_store.stone == 0 and world.local_store.copper == 0, "four completed recipes refill the four-bomb magazine")
-	world.local_store = {"stone": 10, "copper": 10}
-	check(not world.outpost.fabricate_cube("bomb") and world.local_store.stone == 10 and world.local_store.copper == 10, "a full magazine cannot consume ingredients")
+	check(world.gear.ammo() == 4 and world.local_store.structural_component == 0 and world.local_store.electronic_component == 0, "four completed recipes refill the four-bomb magazine")
+	world.local_store = {"structural_component": 10, "electronic_component": 10, "iron": 8}
+	check(not world.outpost.fabricate_cube("bomb") and world.local_store.structural_component == 10 and world.local_store.electronic_component == 10, "a full magazine cannot consume ingredients")
 	ui.refresh()
-	check(ui.choice_status.text == "Banco pronto" and not ui.craft_button.disabled and ui.recipe_rows.bomb.button.disabled, "full bomb reserves do not make an available laboratory recipe appear blocked")
+	check(ui.choice_status.text == "Banco disponibile" and not ui.craft_button.disabled and ui.recipe_rows.bomb.button.disabled, "full bomb reserves do not make an available component recipe appear blocked")
 	Fixture.carve(world, Vector2i(1, 3))
 	world.player.position = Vector2(20, 140)
 	await frames()
@@ -120,7 +120,7 @@ func _run() -> void:
 		for y in range(2, 5):
 			Fixture.carve(world, Vector2i(x, y))
 	var lab: Dictionary = world.outpost.buildings.install("laboratory", Vector2i(5, 2))
-	lab.stock = {"stone": 2, "copper": 4}
+	lab.stock = {"structural_component": 2, "electronic_component": 2}
 	world.player.position = Vector2(280, 200)
 	world.outpost.selected_station = {"kind": "laboratory", "building": lab}
 	await frames()
@@ -130,7 +130,7 @@ func _run() -> void:
 	check(world.gear.ammo() == 3 and world.outpost.fabrication.jobs[0].elapsed == 0, "switched-off lab pauses paid bomb production without loss")
 	lab.enabled = true
 	world.outpost.advance_fabrication(2.1)
-	check(world.gear.ammo() == 4 and lab.stock.stone == 1 and lab.stock.copper == 2, "restored laboratory finishes its paid bomb exactly once")
+	check(world.gear.ammo() == 4 and lab.stock.structural_component == 1 and lab.stock.electronic_component == 1, "restored laboratory finishes its paid bomb exactly once")
 	root.size = Vector2i(1920, 1080)
 	ui.open_picker(Vector2i.ZERO, Vector2.ZERO, true)
 	await frames()

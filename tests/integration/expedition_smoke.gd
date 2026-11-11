@@ -59,7 +59,7 @@ func _run() -> void:
 	await frames()
 	await screenshot("expedition-ship-modules", campaign.ship_menu)
 	campaign.module_picker.select(2)
-	campaign.model.ship.resources = {"soil": 0, "stone": 8, "copper": 6, "crystal": 0}
+	campaign.model.ship.resources = {"structural_component": 5, "electronic_component": 3, "crystal": 0}
 	campaign._upgrade()
 	check(campaign.model.ship.cargo_capacity() == 200, "cargo expansion can be installed")
 	campaign._close_ship_menu()
@@ -94,7 +94,7 @@ func _run() -> void:
 	var soil: int = world.field_cargo.used(world.field_cargo.drone)
 	world._mine_target()
 	check(world.site.material(world.target_cell).is_empty(), "digital beam destroys reachable soil")
-	check(world.field_cargo.used(world.field_cargo.drone) == soil + 1 and world.field_cargo.backpack.is_empty(), "mined resources enter Robbie's physical hold")
+	check(world.field_cargo.used(world.field_cargo.drone) == soil and world.field_cargo.backpack.is_empty(), "common ground leaves Robbie's physical hold unchanged")
 	check(world.beam_time > 0, "successful pulse starts beam effect")
 	world.target_cell = Vector2i(-6, 2)
 	world.equip_tool(1)
@@ -109,8 +109,8 @@ func _run() -> void:
 	world.field_cargo.drone.soil = world.field_cargo.drone_capacity
 	world.mine_timer = 0
 	world._mine_target()
-	check(world.target_blocker(world.target_cell).contains("pieno"), "full Robbie cargo marks target unavailable")
-	check(not world.site.material(world.target_cell).is_empty(), "full hold does not destroy or lose a block")
+	check(world.target_blocker(world.target_cell).is_empty(), "full Robbie cargo does not block the extraction tool")
+	check(not world.site.material(world.target_cell).is_empty(), "one pulse still respects harder mineral resistance")
 	world.field_cargo.restore(cargo)
 	check(not world.target_blocker(Vector2i(20, 0)).is_empty(), "distant target has a blocking reason")
 	check(world._illumination(Vector2(700, 700)) < 0.01, "distant underground cells are dark")
@@ -183,6 +183,23 @@ func _run() -> void:
 	check(campaign.load_campaign(), "multi-planet campaign restores")
 	check(campaign.model.ship.resources.crystal == 0, "cargo is not duplicated from per-planet snapshots")
 	var previous: Node2D = campaign.world
+	previous.set_physics_process(false)
+	var model_before: Dictionary = campaign.model.snapshot()
+	var world_before: Dictionary = previous.capture_state()
+	for malformed: String in ["missing_economy", "other_economy", "invalid_gear"]:
+		var invalid: Dictionary = model_before.duplicate(true)
+		invalid.outposts[campaign.model.active_planet] = world_before.duplicate(true)
+		if malformed == "missing_economy":
+			invalid.outposts[campaign.model.active_planet].erase("economy_version")
+		elif malformed == "other_economy":
+			invalid.outposts[campaign.model.active_planet].economy_version = 1
+		else:
+			invalid.outposts[campaign.model.active_planet].gear.ammo = 99
+		root.get_node("SaveManager").write_campaign_save(invalid)
+		check(not campaign.load_campaign(), "campaign rejects nested " + malformed)
+		check(campaign.world == previous and campaign.model.snapshot() == model_before and previous.capture_state() == world_before, "rejected " + malformed + " preserves live model, terrain and installations")
+		if campaign.world != previous:
+			break
 	root.get_node("SaveManager").write_campaign_save({"version": 999})
 	check(not campaign.load_campaign() and campaign.world == previous, "invalid save leaves running world unchanged")
 	print("EXPEDITION SMOKE: %d failures" % failures)

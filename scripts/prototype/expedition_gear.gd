@@ -3,7 +3,7 @@ extends Node2D
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const BOMB_COST := {"stone": 1, "copper": 2}
+const BOMB_COST := {"structural_component": 1, "electronic_component": 1}
 const BOMB_CAPACITY := 4
 const BLAST_RADIUS := Grid.CELL_SIZE * 2.0
 const SAFE_DISTANCE := Grid.CELL_SIZE * 4.0
@@ -11,6 +11,42 @@ const MAX_BOMBS := 24
 var world: Node2D
 var bombs: Array = []
 var drops: Dictionary = {}
+const Fragment = preload("res://scripts/player/ore_fragment.gd")
+var fragments: Dictionary = {}
+
+func fragment_position(cell: Vector2i) -> Vector2:
+	return fragments[cell].position if fragments.has(cell) else Grid.center(cell)
+
+func magnet_range_metres() -> float:
+	return 2.0 + (float(world.ship_state.modules.drone) - 1.0) * 0.35 if world.ship_state != null else 2.0
+
+func _advance_fragments(delta: float) -> void:
+	for cell: Vector2i in fragments.keys():
+		if not drops.has(cell):
+			fragments[cell].queue_free()
+			fragments.erase(cell)
+	for cell: Vector2i in drops.keys():
+		if not fragments.has(cell):
+			var fragment := Fragment.new()
+			fragment.ore_id = drops[cell]
+			fragment.position = Grid.center(cell)
+			fragment.velocity = Vector2(float(posmod(cell.x * 31 + cell.y * 17, 81)) - 40, -85)
+			add_child(fragment)
+			fragments[cell] = fragment
+		var body: CharacterBody2D = fragments[cell]
+		var target: Vector2 = world.player.position - Vector2(0, 32) if world.is_robbie() else world.drone.position
+		var available: bool = world.is_robbie() or (world.drone.mission == "follow" and world.drone.signal_connected() and not world.drone.water_alarm)
+		var attracted := false
+		if available and body.age > 0.2 and body.position.distance_to(target) <= Grid.metres(magnet_range_metres()) and world.field_cargo.room_for(world.field_cargo.drone, drops[cell], world.field_cargo.drone_capacity) > 0:
+			var ray := PhysicsRayQueryParameters2D.create(body.position, target, 1, [world.player.get_rid(), world.drone.get_rid()])
+			attracted = get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
+		body.advance(delta, target if attracted else null)
+		body.modulate = Color.WHITE * world._illumination(body.position)
+		if attracted and body.position.distance_to(target) < 16 and world.field_cargo.collect_drone(drops[cell], 1):
+			world.guide_event("collected_" + str(drops[cell]))
+			drops.erase(cell)
+			fragments.erase(cell)
+			body.queue_free()
 var next_number := 1
 var firing := false
 var fuse := 0.0
@@ -23,6 +59,21 @@ var repair_target: Dictionary = {}
 var repair_ship := false
 var particle_bursts := 0
 var disarm_target: Dictionary = {}
+var was_grounded := false
+var duration_multiplier := 1.0
+var thrust_multiplier := 1.0
+
+func jetpack_duration_seconds() -> float:
+	return 5.0 * maxf(0.1, duration_multiplier)
+
+func jetpack_thrust_speed() -> float:
+	return 180.0 * maxf(0.1, thrust_multiplier)
+
+func observe_ground_contact(grounded: bool, wet: bool, climbing: bool) -> void:
+	var landed := grounded and not wet and not climbing
+	if landed and not was_grounded:
+		set_charge(100)
+	was_grounded = landed
 
 func _ready() -> void:
 	z_index = 8
@@ -65,7 +116,7 @@ func set_workshop_damage(value: bool) -> void:
 func thrust(delta: float) -> bool:
 	flying = world.active_tool().mode == "jetpack" and charge() > 0 and not world.player_environment().wet and (Input.is_action_pressed("jump") or Input.is_action_pressed("climb_up"))
 	if flying:
-		set_charge(charge() - 20 * delta)
+		set_charge(charge() - 100.0 / jetpack_duration_seconds() * delta)
 	return flying
 
 func placement_blocker(cell: Vector2i) -> String:
@@ -155,6 +206,8 @@ func _explode(bomb: Dictionary) -> void:
 	bomb.body.queue_free()
 	burst(point, Color("f7b767"), true)
 	for building: Dictionary in world.outpost.buildings.structures:
+		if building.get("state") == "planned":
+			continue
 		var rect: Rect2 = world.outpost.buildings.world_rect(building)
 		if point.distance_to(point.clamp(rect.position, rect.end)) <= BLAST_RADIUS:
 			building.damaged = true
@@ -172,7 +225,9 @@ func _explode(bomb: Dictionary) -> void:
 			world.site.removed[cell] = true
 			world.site.damage.erase(cell)
 			world.remove_mined_block(cell, kind)
-			drops[cell] = world.site.RESOURCE_YIELDS.get(kind, kind)
+			var resource: String = world.site.resource_yield(kind)
+			if not resource.is_empty():
+				drops[cell] = resource
 	for cell: Vector2i in world.ladders.keys():
 		if cell.y >= 0 and Grid.center(cell).distance_to(point) <= BLAST_RADIUS:
 			world.ladders.erase(cell)
@@ -200,10 +255,7 @@ func advance(delta: float) -> void:
 				fuse = 0.55
 				firing = not bombs.is_empty()
 	recharge(delta)
-	if world.drone_can_collect():
-		for cell: Vector2i in drops.keys():
-			if world.outpost.reachable_cell(cell) and world.field_cargo.collect(drops[cell], 1, true):
-				drops.erase(cell)
+	_advance_fragments(delta)
 	queue_redraw()
 
 func recharge(delta: float) -> void:
@@ -218,10 +270,6 @@ func recharge(delta: float) -> void:
 		var repair_gain: float = minf(100 - world.suit_integrity(), minf(10 * delta, world.ship_energy() / 0.02))
 		world._set_suit(world.suit_integrity() + repair_gain)
 		world._set_ship_energy(world.ship_energy() - repair_gain * 0.02)
-	if powered and world.outpost.station_rect(station).has_point(world.player.position - Vector2(0, 32)) and not flying and charge() < 100:
-		var added: float = minf(100 - charge(), minf(25 * delta, world.ship_energy() / 0.02))
-		set_charge(charge() + added)
-		world._set_ship_energy(world.ship_energy() - added * 0.02)
 
 func _process(delta: float) -> void:
 	if not world.controls_locked and world.controls_blocked():
@@ -229,7 +277,7 @@ func _process(delta: float) -> void:
 		recharge(delta)
 
 func repair_cost() -> Dictionary:
-	return {"stone": 3, "copper": 2} if repair_ship else Buildings.repair_cost(repair_target)
+	return {"structural_component": 3, "electronic_component": 1} if repair_ship else Buildings.repair_cost(repair_target)
 
 func repair_selected() -> bool:
 	repair_menu.hide()
@@ -278,7 +326,7 @@ func handle_input(event: InputEvent) -> bool:
 	repair_ship = workshop_damaged() and world.outpost.SHIP_LAB_RECT.has_point(point) and world.aboard_workshop()
 	if not repair_ship:
 		for building: Dictionary in world.outpost.buildings.structures:
-			if building.get("damaged", false) and world.outpost.buildings.world_rect(building).has_point(point) and world.outpost.site_reachable(building):
+			if building.get("state") != "planned" and building.get("damaged", false) and world.outpost.buildings.world_rect(building).has_point(point) and world.outpost.site_reachable(building):
 				repair_target = building
 				break
 	if not repair_ship and repair_target.is_empty():
@@ -298,7 +346,10 @@ func snapshot() -> Dictionary:
 		saved.append({"cell": [bomb.cell.x, bomb.cell.y], "number": bomb.number})
 	var resources: Array = []
 	for cell: Vector2i in drops:
-		resources.append({"cell": [cell.x, cell.y], "material": drops[cell]})
+		var body = fragments.get(cell)
+		var point: Vector2 = fragment_position(cell)
+		var motion: Vector2 = body.velocity if is_instance_valid(body) else Vector2.ZERO
+		resources.append({"cell": [cell.x, cell.y], "material": drops[cell], "position": [point.x, point.y], "velocity": [motion.x, motion.y]})
 	return {"bombs": saved, "next_number": next_number, "drops": resources, "charge": charge(), "workshop_damaged": workshop_damaged(), "ammo": ammo()}
 
 static func valid(data: Variant, site: RefCounted, buildings: RefCounted) -> bool:
@@ -329,12 +380,28 @@ static func valid(data: Variant, site: RefCounted, buildings: RefCounted) -> boo
 		if not entry is Dictionary:
 			return false
 		var cell = Grid.decode_cell(entry.get("cell"))
-		if not cell is Vector2i or not site.contains(cell) or not site.material(cell).is_empty() or cell in cells or entry.get("material") not in ["soil", "stone", "copper", "crystal"]:
+		if not cell is Vector2i or not site.contains(cell) or not site.material(cell).is_empty() or cell in cells or entry.get("material") not in ["soil", "stone", "copper", "iron", "crystal", "silica", "cobalt"]:
 			return false
+		for key: String in ["position", "velocity"]:
+			if entry.has(key):
+				if not entry[key] is Array or entry[key].size() != 2:
+					return false
+				for value in entry[key]:
+					if not (value is int or value is float) or not is_finite(float(value)) or absf(float(value)) > 10000:
+						return false
+		if entry.has("position"):
+			var point := Vector2(float(entry.position[0]), float(entry.position[1]))
+			if point.x < Grid.metres(site.LEFT) or point.x >= Grid.metres(site.RIGHT) or point.y < -440 or point.y >= Grid.metres(site.DEPTH):
+				return false
+			if point.y >= 0 and not site.material(Grid.to_cell(point)).is_empty():
+				return false
 		cells.append(cell)
 	return true
 
 func restore(data: Dictionary, restore_shared: bool) -> void:
+	for body in fragments.values():
+		body.queue_free()
+	fragments.clear()
 	for bomb: Dictionary in bombs:
 		bomb.body.queue_free()
 	bombs.clear()
@@ -347,6 +414,14 @@ func restore(data: Dictionary, restore_shared: bool) -> void:
 		_add_body(bomb)
 	for entry: Dictionary in data.get("drops", []):
 		drops[Grid.decode_cell(entry.cell)] = entry.material
+		if entry.has("position"):
+			var body := Fragment.new()
+			body.ore_id = entry.material
+			body.position = Vector2(float(entry.position[0]), float(entry.position[1]))
+			body.velocity = Vector2(float(entry.velocity[0]), float(entry.velocity[1])) if entry.has("velocity") else Vector2.ZERO
+			body.age = 0.25
+			add_child(body)
+			fragments[Grid.decode_cell(entry.cell)] = body
 	next_number = int(data.get("next_number", 1))
 	if restore_shared and world.ship_state == null:
 		set_ammo(int(data.get("ammo", BOMB_CAPACITY)))
@@ -370,9 +445,6 @@ func _draw() -> void:
 		var corners := [rect.position, Vector2(rect.end.x, rect.position.y), rect.end, Vector2(rect.position.x, rect.end.y)]
 		for index in range(4):
 			draw_dashed_line(corners[index], corners[(index + 1) % 4], ink, 2, 7)
-	for cell: Vector2i in drops:
-		if world._illumination(Grid.center(cell)) > 0.1:
-			draw_rect(Rect2(Grid.center(cell) - Vector2(5, 5), Vector2(10, 10)), Cargo.COLORS[drops[cell]])
 	for building: Dictionary in world.outpost.buildings.structures:
 		if building.get("damaged", false):
 			var rect: Rect2 = world.outpost.buildings.world_rect(building)

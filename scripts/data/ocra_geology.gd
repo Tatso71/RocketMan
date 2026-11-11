@@ -27,3 +27,22 @@ static func ore(cell: Vector2i) -> String:
 		if offset.length_squared() <= 1:
 			return vein.kind
 	return ""
+
+static func component_ore(cell: Vector2i) -> String:
+	if cell.y in [2, 3] and cell.x >= -4 and cell.x <= -1:
+		return "iron"
+	if cell.y == 1 and cell.x >= -4 and cell.x <= -2:
+		return "copper"
+	if cell == Vector2i(1, 3) or cell == Vector2i(1, 4):
+		return "crystal"
+	for vein: Dictionary in [
+		{"kind": "iron", "center": Vector2i(6, 6), "radius": Vector2(2.5, 1.7)},
+		{"kind": "iron", "center": Vector2i(-12, 6), "radius": Vector2(2, 1.5)},
+		{"kind": "silica", "center": Vector2i(6, 10), "radius": Vector2(2, 1.5)},
+		{"kind": "silica", "center": Vector2i(-14, 7), "radius": Vector2(1.6, 1.2)},
+		{"kind": "cobalt", "center": Vector2i(-2, 12), "radius": Vector2(1.5, 1.2)},
+		{"kind": "cobalt", "center": Vector2i(19, 11), "radius": Vector2(1.3, 1.5)}
+	]:
+		if (Vector2(cell - vein.center) / vein.radius).length_squared() <= 1:
+			return vein.kind
+	return ""

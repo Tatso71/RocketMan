@@ -11,9 +11,9 @@ const Cargo = preload("res://scripts/systems/field_cargo.gd")
 func test_industry_catalog_is_complete_and_costs_use_runtime_integers() -> void:
 	var data := Catalog.load_data()
 	assert_int(data.recipes.size()).is_equal(3)
-	assert_dict(data.recipes.greenhouse.cost).is_equal({"soil": 4, "stone": 4, "copper_ingot": 2, "glass": 2})
-	assert_bool(Cargo.new().can_pay(data.smelting.glass.cost, true, {"stone": 2})).is_true()
-	assert_bool(Cargo.new().can_pay(data.conduit_cost, true, {"copper": 1})).is_true()
+	assert_dict(data.recipes.greenhouse.cost).is_equal({"structural_component": 4, "electronic_component": 2})
+	assert_bool(Cargo.new().can_pay(data.smelting.glass.cost, true, {"silica": 2})).is_true()
+	assert_bool(Cargo.new().can_pay(data.conduit_cost, true, {"structural_component": 1})).is_true()
 	assert_int(data.crops.size()).is_equal(4)
 	var bad := data.duplicate(true)
 	bad.converter.kwh_per_gas = INF
