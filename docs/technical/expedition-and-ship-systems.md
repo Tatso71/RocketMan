@@ -1,5 +1,7 @@
 # Expedition, Ship and Digital Tools
 
+Lamp power update: lamps use a nearby operational field laboratory for funding, construction progress and active consumption; their own direct ship-radius requirement is removed. Laboratory ship reach/power, pumps/fans and manual industrial conduits are unchanged. Cosmetic automatic leads connect the ship outlet (0, -80 px) to funded labs and the supplying lab to funded lamps. They are not extra paid network cells, do not collide, hide behind rock/darkness and rebuild from the current source after restore. Assembly popups expose the current funding blocker as a live, wrapped status line.
+
 Date: 2026-10-24
 Status: Playable foundation, not final simulation or balance
 

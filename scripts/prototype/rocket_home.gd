@@ -149,7 +149,7 @@ func drone_help_available() -> bool:
 func drone_can_collect() -> bool:
 	if is_robbie():
 		return true
-	return is_instance_valid(drone) and drone.mission == "follow" and drone.signal_connected() and drone.position.distance_to(player.position - Vector2(0, 32)) <= Grid.metres(3) and drone._clear(drone.position, player.position - Vector2(0, 32))
+	return is_instance_valid(drone) and drone.mission == "follow" and drone.position.distance_to(player.position - Vector2(0, 32)) <= Grid.metres(3) and drone._clear(drone.position, player.position - Vector2(0, 32))
 
 func suit_integrity() -> float:
 	return ship_state.suit_integrity if ship_state != null else local_suit

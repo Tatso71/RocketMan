@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "style": "faceted-vector-inventory",
+  "icons": {
+    "copper": {
+      "name": "Rame",
+      "path": "assets/ui/items/copper.svg"
+    },
+    "iron": {
+      "name": "Ferro",
+      "path": "assets/ui/items/iron.svg"
+    },
+    "crystal": {
+      "name": "Cristallo",
+      "path": "assets/ui/items/crystal.svg"
+    },
+    "silica": {
+      "name": "Quarzo",
+      "path": "assets/ui/items/silica.svg"
+    },
+    "cobalt": {
+      "name": "Cobalto",
+      "path": "assets/ui/items/cobalt.svg"
+    },
+    "bedrock": {
+      "name": "Roccia compatta",
+      "path": "assets/ui/items/bedrock.svg"
+    },
+    "anchor": {
+      "name": "Indistruttibile",
+      "path": "assets/ui/items/anchor.svg"
+    },
+    "structural_component": {
+      "name": "Componente strutturale",
+      "path": "assets/ui/items/structural_component.svg"
+    },
+    "electronic_component": {
+      "name": "Componente elettronico",
+      "path": "assets/ui/items/electronic_component.svg"
+    },
+    "copper_ingot": {
+      "name": "Lingotto di rame",
+      "path": "assets/ui/items/copper_ingot.svg"
+    },
+    "glass": {
+      "name": "Vetro",
+      "path": "assets/ui/items/glass.svg"
+    },
+    "water": {
+      "name": "Acqua",
+      "path": "assets/ui/items/water.svg"
+    },
+    "acid": {
+      "name": "Acido",
+      "path": "assets/ui/items/acid.svg"
+    },
+    "oil": {
+      "name": "Petrolio",
+      "path": "assets/ui/items/oil.svg"
+    },
+    "gas": {
+      "name": "Gas",
+      "path": "assets/ui/items/gas.svg"
+    },
+    "laboratory": {
+      "name": "Laboratorio",
+      "path": "assets/ui/items/laboratory.svg"
+    },
+    "lamp": {
+      "name": "Luce",
+      "path": "assets/ui/items/lamp.svg"
+    },
+    "pump": {
+      "name": "Pompa acqua",
+      "path": "assets/ui/items/pump.svg"
+    },
+    "fan": {
+      "name": "Ventilatore gas",
+      "path": "assets/ui/items/fan.svg"
+    },
+    "furnace": {
+      "name": "Fornace",
+      "path": "assets/ui/items/furnace.svg"
+    },
+    "gas_converter": {
+      "name": "Convertitore gas",
+      "path": "assets/ui/items/gas_converter.svg"
+    },
+    "greenhouse": {
+      "name": "Serra",
+      "path": "assets/ui/items/greenhouse.svg"
+    },
+    "ladder": {
+      "name": "Scala",
+      "path": "assets/ui/items/ladder.svg"
+    },
+    "water_conduit": {
+      "name": "Tubo acqua",
+      "path": "assets/ui/items/water_conduit.svg"
+    },
+    "gas_conduit": {
+      "name": "Tubo gas",
+      "path": "assets/ui/items/gas_conduit.svg"
+    },
+    "energy_conduit": {
+      "name": "Cavo energia",
+      "path": "assets/ui/items/energy_conduit.svg"
+    },
+    "potato": {
+      "name": "Patata",
+      "path": "assets/ui/items/potato.svg"
+    },
+    "ochre_tuber": {
+      "name": "Tubero ocra",
+      "path": "assets/ui/items/ochre_tuber.svg"
+    },
+    "verdant_leaf": {
+      "name": "Verdura viridia",
+      "path": "assets/ui/items/verdant_leaf.svg"
+    },
+    "frost_berry": {
+      "name": "Bacca brina",
+      "path": "assets/ui/items/frost_berry.svg"
+    },
+    "seed_potato": {
+      "name": "Semi: Patata",
+      "path": "assets/ui/items/seed_potato.svg"
+    },
+    "seed_ochre_tuber": {
+      "name": "Semi: Tubero ocra",
+      "path": "assets/ui/items/seed_ochre_tuber.svg"
+    },
+    "seed_verdant_leaf": {
+      "name": "Semi: Verdura viridia",
+      "path": "assets/ui/items/seed_verdant_leaf.svg"
+    },
+    "seed_frost_berry": {
+      "name": "Semi: Bacca brina",
+      "path": "assets/ui/items/seed_frost_berry.svg"
+    },
+    "module_hull": {
+      "name": "Scafo",
+      "path": "assets/ui/items/module_hull.svg"
+    },
+    "module_engine": {
+      "name": "Propulsori",
+      "path": "assets/ui/items/module_engine.svg"
+    },
+    "module_cargo": {
+      "name": "Stiva",
+      "path": "assets/ui/items/module_cargo.svg"
+    },
+    "module_battery": {
+      "name": "Accumulatori",
+      "path": "assets/ui/items/module_battery.svg"
+    },
+    "module_drill": {
+      "name": "Banco strumenti",
+      "path": "assets/ui/items/module_drill.svg"
+    },
+    "module_landing_gear": {
+      "name": "Carrelli",
+      "path": "assets/ui/items/module_landing_gear.svg"
+    },
+    "module_habitat": {
+      "name": "Supporto vitale",
+      "path": "assets/ui/items/module_habitat.svg"
+    },
+    "module_drone": {
+      "name": "Robbie",
+      "path": "assets/ui/items/module_drone.svg"
+    },
+    "ship_fuel": {
+      "name": "Carburante nave",
+      "path": "assets/ui/items/ship_fuel.svg"
+    },
+    "pulse": {
+      "name": "Pulse",
+      "path": "assets/ui/items/pulse.svg"
+    },
+    "scanner": {
+      "name": "Scanner",
+      "path": "assets/ui/items/scanner.svg"
+    },
+    "bomb": {
+      "name": "Bomba",
+      "path": "assets/ui/items/bomb.svg"
+    },
+    "jetpack": {
+      "name": "Jetpack",
+      "path": "assets/ui/items/jetpack.svg"
+    },
+    "resonator": {
+      "name": "Risonatore",
+      "path": "assets/ui/items/resonator.svg"
+    },
+    "plasma": {
+      "name": "Plasma",
+      "path": "assets/ui/items/plasma.svg"
+    },
+    "valve": {
+      "name": "Presa stagna",
+      "path": "assets/ui/items/valve.svg"
+    },
+    "outlet": {
+      "name": "Terminale di scarico",
+      "path": "assets/ui/items/outlet.svg"
+    }
+  },
+  "aliases": {
+    "ship_energy": "module_battery",
+    "local_energy": "gas_converter",
+    "stored_water": "water",
+    "hull_integrity": "module_hull",
+    "repaired_ship_workshop": "laboratory",
+    "repaired_laboratory": "laboratory",
+    "repaired_lamp": "lamp",
+    "repaired_pump": "pump",
+    "repaired_fan": "fan",
+    "repaired_furnace": "furnace",
+    "repaired_gas_converter": "gas_converter",
+    "repaired_greenhouse": "greenhouse",
+    "laboratory_level_2": "laboratory",
+    "module_hull_2": "module_hull",
+    "module_engine_2": "module_engine",
+    "module_cargo_2": "module_cargo",
+    "module_battery_2": "module_battery",
+    "module_drill_2": "module_drill",
+    "module_landing_gear_2": "module_landing_gear",
+    "module_habitat_2": "module_habitat",
+    "module_drone_2": "module_drone",
+    "laboratory_level_3": "laboratory",
+    "module_hull_3": "module_hull",
+    "module_engine_3": "module_engine",
+    "module_cargo_3": "module_cargo",
+    "module_battery_3": "module_battery",
+    "module_drill_3": "module_drill",
+    "module_landing_gear_3": "module_landing_gear",
+    "module_habitat_3": "module_habitat",
+    "module_drone_3": "module_drone"
+  }
+}

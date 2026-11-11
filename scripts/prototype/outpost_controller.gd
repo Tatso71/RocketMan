@@ -614,7 +614,7 @@ func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}) -> S
 	if id == "ladder" and world.ladders.has(cell):
 		return "Scala gia presente"
 	if id in Buildings.DEVICE_IDS and not has_lab():
-		return "Costruisci prima un laboratorio operativo"
+		return "Serve un laboratorio attivo e alimentato" if id == "lamp" else "Costruisci prima un laboratorio operativo"
 	if id in Buildings.DEVICE_IDS and not buildings.labs().any(func(lab: Dictionary): return operational(lab) and buildings.world_rect(lab).get_center().distance_to(rect.get_center()) <= Grid.metres(Buildings.light_range(lab))):
 		return "Struttura fuori dal collegamento del laboratorio"
 	return ""
@@ -645,7 +645,7 @@ func funding_blocker(building: Dictionary) -> String:
 	var reason := placement_blocker(building.id, building.origin, building)
 	if not reason.is_empty():
 		return reason
-	if building.id not in Buildings.INDUSTRIAL_IDS and building.id != "ladder" and not safe_link(building):
+	if building.id not in Buildings.INDUSTRIAL_IDS and building.id not in ["ladder", "lamp"] and not safe_link(building):
 		return "Cantiere fuori dal collegamento della nave o area non sicura"
 	if building.id in Buildings.DEVICE_IDS and not has_lab():
 		return "Serve un laboratorio operativo per costruire questa struttura"
@@ -681,9 +681,16 @@ func lamp_powered(building: Dictionary) -> bool:
 	return building.id == "lamp" and device_powered(building)
 
 func device_powered(building: Dictionary) -> bool:
-	if building.id not in Buildings.DEVICE_IDS or not Buildings.is_active(building) or not building.get("enabled", true) or not safe_link(building):
+	if building.id not in Buildings.DEVICE_IDS or not Buildings.is_active(building) or not building.get("enabled", true):
+		return false
+	if not (environment_safe(building) if building.id == "lamp" else safe_link(building)):
 		return false
 	return not supplying_lab(building).is_empty()
+
+func construction_connected(building: Dictionary) -> bool:
+	if building.id == "lamp":
+		return environment_safe(building) and not supplying_lab(building).is_empty()
+	return environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
 
 func supplying_lab(building: Dictionary, powered_only: bool = true) -> Dictionary:
 	var nearest: Dictionary = {}
@@ -701,7 +708,7 @@ func consumption_for(building: Dictionary) -> float:
 	if building.get("damaged", false):
 		return 0.0
 	if building.get("state") == "building":
-		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
+		var connected := construction_connected(building)
 		return Buildings.power_draw(building) if connected and world.ship_energy() > 0 else 0.0
 	var powered := operational(building) if building.id == "laboratory" else device_powered(building)
 	return Buildings.power_draw(building) if powered else 0.0
@@ -754,7 +761,7 @@ func advance(delta: float) -> void:
 	var running_devices := buildings.structures.filter(func(building: Dictionary): return building.id in ["pump", "fan"] and device_powered(building))
 	var duration := minf(delta, world.ship_energy() / power_load) if power_load > 0 else 0.0
 	for building: Dictionary in buildings.structures:
-		var connected := environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
+		var connected := construction_connected(building)
 		if building.get("damaged", false) or building.get("state") != "building" or (building.id != "ladder" and not connected):
 			continue
 		var seconds: float = float(recipe_definition(building.id).get("deployment_seconds", Buildings.build_seconds(building.id)))
@@ -973,7 +980,63 @@ func _build_interface() -> void:
 	add_child(cargo_ui)
 	cargo_window = cargo_ui.window
 
+func _power_lead_points(start: Vector2, end: Vector2) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	var segments := clampi(ceili(start.distance_to(end) / 12.0), 4, 96)
+	var sag := minf(14, start.distance_to(end) * 0.04)
+	for index in range(segments + 1):
+		var t := float(index) / segments
+		points.append(start.lerp(end, t) + Vector2(0, sin(t * PI) * sag))
+	return points
+
+func lamp_connection(lamp: Dictionary) -> Dictionary:
+	if lamp.id != "lamp" or not buildings.structures.has(lamp) or lamp.get("state") not in ["building", "active"]:
+		return {}
+	var lab := supplying_lab(lamp)
+	if lab.is_empty():
+		lab = supplying_lab(lamp, false)
+	if lab.is_empty():
+		return {}
+	var end := buildings.world_rect(lamp).get_center() + Vector2(0, 12)
+	var lab_rect := buildings.world_rect(lab).grow(-6)
+	var start := end.clamp(lab_rect.position, lab_rect.end)
+	return {"lab": lab, "powered": consumption_for(lamp) > 0, "points": _power_lead_points(start, end)}
+
+func laboratory_connection(lab: Dictionary) -> Dictionary:
+	if lab.id != "laboratory" or not buildings.structures.has(lab) or lab.get("state") not in ["building", "active"]:
+		return {}
+	var start := Vector2(0, -80)
+	var rect := buildings.world_rect(lab)
+	var end := start.clamp(rect.position, rect.end)
+	return {"powered": consumption_for(lab) > 0, "points": _power_lead_points(start, end)}
+
+func _draw_automatic_power_links() -> void:
+	for building: Dictionary in buildings.structures:
+		var link := laboratory_connection(building) if building.id == "laboratory" else (lamp_connection(building) if building.id == "lamp" else {})
+		if link.is_empty(): continue
+		var ink := Color("f1cd79") if link.powered else Color("77878d")
+		var run := PackedVector2Array()
+		var colors := PackedColorArray()
+		for point: Vector2 in link.points:
+			var cell := Grid.to_cell(point)
+			var light: float = world._illumination(point)
+			var point_visible: bool = light > 0.04 and (not world.site.contains(cell) or world.site.material(cell).is_empty())
+			if not point_visible:
+				_draw_power_lead_run(run, colors)
+				run.clear()
+				colors.clear()
+				continue
+			run.append(point)
+			colors.append(Color(ink, light * 0.85))
+		_draw_power_lead_run(run, colors)
+
+func _draw_power_lead_run(points: PackedVector2Array, colors: PackedColorArray) -> void:
+	if points.size() < 2: return
+	draw_polyline(points, Color("162024"), 3.2, true)
+	draw_polyline_colors(points, colors, 1.3, true)
+
 func _draw() -> void:
+	_draw_automatic_power_links()
 	var energy_reports := power_reports()
 	for building: Dictionary in buildings.structures:
 		var rect := buildings.world_rect(building)

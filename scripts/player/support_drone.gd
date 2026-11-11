@@ -63,8 +63,6 @@ func _free(cell: Vector2i) -> bool:
 	return cell.y >= -11 and cell.x >= -4 and cell.x < 4
 
 func _clear(from: Vector2, to: Vector2) -> bool:
-	if to.distance_to(BASE) > Grid.metres(range_metres) + 1 and to.distance_to(BASE) > from.distance_to(BASE):
-		return false
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = clearance
 	query.transform = Transform2D(0, from)
