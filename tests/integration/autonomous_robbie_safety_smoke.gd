@@ -40,10 +40,12 @@ func run() -> void:
 	check(world.outpost.logistics.status.contains("danneggiata"), "workshop damage is reported instead of causing empty trips")
 	world.gear.set_workshop_damage(false)
 	world.outpost.logistics.advance(1)
-	check(world.outpost.fabrication.jobs.size() == 1, "repair automatically resumes conversion")
+	check(world.outpost.fabrication.jobs.is_empty(), "repair never starts an unordered conversion")
+	Fixture.workshop(world)
+	check(world.outpost.fabricate_components("structural_component"), "player explicitly reserves conversion after workshop repair")
 	var saved: Dictionary = JSON.parse_string(JSON.stringify(world.capture_state()))
 	var paid_energy: float = world.ship_energy()
-	check(world.restore_state(saved), "paid automatic conversion survives a JSON load")
+	check(world.restore_state(saved), "paid production order survives a JSON load")
 	await physics_frame
 	await physics_frame
 	world.drone._rebuild()
@@ -103,7 +105,7 @@ func run() -> void:
 	world.drone._rebuild()
 	world.outpost.logistics.reset()
 	world.outpost.logistics.advance(1)
-	check(world.outpost.logistics.target == light and world.drone.mission == "delivering", "a damaged paid project does not starve another affordable reachable project")
+	check(world.outpost.logistics.target.is_empty() and world.drone.mission != "delivering" and light.state == "planned", "a damaged first project blocks later projects instead of being skipped")
 	world.outpost.buildings.structures.clear()
 	world.outpost.fabrication.jobs.clear()
 	world.outpost.fabrication.outputs.clear()

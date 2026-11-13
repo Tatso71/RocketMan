@@ -58,7 +58,7 @@ func run() -> void:
 	await physics_frame
 	lab = world.outpost.buildings.structures[0]
 	await tick(1500)
-	check(lab.state == "active", "Robbie unloads, converts, delivers and builds while the player stays away")
+	check(lab.state == "active", "the blueprint alone makes Robbie prepare, deliver and build while the player stays away")
 	check(world.player.position == player_stayed, "autonomous workflow never moves the digging player")
 	check(world.outpost.laboratory_unlocked(), "the automatically completed lab unlocks utilities")
 	check(world.local_store.get("iron", 0) + world.field_cargo.drone.get("iron", 0) == 0, "structural production really consumes its eight iron")
@@ -72,8 +72,8 @@ func run() -> void:
 		world.gear._ensure_fragment_group(entry[0])
 	world.player.position = player_stayed
 	await tick(2400)
-	check(lamp.state == "active" and world.outpost.lamp_powered(lamp), "Robbie independently collects fallen ore, converts it and builds a powered light")
 	check(world.gear.drops.is_empty(), "all reachable dropped ore is collected without Y")
+	check(lamp.state == "active" and world.outpost.lamp_powered(lamp), "the next blueprint orders its own missing electronics and becomes a powered light")
 	lab.state = "planned"
 	lab.progress = 0.0
 	world.local_store.clear()

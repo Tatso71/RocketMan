@@ -2,7 +2,7 @@
 
 Questa e' la mappa del prototipo giocabile: cosa raccogliere, cosa trasformare e cosa costruire. Le proposte future sono separate dalle ricette realmente disponibili.
 
-Documento generato dai cataloghi e dalle funzioni di costo del gioco. Non modificare a mano le tabelle: aggiornare le fonti e rigenerare. [Dati strutturati per il futuro computer di bordo](../../design/generated/production-map.json).
+Documento generato dai cataloghi e dalle funzioni di costo del gioco. Non modificare a mano le tabelle: aggiornare le fonti e rigenerare. [Dati strutturati per la futura guida delle ricette](../../design/generated/production-map.json).
 
 ## La catena principale
 
@@ -12,19 +12,23 @@ Materie prime -> Componenti -> Strutture, consumabili e potenziamenti
         +-> Semilavorati (facoltativi) --+
 ```
 
-**Materie prime:** ferro, rame, cristalli, quarzo e cobalto. **Semilavorati:** lingotti di rame e vetro. **Componenti:** strutturali ed elettronici, versatili e impilabili (4 pezzi per unita' di carico). Terra e pietra comuni non entrano nel carico o nelle ricette.
+**Materie prime:** ferro, rame, cristalli, quarzo e cobalto. **Semilavorati intermedi:** lingotti di rame e vetro. I componenti strutturali ed elettronici sono i semilavorati versatili per il montaggio, impilabili (4 pezzi per unita' di carico). Terra e pietra comuni non entrano nel carico o nelle ricette.
 
-Il laboratorio di bordo e' gia' funzionante e parte senza scorte minerali. Nella modalita umano Robbie gestisce produzione, consegna e montaggio; nella variante Robbie pilotabile queste operazioni restano manuali. Non si trasportano cubi di stanze gia' scelte. Le scale sono gratuite e immediate.
+Il laboratorio di bordo e' gia' funzionante e parte senza scorte minerali. Dal 13 novembre nella modalita umano posare una sagoma e' un ordine completo: Robbie raccoglie e scarica alla nave, fa preparare i componenti mancanti del primo progetto, consegna e monta. Nella variante Robbie pilotabile ordini, ritiro e montaggio restano manuali. Il requisito di ordinare prima i semilavorati del 12 novembre e' superato per l'umano. Non si trasportano cubi di stanze gia' scelte. Le scale sono gratuite e immediate.
 
 ## Il primo laboratorio
 
-Scava i depositi iniziali di **8 ferro + 3 rame + 1 cristallo** e prepara una stanza supportata di **4 x 3 m**. Posa il progetto: Robbie raccoglie, torna alla nave, produce **4 strutturali + 2 elettronici**, li consegna e monta il laboratorio. Puoi continuare a scavare. Nella variante Robbie pilotabile ordini e ritiri manualmente i componenti al banco.
+Scava i depositi iniziali di **8 ferro + 3 rame + 1 cristallo**, prepara una stanza supportata di **4 x 3 m** e posa il progetto del laboratorio. Robbie scarica i minerali alla nave e fa preparare solo i componenti mancanti: da scorte vuote, **2 lotti strutturali + 1 elettronico**, ottenendo **4 strutturali + 2 elettronici**. Poi ritira i componenti pronti, li consegna e monta mentre continui a scavare. Non serve tornare al computer per ordinare. Nella variante Robbie pilotabile ordini, ritiri e monti manualmente i componenti.
 
 Dopo il primo laboratorio da campo si sbloccano luci, pompe, ventilatori, fornaci, convertitori e serre, oltre alle ricette avanzate dei due componenti. I consumi della rete si aggiungono all'energia specifica riportata nelle tabelle.
 
-## Logistica automatica
+## Ordini e logistica automatica
 
-Nella modalita umano Robbie raccoglie i frammenti e torna fisicamente alla nave quando il carico e' pieno o la raccolta si interrompe brevemente. Il banco di bordo produce automaticamente i componenti necessari ai progetti, mantenendo una piccola scorta di 4 strutturali e 2 elettronici quando ci sono ingredienti. Robbie consegna ai cantieri e resta sul posto durante il montaggio; il personaggio puo continuare a scavare altrove. Non occorrono ordini di scarico, produzione o prelievo. Le ricette e i tempi delle tabelle restano invariati. Nella variante Robbie pilotabile il flusso resta manuale.
+I progetti seguono una FIFO stretta nell'ordine originale di posa, anche dopo salvataggio/caricamento. Si preparano soltanto i componenti mancanti del primo: si contano prima scorte pronte e uscite gia pagate, comprese quelle di ordini manuali, poi si arrotonda il residuo ai lotti delle ricette esistenti. Nessuna scorta minima o produzione speculativa per progetti successivi. Se il primo e' bloccato, tutta la coda attende e mostra il motivo concreto, per esempio ferro mancante, botola chiusa, uscita piena o energia assente. Non si saltano progetti: sbloccare o annullare il primo fa avanzare la coda.
+
+Clic destro su un laboratorio apre il computer per controllare coda e scorte o anticipare facoltativamente ordini manuali: scegli ricetta e lotti, controlla ingredienti hai/servono, durata ed energia, poi ordina. Gli ordini riservano subito ingredienti ed energia una sola volta e vengono lavorati in sequenza per postazione; laboratori distinti procedono indipendentemente. Questa coda di produzione e' distinta dalla FIFO dei progetti. La coda pagata resta nei salvataggi e si ferma senza energia o con uscita piena, senza perdere materiali.
+
+Nella modalita umano Robbie raccoglie i frammenti e torna fisicamente alla nave quando il carico e' pieno o la raccolta si interrompe brevemente. Ritira i componenti pronti dalla nave o dai laboratori sotterranei, consegna al primo cantiere e resta sul posto durante il montaggio, prima di passare al successivo. Non occorrono ordini di scarico o prelievo. Ricette, costi, tempi, energia, capienze e accesso fisico restano vincolanti. Nella variante Robbie pilotabile ordini, trasporto e montaggio restano manuali.
 
 ## Raccolta dalla roccia
 

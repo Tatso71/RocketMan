@@ -147,16 +147,16 @@
       },
       {
         "id": "laboratory_cube",
-        "title_it": "Preparazione dei componenti",
-        "hint_it": "Il banco della nave trasforma 8 ferro, 3 rame e 1 cristallo in 4 componenti strutturali e 2 elettronici. La lavorazione richiede energia; le risorse si pagano una sola volta all'avvio.",
-        "detail_it": "Banco / 4 strutturali + 2 elettronici",
+        "title_it": "Robbie prepara i componenti",
+        "hint_it": "Puoi gia posare il laboratorio nella stanza 4 x 3: clic destro nello spazio libero e scegli Laboratorio. La sagoma e un ordine completo: Robbie fa preparare alla nave i componenti mancanti del primo progetto, poi li consegna e monta. Non serve tornare al computer per ordinare.",
+        "detail_it": "Posa la sagoma / preparazione automatica per il primo progetto",
         "action": "fabricate_lab",
         "complete_when": {"fact": "components_produced"}
       },
       {
         "id": "carry_laboratory",
         "title_it": "Trasporto dei componenti",
-        "hint_it": "Per il primo laboratorio devono arrivare al cantiere 4 componenti strutturali e 2 elettronici. Nel carico di Robbie occupano solo due unita. Mantieni libero il percorso dalla nave alla stanza.",
+        "hint_it": "Robbie porta al primo progetto 4 componenti strutturali e 2 elettronici. Se non l'hai ancora fatto, posa il laboratorio nella stanza scavata: non serve ritirare i pezzi al computer. Nel carico di Robbie occupano solo due unita. Mantieni libero il percorso dalla nave alla stanza.",
         "detail_it": "Cantiere / 4 strutturali + 2 elettronici",
         "action": "fabricate_lab",
         "complete_when": {"fact": "components_collected"}
@@ -164,7 +164,7 @@
       {
         "id": "deploy_laboratory",
         "title_it": "Progetto del laboratorio",
-        "hint_it": "Nella stanza scavata fai clic destro e scegli Laboratorio. Sistema la sagoma 4 x 3 sul pavimento e posa il progetto. Il montaggio richiede 4 strutturali e 2 elettronici; senza materiali il progetto resta in attesa.",
+        "hint_it": "Nella stanza scavata fai clic destro e scegli Laboratorio. Posa la sagoma 4 x 3 sul pavimento: Robbie prepara i componenti mancanti, consegna e monta. I progetti seguono l'ordine di posa. Se il primo si blocca, controlla il motivo con clic destro; sbloccalo o annullalo per far avanzare la coda.",
         "detail_it": "Clic destro nello spazio libero / Laboratorio / posa progetto",
         "action": "place_lab",
         "complete_when": {"fact": "lab_built"}

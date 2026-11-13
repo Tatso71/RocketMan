@@ -22,7 +22,7 @@
       "robbie": {"body": "Pulse operativo. Terra e pietra non occupano il mio cargo. I minerali cadono e rimbalzano: avvicinandomi li attiro col magnete. Se sono pieno restano al suolo; migliorando il modulo drone aumento il raggio magnetico."},
       "priority": 15,
       "title": "Il primo scavo",
-      "body": "Scava liberamente: terra e pietra non riempiono il carico. Raccolgo i minerali col magnete, li scarico alla nave e li trasformo in componenti automaticamente. Tu scava e posa i progetti: li rifornisco e li monto io. Lascia un percorso sicuro e l'officina alimentata.",
+      "body": "Scava liberamente: terra e pietra non riempiono il carico. Raccolgo i minerali col magnete e li scarico alla nave. Tu posa i progetti: faccio preparare solo i componenti mancanti del primo, li porto e monto io. Seguo l'ordine di posa. Lascia un percorso sicuro e l'officina alimentata.",
       "detail": ""
     },
     {
@@ -30,7 +30,7 @@
       "robbie": {"body": "Raccogli 8 ferro, 3 rame e 1 cristallo. Al banco della nave produci 4 componenti strutturali e 2 elettronici, poi ritirali. Nella stanza 4 x 3 scegli il laboratorio dal menu di montaggio."},
       "priority": 20,
       "title": "La prima officina sotterranea",
-      "body": "Scava 8 ferro, 3 rame e 1 cristallo e libera una stanza 4 x 3. Posa il progetto del laboratorio: raccolgo i minerali, li scarico alla nave, preparo i componenti e li consegno al cantiere. Monto io mentre continui a scavare.",
+      "body": "Scava 8 ferro, 3 rame e 1 cristallo e libera una stanza 4 x 3. Raccolgo i minerali e li scarico alla nave. Posa il progetto del laboratorio: faccio preparare i componenti mancanti, consegno e monto io mentre continui a scavare. Non serve tornare al computer per ordinare.",
       "detail": ""
     },
     {
@@ -38,7 +38,7 @@
       "robbie": {"body": "Obiettivo: 8 ferro, 3 rame e 1 cristallo. Al banco li trasformo in 4 componenti strutturali e 2 elettronici. Terra e pietra restano fuori dal cargo."},
       "priority": 65,
       "title": "Prima il laboratorio",
-      "body": "Scava 8 ferro, 3 rame e 1 cristallo. Con 2 lo scanner mostra per poco i filoni nascosti; con 1 torni a Pulse. Raccolgo io i minerali, li scarico alla nave e li converto in componenti. Se il cantiere attende materiali, cerca i minerali mancanti.",
+      "body": "Scava 8 ferro, 3 rame e 1 cristallo. Con 2 lo scanner mostra per poco i filoni nascosti; con 1 torni a Pulse. Raccolgo io i minerali e li scarico alla nave. Libera una stanza 4 x 3 e posa il laboratorio: alla preparazione dei componenti, alla consegna e al montaggio penso io.",
       "detail": ""
     },
     {
@@ -53,7 +53,7 @@
       "robbie": {"body": "Qui entra un laboratorio! Clic destro nello spazio libero, scegli Laboratorio e sistema la sagoma. Il montaggio costa 4 strutturali e 2 elettronici nel mio carico. Senza componenti puoi lasciare il progetto in attesa."},
       "priority": 70,
       "title": "La stanza e abbastanza grande",
-      "body": "Qui entra un laboratorio! Clic destro nello spazio libero, scegli Laboratorio e posa la sagoma sul pavimento. Il progetto va in coda: preparo e consegno i 4 strutturali e 2 elettronici, poi monto io. Puoi continuare a scavare altrove.",
+      "body": "Qui entra un laboratorio! Clic destro nello spazio libero, scegli Laboratorio e posa la sagoma sul pavimento. Basta il progetto: faccio preparare i 4 strutturali e 2 elettronici mancanti, poi li consegno e monto io. Servo i progetti nell'ordine di posa. Puoi continuare a scavare altrove.",
       "detail": ""
     },
     {
@@ -61,7 +61,7 @@
       "robbie": {"body": "Il progetto richiede componenti nel mio cargo, non minerali grezzi o risorse di un deposito lontano. Li produco al banco e poi li ritiro."},
       "priority": 65,
       "title": "Componenti per il progetto",
-      "body": "Il progetto e in coda: raccolgo e scarico i minerali, preparo i componenti alla nave, li consegno e monto io. Se mancano minerali, continua a cercarli. Se mi fermo, controlla il percorso e l'energia. Clic destro sul progetto mostra lo stato; non devi aspettarmi qui.",
+      "body": "Il progetto e in coda. Preparo solo cio che manca al primo, riusando i componenti pronti e quelli gia pagati. Se il primo si blocca, anche i successivi aspettano. Clic destro sul primo progetto mostra il motivo: sbloccalo o annullalo per far avanzare la coda.",
       "detail": ""
     },
     {
@@ -127,7 +127,7 @@
       "robbie": {"body": "Il banco trasforma 4 ferro in 2 strutturali, oppure 3 rame e 1 cristallo in 2 elettronici. Scegli i lotti e premi Crea: paghi una sola volta. Ritira l'uscita prima di tornare a montare."},
       "priority": 45,
       "title": "Produzione dei componenti",
-      "body": "Preparo automaticamente i componenti alla nave: 4 ferro danno 2 strutturali, 3 rame e 1 cristallo danno 2 elettronici. Scava i minerali mancanti; alla raccolta, al trasporto e al montaggio dei progetti penso io. Serve energia in officina.",
+      "body": "La sagoma basta: faccio produrre solo i componenti mancanti del primo progetto. Riuso scorte pronte e ordini gia pagati, poi arrotondo il resto ai lotti esistenti. Niente scorte minime. Al computer puoi controllare coda e scorte o anticipare ordini manuali; ingredienti ed energia si pagano una sola volta.",
       "detail": ""
     },
     {
@@ -143,7 +143,7 @@
       "robbie": {"body": "Il primo laboratorio e attivo: luci, pompa e ventilatore sono sbloccati! Ora puoi produrre componenti anche qui. Portali dove servono e scegli una struttura dal menu di montaggio. Le macchine richiedono energia e collegamenti."},
       "priority": 55,
       "title": "Laboratorio attivo",
-      "body": "Il primo laboratorio e attivo: luci, pompa e ventilatore sono sbloccati! Continua a scavare e posa i nuovi progetti; preparo, consegno e monto i componenti. Le macchine richiedono energia e collegamenti.",
+      "body": "Il primo laboratorio e attivo: luci, pompa e ventilatore sono sbloccati! Posa i nuovi progetti: preparo i componenti mancanti, consegno e monto nell'ordine di posa. Se il primo si blocca, la coda aspetta. Le macchine richiedono energia e collegamenti.",
       "detail": ""
     },
     {
@@ -173,7 +173,7 @@
       "robbie": {"body": "Carico scaricato! Il deposito e separato dal nostro carico comune. Questo laboratorio puo usare anche le materie nel suo deposito: clic destro e Costruisci. Per portarle altrove scegli Preleva materiali."},
       "priority": 25,
       "title": "Materiale al sicuro",
-      "body": "Carico scaricato alla nave. Uso i minerali per preparare i componenti e rifornire i progetti in coda. Tu puoi continuare lo scavo; se la lavorazione si ferma, controlla l'energia dell'officina.",
+      "body": "Carico scaricato alla nave. Se hai posato un progetto, faccio preparare solo i componenti mancanti del primo, poi li ritiro e lo costruisco. Non servono ordini o prelievi manuali. Il computer resta disponibile per controllare coda e scorte o anticipare la produzione.",
       "detail": ""
     },
     {
@@ -239,7 +239,7 @@
       "robbie": {"body": "Banco raggiungibile. Posso depositare il mio cargo con Y oppure con clic destro sul laboratorio e Deposita materiali. Le materie restano nel deposito fino a un prelievo o una lavorazione."},
       "priority": 80,
       "title": "Carico pieno",
-      "body": "Scarico automaticamente alla nave e preparo i componenti per i cantieri. Non servono trasferimenti manuali: lascia libero il percorso e continua pure a scavare.",
+      "body": "Scarico automaticamente alla nave. Basta posare i progetti: faccio preparare i componenti mancanti del primo, li porto e monto, poi passo al successivo. Non servono trasferimenti manuali: lascia libero il percorso e continua pure a scavare.",
       "detail": ""
     },
     {
@@ -307,7 +307,7 @@
       "robbie": {"title": "Raccogli per il laboratorio", "body": "Cerco 8 ferro, 3 rame e 1 cristallo. Rame e ferro sono subito a sinistra della scala; i cristalli poco oltre, sullo stesso lato. Con 2 vedo le icone dello scanner: mi avvicino ai segnali grigi per identificarli. Con 1 torno a scavare.", "detail": "8 ferro + 3 rame + 1 cristallo"},
       "priority": 65,
       "title": "Scava i minerali per il laboratorio",
-      "body": "Servono 8 ferro, 3 rame e 1 cristallo. Cerca a sinistra della scala: prima rame e ferro, poi cristalli poco oltre. Con 2 individui i filoni; con 1 scavi. Raccolgo io i frammenti, li scarico alla nave e li converto in componenti automaticamente.",
+      "body": "Servono 8 ferro, 3 rame e 1 cristallo. Cerca a sinistra della scala: prima rame e ferro, poi cristalli poco oltre. Con 2 individui i filoni; con 1 scavi. Raccolgo io i frammenti e li scarico alla nave. Libera una stanza 4 x 3 e posa il laboratorio: preparo e consegno io i componenti.",
       "detail": "8 ferro + 3 rame + 1 cristallo"
     },
     {
@@ -322,8 +322,8 @@
       "robbie": {"title": "Produci i componenti", "body": "Rientra al banco della nave. Clic destro e Produci componenti: ordina 2 lotti strutturali e 1 elettronico. Otterrai 4 strutturali e 2 elettronici. Le risorse si pagano una sola volta all'avvio.", "detail": "Banco / 2 lotti strutturali + 1 elettronico"},
       "priority": 65,
       "title": "Robbie prepara i componenti",
-      "body": "Scarico i minerali alla nave e preparo automaticamente 4 componenti strutturali e 2 elettronici. Puoi continuare a scavare e posare il progetto del laboratorio nella stanza 4 x 3. Se mancano minerali cercali con lo scanner; se mi fermo controlla percorso ed energia.",
-      "detail": "Officina automatica / 4 strutturali + 2 elettronici"
+      "body": "Puoi gia posare il laboratorio nella stanza 4 x 3: clic destro nello spazio libero e scegli Laboratorio. La sagoma e un ordine completo: faccio preparare alla nave solo i componenti mancanti del primo progetto, poi li consegno e monto. Non serve tornare al computer per ordinare.",
+      "detail": "Posa la sagoma / preparazione automatica per il primo progetto"
     },
     {
       "id": "ocra/carry_laboratory",
@@ -338,7 +338,7 @@
       "robbie": {"title": "Monta il laboratorio", "body": "Nella stanza scavata fai clic destro e scegli Laboratorio. Sistema la sagoma sul pavimento e clicca per montare. Consuma 4 strutturali e 2 elettronici trasportati. Senza materiali resta un progetto in attesa: clic destro sul progetto per Monta o Annulla.", "detail": "Clic destro / Laboratorio / monta nella stanza"},
       "priority": 65,
       "title": "Posa il progetto del laboratorio",
-      "body": "Nella stanza scavata fai clic destro e scegli Laboratorio. Posa la sagoma sul pavimento: il progetto va in coda anche senza componenti pronti. Li preparo, li consegno e monto io mentre continui a scavare. Clic destro sul progetto mostra stato e materiali mancanti.",
+      "body": "Nella stanza scavata fai clic destro e scegli Laboratorio. Posa la sagoma sul pavimento anche senza componenti pronti: preparo quelli mancanti, consegno e monto io. Seguo l'ordine di posa. Clic destro sul primo progetto mostra il motivo di un blocco; sbloccalo o annullalo per far avanzare la coda.",
       "detail": "Clic destro / Laboratorio / posa progetto"
     },
     {
@@ -381,8 +381,8 @@
       "robbie": {"body": "Trasporto in corso. Porto i materiali al banco e preparo i componenti prima di montarli al cantiere.", "detail": "Trasporto manuale"},
       "priority": 75,
       "title": "Consegna in corso",
-      "body": "Sto lavorando: raccolgo e scarico minerali alla nave, preparo i componenti e li porto ai progetti da montare. Puoi continuare a scavare. Lascia liberi i passaggi e la botola; senza minerali, spazio in stiva o energia il lavoro attende.",
-      "detail": "Raccolta / conversione / consegna / montaggio"
+      "body": "Raccolgo e scarico minerali alla nave, preparo solo i componenti mancanti del primo progetto, consegno e monto. Poi passo al successivo nell'ordine di posa. Se il primo attende ferro, spazio, energia o un passaggio sicuro, la coda si ferma: controlla il suo motivo con clic destro. Puoi continuare a scavare.",
+      "detail": "Raccolta / preparazione del primo progetto / consegna / montaggio"
     },
     {
       "id": "bomb_tool",

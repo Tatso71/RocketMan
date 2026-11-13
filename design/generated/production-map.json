@@ -1,13 +1,29 @@
 {
 	"automatic_logistics": {
-		"component_buffer": {
-			"electronic_component": 2,
-			"structural_component": 4
-		},
+		"batch_rounding": "missing_quantity_up_to_existing_recipe_batches",
+		"blocked_head": "pause_queue_show_concrete_reason",
+		"cancel_head": "advance_queue",
+		"component_sources": [
+			"ship_workshop",
+			"field_laboratory"
+		],
+		"computer": [
+			"queue_status",
+			"stock",
+			"optional_manual_orders"
+		],
 		"construction": "worker_on_site",
 		"controlled_robbie": "manual",
 		"delivery": "physical_worker",
-		"processor": "ship_workshop",
+		"minimum_stock": false,
+		"production": "head_project_missing_components",
+		"project_order": "strict_placement_fifo",
+		"queue": "fifo_per_station",
+		"reuse_before_production": [
+			"ready_stock",
+			"already_paid_output_including_manual_orders"
+		],
+		"speculative_production": false,
 		"variant": "explorer"
 	},
 	"nodes": {

@@ -413,6 +413,8 @@ func handle_input(event: InputEvent) -> bool:
 			return true
 	repair_target = {}
 	repair_ship = workshop_damaged() and world.outpost.SHIP_LAB_RECT.has_point(point) and world.aboard_workshop()
+	if repair_ship:
+		return false
 	if not repair_ship:
 		for building: Dictionary in world.outpost.buildings.structures:
 			if building.get("state") != "planned" and building.get("damaged", false) and world.outpost.buildings.world_rect(building).has_point(point) and world.outpost.site_reachable(building):

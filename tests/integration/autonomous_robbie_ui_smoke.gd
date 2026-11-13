@@ -159,9 +159,9 @@ func run() -> void:
 	world.field_cargo.drone = {"iron": 20}
 	check(world.guide.context() != "cargo_full", "routine automatic full cargo does not interrupt with manual instructions")
 	var human_fund := show_message("tutorial_fund")
-	check(not human_fund.contains("Ritira") and not human_fund.contains("torna qui") and human_fund.contains("minerali"), "human funding speech describes automatic work and missing minerals")
+	check(not human_fund.contains("Ritira") and human_fund.contains("primo") and human_fund.contains("coda"), "human funding speech explains complete project orders and strict FIFO")
 	var human_production := show_message("ocra/laboratory_cube")
-	check(not human_production.contains("Rientra") and human_production.contains("automatic"), "human production bubble uses authored automatic copy")
+	check(human_production.contains("progetto") and not human_production.contains("Ordina 2 lotti"), "human production bubble explains preparation from the placed project")
 	check(not show_message("cargo_full").contains("Con Y"), "human cargo bubble never requests Y")
 	check(not show_message("drone_delivery").contains("scarico e torno da te"), "delivery speech covers work beyond return-to-follow")
 	world.free()

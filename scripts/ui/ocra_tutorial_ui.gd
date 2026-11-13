@@ -72,7 +72,7 @@ func refresh() -> void:
 	if tutorial.complete():
 		title.text = "Primo laboratorio attivo"
 		title.modulate = Color("a7e5b4")
-		detail.text = "Luci, pompa e ventilatore sbloccati. I nuovi progetti sono affidati a Robbie." if automatic else "Luci, pompa e ventilatore sbloccati. Produci componenti qui e monta nelle gallerie."
+		detail.text = "Luci, pompa e ventilatore sbloccati. Posa i progetti: Robbie prepara, consegna e monta in ordine di posa." if automatic else "Luci, pompa e ventilatore sbloccati. Produci componenti qui e monta nelle gallerie."
 		action.text = "Apri laboratorio" if not world.outpost.nearby_lab().is_empty() else "Riascolta Robbie"
 		return
 	if step.is_empty():
@@ -91,8 +91,8 @@ func refresh() -> void:
 		else:
 			var available: Dictionary = world.outpost.logistics.available_components() if automatic else {"structural_component": cargo.available("structural_component", world.drone_help_available()), "electronic_component": cargo.available("electronic_component", world.drone_help_available())}
 			stock.text = "Strutturali %d/4\nElettronici %d/2" % [available.structural_component, available.electronic_component]
-			if automatic: detail.text = "Posa il progetto nella stanza / Robbie prepara e consegna i componenti"
-		action.text = "Apri officina" if not automatic and step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
+			if automatic: detail.text = "Posa il progetto nella stanza 4 x 3. Robbie prepara i semilavorati mancanti, consegna e monta in ordine. Il computer resta facoltativo."
+		action.text = "Apri computer" if step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
 	elif step.action == "place_lab":
 		var building: Dictionary = world.outpost.buildings.structures.filter(func(item: Dictionary): return item.id == "laboratory").front() if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory") else {}
 		if not building.is_empty():
@@ -110,7 +110,7 @@ func _activate() -> void:
 	var step: Dictionary = tutorial.current()
 	if tutorial.complete() and not world.outpost.nearby_lab().is_empty():
 		world.outpost.open_station(world.outpost.nearby_station(), world.player.get_global_transform_with_canvas() * Vector2(0, -40))
-	elif step.get("action") == "fabricate_lab" and world.aboard_workshop() and not world.outpost.logistics.enabled():
+	elif step.get("action") == "fabricate_lab" and world.aboard_workshop():
 		world.outpost.construction.open_picker(world.Grid.to_cell(world.player.position), Vector2(330, 180), true)
 	elif step.get("action") == "inventory":
 		world.outpost.open_cargo()

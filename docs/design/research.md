@@ -59,6 +59,6 @@ Questa sequenza fino al primo laboratorio e letta dal runtime da progression.ocr
 | return_ladder | Prepara la risalita | {"fact":"ladder"} | help |
 | laboratory_materials | Minerali per il laboratorio | {"fact":"lab_materials_ready"} | inventory |
 | laboratory_room | Scava la stanza del laboratorio | {"fact":"lab_room_ready"} | help |
-| laboratory_cube | Preparazione dei componenti | {"fact":"components_produced"} | fabricate_lab |
+| laboratory_cube | Robbie prepara i componenti | {"fact":"components_produced"} | fabricate_lab |
 | carry_laboratory | Trasporto dei componenti | {"fact":"components_collected"} | fabricate_lab |
 | deploy_laboratory | Progetto del laboratorio | {"fact":"lab_built"} | place_lab |
