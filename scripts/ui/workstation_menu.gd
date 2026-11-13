@@ -48,9 +48,18 @@ func is_open() -> bool:
 	return popup.visible or window.visible
 
 func open(viewport_point: Vector2) -> void:
+	popup.hide()
+	window.hide()
+	var world: Node2D = outpost.world
+	var anchor: Vector2i = world.Grid.to_cell(world.player.position - Vector2(0, 1))
+	outpost.construction.open_picker(anchor, viewport_point, true)
+
+func open_actions(viewport_point: Vector2) -> void:
 	popup.clear()
 	popup.add_separator(outpost.station_name())
 	for index in range(ACTION_NAMES.size()):
+		if index == 2:
+			continue
 		popup.add_item(ACTION_NAMES[index], index)
 	if outpost.selected_station.get("kind") == "laboratory":
 		popup.add_separator()
@@ -95,6 +104,8 @@ func show_section(id: int) -> void:
 	if id == 3:
 		row("suit", "Ripristina la tuta", "Ripara", _perform.bind("suit"))
 		row("hull", "Ripara lo scafo della nave", "Ripara", _perform.bind("hull"))
+		if outpost.selected_station.get("kind") == "ship" and outpost.world.gear.workshop_damaged():
+			row("workshop", "Ripara il laboratorio di bordo", "Ripara", _perform.bind("workshop"))
 	elif id == 4:
 		row("upgrade", "Potenziamento della postazione", "Potenzia", _perform.bind("upgrade"))
 	var spacer := Control.new()
@@ -138,6 +149,11 @@ func hull_blocker() -> String:
 		return "Scafo gia integro"
 	return "" if ship.can_afford({"structural_component": 2, "electronic_component": 1}) else "Servono 2 strutturali + 1 elettronico nella stiva"
 
+func workshop_blocker() -> String:
+	if not outpost.world.aboard_workshop(): return "Rientra nel laboratorio di bordo"
+	if not outpost.world.gear.workshop_damaged(): return "Laboratorio gia operativo"
+	return "" if outpost.world.field_cargo.can_pay({"structural_component": 3, "electronic_component": 1}, outpost.world.drone_help_available(), outpost.source_stock()) else "Servono 3 strutturali + 1 elettronico"
+
 func _perform(action: String) -> void:
 	if not outpost.station_available(outpost.selected_station):
 		return
@@ -148,6 +164,9 @@ func _perform(action: String) -> void:
 		ok = outpost.repair_suit()
 	elif action == "hull" and hull_blocker().is_empty():
 		ok = outpost.world.ship_state.repair()
+	elif action == "workshop" and workshop_blocker().is_empty():
+		outpost.world.gear.repair_ship = true
+		ok = outpost.world.gear.repair_selected()
 	elif action == "upgrade":
 		ok = outpost.upgrade_station()
 	feedback.text = {"lamp": "Luce aggiunta al carico", "suit": "Tuta ripristinata al 100%", "hull": "Scafo riparato: +25 integrita", "upgrade": "Laboratorio potenziato"}.get(action, "Operazione completata") if ok else "Operazione non disponibile: controlla requisiti e materiali."
@@ -176,6 +195,9 @@ func refresh() -> void:
 			"hull":
 				text = "2 strutturali + 1 elettronico dalla stiva / +25 integrita"
 				reason = hull_blocker()
+			"workshop":
+				text = "3 strutturali + 1 elettronico / Ripristina la produzione pagata"
+				reason = workshop_blocker()
 			"upgrade":
 				if aboard:
 					var level: int = outpost.station_level()

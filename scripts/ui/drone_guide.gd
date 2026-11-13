@@ -74,6 +74,7 @@ func _ready() -> void:
 	tail.hide()
 
 func context() -> String:
+	var automatic: bool = world.outpost.logistics.enabled()
 	if room_poll <= 0 or room_revision != world.navigation_revision:
 		room_cache = world.outpost.find_laboratory_space()
 		room_revision = world.navigation_revision
@@ -88,28 +89,28 @@ func context() -> String:
 		return "oil_danger"
 	if float(danger.gas) >= 0.03:
 		return "gas_danger"
-	if world.drone.mission != "follow":
-		return "drone_delivery"
-	if not world.is_robbie() and world.drone.status == "Percorso ostruito":
+	if not world.is_robbie() and world.drone.status.contains("ostruito"):
 		return "path_blocked"
+	if world.ship_energy() < 5:
+		return "energy_low"
+	if world.drone.mission != "follow" and (not automatic or world.drone.mission != "collecting"):
+		return "drone_delivery"
 	if world.active_tool().mode == "bomb" and "bomb_tool" not in state.seen:
 		return "bomb_tool"
 	if world.active_tool().mode == "jetpack" and "jetpack_tool" not in state.seen:
 		return "jetpack_tool"
-	if world.ship_energy() < 5:
-		return "energy_low"
 	if world.crew_energy() < 25:
 		return "robot_charge_low" if world.is_robbie() else "bed_rest"
 	var step: Dictionary = state.ocra.current()
 	if world.is_ocra() and not step.is_empty() and not state.ocra.complete():
-		if step.id not in ["laboratory_cube", "carry_laboratory", "deploy_laboratory"] and world.field_cargo.free_space(world.drone_can_collect()) <= 0:
+		if not automatic and step.id not in ["laboratory_cube", "carry_laboratory", "deploy_laboratory"] and world.field_cargo.free_space(world.drone_can_collect()) <= 0:
 			return "cargo_full" if world.drone_can_collect() else "drone_unavailable"
 		if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory" and item.get("state") == "planned"):
 			return "tutorial_fund"
 		return "ocra/" + step.id
 	if world.rooms.available("bedroom") and "bed_rest" not in state.seen:
 		return "bed_rest"
-	if world.field_cargo.free_space(world.drone_can_collect()) <= 0:
+	if not automatic and world.field_cargo.free_space(world.drone_can_collect()) <= 0:
 		return "cargo_full" if world.drone_can_collect() else "drone_unavailable"
 	if not world.outpost.laboratory_unlocked() and state.facts.get("mined", false):
 		for building: Dictionary in world.outpost.buildings.structures:
@@ -153,7 +154,7 @@ func request_help() -> void:
 	replay_title = ""
 	current_id = ""
 	var id := context()
-	if not world.is_ocra() and world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
+	if not world.outpost.logistics.enabled() and not world.is_ocra() and world.aboard_workshop() and world.field_cargo.used(world.field_cargo.backpack) > 0 and not world.outpost.has_lab():
 		id = "lab_plan" if world.field_cargo.free_space(world.drone_help_available()) > 0 else "cargo_full"
 	state.offer(id, true)
 	_update_bubble()

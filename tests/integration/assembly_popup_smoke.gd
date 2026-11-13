@@ -21,6 +21,7 @@ func run() -> void:
 	await frames()
 	world.player.set_physics_process(false)
 	world.drone.set_physics_process(false)
+	world.outpost.logistics.automatic = false
 	world.guide_state.set_muted(true)
 	Fixture.lab_room(world)
 	world.player.position = Vector2(-100, 160)

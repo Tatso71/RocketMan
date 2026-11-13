@@ -45,6 +45,7 @@ var assembly: Node
 var hydraulics := WaterCircuit.new()
 var hydraulic_ui: Node2D
 var lamp_network_cache := {}
+var logistics := preload("res://scripts/systems/drone_logistics.gd").new()
 var lamp_query_depth := 0
 var lamp_query_networks := {}
 
@@ -56,6 +57,8 @@ func placement_origin(id: String, anchor: Vector2i) -> Vector2i:
 	return anchor - Vector2i(size.x / 2, size.y - 1)
 
 func _ready() -> void:
+	logistics.world = world
+	logistics.worker = world.drone
 	_build_interface()
 	station_menu = StationMenu.new()
 	station_menu.outpost = self
@@ -90,15 +93,15 @@ func station_available(station: Dictionary) -> bool:
 	if station.is_empty():
 		return false
 	if station.get("kind") == "ship":
-		return world.aboard_workshop() and (not is_instance_valid(world.gear) or not world.gear.workshop_damaged())
+		return world.aboard_workshop()
 	if station.get("kind") != "laboratory" or not buildings.structures.has(station.get("building")) or not Buildings.is_active(station.building):
 		return false
 	return site_reachable(station.building)
 
-func site_reachable(building: Dictionary) -> bool:
+func site_reachable(building: Dictionary, actor: Variant = null) -> bool:
 	if not buildings.structures.has(building):
 		return false
-	var point: Vector2 = world.player_center()
+	var point: Vector2 = actor if actor is Vector2 else world.player_center()
 	var rect := buildings.world_rect(building)
 	var closest := point.clamp(rect.position + Vector2.ONE, rect.end - Vector2.ONE)
 	if point.distance_to(closest) > Grid.metres(1.5):
@@ -359,7 +362,11 @@ func _legacy_fabricate_cube(id: String) -> bool:
 func advance_fabrication(delta: float) -> void:
 	if delta <= 0 or not is_finite(delta):
 		return
+	_flush_component_buffers()
+	var advanced_stations: Array = []
 	for job: Dictionary in fabrication.jobs.duplicate():
+		if job.station in advanced_stations: continue
+		advanced_stations.append(job.station)
 		var station := resolve_station(job.station)
 		if not fabrication_pause_reason(job).is_empty():
 			continue
@@ -386,25 +393,26 @@ func advance_fabrication(delta: float) -> void:
 func fabrication_definition(id: String) -> Dictionary:
 	return Components.recipe(id)
 
-func component_blocker(id: String, batches: int = 1) -> String:
+func component_blocker(id: String, batches: int = 1, station: Dictionary = {}, as_worker: bool = false) -> String:
 	var definition := Components.recipe(id)
 	if definition.is_empty() or batches < 1 or batches > 20:
 		return "Ricetta o quantita non valida"
 	if definition.advanced and not laboratory_unlocked():
 		return "Attiva il primo laboratorio per questa ricetta"
-	var station := nearby_station()
+	if station.is_empty(): station = nearby_station()
 	if station.is_empty():
+		return "Raggiungi un laboratorio"
+	if as_worker:
+		if not logistics.enabled() or station.get("kind") != "ship" or id not in Components.COMPONENT_IDS or not logistics._reached(world.drone.UNLOAD_POINT):
+			return "Robbie deve raggiungere il laboratorio della nave"
+	elif not station_available(station):
 		return "Raggiungi un laboratorio"
 	if station.kind == "ship" and world.gear.workshop_damaged():
 		return "Ripara il laboratorio di bordo"
 	if station.kind != "ship" and not operational(station.building):
 		return "Laboratorio non operativo"
-	if not fabrication.job_at(station_identity(station)).is_empty():
-		return "Produzione in corso"
 	if fabrication.jobs.size() >= 200:
 		return "Limite di lavorazioni raggiunto"
-	if not fabrication.buffer_at(station_identity(station)).is_empty():
-		return "Ritira l'uscita pronta per liberare il banco"
 	var reserved_ammo := 0
 	for job: Dictionary in fabrication.jobs:
 		if job.id == "bomb":
@@ -414,7 +422,18 @@ func component_blocker(id: String, batches: int = 1) -> String:
 	if world.ship_energy() < float(definition.energy) * batches:
 		return "Batteria della nave insufficiente"
 	var cost := component_batch_cost(id, batches)
-	return "" if world.field_cargo.can_pay(cost, world.drone_help_available(), fabrication_stock()) else "Materiali insufficienti o Robbie non accessibile"
+	return "" if _component_cargo(as_worker).can_pay(cost, as_worker or world.drone_help_available(), station_stock(station)) else "Materiali insufficienti o Robbie non accessibile"
+
+func station_stock(station: Dictionary) -> Dictionary:
+	return logistics.stock() if station.get("kind") == "ship" else station.building.stock
+
+func _component_cargo(as_worker: bool) -> RefCounted:
+	if not as_worker: return world.field_cargo
+	var cargo := preload("res://scripts/systems/field_cargo.gd").new()
+	cargo.drone_only = true
+	cargo.drone_capacity = world.field_cargo.drone_capacity
+	cargo.drone = world.field_cargo.drone
+	return cargo
 
 func component_batch_cost(id: String, batches: int) -> Dictionary:
 	var cost: Dictionary = Components.recipe(id).get("cost", {})
@@ -422,17 +441,19 @@ func component_batch_cost(id: String, batches: int) -> Dictionary:
 		cost[resource] *= batches
 	return cost
 
-func fabricate_components(id: String, batches: int = 1) -> bool:
-	var reason := component_blocker(id, batches)
+func fabricate_components(id: String, batches: int = 1, station: Dictionary = {}, as_worker: bool = false) -> bool:
+	if station.is_empty(): station = nearby_station()
+	var reason := component_blocker(id, batches, station, as_worker)
 	if not reason.is_empty():
 		world._note(reason)
 		return false
 	var definition := Components.recipe(id)
-	if not world.field_cargo.pay(component_batch_cost(id, batches), world.drone_help_available(), fabrication_stock()):
+	if not _component_cargo(as_worker).pay(component_batch_cost(id, batches), as_worker or world.drone_help_available(), station_stock(station)):
 		return false
 	world._set_ship_energy(world.ship_energy() - float(definition.energy) * batches)
-	fabrication.jobs.append({"id": id, "level": 1, "station": station_identity(nearby_station()), "elapsed": 0.0, "seconds": float(definition.seconds) * batches / (1.0 + 0.5 * (station_level() - 1)), "batches": batches})
+	fabrication.jobs.append({"id": id, "level": 1, "station": station_identity(station), "elapsed": 0.0, "seconds": float(definition.seconds) * batches / (1.0 + 0.5 * (station_level(station) - 1)), "batches": batches})
 	world.guide_event("component_production_started")
+	world._note("Ordine aggiunto: %s / %d lotti" % [definition.name_it, batches])
 	return true
 
 func _flush_component_buffers() -> void:
@@ -481,6 +502,11 @@ func fabrication_pause_reason(job: Dictionary) -> String:
 		return "Produzione in pausa / accendi il laboratorio e verifica collegamento e sicurezza"
 	if station.kind == "ship" and world.gear.workshop_damaged():
 		return "Produzione in pausa / ripara il laboratorio di bordo"
+	if job.id in Components.RECIPE_IDS and job.id != "bomb":
+		var definition := Components.recipe(job.id)
+		var amount: int = int(definition.amount) * int(job.get("batches", 1))
+		if world.field_cargo.room_for(fabrication.buffer_at(job.station), definition.output, fabrication.BUFFER_CAPACITY) < amount:
+			return "Produzione in pausa / uscita piena: libera spazio nel deposito"
 	return ""
 
 func cube_near_player(cube: Dictionary) -> bool:
@@ -610,11 +636,11 @@ func place_blueprint(cell: Vector2i) -> bool:
 	if not place(blueprint, cell):
 		return false
 	var plan: Dictionary = buildings.structures.back()
-	if funding_blocker(plan).is_empty():
+	if not logistics.enabled() and funding_blocker(plan).is_empty():
 		fund_site(plan)
 	return true
 
-func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}) -> String:
+func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}, actor: Variant = null) -> String:
 	if id != "ladder":
 		for entry: Dictionary in hydraulics.valves:
 			if buildings.footprint(id, cell).has_point(entry.cell):
@@ -629,7 +655,7 @@ func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}) -> S
 	var rect := Rect2(Grid.to_world(cell), Grid.to_world(buildings.size_for(id)))
 	if is_instance_valid(world.gear) and world.gear.bombs.any(func(bomb: Dictionary): return rect.intersects(Grid.rect(bomb.cell))):
 		return "Ingombro occupato da una bomba"
-	var torso: Vector2 = world.player_center()
+	var torso: Vector2 = actor if actor is Vector2 else world.player_center()
 	if torso.distance_to(rect.get_center()) > Grid.metres(3):
 		return "Cantiere fuori portata"
 	var closest := torso.clamp(rect.position + Vector2.ONE, rect.end - Vector2.ONE)
@@ -658,7 +684,7 @@ func place(id: String, cell: Vector2i) -> bool:
 		return false
 	buildings.plan(id, cell)
 	world.guide_event("project_placed")
-	world._note("Progetto in attesa / clic destro per montare")
+	world._note("Progetto in coda a Robbie" if logistics.enabled() else "Progetto in attesa / clic destro per montare")
 	build_mode = false
 	_refresh_light_sources()
 	queue_redraw()
@@ -667,12 +693,14 @@ func place(id: String, cell: Vector2i) -> bool:
 func site_cost(building: Dictionary) -> Dictionary:
 	return Buildings.cost_for(building.id)
 
-func funding_blocker(building: Dictionary) -> String:
+func funding_blocker(building: Dictionary, actor: Variant = null) -> String:
 	if building.id == "ladder":
 		return "Le scale si costruiscono direttamente con B"
-	if not site_reachable(building) or building.get("state") != "planned":
+	if not site_reachable(building, actor) or building.get("state") != "planned":
 		return "Progetto non raggiungibile: avvicinati senza pareti"
-	var reason := placement_blocker(building.id, building.origin, building)
+	if logistics.enabled() and logistics.queue_head() != building:
+		return "Attende il progetto precedente nella coda"
+	var reason := placement_blocker(building.id, building.origin, building, actor)
 	if not reason.is_empty():
 		return reason
 	if building.id not in Buildings.INDUSTRIAL_IDS and building.id not in ["ladder", "lamp"] and not safe_link(building):
@@ -681,7 +709,8 @@ func funding_blocker(building: Dictionary) -> String:
 		return "Serve un laboratorio operativo per costruire questa struttura"
 	var missing: Array[String] = []
 	for id: String in site_cost(building):
-		var deficit: int = int(site_cost(building)[id]) - world.field_cargo.available(id, world.drone_help_available())
+		var available: int = int(world.field_cargo.drone.get(id, 0)) if actor is Vector2 else world.field_cargo.available(id, world.drone_help_available())
+		var deficit: int = int(site_cost(building)[id]) - available
 		if deficit > 0:
 			missing.append("%d %s" % [deficit, ITEM_NAMES[id].to_lower()])
 	if not missing.is_empty():
@@ -697,6 +726,15 @@ func fund_site(building: Dictionary) -> bool:
 	building.progress = 0.0
 	world.guide_event("assembly_started")
 	world._note("Componenti trasferiti / montaggio in corso")
+	return true
+
+func fund_site_for_worker(building: Dictionary) -> bool:
+	if not logistics.enabled() or not funding_blocker(building, world.drone.position).is_empty(): return false
+	if not world.field_cargo.pay(site_cost(building), false, world.field_cargo.drone): return false
+	building.state = "building"
+	building.progress = 0.0
+	building.automatic = true
+	world.guide_event("assembly_started")
 	return true
 
 func cancel_plan(building: Dictionary) -> bool:
@@ -787,6 +825,8 @@ func consumption_for(building: Dictionary) -> float:
 	if building.get("damaged", false):
 		return 0.0
 	if building.get("state") == "building":
+		if logistics.enabled() and logistics.queue_head() != building: return 0.0
+		if building.get("automatic", false) and not logistics.at_site(building): return 0.0
 		var connected := construction_connected(building)
 		return Buildings.power_draw(building) if connected and world.ship_energy() > 0 else 0.0
 	var powered := operational(building) if building.id == "laboratory" else device_powered(building)
@@ -850,6 +890,8 @@ func advance(delta: float) -> void:
 		var connected := construction_connected(building)
 		if building.get("damaged", false) or building.get("state") != "building" or (building.id != "ladder" and not connected):
 			continue
+		if logistics.enabled() and logistics.queue_head() != building: continue
+		if building.get("automatic", false) and not logistics.at_site(building): continue
 		var seconds: float = float(recipe_definition(building.id).get("deployment_seconds", Buildings.build_seconds(building.id)))
 		building.progress = 1.0 if building.id == "ladder" else minf(1, float(building.progress) + duration / seconds)
 		if building.progress >= 1:

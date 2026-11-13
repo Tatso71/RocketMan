@@ -5,6 +5,7 @@ const Site = preload("res://scripts/systems/dig_site.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
 const Components = preload("res://scripts/data/component_catalog.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
+const BUFFER_CAPACITY := 80
 var jobs: Array = []
 var cubes: Array = []
 var outputs: Array = []
@@ -91,15 +92,17 @@ func restore(data: Variant) -> bool:
 			return false
 		var station := normalized_station(job.station)
 		if station in stations:
-			return false
-		stations.append(station)
+			if job.id not in Components.RECIPE_IDS or job.elapsed != 0 or next_jobs.any(func(prior: Dictionary): return prior.station == station and prior.id not in Components.RECIPE_IDS):
+				return false
+		else:
+			stations.append(station)
 		var normalized := {"id": job.id, "level": 1, "station": station, "elapsed": float(job.elapsed), "seconds": float(job.seconds)}
 		if job.has("batches"):
 			normalized.batches = int(job.batches)
 		next_jobs.append(normalized)
 	var output_stations: Array = []
 	for output in data.get("outputs", []):
-		if not output is Dictionary or not station_valid(output.get("station")) or not output.get("stock") is Dictionary or not Cargo.valid_stock(output.stock, 80):
+		if not output is Dictionary or not station_valid(output.get("station")) or not output.get("stock") is Dictionary or not Cargo.valid_stock(output.stock, BUFFER_CAPACITY):
 			return false
 		for id in output.stock:
 			if id not in Components.COMPONENT_IDS:

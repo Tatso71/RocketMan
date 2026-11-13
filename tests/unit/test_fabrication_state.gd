@@ -6,6 +6,30 @@ const Ship = preload("res://scripts/systems/ship_state.gd")
 func test_new_ship_starts_without_resources() -> void:
 	assert_int(Ship.new().cargo_used()).is_equal(0)
 
+func test_paid_component_queue_roundtrips_in_submission_order() -> void:
+	var state := Factory.new()
+	state.jobs = [
+		{"id": "structural_component", "level": 1, "station": ["ship"], "elapsed": 0.5, "seconds": 2.0, "batches": 1},
+		{"id": "electronic_component", "level": 1, "station": ["ship"], "elapsed": 0.0, "seconds": 2.0, "batches": 1}]
+	var loaded := Factory.new()
+	assert_bool(loaded.restore(JSON.parse_string(JSON.stringify(state.snapshot())))).is_true()
+	assert_int(loaded.jobs.size()).is_equal(2)
+	if loaded.jobs.size() != 2: return
+	assert_str(loaded.job_at(["ship"]).id).is_equal("structural_component")
+	assert_float(loaded.jobs[1].elapsed).is_equal(0.0)
+
+func test_queued_work_cannot_already_have_progress_or_conflict_with_cubes() -> void:
+	var state := Factory.new()
+	state.jobs = [{"id": "structural_component", "level": 1, "station": ["ship"], "elapsed": 0.5, "seconds": 2.0}]
+	var before := state.snapshot()
+	var bad := before.duplicate(true)
+	bad.jobs.append({"id": "electronic_component", "level": 1, "station": ["ship"], "elapsed": 0.1, "seconds": 2.0})
+	assert_bool(state.restore(bad)).is_false()
+	bad.jobs[1].elapsed = 0.0
+	bad.jobs[1].id = "laboratory"
+	assert_bool(state.restore(bad)).is_false()
+	assert_dict(state.snapshot()).is_equal(before)
+
 func test_paid_jobs_and_carried_cubes_roundtrip_native_and_json() -> void:
 	var state := Factory.new()
 	state.jobs.append({"id": "laboratory", "level": 1, "station": ["ship"], "elapsed": 2.5, "seconds": 5.0})

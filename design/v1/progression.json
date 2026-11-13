@@ -131,8 +131,8 @@
       },
       {
         "id": "laboratory_materials",
-        "title_it": "Raccogli per il laboratorio",
-        "hint_it": "Per il primo laboratorio raccogliamo 8 ferro, 3 rame e 1 cristallo. Con 2 lo scanner rivela temporaneamente i filoni nascosti vicino alla nave; con 1 torni a Pulse per scavarli. Terra e pietra non riempiono il carico.",
+        "title_it": "Minerali per il laboratorio",
+        "hint_it": "Per il primo laboratorio servono 8 ferro, 3 rame e 1 cristallo. Con 2 lo scanner rivela temporaneamente i filoni nascosti vicino alla nave; con 1 torni a Pulse per scavarli. Terra e pietra non riempiono il carico.",
         "detail_it": "8 ferro + 3 rame + 1 cristallo",
         "action": "inventory",
         "complete_when": {"fact": "lab_materials_ready"}
@@ -147,25 +147,25 @@
       },
       {
         "id": "laboratory_cube",
-        "title_it": "Produci i componenti",
-        "hint_it": "Rientra al banco della nave. Clic destro e Produci componenti: ordina 2 lotti strutturali e 1 elettronico. Otterrai 4 strutturali e 2 elettronici. Le risorse si pagano una sola volta all'avvio.",
-        "detail_it": "Banco / 2 lotti strutturali + 1 elettronico",
+        "title_it": "Robbie prepara i componenti",
+        "hint_it": "Puoi gia posare il laboratorio nella stanza 4 x 3: clic destro nello spazio libero e scegli Laboratorio. La sagoma e un ordine completo: Robbie fa preparare alla nave i componenti mancanti del primo progetto, poi li consegna e monta. Non serve tornare al computer per ordinare.",
+        "detail_it": "Posa la sagoma / preparazione automatica per il primo progetto",
         "action": "fabricate_lab",
         "complete_when": {"fact": "components_produced"}
       },
       {
         "id": "carry_laboratory",
-        "title_it": "Carica i componenti",
-        "hint_it": "Nel pannello del banco premi Ritira componenti. Servono 4 strutturali e 2 elettronici nel carico di Robbie: occupano solo due unita. Se manca qualcosa, completa prima la produzione.",
-        "detail_it": "Ritira / 4 strutturali + 2 elettronici",
+        "title_it": "Trasporto dei componenti",
+        "hint_it": "Robbie porta al primo progetto 4 componenti strutturali e 2 elettronici. Se non l'hai ancora fatto, posa il laboratorio nella stanza scavata: non serve ritirare i pezzi al computer. Nel carico di Robbie occupano solo due unita. Mantieni libero il percorso dalla nave alla stanza.",
+        "detail_it": "Cantiere / 4 strutturali + 2 elettronici",
         "action": "fabricate_lab",
         "complete_when": {"fact": "components_collected"}
       },
       {
         "id": "deploy_laboratory",
-        "title_it": "Monta il laboratorio",
-        "hint_it": "Nella stanza scavata fai clic destro e scegli Laboratorio. Sistema la sagoma 4 x 3 sul pavimento e clicca per montare. Il montaggio consuma i componenti che portiamo; senza materiali resta un progetto in attesa, non una stanza gratuita.",
-        "detail_it": "Clic destro nello spazio libero / Laboratorio / monta",
+        "title_it": "Progetto del laboratorio",
+        "hint_it": "Nella stanza scavata fai clic destro e scegli Laboratorio. Posa la sagoma 4 x 3 sul pavimento: Robbie prepara i componenti mancanti, consegna e monta. I progetti seguono l'ordine di posa. Se il primo si blocca, controlla il motivo con clic destro; sbloccalo o annullalo per far avanzare la coda.",
+        "detail_it": "Clic destro nello spazio libero / Laboratorio / posa progetto",
         "action": "place_lab",
         "complete_when": {"fact": "lab_built"}
       }

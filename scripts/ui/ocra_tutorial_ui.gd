@@ -62,6 +62,7 @@ func refresh() -> void:
 	if not panel.visible:
 		return
 	var tutorial: RefCounted = world.guide_state.ocra
+	var automatic: bool = world.outpost.logistics.enabled()
 	var step: Dictionary = tutorial.current()
 	var total: int = tutorial.definition.steps.size()
 	counter.text = "%d / %d" % [mini(tutorial.index() + 1, total), total]
@@ -71,7 +72,7 @@ func refresh() -> void:
 	if tutorial.complete():
 		title.text = "Primo laboratorio attivo"
 		title.modulate = Color("a7e5b4")
-		detail.text = "Luci, pompa e ventilatore sbloccati. Produci componenti qui e monta nelle gallerie."
+		detail.text = "Luci, pompa e ventilatore sbloccati. Posa i progetti: Robbie prepara, consegna e monta in ordine di posa." if automatic else "Luci, pompa e ventilatore sbloccati. Produci componenti qui e monta nelle gallerie."
 		action.text = "Apri laboratorio" if not world.outpost.nearby_lab().is_empty() else "Riascolta Robbie"
 		return
 	if step.is_empty():
@@ -84,15 +85,18 @@ func refresh() -> void:
 	if step.action == "fabricate_lab" or step.id == "laboratory_materials":
 		var cargo: RefCounted = world.field_cargo
 		var source: Dictionary = world.outpost.source_stock() if world.aboard_workshop() else {}
+		if automatic: source = world.outpost.logistics.stock()
 		if step.id == "laboratory_materials":
 			stock.text = "Ferro %d/8  Rame %d/3\nCristallo %d/1" % [cargo.available("iron", world.drone_help_available(), source), cargo.available("copper", world.drone_help_available(), source), cargo.available("crystal", world.drone_help_available(), source)]
 		else:
-			stock.text = "Strutturali %d/4\nElettronici %d/2" % [cargo.available("structural_component", world.drone_help_available()), cargo.available("electronic_component", world.drone_help_available())]
-		action.text = "Apri officina" if step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
+			var available: Dictionary = world.outpost.logistics.available_components() if automatic else {"structural_component": cargo.available("structural_component", world.drone_help_available()), "electronic_component": cargo.available("electronic_component", world.drone_help_available())}
+			stock.text = "Strutturali %d/4\nElettronici %d/2" % [available.structural_component, available.electronic_component]
+			if automatic: detail.text = "Posa il progetto nella stanza 4 x 3. Robbie prepara i semilavorati mancanti, consegna e monta in ordine. Il computer resta facoltativo."
+		action.text = "Apri computer" if step.action == "fabricate_lab" and world.aboard_workshop() else "Riascolta Robbie"
 	elif step.action == "place_lab":
 		var building: Dictionary = world.outpost.buildings.structures.filter(func(item: Dictionary): return item.id == "laboratory").front() if world.outpost.buildings.structures.any(func(item: Dictionary): return item.id == "laboratory") else {}
 		if not building.is_empty():
-			stock.text = "Montaggio %.0f%%" % (float(building.progress) * 100) if building.state == "building" else "Progetto in attesa / clic destro per montare"
+			stock.text = "Montaggio %.0f%%" % (float(building.progress) * 100) if building.state == "building" else (world.outpost.logistics.project_status(building) if automatic else "Progetto in attesa / clic destro per montare")
 		else:
 			stock.text = "4 strutturali + 2 elettronici\nIngombro libero e pavimento stabile"
 		action.text = "Riascolta Robbie"

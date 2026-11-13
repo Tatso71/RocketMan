@@ -2,7 +2,9 @@
 
 Il tutorial di Ocra fino al primo laboratorio e definito in `design/v1/progression.json`, sezione `ocra_tutorial`. I testi effettivi dei balloon e degli obiettivi sono centralizzati in `design/v1/robbie_texts.json`. Il runtime legge direttamente questi dati; non modificare l'HTML generato per cambiare il gioco.
 
-Dal 10 novembre il percorso usa raccolta di 8 ferro, 3 rame e 1 cristallo, produzione al banco di 4 componenti strutturali e 2 elettronici, ritiro nel carico di Robbie e montaggio del laboratorio nella stanza 4 x 3 m. Gli ID storici delle tappe `laboratory_cube` e `carry_laboratory` restano stabili per il catalogo testi, ma significano produzione e ritiro dei componenti: le condizioni reali sono `components_produced` e `components_collected`, non eventi di pickup di un cubo. Le scale sono gratuite. I costi di produzione/montaggio sono in `prototype_components.json`, non nelle vecchie ricette di cubi del design completo.
+Dal 13 novembre nella variante umano il percorso e': raccogliere 8 ferro, 3 rame e 1 cristallo, liberare una stanza sicura e supportata 4 x 3 m e posare il laboratorio. La sagoma e' un ordine completo: Robbie scarica alla nave, fa preparare solo i componenti mancanti del primo progetto, ritira, consegna e monta. Da scorte vuote servono 2 lotti strutturali e 1 elettronico. Non richiedere un ritorno al computer per ordinare: resta disponibile per stato, scorte e anticipazioni manuali facoltative. La direzione manuale del 12 novembre e' storica e superata per l'umano; Robbie pilotabile mantiene ordini, ritiro e montaggio manuali e i suoi override `robbie` nel catalogo testi.
+
+Gli ID delle tappe `laboratory_cube` e `carry_laboratory` restano stabili e significano produzione e ritiro dei componenti: le condizioni reali restano `components_produced` e `components_collected`, non eventi di pickup di un cubo. Titoli e aiuti per l'umano spiegano che puo gia posare la sagoma mentre Robbie prepara e trasporta; non aggiungere obblighi manuali o cambiare ID/condizioni per aggiornare il testo. Le scale sono gratuite. I costi di produzione/montaggio sono in `prototype_components.json`, non nelle vecchie ricette di cubi del design completo.
 
 ## Laboratorio Dei Testi
 
@@ -61,7 +63,15 @@ Gli eventi emessi da un'azione riuscita hanno automaticamente anche un contatore
 
 Per una nuova azione di gioco emettere una volta `world.guide_event("nome_evento")` solo dopo il successo della transazione; non occorrono modifiche al modello per contarla. Non assegnare esperienza o materiali da un messaggio. Le azioni di pulsante supportate sono `help`, `fabricate_lab`, `place_lab` e `inventory`; comandi nuovi richiedono un gestore esplicito nella GUI.
 
-## Costruzione E Compatibilita
+## Contratto Runtime Attuale
+
+Nella variante umano i progetti sono ordini completi e seguono una FIFO stretta nell'ordine originale di posa, mantenuto dopo salvataggio/caricamento. La nave produce solo i componenti mancanti del primo progetto dopo aver contato scorte pronte e uscite gia pagate, anche da ordini manuali; il residuo si arrotonda ai lotti esistenti. Niente scorte minime o produzione per progetti successivi. Robbie deve ritirare i componenti reali, raggiungere il cantiere e restare sul posto per montare: nessun pagamento remoto. Un primo progetto bloccato ferma la coda, senza saltare ai successivi. Stato e aiuti devono indicare il motivo concreto, per esempio ferro mancante, botola chiusa, stoccaggio pieno o mancanza di energia. Annullare il primo permette di avanzare.
+
+Clic destro su un laboratorio raggiungibile apre il computer per controllare stato/scorte o anticipare manualmente la produzione. Gli ordini pagano e riservano ingredienti ed energia alla richiesta e avanzano in sequenza per postazione; laboratori distinti lavorano indipendentemente. Coda pagata e uscita pronta persistono nei salvataggi, anche se manca energia o lo stoccaggio e' pieno. Distanza dalla nave e profondita non fermano il robot; botole chiuse, roccia e liquidi pericolosi possono bloccarlo. Costi, ricette, tempi, energia, capienze, icone e accesso fisico restano invariati. Consultare README, [specifica approvata](../superpowers/specs/2026-11-13-project-orders-design.md) e mappa di produzione per regole aggiornate.
+
+## Note Storiche Del Prototipo A Cubi
+
+Le sezioni seguenti descrivono il sistema precedente, non il runtime attuale: cubi da trasportare, materiali comuni, limiti radio, ricette e comandi di compatibilita qui citati sono superati. Non usarli per aggiungere compiti o testi al tutorial corrente.
 
 Le nuove partite iniziano senza materiali nella nave, nel giocatore o in Robbie. I due carichi si sommano sempre per disponibilita, pagamento e trasferimenti; il raggio radio continua a limitare il movimento del robot e la raccolta di nuove risorse, non l'uso dei materiali gia trasportati. Il deposito della nave o del laboratorio contribuisce solo quando quel banco e raggiungibile.
 
