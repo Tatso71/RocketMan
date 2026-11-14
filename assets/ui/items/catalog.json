@@ -66,6 +66,10 @@
       "name": "Laboratorio",
       "path": "assets/ui/items/laboratory.svg"
     },
+    "solar_panel": {
+      "name": "Pannello solare",
+      "path": "assets/ui/items/solar_panel.svg"
+    },
     "lamp": {
       "name": "Luce",
       "path": "assets/ui/items/lamp.svg"
@@ -214,6 +218,7 @@
     "hull_integrity": "module_hull",
     "repaired_ship_workshop": "laboratory",
     "repaired_laboratory": "laboratory",
+    "repaired_solar_panel": "solar_panel",
     "repaired_lamp": "lamp",
     "repaired_pump": "pump",
     "repaired_fan": "fan",

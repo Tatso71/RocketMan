@@ -3,6 +3,7 @@ extends RefCounted
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const Components = preload("res://scripts/data/component_catalog.gd")
+const Solar = preload("res://scripts/systems/solar_power.gd")
 const LAB_SIZE := Vector2i(4, 3)
 static var LAB_COST: Dictionary = Components.assembly_cost("laboratory")
 const CACHE_CAPACITY := 32
@@ -12,13 +13,13 @@ const PUMP_SIZE := Vector2i.ONE
 static var FAN_COST: Dictionary = Components.assembly_cost("fan")
 const FAN_RATE := 0.35
 const FAN_RADIUS := 3
-const CUBE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse", "water_tank"]
+const CUBE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse", "water_tank", "solar_panel"]
 const DEVICE_IDS := ["lamp", "pump", "fan"]
 const INDUSTRIAL_IDS := ["furnace", "gas_converter", "greenhouse", "water_tank"]
 const IndustryCatalog = preload("res://scripts/data/industry_catalog.gd")
-const NAMES := {"laboratory": "Laboratorio", "lamp": "Luce", "pump": "Pompa acqua", "fan": "Ventilatore gas", "furnace": "Fornace", "gas_converter": "Convertitore gas", "greenhouse": "Serra", "water_tank": "Contenitore acqua"}
-const CUBE_COLORS := {"laboratory": Color("8be7df"), "lamp": Color("f6d683"), "pump": Color("7cc6ee"), "fan": Color("b9e8a0"), "furnace": Color("ee9c75"), "gas_converter": Color("d4d774"), "greenhouse": Color("9cdb8c"), "water_tank": Color("6dc7e0")}
-const SIZES := {"laboratory": Vector2i(4, 3), "pump": Vector2i.ONE, "fan": Vector2i(2, 2), "furnace": Vector2i(3, 2), "gas_converter": Vector2i(2, 2), "greenhouse": Vector2i(4, 3), "water_tank": Vector2i(2, 2)}
+const NAMES := {"laboratory": "Laboratorio", "lamp": "Luce", "pump": "Pompa acqua", "fan": "Ventilatore gas", "furnace": "Fornace", "gas_converter": "Convertitore gas", "greenhouse": "Serra", "water_tank": "Contenitore acqua", "solar_panel": "Pannello solare"}
+const CUBE_COLORS := {"laboratory": Color("8be7df"), "lamp": Color("f6d683"), "pump": Color("7cc6ee"), "fan": Color("b9e8a0"), "furnace": Color("ee9c75"), "gas_converter": Color("d4d774"), "greenhouse": Color("9cdb8c"), "water_tank": Color("6dc7e0"), "solar_panel": Color("83b9eb")}
+const SIZES := {"laboratory": Vector2i(4, 3), "pump": Vector2i.ONE, "fan": Vector2i(2, 2), "furnace": Vector2i(3, 2), "gas_converter": Vector2i(2, 2), "greenhouse": Vector2i(4, 3), "water_tank": Vector2i(2, 2), "solar_panel": Solar.SIZE}
 const MAX_LAB_LEVEL := 3
 var structures: Array = []
 
@@ -42,6 +43,8 @@ static func build_seconds(id: String) -> float:
 	return 5.0 if id == "laboratory" else (0.0 if id == "ladder" else 2.5)
 
 static func power_draw(building: Dictionary) -> float:
+	if building.id == "solar_panel":
+		return 0.02 if building.get("state") == "building" else 0.0
 	if building.id in INDUSTRIAL_IDS:
 		return 0.06 if building.get("state") == "building" else 0.0
 	if building.id == "ladder":
@@ -83,10 +86,13 @@ func blocker(id: String, origin: Vector2i, site: RefCounted, field: RefCounted, 
 	if id not in CUBE_IDS and id != "ladder":
 		return "Progetto sconosciuto"
 	var rect := footprint(id, origin)
+	if id == "solar_panel":
+		var reason := Solar.placement_blocker(origin, site)
+		if not reason.is_empty(): return reason
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var cell := Vector2i(x, y)
-			if not site.contains(cell) or not site.material(cell).is_empty():
+			if (id != "solar_panel" and not site.contains(cell)) or not site.material(cell).is_empty():
 				return "Spazio non libero: scava l'ingombro del progetto"
 			if not environment_safe(id, float(field.water.get(cell, 0)), float(field.gas.get(cell, 0)), float(field.oil.get(cell, 0)), float(field.acid.get(cell, 0))):
 				return "Area non sicura: presenza di acqua, gas, petrolio o acido"
@@ -131,9 +137,11 @@ func restore(data: Variant, site: RefCounted) -> bool:
 		if not origin is Vector2i:
 			return false
 		var rect := footprint(item.id, origin)
+		if item.id == "solar_panel" and not Solar.placement_blocker(origin, site).is_empty():
+			return false
 		for y in range(rect.position.y, rect.end.y):
 			for x in range(rect.position.x, rect.end.x):
-				if not site.contains(Vector2i(x, y)) or not site.material(Vector2i(x, y)).is_empty():
+				if (item.id != "solar_panel" and not site.contains(Vector2i(x, y))) or not site.material(Vector2i(x, y)).is_empty():
 					return false
 		for placed: Dictionary in next:
 			if rect.intersects(footprint(placed.id, placed.origin)):

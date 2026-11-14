@@ -3,6 +3,12 @@ extends GdUnitTestSuite
 const REGISTRY := "res://scripts/data/item_icon_catalog.gd"
 const Tools = preload("res://scripts/data/digital_tool_catalog.gd")
 
+func test_solar_panel_and_its_repair_share_a_registered_structure_icon() -> void:
+	var icons = load(REGISTRY)
+	assert_str(icons.path("solar_panel")).is_equal("res://assets/ui/items/solar_panel.svg")
+	assert_bool(FileAccess.file_exists(icons.path("solar_panel"))).is_true()
+	assert_str(icons.path("repaired_solar_panel")).is_equal(icons.path("solar_panel"))
+
 func test_every_production_node_and_tool_has_an_icon() -> void:
 	assert_bool(FileAccess.file_exists(REGISTRY)).is_true()
 	if not FileAccess.file_exists(REGISTRY):

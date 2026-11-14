@@ -24,7 +24,10 @@ the sealed-drilling system. Mixtures and chemical reactions are deferred.
   finite-capacity endpoints. Removing a pipe stops transfer, never destroys or
   duplicates stored water.
 - Pumps occupy one cell on a pipe endpoint or straight run, never a corner or
-  junction. Existing construction costs and laboratory power still apply.
+  junction. Existing construction costs and laboratory power still apply, but
+  there is no laboratory/ship-distance limit for pump placement, paid assembly
+  or operation. Any operational field laboratory can supply the pump from the
+  shared ship battery; proximity limits for other devices are unchanged.
   Right-click controls on/off and direction. Their internal buffer is 8 units;
   active delivery has a 6 m lift and 0.7 units/s limit. Passive flow is limited
   to 0.35 units/s and cannot flow above its source head.

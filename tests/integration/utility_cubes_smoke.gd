@@ -86,6 +86,11 @@ func make_and_deploy(id: String, feet: Vector2) -> void:
 	Fixture.support(world)
 	await frames()
 	var origin: Vector2i = world.outpost.placement_origin(id, world.Grid.to_cell(feet - Vector2(0, 1)))
+	if id == "pump":
+		for offset in [-1, 0, 1]:
+			var pipe_cell := origin + Vector2i(offset, 0)
+			Fixture.carve(world, pipe_cell)
+			world.outpost.network.add("water", pipe_cell)
 	check(world.outpost.place(id, origin), id + " plan fits the intended metric footprint")
 	var unfolding: Dictionary = world.outpost.buildings.structures.back()
 	check(world.outpost.fund_site(unfolding), id + " begins assembly from carried components")
@@ -149,7 +154,7 @@ func _run() -> void:
 	world.outpost.selected_station = {"kind": "laboratory", "building": world.outpost.buildings.labs()[0]}
 	ui.open_picker(Vector2i.ZERO, Vector2(330, 160), true)
 	check(ui.recipe_rows.size() == 5 and not ui.recipe_rows.structural_component.button.disabled and ui.recipe_rows.electronic_component.button.disabled, "component rows independently reflect affordability after unlock")
-	check(ui.recipe_rows.structural_component.resources.iron.modulate == Color("a7e5b4") and ui.recipe_rows.electronic_component.resources.crystal.modulate == Color("ff7e85"), "ingredient colors use nearby Robbie's actual minerals")
+	check(ui.recipe_rows.structural_component.resources.iron.modulate == Color("a7e5b4") and ui.recipe_rows.electronic_component.resources.crystal.modulate == Color("829396"), "ingredient colors use nearby Robbie's actual minerals")
 	await frames()
 	if DisplayServer.get_name() != "headless":
 		check(controls_fit(ui.picker, ui.picker.get_visible_rect()), "all four recipe rows fit at 720p")

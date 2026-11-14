@@ -3,7 +3,7 @@ extends RefCounted
 const PATH := "res://design/v1/prototype_components.json"
 const COMPONENT_IDS := ["structural_component", "electronic_component"]
 const RECIPE_IDS := ["structural_component", "electronic_component", "refined_electronics", "structural_alloy", "bomb"]
-const STRUCTURE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse", "water_tank"]
+const STRUCTURE_IDS := ["laboratory", "solar_panel", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse", "water_tank"]
 const INGREDIENT_IDS := ["copper", "iron", "crystal", "silica", "cobalt", "copper_ingot", "glass", "structural_component", "electronic_component"]
 static var cached: Dictionary = {}
 

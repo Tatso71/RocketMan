@@ -3,6 +3,18 @@ extends GdUnitTestSuite
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
 const CATALOG_PATH := "res://scripts/data/component_catalog.gd"
 
+func test_solar_panel_assembly_is_validated_without_an_industrial_recipe() -> void:
+	var catalog = load(CATALOG_PATH)
+	var data: Dictionary = catalog.load_data()
+	assert_dict(catalog.assembly_cost("solar_panel")).is_equal({"structural_component": 2, "electronic_component": 1})
+	assert_bool(data.recipes.has("solar_panel")).is_false()
+	var bad := data.duplicate(true)
+	bad.assembly.erase("solar_panel")
+	assert_dict(catalog.validate(bad)).is_empty()
+	bad = data.duplicate(true)
+	bad.assembly.solar_panel = {"structural_component": 2, "copper": 1}
+	assert_dict(catalog.validate(bad)).is_empty()
+
 func test_component_recipes_and_assembly_costs_share_a_validated_catalog() -> void:
 	assert_bool(ResourceLoader.exists(CATALOG_PATH)).is_true()
 	if not ResourceLoader.exists(CATALOG_PATH):
