@@ -90,6 +90,10 @@
       "name": "Serra",
       "path": "assets/ui/items/greenhouse.svg"
     },
+    "water_tank": {
+      "name": "Contenitore acqua",
+      "path": "assets/ui/items/water_tank.svg"
+    },
     "ladder": {
       "name": "Scala",
       "path": "assets/ui/items/ladder.svg"
@@ -199,12 +203,8 @@
       "path": "assets/ui/items/plasma.svg"
     },
     "valve": {
-      "name": "Presa stagna",
+      "name": "Valvola blu",
       "path": "assets/ui/items/valve.svg"
-    },
-    "outlet": {
-      "name": "Terminale di scarico",
-      "path": "assets/ui/items/outlet.svg"
     }
   },
   "aliases": {
@@ -220,6 +220,7 @@
     "repaired_furnace": "furnace",
     "repaired_gas_converter": "gas_converter",
     "repaired_greenhouse": "greenhouse",
+    "repaired_water_tank": "water_tank",
     "laboratory_level_2": "laboratory",
     "module_hull_2": "module_hull",
     "module_engine_2": "module_engine",

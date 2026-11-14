@@ -178,7 +178,7 @@ func recipe_visible(id: String) -> bool:
 	return id in ["laboratory", "bomb"] or ((id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and laboratory_unlocked())
 
 func reachable_cell(cell: Vector2i, reach: float = 3.0) -> bool:
-	if not world.site.contains(cell):
+	if not Network.valid_cell(cell, world.site):
 		return false
 	var hand: Vector2 = world.player_center()
 	if hand.distance_to(Grid.center(cell)) > Grid.metres(reach):
@@ -187,22 +187,22 @@ func reachable_cell(cell: Vector2i, reach: float = 3.0) -> bool:
 	return get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
 
 func conduit_blocker(kind: String, cell: Vector2i) -> String:
-	if kind not in Network.KINDS or not world.site.contains(cell) or not world.site.material(cell).is_empty():
+	if kind not in Network.KINDS or not (Network.valid_cell(cell, world.site) if kind == "water" else world.site.contains(cell) and world.site.material(cell).is_empty()):
 		return "Serve una cella scavata"
 	if network.cells[kind].has(cell):
 		return "Condotto gia presente"
 	if kind == "water":
 		for pump: Dictionary in buildings.structures:
-			if pump.id == "pump" and buildings.footprint(pump.id, pump.origin).has_point(cell):
-				var ports := hydraulics.pump_ports(pump)
-				if cell != ports.input and cell != ports.output:
-					return "Collega il tubo alle porte inferiori della pompa"
+			if pump.id == "pump" and cell - pump.origin in Network.OFFSETS:
+				var direction: Vector2i = hydraulics.pump_direction(pump)
+				if cell - pump.origin not in [direction, -direction]:
+					return "La pompa richiede un tratto diritto: niente gomiti o giunzioni"
 	if not reachable_cell(cell):
 		return "Condotto fuori portata o dietro una parete"
 	return "" if world.field_cargo.can_pay(conduit_cost(kind), world.drone_help_available()) else "Serve 1 componente per metro di condotto"
 
 func conduit_cost(kind: String) -> Dictionary:
-	return {"electronic_component": 1} if kind == "energy" else {"structural_component": 1}
+	return Industry.Catalog.load_data().conduit_cost.get(kind, {}).duplicate()
 
 func place_conduit(kind: String, cell: Vector2i) -> bool:
 	var reason := conduit_blocker(kind, cell)
@@ -644,7 +644,7 @@ func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}, acto
 	if id != "ladder":
 		for entry: Dictionary in hydraulics.valves:
 			if buildings.footprint(id, cell).has_point(entry.cell):
-				return "Ingombro occupato da una presa stagna"
+				return "Ingombro occupato da una valvola"
 	if (id in Buildings.DEVICE_IDS or id in Buildings.INDUSTRIAL_IDS) and not laboratory_unlocked():
 		return "Costruisci e attiva il primo laboratorio"
 	if buildings.structures.size() >= 200 and ignore.is_empty():
@@ -652,6 +652,9 @@ func placement_blocker(id: String, cell: Vector2i, ignore: Dictionary = {}, acto
 	var reason := buildings.blocker(id, cell, world.site, world.environment, ignore)
 	if not reason.is_empty():
 		return reason
+	if id == "pump":
+		var pipe_reason: String = hydraulics.pump_placement_blocker(cell, self)
+		if not pipe_reason.is_empty(): return pipe_reason
 	var rect := Rect2(Grid.to_world(cell), Grid.to_world(buildings.size_for(id)))
 	if is_instance_valid(world.gear) and world.gear.bombs.any(func(bomb: Dictionary): return rect.intersects(Grid.rect(bomb.cell))):
 		return "Ingombro occupato da una bomba"
@@ -1027,7 +1030,7 @@ func mining_blocker(cell: Vector2i) -> String:
 		if cube.uid != fabrication.carried_id and Grid.to_cell(cube.position - Vector2(0, 1)) + Vector2i.DOWN == cell:
 			return "Sposta prima il cubo appoggiato su questo blocco"
 	for building: Dictionary in buildings.structures:
-		if building.id == "ladder":
+		if building.id in ["ladder", "pump"]:
 			continue
 		var rect := buildings.footprint(building.id, building.origin)
 		if cell.y == rect.end.y and cell.x >= rect.position.x and cell.x < rect.end.x:
@@ -1217,19 +1220,19 @@ func _draw() -> void:
 			draw_rect(Rect2(center - Vector2(13, 16), Vector2(26, 8)), Color("f6d683") if lamp_powered(building) else Color("727c7e"))
 		elif building.id == "pump":
 			var working := device_powered(building)
-			var base := rect.position + Vector2(8, 18)
-			draw_rect(Rect2(base, Vector2(64, 60)), Color("63888b"))
-			draw_rect(Rect2(base + Vector2(4, 6), Vector2(28, 48)), Color("25424b"))
-			draw_rect(Rect2(base + Vector2(8, 25), Vector2(20, 25)), Color("76d7dd") if working else Color("62777d"))
-			var rotor := base + Vector2(47, 28)
-			draw_circle(rotor, 13, Color("263b42"))
+			var rotor := rect.get_center()
+			draw_rect(rect.grow(-4), Color("63888b"))
+			draw_rect(rect.grow(-7), Color("25424b"))
+			draw_circle(rotor, 11, Color("263b42"))
 			for index in range(3):
 				var angle: float = index * TAU / 3 + (world.ambient_time * 6 if working else 0)
-				draw_line(rotor, rotor + Vector2(cos(angle), sin(angle)) * 10, Color("d5e5d6"), 4)
-			draw_line(base + Vector2(15, 58), base + Vector2(15, 62), Color("d6bd74"), 8)
-			draw_circle(base + Vector2(49, 8), 3, Color("a8f9a6") if working else Color("e8a477"))
-			if state == "active":
-				draw_string(ThemeDB.fallback_font, rect.position + Vector2(2, 10), "DRENATO %.1f u" % float(building.get("drained", 0)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("b6e7df"))
+				draw_line(rotor, rotor + Vector2(cos(angle), sin(angle)) * 8, Color("d5e5d6"), 3)
+			var direction := Vector2(hydraulics.pump_direction(building))
+			var tip := rotor + direction * 15
+			draw_line(rotor - direction * 14, tip, Color("76d7dd"), 2)
+			draw_line(tip, tip - direction * 5 + direction.orthogonal() * 4, Color("76d7dd"), 2)
+			draw_line(tip, tip - direction * 5 - direction.orthogonal() * 4, Color("76d7dd"), 2)
+			draw_circle(rect.position + Vector2(32, 8), 2.5, Color("a8f9a6") if working else Color("e8a477"))
 		elif building.id == "fan":
 			var working := device_powered(building)
 			var center := rect.get_center() + Vector2(0, 2)

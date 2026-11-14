@@ -142,12 +142,30 @@ func test_fluid_snapshot_survives_json_and_rejects_invalid_data_transactionally(
 	assert_bool(restored.restore(data)).is_true()
 	assert_bool(absf(_amount(restored.water) - _amount(field.water)) < 0.001).is_true()
 	var before := restored.snapshot()
-	data.water.append([12, 12, 0.5])
+	data.water.append([site.RIGHT - 1, site.DEPTH - 1, 0.5])
 	assert_bool(restored.restore(data)).is_false()
 	assert_dict(restored.snapshot()).is_equal(before)
 	data = field.snapshot()
 	data.gas[0][2] = INF
 	assert_bool(restored.restore(data)).is_false()
+
+func test_imported_water_can_exceed_native_reserves_and_still_round_trip() -> void:
+	var site := Site.new()
+	var field := Field.new(site)
+	var native_volume := _amount(field.water)
+	for x in range(-20, -12):
+		var cell := Vector2i(x, 1)
+		site.removed[cell] = true
+		field.water[cell] = 1.0
+	assert_float(_amount(field.water)).is_greater(native_volume)
+	var saved: Dictionary = JSON.parse_string(JSON.stringify(field.snapshot()))
+	var copy := Field.new(site)
+	assert_bool(copy.restore(saved)).is_true()
+	assert_float(_amount(copy.water)).is_equal_approx(_amount(field.water), 0.00001)
+	var before := copy.snapshot()
+	saved.water[0][2] = 1.1
+	assert_bool(copy.restore(saved)).is_false()
+	assert_dict(copy.snapshot()).is_equal(before)
 
 func test_legacy_outpost_without_fluid_state_can_initialize_defaults() -> void:
 	var site := Site.new(0, 0)

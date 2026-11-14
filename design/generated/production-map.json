@@ -26,6 +26,15 @@
 		"speculative_production": false,
 		"variant": "explorer"
 	},
+	"hydraulics": {
+		"greenhouse_capacity": 4.0,
+		"greenhouse_power": "operational_local_lab_ship_battery_else_cabled_converter",
+		"open_ends_spill": false,
+		"ship_tank_capacity_each": 40,
+		"ship_tanks": 2,
+		"water_only": true,
+		"water_tank_capacity": 32.0
+	},
 	"nodes": {
 		"acid": {
 			"category": "reservoir",
@@ -237,11 +246,6 @@
 			"icon": "assets/ui/items/oil.svg",
 			"name": "Petrolio"
 		},
-		"outlet": {
-			"category": "infrastructure",
-			"icon": "assets/ui/items/outlet.svg",
-			"name": "Terminale di scarico"
-		},
 		"potato": {
 			"category": "food",
 			"icon": "assets/ui/items/potato.svg",
@@ -292,6 +296,11 @@
 			"icon": "assets/ui/items/laboratory.svg",
 			"name": "Officina di bordo riparata"
 		},
+		"repaired_water_tank": {
+			"category": "state",
+			"icon": "assets/ui/items/water_tank.svg",
+			"name": "Ripristino: Contenitore acqua"
+		},
 		"seed_frost_berry": {
 			"category": "seed",
 			"icon": "assets/ui/items/seed_frost_berry.svg",
@@ -340,7 +349,7 @@
 		"valve": {
 			"category": "infrastructure",
 			"icon": "assets/ui/items/valve.svg",
-			"name": "Presa stagna"
+			"name": "Valvola blu"
 		},
 		"verdant_leaf": {
 			"category": "food",
@@ -356,6 +365,11 @@
 			"category": "infrastructure",
 			"icon": "assets/ui/items/water_conduit.svg",
 			"name": "Tubo acqua"
+		},
+		"water_tank": {
+			"category": "structure",
+			"icon": "assets/ui/items/water_tank.svg",
+			"name": "Contenitore acqua"
 		}
 	},
 	"planned": [
@@ -384,9 +398,9 @@
 			"status": "planned"
 		},
 		{
-			"id": "ship_fluid_tanks",
-			"name": "Serbatoi della nave e bocchettoni",
-			"note": "Serbatoi inizialmente vuoti e separati per acqua/gas/altri fluidi; carico e scarico fisici per trasportare risorse fra pianeti. Non implementati in questa tranche.",
+			"id": "fluid_mixing",
+			"name": "Miscele e altri fluidi trasportati",
+			"note": "Il circuito attuale trasporta solo acqua. Miscele, reazioni e trasporto di gas, petrolio o acido nei serbatoi restano futuri; nessuna conversione implicita.",
 			"status": "planned"
 		},
 		{
@@ -652,7 +666,7 @@
 				"structural_component": 2
 			},
 			"name": "Pompa acqua",
-			"notes": "2 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"notes": "1 x 1 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
 			"outputs": {
 				"pump": 1
 			},
@@ -842,6 +856,46 @@
 		},
 		{
 			"energy": {
+				"ship_energy": 0.24
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/water_tank.svg",
+			"id": "assemble_water_tank",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Contenitore acqua",
+			"notes": "2 x 2 m; componenti nel carico accessibile. Sbloccato dopo il primo laboratorio da campo.",
+			"outputs": {
+				"water_tank": 1
+			},
+			"seconds": 4.0,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/water_tank.svg",
+			"id": "repair_water_tank",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Ripara Contenitore acqua",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_water_tank": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"energy": {
 
 			},
 			"group": "infrastructure",
@@ -867,10 +921,10 @@
 			"icon": "assets/ui/items/water_conduit.svg",
 			"id": "place_water_conduit",
 			"inputs": {
-				"structural_component": 1
+
 			},
 			"name": "Tubo acqua",
-			"notes": "Costo per segmento di 1 m; posa immediata, non una lavorazione in laboratorio.",
+			"notes": "Acqua: posa e rimozione gratuite, sullo sfondo senza collisioni; angoli e giunzioni automatici. Un'estremita' libera non versa acqua.",
 			"outputs": {
 				"water_conduit": 1
 			},
@@ -924,35 +978,15 @@
 			"icon": "assets/ui/items/valve.svg",
 			"id": "place_valve",
 			"inputs": {
-				"electronic_component": 1,
-				"structural_component": 2
+
 			},
-			"name": "Monta presa stagna",
-			"notes": "Dopo il primo laboratorio; occupa 1 x 1 m libero. Perfora un solo blocco con il tool compatibile senza rimuoverlo. Apertura manuale; scollegare il tubo la chiude.",
+			"name": "Monta valvola blu",
+			"notes": "Gratuita dall'inizio, con acqua in una cella ortogonalmente adiacente. Roccia e acqua restano intatte; quattro facce collegabili, senza tool, perforazione o orientamento.",
 			"outputs": {
 				"valve": 1
 			},
 			"seconds": 0.0,
-			"station": "Faccia di una roccia",
-			"status": "implemented"
-		},
-		{
-			"energy": {
-
-			},
-			"group": "infrastructure",
-			"icon": "assets/ui/items/outlet.svg",
-			"id": "configure_outlet",
-			"inputs": {
-
-			},
-			"name": "Configura terminale acqua",
-			"notes": "Terminale chiuso inizialmente; orientabile verso una cella libera. Clic destro: scarico oppure aspirazione da una vasca. Cambiare ruolo lo richiude. Scaricare versa acqua fisica, che puo' traboccare. Non e' un nuovo macchinario.",
-			"outputs": {
-				"outlet": 1
-			},
-			"seconds": 0.0,
-			"station": "Su tubo acqua gia' posato",
+			"station": "Dentro una cella di roccia",
 			"status": "implemented"
 		},
 		{
@@ -985,7 +1019,7 @@
 				"water": 1
 			},
 			"name": "Recupera acqua",
-			"notes": "Presa stagna perforata e aperta, tubo fino all'ingresso; uscita separata verso serra o scarico. Buffer 8 u; aspirazione e sollevamento entro 6 m dalla pompa. Nessun drenaggio per raggio.",
+			"notes": "Pompa 1 x 1 m montata su un tubo terminale o rettilineo, senza pavimento, angoli o giunzioni. On/off e direzione con clic destro. Buffer 8 u, portata massima 0.70 u/s e sollevamento 6 m; consegna soltanto a contenitori, serbatoi nave o serre con spazio.",
 			"outputs": {
 				"stored_water": 1
 			},
@@ -1004,12 +1038,12 @@
 				"water": 1
 			},
 			"name": "Trasferisci acqua per gravita'",
-			"notes": "Acqua spostata, non creata. Percorso sotto il livello della presa e scarico piu' basso. Cella ricevente piena o contaminata ferma il trasferimento.",
+			"notes": "Portata passiva massima 0.35 u/s, mai sopra il livello della fonte. Solo acqua verso destinazioni finite: contenitore 32 u, serra 4 u, due serbatoi nave da 40 u. Estremita' libere e destinazioni piene non disperdono acqua.",
 			"outputs": {
-				"water": 1
+				"stored_water": 1
 			},
 			"seconds": 2.85714285714286,
-			"station": "Presa e scarico collegati",
+			"station": "Valvola e contenitore collegati",
 			"status": "implemented"
 		},
 		{
@@ -1033,7 +1067,7 @@
 		},
 		{
 			"energy": {
-				"local_energy": 0.9
+				"ship_energy": 0.9
 			},
 			"group": "agriculture",
 			"icon": "assets/ui/items/potato.svg",
@@ -1043,7 +1077,7 @@
 				"stored_water": 2.0
 			},
 			"name": "Patata",
-			"notes": "Nave: 3 semi di patata iniziali.",
+			"notes": "Nave: 3 semi di patata iniziali. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
 			"outputs": {
 				"potato": 3.0,
 				"seed_potato": 2.0
@@ -1054,7 +1088,7 @@
 		},
 		{
 			"energy": {
-				"local_energy": 1.0
+				"ship_energy": 1.0
 			},
 			"group": "agriculture",
 			"icon": "assets/ui/items/ochre_tuber.svg",
@@ -1064,7 +1098,7 @@
 				"stored_water": 2.5
 			},
 			"name": "Tubero ocra",
-			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
 			"outputs": {
 				"ochre_tuber": 3.0,
 				"seed_ochre_tuber": 2.0
@@ -1075,7 +1109,7 @@
 		},
 		{
 			"energy": {
-				"local_energy": 0.8
+				"ship_energy": 0.8
 			},
 			"group": "agriculture",
 			"icon": "assets/ui/items/verdant_leaf.svg",
@@ -1085,7 +1119,7 @@
 				"stored_water": 3.0
 			},
 			"name": "Verdura viridia",
-			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
 			"outputs": {
 				"seed_verdant_leaf": 2.0,
 				"verdant_leaf": 3.0
@@ -1096,7 +1130,7 @@
 		},
 		{
 			"energy": {
-				"local_energy": 1.2
+				"ship_energy": 1.2
 			},
 			"group": "agriculture",
 			"icon": "assets/ui/items/frost_berry.svg",
@@ -1106,7 +1140,7 @@
 				"stored_water": 1.5
 			},
 			"name": "Bacca brina",
-			"notes": "Semi trovati nelle capsule dei pianeti; acqua da pompa e energia locale via cavi.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
 			"outputs": {
 				"frost_berry": 3.0,
 				"seed_frost_berry": 2.0
@@ -1555,7 +1589,8 @@
 		}
 	],
 	"runtime_flags": {
-		"local_industry_supply": "paused_without_natural_gas",
+		"gas_industry_supply": "paused_without_natural_gas",
+		"greenhouse_supply": "local_lab_ship_battery_else_cabled_converter",
 		"natural_gas_pockets": false
 	},
 	"scope": "current_playable_prototype",
@@ -1589,8 +1624,9 @@
 			"repair_gas_converter",
 			"assemble_greenhouse",
 			"repair_greenhouse",
+			"assemble_water_tank",
+			"repair_water_tank",
 			"place_energy_conduit",
-			"place_valve",
 			"upgrade_module_hull_2",
 			"upgrade_module_hull_3",
 			"upgrade_module_engine_2",
@@ -1626,11 +1662,7 @@
 		],
 		"local_energy": [
 			"smelt_copper_ingot",
-			"smelt_glass",
-			"grow_potato",
-			"grow_ochre_tuber",
-			"grow_verdant_leaf",
-			"grow_frost_berry"
+			"smelt_glass"
 		],
 		"seed_frost_berry": [
 			"grow_frost_berry"
@@ -1657,8 +1689,13 @@
 			"assemble_furnace",
 			"assemble_gas_converter",
 			"assemble_greenhouse",
+			"assemble_water_tank",
 			"pump_water",
-			"vent_gas"
+			"vent_gas",
+			"grow_potato",
+			"grow_ochre_tuber",
+			"grow_verdant_leaf",
+			"grow_frost_berry"
 		],
 		"silica": [
 			"smelt_glass"
@@ -1683,9 +1720,9 @@
 			"repair_gas_converter",
 			"assemble_greenhouse",
 			"repair_greenhouse",
-			"place_water_conduit",
+			"assemble_water_tank",
+			"repair_water_tank",
 			"place_gas_conduit",
-			"place_valve",
 			"upgrade_module_hull_2",
 			"upgrade_module_hull_3",
 			"upgrade_module_engine_2",

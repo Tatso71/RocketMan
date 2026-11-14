@@ -175,6 +175,7 @@ func test_fan_accepts_gas_but_not_water_and_uses_real_power() -> void:
 	_room(site)
 	var field := Field.new(site)
 	field.gas[Vector2i(-5, 3)] = 1.0
+	field.gas[Vector2i(-5, 2)] = 1.0
 	var buildings := Buildings.new()
 	assert_str(buildings.blocker("fan", Vector2i(-5, 2), site, field)).is_empty()
 	assert_str(buildings.blocker("pump", Vector2i(-5, 2), site, field)).contains("sicura")

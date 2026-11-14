@@ -75,14 +75,14 @@
       "id": "pump_plan",
       "priority": 40,
       "title": "Pompa e circuito acqua",
-      "body": "La pompa occupa 2 x 2 m e costa 2 strutturali e 2 elettronici. Con T monta una presa stagna accanto alla parete della falda; R cambia orientamento. Collega i tubi all'ingresso della pompa e porta l'uscita alla serra o a uno scarico.",
+      "body": "Con T posa una valvola blu sulla roccia che tocca l'acqua: non devi scavare la parete. P seleziona i tubi: clicca e trascina col mouse per posarli gratis, anche sulle scale. Maiusc e clic li rimuove; destro esce. La pompa occupa un blocco su un tratto diritto e costa 2 strutturali e 2 elettronici. Porta il tubo a una serra, un contenitore o una valvola della nave.",
       "detail": ""
     },
     {
       "id": "pump_built",
       "priority": 45,
       "title": "Pompa attiva",
-      "body": "La pompa ha due porte separate: ingresso azzurro e uscita dorata. Clic destro sulla presa per perforare in tenuta e aprire la valvola; sulla pompa trovi portata, riserva e inversione. Serve energia dal laboratorio: l'acqua non scompare, va alla destinazione collegata.",
+      "body": "Clic destro sulla pompa per accenderla e scegliere la direzione della freccia. La pompa riceve energia dal laboratorio e puo spingere l'acqua verso l'alto. Una valvola aperta lascia passare acqua solo verso un oggetto collegato: un tubo che finisce nel vuoto non perde.",
       "detail": ""
     },
     {

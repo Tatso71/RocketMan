@@ -104,12 +104,12 @@ func craft_deploy(id: String, origin: Vector2i, supply: bool = true) -> void:
 
 func lay_line(kind: String, first: int, last: int) -> void:
 	var component := "electronic_component" if kind == "energy" else "structural_component"
-	give({component: last - first + 1})
+	give({} if kind == "water" else {component: last - first + 1})
 	for x in range(first, last + 1):
 		world.player.position = Vector2(x * 40 + 20, 240)
 		Fixture.support(world)
 		var reason: String = world.outpost.conduit_blocker(kind, Vector2i(x, 5))
-		check(world.outpost.place_conduit(kind, Vector2i(x, 5)), "%s pipe at %d paid and placed instantly%s" % [kind, x, " / " + reason if not reason.is_empty() else ""])
+		check(world.outpost.place_conduit(kind, Vector2i(x, 5)), "%s pipe at %d placed instantly%s" % [kind, x, " / " + reason if not reason.is_empty() else ""])
 
 func _run() -> void:
 	create_timer(100).timeout.connect(func(): push_error("Industry smoke timeout"); quit(2))
@@ -144,7 +144,8 @@ func _run() -> void:
 	check(Fixture.build(world, "laboratory", Vector2i(-4, 0)), "first real lab unlocks the industrial branch")
 	await craft_deploy("gas_converter", Vector2i(-7, 4))
 	await craft_deploy("furnace", Vector2i(-4, 4))
-	await craft_deploy("pump", Vector2i(-10, 4))
+	await lay_line("water", -10, -8)
+	await craft_deploy("pump", Vector2i(-9, 5))
 	await stand(Vector2(-100, 240))
 	give({"copper": 4, "silica": 4})
 	check(world.outpost.industry.start_smelting(machine("furnace"), "copper_ingot", world.outpost), "furnace reserves real ore for a paid order")
@@ -187,30 +188,41 @@ func _run() -> void:
 	check(world.outpost.industry.plant(machine("greenhouse"), "potato", world.outpost), "first crop consumes one of the ship's seed potatoes")
 	world.outpost.advance(5)
 	check(world.seeds().potato == 2 and world.outpost.industry.state(machine("greenhouse")).elapsed == 0, "no water means no free growth or seed repayment")
-	await lay_line("water", -9, 1)
+	for x in range(-12, 2):
+		if world.outpost.network.cells.water.has(Vector2i(x, 5)):
+			continue
+		world.player.position = Vector2(x * 40 + 20, 240)
+		Fixture.support(world)
+		check(world.outpost.place_conduit("water", Vector2i(x, 5)), "free water pipe extends the straight pump run")
 	for cell: Vector2i in [Vector2i(-15, 4), Vector2i(-14, 4), Vector2i(-15, 5), Vector2i(-14, 5)]:
 		Fixture.carve(world, cell)
 	world.environment.water = {Vector2i(-15, 4): 1.0, Vector2i(-14, 4): 1.0, Vector2i(-15, 5): 1.0, Vector2i(-14, 5): 1.0}
 	world.player.position = Vector2(-460, 240)
 	Fixture.support(world)
 	give({"structural_component": 5, "electronic_component": 1})
-	check(world.outpost.hydraulics.place("valve", Vector2i(-12, 5), Vector2i.LEFT, world.outpost), "sealed intake mounts without removing its rock anchor")
-	for x in range(-12, -9):
-		check(world.outpost.place_conduit("water", Vector2i(x, 5)), "connect actual valve to separate pump inlet")
-	check(world.outpost.hydraulics.drill(world.outpost.hydraulics.valves[0], world.outpost) and world.outpost.hydraulics.toggle(world.outpost.hydraulics.valves[0], world.outpost), "perforate and open the sealed intake")
+	var valve_cell := Vector2i(-13, 5)
+	check(not world.site.material(valve_cell).is_empty(), "valve anchor remains an existing rock cell beside water")
+	check(world.outpost.hydraulics.place("valve", valve_cell, world.outpost), "blue valve mounts in rock without drilling or orientation")
+	var valve: Dictionary = world.outpost.hydraulics.at(valve_cell)
+	if not valve.get("opened", false):
+		check(world.outpost.hydraulics.toggle(valve, world.outpost), "open blue valve")
+	await stand(Vector2(-340, 240))
+	check(world.outpost.hydraulics.set_pump_direction(machine("pump"), Vector2i.RIGHT, world.outpost), "straight one-cell pump delivers toward the greenhouse")
 	world.player.position = Vector2(140, 240)
 	world.drone.position = Vector2(60, 170)
 	for tick in range(100):
 		# Advance the water cavity while unrelated gas hazards remain frozen, as in this fixture's other steps.
 		world.environment.water = world.environment._step_liquid(world.environment.water, {}, world.environment.Fluids.KINDS.water.fall, world.environment.Fluids.KINDS.water.spread)
 		world.outpost.advance(0.2)
-	check(world.outpost.industry.state(machine("greenhouse")).elapsed > 19.9, "pumped finite water irrigates crop through actual connected tubes")
+	var growing: Dictionary = world.outpost.industry.state(machine("greenhouse"))
+	check(growing.elapsed > 0 and growing.water > 0 and growing.water <= 4, "finite connected water fills the greenhouse's own irrigation buffer and grows crops")
 	var tank: float = world.outpost.industry.state(machine("pump")).water
-	check(absf(tank + volume(world.environment.water) + 20.0 * 2.0 / 45.0 - 4.0) < 0.001, "pump storage, remaining source and irrigation conserve four water volumes")
+	check(absf(tank + float(growing.water) + volume(world.environment.water) + float(growing.elapsed) * 2.0 / 45.0 - 4.0) < 0.001, "pump buffer, greenhouse buffer, remaining source and consumed irrigation conserve four water volumes")
 	world.player.position = Vector2(-180, 240)
 	check(world.outpost.remove_conduit("water", Vector2i(-5, 5)), "water tube can be removed without removing gas or energy at that crossing")
+	var buffered_progress: float = growing.elapsed
 	world.outpost.advance(5)
-	check(absf(world.outpost.industry.state(machine("greenhouse")).elapsed - 20) < 0.001, "cut water line pauses growth while preserving crop")
+	check(growing.elapsed > buffered_progress, "cut water line preserves the greenhouse buffer for continued irrigation")
 	var fuel_before := volume(world.environment.gas)
 	world.outpost.advance(2)
 	check(absf(volume(world.environment.gas) - fuel_before) < 0.00001, "full converter stops consuming gas when there is no electrical demand")
@@ -219,7 +231,7 @@ func _run() -> void:
 	await reload_world()
 	world.player.position = Vector2(140, 240)
 	world.drone.position = Vector2(60, 170)
-	check(world.seeds().potato == 2 and world.outpost.industry.state(machine("greenhouse")).elapsed > 19.9, "crop and global seed count survive halfway save/load")
+	check(world.seeds().potato == 2 and world.outpost.industry.state(machine("greenhouse")).elapsed > buffered_progress, "crop, stored water and global seed count survive halfway save/load")
 	world.camera.position = Vector2(-40, 135)
 	world.camera.zoom = Vector2.ONE * 0.9
 	# Gas conversion is tested above; do not vent that fixture's exposed gas into the farm during live panel simulation.
@@ -238,7 +250,7 @@ func _run() -> void:
 	world.outpost.set_process(false)
 	world.outpost.industry_ui.window.hide()
 	world.outpost.advance(30)
-	give({"soil": 20})
+	give({"structural_component": 80})
 	check(not world.outpost.industry.collect(machine("greenhouse"), world.outpost) and world.seeds().potato == 2, "full cargo preserves mature crop without duplicating food or seeds")
 	give({})
 	check(world.outpost.industry.collect(machine("greenhouse"), world.outpost), "harvest fits once cargo has room")
@@ -292,7 +304,7 @@ func _run() -> void:
 	world.outpost.industry_ui.window.hide()
 	world.player.position = Vector2(-80, -80)
 	world.outpost.construction.open_picker(Vector2i.ZERO, Vector2.ZERO, true)
-	await picture("seven-recipes-1080p", world.outpost.construction.picker)
+	await picture("eight-recipes-1080p", world.outpost.construction.picker)
 	var recipe_scroll: ScrollContainer = world.outpost.construction.recipe_grid.get_parent()
 	recipe_scroll.scroll_vertical = 1000
 	await picture("greenhouse-recipe-bottom-1080p", world.outpost.construction.picker)

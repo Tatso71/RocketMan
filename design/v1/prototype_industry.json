@@ -3,7 +3,8 @@
   "recipes": {
     "furnace": {"name_it": "Fornace", "cost": {"structural_component": 3, "electronic_component": 1}, "seconds": 6.0, "energy": 0.02, "deployment_seconds": 5.0},
     "gas_converter": {"name_it": "Convertitore gas", "cost": {"structural_component": 2, "electronic_component": 2}, "seconds": 5.0, "energy": 0.02, "deployment_seconds": 4.0},
-    "greenhouse": {"name_it": "Serra", "cost": {"structural_component": 4, "electronic_component": 2}, "seconds": 7.0, "energy": 0.02, "deployment_seconds": 6.0}
+    "greenhouse": {"name_it": "Serra", "cost": {"structural_component": 4, "electronic_component": 2}, "seconds": 7.0, "energy": 0.02, "deployment_seconds": 6.0},
+    "water_tank": {"name_it": "Contenitore acqua", "cost": {"structural_component": 2, "electronic_component": 1}, "seconds": 5.0, "energy": 0.02, "deployment_seconds": 4.0}
   },
   "smelting": {
     "copper_ingot": {"name_it": "Lingotto di rame", "cost": {"copper": 2}, "seconds": 12.0, "power": 0.2},
@@ -17,5 +18,7 @@
   },
   "converter": {"gas_per_second": 0.04, "kwh_per_gas": 12.0, "capacity": 12.0},
   "pump_capacity": 8.0,
-  "conduit_cost": {"structural_component": 1}
+  "water_tank_capacity": 32.0,
+  "greenhouse_capacity": 4.0,
+  "conduit_cost": {"water": {}, "gas": {"structural_component": 1}, "energy": {"electronic_component": 1}}
 }

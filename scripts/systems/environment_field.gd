@@ -257,6 +257,8 @@ func _decode(entries: Array, kind: String) -> Variant:
 	for pocket: Dictionary in site.pockets():
 		if pocket.kind == kind:
 			capacity += Layout.cells(pocket).size()
+	# Ship tanks can import water; valid open cells, not native reserves, bound it.
+	if kind == "water": capacity = site.DEPTH * (site.RIGHT - site.LEFT)
 	for entry in entries:
 		if not entry is Array or entry.size() != 3:
 			return null

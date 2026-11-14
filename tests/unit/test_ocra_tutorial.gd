@@ -40,7 +40,7 @@ func test_catalog_loads_the_authored_tasks_and_laboratory_recipe() -> void:
 	assert_int(data.laboratory.cost.stone).is_equal(6)
 	assert_int(data.laboratory.cost.copper).is_equal(4)
 	assert_float(data.laboratory.seconds).is_equal(5.0)
-	assert_int(data.fabrication.size()).is_equal(7)
+	assert_int(data.fabrication.size()).is_equal(8)
 	assert_dict(data.fabrication.lamp.cost).is_equal({"soil": 1, "copper": 1})
 	assert_dict(data.fabrication.pump.cost).is_equal({"stone": 3, "copper": 4})
 	assert_dict(data.fabrication.fan.cost).is_equal({"stone": 2, "copper": 3})

@@ -2,6 +2,7 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Cargo = preload("res://scripts/systems/field_cargo.gd")
+const VeinSurface = preload("res://scripts/ui/vein_surface.gd")
 const DARK := Color("030509")
 static var rock_atlas: Texture2D = load("res://assets/terrain/rock-atlas-v1.png")
 static var noises: Dictionary = {}
@@ -129,6 +130,54 @@ static func _light(world: Node2D, lighting: Dictionary, point: Vector2) -> float
 		lighting[point] = world._illumination(point)
 	return lighting[point]
 
+static func cached_vein_batch(cache: Dictionary, site: RefCounted, candidates: Array, illumination: Callable, hidden: Dictionary = {}) -> Dictionary:
+	var key := [site.get_instance_id(), site.terrain_seed, site.layout_version]
+	if cache.get("key") != key:
+		cache.clear()
+		cache.merge({"key": key, "geometry": {}})
+	var cells: Array = []
+	for cell: Vector2i in candidates:
+		if hidden.has(cell) or site.material(cell).is_empty() or not site.exposed(cell): continue
+		if site.pure_vein(cell).is_empty() or illumination.call(Grid.center(cell)) <= 0.08: continue
+		cells.append(cell)
+	if cache.has("batch") and cache.batch.cells == cells:
+		return cache.batch
+	var batch := VeinSurface.empty_batch()
+	batch.cells = cells
+	batch.merge({"light_points": PackedVector2Array(), "light_offsets": PackedInt32Array(), "light_weights": PackedVector4Array()})
+	for cell: Vector2i in cells:
+		var vein: Dictionary = site.pure_vein(cell)
+		var geometry := VeinSurface.cached_vein(cache.geometry, vein, site.terrain_seed)
+		var data: Dictionary = geometry.cells[cell]
+		VeinSurface.append_geometry(batch, data)
+		var rect := Grid.rect(cell)
+		var offset: int = batch.light_points.size()
+		batch.light_points.append_array(PackedVector2Array([rect.position, rect.position + Vector2(40, 0), rect.end, rect.position + Vector2(0, 40)]))
+		for point: Vector2 in data.points:
+			var fraction := (point - rect.position) / rect.size
+			batch.light_offsets.append(offset)
+			batch.light_weights.append(Vector4((1 - fraction.x) * (1 - fraction.y), fraction.x * (1 - fraction.y), fraction.x * fraction.y, (1 - fraction.x) * fraction.y))
+	cache.batch = batch
+	return batch
+
+static func lit_vein_colors(world: Node2D, batch: Dictionary, lighting: Dictionary) -> PackedColorArray:
+	# Reuse the atlas's world-grid samples, not one expensive light query per facet.
+	var samples := PackedFloat32Array()
+	for point: Vector2 in batch.light_points:
+		samples.append(_light(world, lighting, point))
+	var colors := PackedColorArray()
+	for index in range(batch.points.size()):
+		var offset: int = batch.light_offsets[index]
+		var weights: Vector4 = batch.light_weights[index]
+		var light := weights.dot(Vector4(samples[offset], samples[offset + 1], samples[offset + 2], samples[offset + 3]))
+		var ink: Color = batch.colors[index]
+		colors.append(Color(DARK.lerp(ink, light), ink.a * smoothstep(0.08, 0.24, light)))
+	return colors
+
+static func _draw_veins(world: Node2D, batch: Dictionary, lighting: Dictionary) -> void:
+	if batch.points.is_empty(): return
+	RenderingServer.canvas_item_add_triangle_array(world.get_canvas_item(), batch.indices, batch.points, lit_vein_colors(world, batch, lighting))
+
 static func noise_at(point: Vector2, seed: int) -> float:
 	return sin(point.x * 0.031 + seed * 0.71) * cos(point.y * 0.026 - seed * 0.37) * 0.055 + sin(point.x * 0.013 + point.y * 0.021) * 0.035
 
@@ -165,6 +214,7 @@ static func draw(world: Node2D) -> void:
 	world.set_meta("terrain_geometry", cache)
 	var hidden := hidden_pockets(world)
 	var rock_cells: Array = []
+	var lit_cells: Array = []
 	var exposed_edges: Array = []
 	var grid_cells: Array = []
 	for y in range(maxi(0, floori(visible.position.y / 40)), mini(world.site.DEPTH, ceili(visible.end.y / 40))):
@@ -186,15 +236,17 @@ static func draw(world: Node2D) -> void:
 			else:
 				rock_cells.append(cell)
 				if light > 0.08:
+					lit_cells.append(cell)
 					exposed_edges.append({"cell": cell, "light": light})
 			if world.show_grid and light > 0.15:
 				grid_cells.append({"rect": rect, "light": light})
 	_draw_rocks(world, cached_batch(cache, rock_cells, world.site.terrain_seed), lighting)
+	var vein_cache: Dictionary = world.get_meta("vein_geometry", {})
+	world.set_meta("vein_geometry", vein_cache)
+	var illuminated := func(point: Vector2) -> float: return _light(world, lighting, point)
+	_draw_veins(world, cached_vein_batch(vein_cache, world.site, lit_cells, illuminated, hidden), lighting)
 	# Decorate after all air cells, so their backgrounds cannot erase the silhouette.
 	for entry: Dictionary in exposed_edges:
-		if world.site.exposed(entry.cell) and not world.site.pure_vein(entry.cell).is_empty():
-			var kind: String = world.site.material(entry.cell)
-			world.draw_colored_polygon(PackedVector2Array(cache.cells[entry.cell].points.slice(0, 4)), Color(Cargo.COLORS[kind], entry.light * 0.38))
 		_draw_edges(world, entry.cell, cache.cells[entry.cell].base, entry.light, hidden)
 	for entry: Dictionary in grid_cells:
 		world.draw_rect(entry.rect, Color(0.65, 0.7, 0.73, entry.light * 0.2), false, 1)

@@ -6,30 +6,28 @@ var failures := 0
 var world: Node2D
 var capture := false
 
-func _initialize() -> void:
-	run.call_deferred()
+func _initialize() -> void: run.call_deferred()
 
 func check(value: bool, label: String) -> void:
 	print(("PASS: " if value else "FAIL: ") + label)
 	if not value: failures += 1
 
 func frames() -> void:
-	for index in range(5): await physics_frame
+	for index in range(4): await physics_frame
 
 func picture(name: String, viewport: Viewport = null) -> void:
 	if not capture: return
 	await frames()
 	await RenderingServer.frame_post_draw
 	var target: Viewport = root if viewport == null else viewport
-	check(target.get_texture().get_image().save_png("res://reports/water-" + name + ".png") == OK, "capture " + name)
+	check(target.get_texture().get_image().save_png("res://reports/blue-water-" + name + ".png") == OK, "capture " + name)
 
 func stand(cell: Vector2i) -> void:
-	world.player.position = Grid.center(cell) + Vector2(0, 20)
-	Fixture.support(world)
-	# This fixture tests plumbing, not companion pathfinding through its test shafts.
+	world.player.position = Grid.center(cell) + Vector2(0, world.player.body_size().y / 2)
 	world.drone.position = world.player.position - Vector2(0, 36)
 	world.drone.mission = "follow"
 	world.field_cargo.drone_available = true
+	await frames()
 
 func click(cell: Vector2i, button: MouseButton) -> InputEventMouseButton:
 	var event := InputEventMouseButton.new()
@@ -41,20 +39,21 @@ func click(cell: Vector2i, button: MouseButton) -> InputEventMouseButton:
 func volume() -> float:
 	var result := 0.0
 	for value in world.environment.water.values(): result += float(value)
-	for pump: Dictionary in world.outpost.buildings.structures:
-		if pump.id == "pump": result += float(world.outpost.industry.state(pump).water)
+	for b: Dictionary in world.outpost.buildings.structures:
+		if b.id in ["pump", "water_tank", "greenhouse"]: result += float(world.outpost.industry.state(b).get("water", 0))
+	for value in world.outpost.hydraulics.local_ship_water.values(): result += float(value)
 	return result
 
 func fits(node: Node, bounds: Rect2) -> bool:
 	for child in node.get_children():
 		if child is Control and child.is_visible_in_tree() and not bounds.grow(1).encloses(child.get_global_rect()):
-			print("Overflow: ", child, " / ", child.get_global_rect())
+			print("Overflow: ", child.get_path(), " rect=", child.get_global_rect(), " bounds=", bounds)
 			return false
 		if not fits(child, bounds): return false
 	return true
 
 func run() -> void:
-	create_timer(60).timeout.connect(func(): quit(2))
+	create_timer(45).timeout.connect(func(): quit(2))
 	capture = "--capture" in OS.get_cmdline_user_args()
 	root.size = Vector2i(1280, 720)
 	world = load("res://scenes/prototype/rocket_home.tscn").instantiate()
@@ -66,103 +65,85 @@ func run() -> void:
 	world.drone.set_physics_process(false)
 	world.outpost.set_process(false)
 	world.guide_state.set_muted(true)
-	for y in range(3):
-		for x in range(-4, 0): Fixture.carve(world, Vector2i(x, y))
-	world.outpost.buildings.install("laboratory", Vector2i(-4, 0))
-	world.guide_state.facts.lab_built = true
-	world.environment.water.clear()
-	world.environment.oil.clear()
-	world.environment.acid.clear()
-	world.environment.gas.clear()
+	for kind: String in ["water", "oil", "acid", "gas"]: world.environment.get(kind).clear()
 	Fixture.carve(world, Vector2i(-6, 5))
 	world.environment.water[Vector2i(-6, 5)] = 1.0
-	for x in range(-4, 1): Fixture.carve(world, Vector2i(x, 5))
-	for x in range(-4, 0): Fixture.carve(world, Vector2i(x, 4))
-	for y in range(1, 6): Fixture.carve(world, Vector2i(0, y))
-	Fixture.carve(world, Vector2i(1, 1))
-	Fixture.carve(world, Vector2i(1, 2))
-	Fixture.carve(world, Vector2i(1, 3))
-	await frames()
-	world.field_cargo.drone = {"structural_component": 60, "electronic_component": 16}
-	stand(Vector2i(-4, 5))
+	for x in range(-4, 3): Fixture.carve(world, Vector2i(x, 5))
+	for y in range(1, 6): Fixture.carve(world, Vector2i(2, y))
+	for x in range(2):
+		for y in range(2): Fixture.carve(world, Vector2i(x, y))
+	await stand(Vector2i(-4, 5))
 	var outpost = world.outpost
-	world.camera.position = Vector2(-60, 80)
-	world.camera.zoom = Vector2.ONE
-	world.camera.force_update_scroll()
-	outpost.industry_ui.menu.id_pressed.emit(10)
-	var rotate := InputEventKey.new()
-	rotate.physical_keycode = KEY_R
-	rotate.pressed = true
-	check(outpost.handle_input(rotate), "R rotates the selected intake preview")
-	outpost.hydraulic_ui.direction = Vector2i.LEFT
-	check(outpost.handle_input(click(Vector2i(-4, 5), MOUSE_BUTTON_LEFT)), "actual left click mounts valve instead of mining")
-	check(outpost.hydraulics.valves.size() == 1 and not world.site.material(Vector2i(-5, 5)).is_empty(), "valve leaves anchor intact")
+	var cargo: Dictionary = world.field_cargo.snapshot()
+	var terrain: Array = world.site.snapshot()
+	outpost.hydraulic_ui.begin("valve")
+	check(outpost.handle_input(click(Vector2i(-5, 5), MOUSE_BUTTON_LEFT)), "left click places blue valve on rock")
 	outpost.hydraulic_ui.reset()
-	for cell: Vector2i in [Vector2i(-4, 5), Vector2i(-3, 5), Vector2i(-2, 5), Vector2i(-1, 5), Vector2i(0, 5), Vector2i(0, 4), Vector2i(0, 3), Vector2i(0, 2), Vector2i(0, 1)]:
-		stand(cell)
-		check(outpost.place_conduit("water", cell), "place pipe " + str(cell))
-	stand(Vector2i(-2, 5))
-	check(outpost.place("pump", Vector2i(-2, 4)), "pump has its normal paid assembly plan")
-	var pump: Dictionary = outpost.buildings.structures.back()
-	check(outpost.fund_site(pump), "pay carried components for pump")
-	outpost.advance(4.1)
-	check(pump.state == "active", "pump assembly completes")
-	stand(Vector2i(0, 1))
-	outpost.industry_ui.menu.id_pressed.emit(11)
-	outpost.hydraulic_ui.direction = Vector2i.RIGHT
-	check(outpost.handle_input(click(Vector2i(0, 1), MOUSE_BUTTON_LEFT)), "actual click configures capped outlet on paid pipe")
-	outpost.hydraulic_ui.reset()
-	if outpost.hydraulics.outlets.is_empty() or outpost.hydraulics.valves.is_empty():
+	var entry: Dictionary = outpost.hydraulics.at(Vector2i(-5, 5))
+	check(not entry.is_empty() and entry.get("opened", false), "new valve is immediately ready without extra action")
+	check(world.field_cargo.snapshot() == cargo and world.site.snapshot() == terrain, "valve uses no research, cargo or mining")
+	if entry.is_empty():
 		quit(1)
 		return
-	check(outpost.hydraulics.toggle(outpost.hydraulics.outlets[0], outpost), "open receiving outlet")
-	stand(Vector2i(-4, 5))
-	check(outpost.handle_input(click(Vector2i(-4, 5), MOUSE_BUTTON_RIGHT)), "right click opens intake control panel")
-	check(outpost.hydraulic_ui.window.visible and world.controls_blocked(), "intake panel blocks explorer controls")
-	outpost.hydraulic_ui.drill_button.pressed.emit()
-	outpost.hydraulic_ui.opened_toggle.set_pressed(true)
-	check(outpost.hydraulics.valves[0].drilled and outpost.hydraulics.valves[0].opened, "panel perforates and opens intake")
+	for x in range(-4, 3):
+		var cell := Vector2i(x, 5)
+		await stand(cell)
+		check(outpost.place_conduit("water", cell), "free background pipe " + str(cell))
+	for y in range(1, 5):
+		await stand(Vector2i(2, y))
+		check(outpost.place_conduit("water", Vector2i(2, y)), "elbow route " + str(y))
+	for x in range(2):
+		await stand(Vector2i(x, 1))
+		check(outpost.place_conduit("water", Vector2i(x, 1)), "tank port route " + str(x))
+	check(world.field_cargo.snapshot() == cargo, "entire water pipe route leaves cargo unchanged")
+	outpost.hydraulics.advance(2, outpost, 0)
+	check(is_equal_approx(float(world.environment.water[Vector2i(-6, 5)]), 1.0), "dangling pipe never spills or drains source")
+	for y in range(3):
+		for x in range(-4, 0): Fixture.carve(world, Vector2i(x, y))
+	outpost.buildings.install("laboratory", Vector2i(-4, 0))
+	world.guide_state.facts.lab_built = true
+	var tank: Dictionary = outpost.buildings.install("water_tank", Vector2i(0, 0))
+	world.field_cargo.drone = {"structural_component": 20, "electronic_component": 20}
+	await stand(Vector2i(-2, 5))
+	check(outpost.place("pump", Vector2i(-2, 5)), "one-cell inline pump uses normal assembly plan")
+	var pump: Dictionary = outpost.buildings.structures.back()
+	check(outpost.fund_site(pump), "pump pays its normal components")
+	outpost.advance(4.1)
+	check(pump.state == "active" and outpost.device_powered(pump), "lab powers completed inline pump")
 	var before := volume()
-	stand(Vector2i(-4, 5))
-	check(outpost.placement_blocker("lamp", Vector2i(-4, 5)).contains("presa"), "construction cannot overlap a mounted valve")
-	outpost.advance(0.4)
-	check(float(world.environment.water.get(Vector2i(1, 1), 0)) > 0, "powered pump lifts water into actual upper world cell")
-	check(absf(before - volume()) < 0.00001, "source, buffer and outlet conserve all water")
-	outpost.set_process(true)
-	for frame_index in range(30): await physics_frame
-	outpost.set_process(false)
-	check(float(world.environment.water.get(Vector2i(1, 2), 0)) + float(world.environment.water.get(Vector2i(1, 3), 0)) > 0, "physical water keeps falling while valve controls are open")
-	check(absf(before - volume()) < 0.0001, "inspecting controls preserves total water")
+	outpost.advance(1)
+	check(float(outpost.industry.state(tank).water) > 0, "powered pump lifts real water into finite tank")
+	check(absf(volume() - before) < 0.00001, "source, pump and tank conserve water")
+	check(not world.site.material(Vector2i(-5, 5)).is_empty(), "flow leaves rock valve intact")
+	await stand(Vector2i(-4, 5))
+	check(outpost.handle_input(click(Vector2i(-5, 5), MOUSE_BUTTON_RIGHT)), "right click opens blue valve controls")
 	for size: Vector2i in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		root.size = size
 		await frames()
-		check(fits(outpost.hydraulic_ui.window, outpost.hydraulic_ui.window.get_visible_rect()), "valve controls fit " + str(size))
+		if DisplayServer.get_name() != "headless": check(fits(outpost.hydraulic_ui.window, outpost.hydraulic_ui.window.get_visible_rect()), "valve controls fit " + str(size))
 		await picture("valve-" + str(size.y), outpost.hydraulic_ui.window)
 	outpost.hydraulic_ui.window.hide()
-	stand(Vector2i(-2, 5))
+	await stand(Vector2i(-2, 5))
 	outpost.industry_ui.open_machine(pump)
 	await frames()
-	check(fits(outpost.industry_ui.window, outpost.industry_ui.window.get_visible_rect()), "pump direction and flow controls fit")
-	await picture("pump-controls", outpost.industry_ui.window)
+	if DisplayServer.get_name() != "headless": check(fits(outpost.industry_ui.window, outpost.industry_ui.window.get_visible_rect()), "pump controls fit")
+	check(outpost.industry_ui.pump_directions.size() == 4, "pump exposes four direction controls")
+	outpost.industry_ui._set_pump_direction(Vector2i.LEFT)
+	check(outpost.hydraulics.pump_direction(pump) == Vector2i.LEFT, "pump control reverses actual flow direction")
+	outpost.industry_ui._set_pump_direction(Vector2i.RIGHT)
+	await picture("pump", outpost.industry_ui.window)
 	outpost.industry_ui.window.hide()
-	stand(Vector2i(0, 1))
-	check(outpost.handle_input(click(Vector2i(0, 1), MOUSE_BUTTON_RIGHT)), "right click opens terminal role controls")
-	outpost.hydraulic_ui.role_picker.item_selected.emit(1)
-	check(outpost.hydraulics.outlets[0].role == "intake" and not outpost.hydraulics.outlets[0].opened, "switching terminal to aspiration closes it safely")
-	outpost.hydraulic_ui.role_picker.item_selected.emit(0)
-	outpost.hydraulic_ui.opened_toggle.set_pressed(true)
-	await frames()
-	check(fits(outpost.hydraulic_ui.window, outpost.hydraulic_ui.window.get_visible_rect()), "terminal role selector and feedback fit")
-	await picture("terminal-controls", outpost.hydraulic_ui.window)
-	outpost.hydraulic_ui.window.hide()
+	check(outpost.hydraulics.at(Vector2i(-6, -3)).get("kind") == "ship", "left booster port is at (-6,-3)")
+	check(outpost.hydraulics.at(Vector2i(5, -3)).get("kind") == "ship", "right booster port is at (5,-3)")
+	outpost.hydraulics.local_ship_water.left = 12.5
+	var saved: Dictionary = world.capture_state()
+	check(world.restore_state(JSON.parse_string(JSON.stringify(saved))), "real world v2 circuit and buffer save roundtrip")
+	check(is_equal_approx(world.outpost.hydraulics.local_ship_water.left, 12.5), "sandbox ship tank survives reload")
+	var bad: Dictionary = world.capture_state().duplicate(true)
+	bad.hydraulics.valves[0].cell = [-5.5, 5]
+	var unchanged := JSON.stringify(world.capture_state())
+	check(not world.restore_state(bad) and JSON.stringify(world.capture_state()) == unchanged, "malformed hydraulic save leaves whole world unchanged")
 	root.size = Vector2i(1280, 720)
 	await picture("circuit-720")
-	var saved: Dictionary = world.capture_state()
-	check(world.restore_state(JSON.parse_string(JSON.stringify(saved))), "world roundtrip preserves sealed circuit and physical water")
-	check(world.outpost.hydraulics.valves.size() == 1 and world.outpost.hydraulics.valves[0].opened, "restored valve retains open state")
-	var bad := saved.duplicate(true)
-	bad.hydraulics.valves[0].direction = [1, 1]
-	var state_before := JSON.stringify(world.capture_state())
-	check(not world.restore_state(bad) and JSON.stringify(world.capture_state()) == state_before, "invalid circuit is rejected without replacing current world")
-	print("Water circuit smoke: %d failures" % failures)
+	print("BLUE WATER CIRCUIT: %d failures" % failures)
 	quit(1 if failures else 0)

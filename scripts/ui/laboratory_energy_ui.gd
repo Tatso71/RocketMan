@@ -2,7 +2,7 @@ extends CanvasLayer
 
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const SHORT_NAMES := {"laboratory": "Banco", "lamp": "Luci", "pump": "Pompe", "fan": "Vent.", "furnace": "Fornaci", "gas_converter": "Conv.", "greenhouse": "Serre"}
+const SHORT_NAMES := {"laboratory": "Banco", "lamp": "Luci", "pump": "Pompe", "fan": "Vent.", "furnace": "Fornaci", "gas_converter": "Conv.", "greenhouse": "Serre", "water_tank": "Serbatoi"}
 
 class LoadMeter extends Control:
 	var report: Dictionary = {}
