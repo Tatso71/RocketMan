@@ -553,6 +553,8 @@ func target_blocker(cell: Vector2i) -> String:
 	if not can_reach(cell):
 		return "Fuori portata o percorso ostruito"
 	var tool := active_tool()
+	if tool.mode == "mine" and outpost.hydraulics.at(cell).get("kind") == "valve":
+		return "Valvola installata: clic destro > Rimuovi valvola"
 	if tool.mode == "mine" and is_instance_valid(outpost) and not outpost.mining_blocker(cell).is_empty():
 		return outpost.mining_blocker(cell)
 	if tool.mode == "mine" and site.material(cell) == "anchor":
@@ -1091,8 +1093,8 @@ func _refresh_hud() -> void:
 	if danger.acid:
 		hazard_label.modulate = Color("e0f58a")
 	var capacity: float = ship_state.energy_capacity() if ship_state != null else 60
-	var load: float = outpost.network_load()
-	power_label.text = "BATTERIA NAVE %.1f / %.0f kWh\nRete %.2f kWh/min%s" % [ship_energy(), capacity, load * 60, " / %.1f min" % (ship_energy() / load / 60) if load > 0 else " / nessun consumo"]
+	var energy: Dictionary = outpost.power_report()
+	power_label.text = "BATTERIA NAVE %.1f / %.0f kWh\nSolare +%.1f | Rete -%.1f | Saldo %+.1f kWh/min" % [ship_energy(), capacity, energy.generation * 60, energy.network * 60, energy.net * 60]
 	power_label.modulate = Color("ffb18e") if ship_energy() < 5 else Color("d4e9df")
 	var tool := active_tool()
 	metric_label.text = "1 CELLA = 1 m  |  %s / %.1f m" % [tool.display_name, tool.effective_reach_metres()]

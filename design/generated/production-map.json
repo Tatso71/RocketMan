@@ -296,6 +296,11 @@
 			"icon": "assets/ui/items/laboratory.svg",
 			"name": "Officina di bordo riparata"
 		},
+		"repaired_solar_panel": {
+			"category": "state",
+			"icon": "assets/ui/items/solar_panel.svg",
+			"name": "Ripristino: Pannello solare"
+		},
 		"repaired_water_tank": {
 			"category": "state",
 			"icon": "assets/ui/items/water_tank.svg",
@@ -335,6 +340,11 @@
 			"category": "raw",
 			"icon": "assets/ui/items/silica.svg",
 			"name": "Quarzo"
+		},
+		"solar_panel": {
+			"category": "structure",
+			"icon": "assets/ui/items/solar_panel.svg",
+			"name": "Pannello solare"
 		},
 		"stored_water": {
 			"category": "utility",
@@ -577,6 +587,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": true,
 			"energy": {
 				"ship_energy": 0.3
 			},
@@ -617,6 +628,48 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": true,
+			"energy": {
+				"ship_energy": 0.05
+			},
+			"group": "assembly",
+			"icon": "assets/ui/items/solar_panel.svg",
+			"id": "assemble_solar_panel",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 2
+			},
+			"name": "Pannello solare",
+			"notes": "2 x 1 m; componenti nel carico accessibile. Disponibile dall'inizio. Solo all'aperto su appoggio stabile; cavo automatico gratuito verso la nave, senza limite di distanza o laboratorio richiesto.",
+			"outputs": {
+				"solar_panel": 1
+			},
+			"seconds": 2.5,
+			"station": "Sul posto",
+			"status": "implemented"
+		},
+		{
+			"energy": {
+
+			},
+			"group": "repair",
+			"icon": "assets/ui/items/solar_panel.svg",
+			"id": "repair_solar_panel",
+			"inputs": {
+				"electronic_component": 1,
+				"structural_component": 1
+			},
+			"name": "Ripara Pannello solare",
+			"notes": "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.",
+			"outputs": {
+				"repaired_solar_panel": 1
+			},
+			"seconds": 0.0,
+			"station": "Installazione danneggiata",
+			"status": "implemented"
+		},
+		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.05
 			},
@@ -655,6 +708,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.32
 			},
@@ -695,6 +749,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.2
 			},
@@ -735,6 +790,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.3
 			},
@@ -775,6 +831,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.24
 			},
@@ -815,6 +872,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.36
 			},
@@ -855,6 +913,7 @@
 			"status": "implemented"
 		},
 		{
+			"available_before_first_lab": false,
 			"energy": {
 				"ship_energy": 0.24
 			},
@@ -1010,6 +1069,25 @@
 		},
 		{
 			"energy": {
+
+			},
+			"group": "utilities",
+			"icon": "assets/ui/items/module_battery.svg",
+			"id": "generate_solar_energy",
+			"inputs": {
+
+			},
+			"name": "Genera energia solare",
+			"notes": "Produzione continua di ogni pannello attivo, abilitato e integro: 6 kWh/min (0.1 kWh/s), senza ciclo notte. I pannelli si sommano e caricano la batteria condivisa fino alla sua capienza; l'eccesso non si accumula. Cavo automatico gratuito verso la nave, senza limite di distanza; nessun componente cavo o consumo operativo aggiuntivo.",
+			"outputs": {
+				"ship_energy": 6.0
+			},
+			"seconds": 60.0,
+			"station": "Pannello solare",
+			"status": "implemented"
+		},
+		{
+			"energy": {
 				"ship_energy": 0.0428571428571429
 			},
 			"group": "utilities",
@@ -1019,7 +1097,7 @@
 				"water": 1
 			},
 			"name": "Recupera acqua",
-			"notes": "Pompa 1 x 1 m montata su un tubo terminale o rettilineo, senza pavimento, angoli o giunzioni. On/off e direzione con clic destro. Buffer 8 u, portata massima 0.70 u/s e sollevamento 6 m; consegna soltanto a contenitori, serbatoi nave o serre con spazio.",
+			"notes": "Pompa 1 x 1 m montata su un tubo terminale o rettilineo, senza pavimento, angoli o giunzioni. Nessun limite di distanza dal laboratorio o dalla nave per posa, montaggio e funzionamento; richiede comunque un laboratorio operativo e consuma la batteria condivisa. On/off e direzione con clic destro. Buffer 8 u, portata massima 0.70 u/s e sollevamento 6 m; consegna soltanto a contenitori, serbatoi nave o serre con spazio.",
 			"outputs": {
 				"stored_water": 1
 			},
@@ -1559,7 +1637,7 @@
 
 			},
 			"name": "Ricarica batteria nave",
-			"notes": "Servizio provvisorio senza ingredienti; non e' ancora una filiera energetica definitiva.",
+			"notes": "Ricarica di emergenza gratuita da +15 kWh, limitata dalla capienza della batteria. Resta disponibile accanto ai pannelli solari costruibili; non e' la loro produzione continua.",
 			"outputs": {
 				"ship_energy": 15.0
 			},
@@ -1594,6 +1672,19 @@
 		"natural_gas_pockets": false
 	},
 	"scope": "current_playable_prototype",
+	"solar_generation": {
+		"additive": true,
+		"available_before_first_lab": true,
+		"cable": "automatic_free_unlimited_to_ship",
+		"footprint_metres": [
+			2,
+			1
+		],
+		"kwh_per_second_per_panel": 0.1,
+		"night_cycle": false,
+		"placement": "outdoor_supported",
+		"storage": "shared_ship_battery_capped"
+	},
 	"used_by": {
 		"cobalt": [
 			"fabricate_structural_alloy"
@@ -1612,6 +1703,8 @@
 			"fabricate_bomb",
 			"assemble_laboratory",
 			"repair_laboratory",
+			"assemble_solar_panel",
+			"repair_solar_panel",
 			"assemble_lamp",
 			"repair_lamp",
 			"assemble_pump",
@@ -1683,6 +1776,7 @@
 			"fabricate_structural_alloy",
 			"fabricate_bomb",
 			"assemble_laboratory",
+			"assemble_solar_panel",
 			"assemble_lamp",
 			"assemble_pump",
 			"assemble_fan",
@@ -1710,6 +1804,8 @@
 			"fabricate_bomb",
 			"assemble_laboratory",
 			"repair_laboratory",
+			"assemble_solar_panel",
+			"repair_solar_panel",
 			"assemble_pump",
 			"repair_pump",
 			"assemble_fan",

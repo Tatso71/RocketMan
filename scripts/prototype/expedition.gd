@@ -401,7 +401,7 @@ func _build_ship_menu() -> void:
 	repair_button.tooltip_text = "Costo: 2 componenti strutturali + 1 elettronico"
 	fuel_button = _button(left, "Rifornisci (+20 u)", func(): _service("refuel"))
 	fuel_button.tooltip_text = "Costo: 1 componente elettronico (conversione provvisoria)"
-	charge_button = _button(left, "Ricarica solare (+15 kWh)", func(): _service("recharge"))
+	charge_button = _button(left, "Ricarica emergenza (+15 kWh)", func(): _service("recharge"))
 	charge_button.tooltip_text = "Ricarica di emergenza disponibile in orbita o in officina"
 	var right := VBoxContainer.new()
 	right.custom_minimum_size.x = 370

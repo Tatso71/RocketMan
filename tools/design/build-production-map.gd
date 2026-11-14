@@ -35,6 +35,12 @@ func recipe(id: String, title: String, group: String, station: String, inputs: D
 
 func build() -> void:
 	data.runtime_flags = {"natural_gas_pockets": Site.HazardLayout.gas_pockets_enabled, "gas_industry_supply": "natural_gas" if Site.HazardLayout.gas_pockets_enabled else "paused_without_natural_gas", "greenhouse_supply": "local_lab_ship_battery_else_cabled_converter"}
+	data.solar_generation = {
+		"available_before_first_lab": true, "footprint_metres": [Buildings.SIZES.solar_panel.x, Buildings.SIZES.solar_panel.y],
+		"placement": "outdoor_supported", "kwh_per_second_per_panel": Buildings.Solar.RATE,
+		"cable": "automatic_free_unlimited_to_ship", "additive": true,
+		"storage": "shared_ship_battery_capped", "night_cycle": false
+	}
 	var yields := {"1": 0, "2": 0, "3": 0}
 	for roll in range(100):
 		yields[str(Gear.yield_for_roll(roll))] += 1
@@ -78,7 +84,11 @@ func build() -> void:
 		node(id, Buildings.NAMES[id], "structure")
 		var size: Vector2i = Buildings.SIZES.get(id, Vector2i.ONE)
 		var seconds := Buildings.build_seconds(id)
-		recipe("assemble_" + id, Buildings.NAMES[id], "assembly", "Sul posto", Components.assembly_cost(id), {id: 1}, seconds, {"ship_energy": Buildings.power_draw({"id": id, "state": "building"}) * seconds}, "%d x %d m; componenti nel carico accessibile. %s" % [size.x, size.y, "Disponibile dall'inizio." if id == "laboratory" else "Sbloccato dopo il primo laboratorio da campo."])
+		var unlock := "Disponibile dall'inizio." if id in ["laboratory", "solar_panel"] else "Sbloccato dopo il primo laboratorio da campo."
+		if id == "solar_panel":
+			unlock += " Solo all'aperto su appoggio stabile; cavo automatico gratuito verso la nave, senza limite di distanza o laboratorio richiesto."
+		recipe("assemble_" + id, Buildings.NAMES[id], "assembly", "Sul posto", Components.assembly_cost(id), {id: 1}, seconds, {"ship_energy": Buildings.power_draw({"id": id, "state": "building"}) * seconds}, "%d x %d m; componenti nel carico accessibile. %s" % [size.x, size.y, unlock])
+		data.recipes.back().available_before_first_lab = id in ["laboratory", "solar_panel"]
 		var repair_id := "repaired_" + id
 		node(repair_id, "Ripristino: " + Buildings.NAMES[id], "state")
 		recipe("repair_" + id, "Ripara " + Buildings.NAMES[id], "repair", "Installazione danneggiata", Buildings.repair_cost({"id": id}), {repair_id: 1}, 0, {}, "Costo: meta' del montaggio, arrotondata per eccesso per ciascun componente.")
@@ -91,7 +101,8 @@ func build() -> void:
 	recipe("place_valve", "Monta valvola blu", "infrastructure", "Dentro una cella di roccia", {}, {"valve": 1}, 0, {}, "Gratuita dall'inizio, con acqua in una cella ortogonalmente adiacente. Roccia e acqua restano intatte; quattro facce collegabili, senza tool, perforazione o orientamento.")
 	var conversion: Dictionary = industry.converter
 	recipe("convert_gas", "Converti gas in energia locale", "utilities", "Convertitore gas", {"gas": 1}, {"local_energy": conversion.kwh_per_gas}, 1.0 / float(conversion.gas_per_second), {}, "Processo continuo: gas da una falda collegata con tubi; accumulo massimo %.0f kWh. Non ricarica automaticamente la nave." % conversion.capacity)
-	recipe("pump_water", "Recupera acqua", "utilities", "Pompa acqua", {"water": 1}, {"stored_water": 1}, 1.0 / WaterCircuit.PUMP_RATE, {"ship_energy": Buildings.power_draw({"id": "pump", "state": "active"}) / WaterCircuit.PUMP_RATE}, "Pompa 1 x 1 m montata su un tubo terminale o rettilineo, senza pavimento, angoli o giunzioni. On/off e direzione con clic destro. Buffer %.0f u, portata massima %.2f u/s e sollevamento %.0f m; consegna soltanto a contenitori, serbatoi nave o serre con spazio." % [WaterCircuit.capacity(), WaterCircuit.PUMP_RATE, WaterCircuit.MAX_LIFT])
+	recipe("generate_solar_energy", "Genera energia solare", "utilities", Buildings.NAMES.solar_panel, {}, {"ship_energy": float(data.solar_generation.kwh_per_second_per_panel) * 60.0}, 60.0, {}, "Produzione continua di ogni pannello attivo, abilitato e integro: 6 kWh/min (0.1 kWh/s), senza ciclo notte. I pannelli si sommano e caricano la batteria condivisa fino alla sua capienza; l'eccesso non si accumula. Cavo automatico gratuito verso la nave, senza limite di distanza; nessun componente cavo o consumo operativo aggiuntivo.")
+	recipe("pump_water", "Recupera acqua", "utilities", "Pompa acqua", {"water": 1}, {"stored_water": 1}, 1.0 / WaterCircuit.PUMP_RATE, {"ship_energy": Buildings.power_draw({"id": "pump", "state": "active"}) / WaterCircuit.PUMP_RATE}, "Pompa 1 x 1 m montata su un tubo terminale o rettilineo, senza pavimento, angoli o giunzioni. Nessun limite di distanza dal laboratorio o dalla nave per posa, montaggio e funzionamento; richiede comunque un laboratorio operativo e consuma la batteria condivisa. On/off e direzione con clic destro. Buffer %.0f u, portata massima %.2f u/s e sollevamento %.0f m; consegna soltanto a contenitori, serbatoi nave o serre con spazio." % [WaterCircuit.capacity(), WaterCircuit.PUMP_RATE, WaterCircuit.MAX_LIFT])
 	recipe("gravity_water", "Trasferisci acqua per gravita'", "utilities", "Valvola e contenitore collegati", {"water": 1}, {"stored_water": 1}, 1.0 / WaterCircuit.PASSIVE_RATE, {}, "Portata passiva massima %.2f u/s, mai sopra il livello della fonte. Solo acqua verso destinazioni finite: contenitore %.0f u, serra %.0f u, due serbatoi nave da 40 u. Estremita' libere e destinazioni piene non disperdono acqua." % [WaterCircuit.PASSIVE_RATE, industry.water_tank_capacity, industry.greenhouse_capacity])
 	recipe("vent_gas", "Rimuovi gas pericoloso", "utilities", "Ventilatore gas", {"gas": 1}, {}, 1.0 / Buildings.FAN_RATE, {"ship_energy": Buildings.power_draw({"id": "fan", "state": "active"}) / Buildings.FAN_RATE}, "Rimuove il gas dall'ambiente: non produce carburante o energia.")
 	for id: String in Industry.CROP_IDS:
@@ -121,7 +132,7 @@ func build() -> void:
 	recipe("refuel_ship", "Rifornisci nave", "service", "Officina della nave", service.quoted, {"ship_fuel": service.fuel}, 0, {}, "Ricetta provvisoria del prototipo: il petrolio non viene ancora usato per il carburante.")
 	service.energy = 0
 	service.recharge()
-	recipe("recharge_ship", "Ricarica batteria nave", "service", "Officina della nave", {}, {"ship_energy": service.energy}, 0, {}, "Servizio provvisorio senza ingredienti; non e' ancora una filiera energetica definitiva.")
+	recipe("recharge_ship", "Ricarica batteria nave", "service", "Officina della nave", {}, {"ship_energy": service.energy}, 0, {}, "Ricarica di emergenza gratuita da +15 kWh, limitata dalla capienza della batteria. Resta disponibile accanto ai pannelli solari costruibili; non e' la loro produzione continua.")
 	var gear := Gear.new()
 	gear.repair_ship = true
 	node("repaired_ship_workshop", "Officina di bordo riparata", "state")
@@ -156,6 +167,7 @@ func number_text(value: float) -> String:
 func markdown() -> String:
 	var lines: Array[String] = ["# Mappa di produzione di RocketMan", "", "Questa e' la mappa del prototipo giocabile: cosa raccogliere, cosa trasformare e cosa costruire. Le proposte future sono separate dalle ricette realmente disponibili.", "", "Documento generato dai cataloghi e dalle funzioni di costo del gioco. Non modificare a mano le tabelle: aggiornare le fonti e rigenerare. [Dati strutturati per la futura guida delle ricette](../../design/generated/production-map.json).", "", "## La catena principale", "", "```text", "Materie prime -> Componenti -> Strutture, consumabili e potenziamenti", "        |             ^", "        +-> Semilavorati (facoltativi) --+", "```", "", "**Materie prime:** ferro, rame, cristalli, quarzo e cobalto. **Semilavorati intermedi:** lingotti di rame e vetro. I componenti strutturali ed elettronici sono i semilavorati versatili per il montaggio, impilabili (4 pezzi per unita' di carico). Terra e pietra comuni non entrano nel carico o nelle ricette.", "",
 		"Il laboratorio di bordo e' gia' funzionante e parte senza scorte minerali. Dal 13 novembre nella modalita umano posare una sagoma e' un ordine completo: Robbie raccoglie e scarica alla nave, fa preparare i componenti mancanti del primo progetto, consegna e monta. Nella variante Robbie pilotabile ordini, ritiro e montaggio restano manuali. Il requisito di ordinare prima i semilavorati del 12 novembre e' superato per l'umano. Non si trasportano cubi di stanze gia' scelte. Le scale sono gratuite e immediate.", "", "## Il primo laboratorio", "",
+		"I pannelli solari sono disponibili gia' prima del primo laboratorio da campo: occupano **2 x 1 m all'aperto**, su appoggio stabile, e costano **2 componenti strutturali + 1 elettronico**. Ogni pannello operativo produce continuamente **6 kWh/min (0.1 kWh/s)** senza ciclo notte. Un cavo automatico gratuito lo collega alla nave senza limite di distanza; non serve una rete industriale o un laboratorio. Le produzioni si sommano nella batteria condivisa, senza superarne la capienza. La ricarica gratuita di emergenza da **+15 kWh** rimane disponibile.", "",
 		"Scava i depositi iniziali di **8 ferro + 3 rame + 1 cristallo**, prepara una stanza supportata di **4 x 3 m** e posa il progetto del laboratorio. Robbie scarica i minerali alla nave e fa preparare solo i componenti mancanti: da scorte vuote, **2 lotti strutturali + 1 elettronico**, ottenendo **4 strutturali + 2 elettronici**. Poi ritira i componenti pronti, li consegna e monta mentre continui a scavare. Non serve tornare al computer per ordinare. Nella variante Robbie pilotabile ordini, ritiri e monti manualmente i componenti.", "",
 		"Dopo il primo laboratorio da campo si sbloccano luci, pompe, ventilatori, fornaci, convertitori, serre e contenitori acqua, oltre alle ricette avanzate dei due componenti. Il contenitore occupa 2 x 2 m, costa 2 componenti strutturali + 1 elettronico e conserva fino a 32 u senza consumo operativo. I consumi della rete si aggiungono all'energia specifica riportata nelle tabelle."]
 	lines.append_array(["", "## Ordini e logistica automatica", "",
@@ -183,6 +195,7 @@ func markdown() -> String:
 		"- La fornace usa energia locale del convertitore, non direttamente la batteria della nave. La serra usa il laboratorio operativo locale, oppure il convertitore via cavo: si addebita la fonte effettiva. Il buffer della serra contiene fino a 4 u; pioggia e crescita richiedono acqua realmente consumata.",
 		"- I contenitori conservano fino a 32 u e non richiedono energia operativa. I due serbatoi acqua della nave hanno porte blu permanenti, capienza di 40 u ciascuno e conservano l'acqua durante viaggi e salvataggi. Togliere un tubo interrompe il flusso senza perdere acqua; non esistono scarichi liberi.",
 		"- Il laboratorio e i dispositivi alimentati dalla nave continuano a consumare durante l'uso: l'energia di montaggio non e' il loro intero costo di vita.",
+		"- I pannelli solari generano energia soltanto dopo il montaggio, se attivi, abilitati e integri. Non sono macchine del convertitore gas: alimentano direttamente la batteria nave, con produzione additiva e accumulo limitato alla capienza. Il loro cavo automatico e' gratuito, senza limite di distanza; i cavi industriali posati a mano mantengono il costo per segmento.",
 		"- Le riparazioni elencate sono riparazioni di installazioni/scafo. La manutenzione di tuta e Robbie e il riposo non sono nuove ricette di costruzione.", "", "## Da progettare o completare", ""])
 	for entry: Dictionary in data.planned:
 		lines.append("- **%s:** %s" % [entry.name, entry.note])

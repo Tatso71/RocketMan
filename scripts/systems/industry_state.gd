@@ -48,12 +48,23 @@ func water_available(building: Dictionary, outpost: Node2D) -> float:
 func is_irrigating(building: Dictionary) -> bool:
 	return irrigated.has(key(building))
 
-func _consume(building: Dictionary, kind: String, amount: float, outpost: Node2D) -> void:
+func ship_power_draw(building: Dictionary, outpost: Node2D) -> float:
+	if building.id != "greenhouse" or not healthy(building, outpost) or outpost.supplying_lab(building).is_empty():
+		return 0.0
+	var storage := state(building)
+	if storage.crop.is_empty() or storage.water <= 0.000001:
+		return 0.0
+	var crop: Dictionary = Catalog.load_data().crops[storage.crop]
+	return float(crop.power) if float(storage.elapsed) < float(crop.seconds) else 0.0
+
+func _consume(building: Dictionary, kind: String, amount: float, outpost: Node2D, ship_budget: Dictionary = {}) -> void:
 	if kind == "water":
 		outpost.hydraulics.withdraw(building, amount, outpost)
 		return
 	if kind == "energy" and building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
-		outpost.world._set_ship_energy(maxf(0.0, outpost.world.ship_energy() - amount))
+		var remaining := maxf(0.0, float(ship_budget.get("remaining", outpost.world.ship_energy())) - amount)
+		if ship_budget.has("remaining"): ship_budget.remaining = remaining
+		outpost.world._set_ship_energy(remaining)
 		return
 	var supplier := "gas_converter" if kind == "energy" else "pump"
 	var sources: Array = linked(building, kind, supplier, outpost)
@@ -159,17 +170,17 @@ func collect_seed(pod: Dictionary, outpost: Node2D) -> bool:
 	outpost.world.guide_event("seeds_found")
 	return true
 
-func advance(delta: float, outpost: Node2D, active: Array) -> void:
+func advance(delta: float, outpost: Node2D, active: Array, ship_budget: Dictionary = {}) -> void:
 	irrigated.clear()
 	if not is_finite(delta) or delta <= 0:
 		return
 	var remaining := minf(delta, 60)
 	while remaining > 0.000001:
 		var step := minf(remaining, 0.25)
-		_step(step, outpost, active)
+		_step(step, outpost, active, ship_budget)
 		remaining -= step
 
-func _step(delta: float, outpost: Node2D, active: Array) -> void:
+func _step(delta: float, outpost: Node2D, active: Array, ship_budget: Dictionary = {}) -> void:
 	var data := Catalog.load_data()
 	for converter: Dictionary in active:
 		if converter.id != "gas_converter" or not healthy(converter, outpost):
@@ -195,7 +206,10 @@ func _step(delta: float, outpost: Node2D, active: Array) -> void:
 			continue
 		var definition: Dictionary = data.smelting[id] if building.id == "furnace" else data.crops[id]
 		var duration := minf(delta, maxf(0, float(definition.seconds) - float(storage.elapsed)))
-		duration = minf(duration, energy_available(building, outpost) / float(definition.power))
+		var available := energy_available(building, outpost)
+		if building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+			available = float(ship_budget.get("remaining", available))
+		duration = minf(duration, available / float(definition.power))
 		if building.id == "greenhouse":
 			duration = minf(duration, water_available(building, outpost) * float(definition.seconds) / float(definition.water))
 		if duration <= 0.000001:
@@ -206,7 +220,7 @@ func _step(delta: float, outpost: Node2D, active: Array) -> void:
 			if duration <= 0.000001:
 				continue
 			irrigated[key(building)] = true
-		_consume(building, "energy", duration * float(definition.power), outpost)
+		_consume(building, "energy", duration * float(definition.power), outpost, ship_budget)
 		storage.elapsed = minf(float(definition.seconds), float(storage.elapsed) + duration)
 		if float(definition.seconds) - float(storage.elapsed) < 0.000001:
 			storage.elapsed = float(definition.seconds)

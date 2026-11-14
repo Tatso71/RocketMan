@@ -30,6 +30,7 @@ add('oil', 'Petrolio', p('M32 7C27 20 13 29 13 40a19 19 0 0 0 38 0C51 29 37 20 3
 add('gas', 'Gas', p('M12 46C1 39 8 25 18 27 15 10 35 7 41 20c12-7 23 11 12 19 5 13-11 21-20 13-9 10-25 4-21-6z', '#c4d286') + p('M18 39q5-9 12-2t16-2M24 25q5-5 9 0', 'none', 'stroke="#6c8d63" stroke-width="3"'));
 
 add('laboratory', 'Laboratorio', housing + rect(18, 29, 17, 13, '#71d5cf') + p('M42 26v9l5 8H36l4-8v-9', '#dbe6ae') + line('M13 54v3m38-3v3M17 48h30'));
+add('solar_panel', 'Pannello solare', p('M13 17h42l-9 25H4z', '#8fb7ce') + p('M17 21h32l-6 17H11z', '#3c75a6') + p('M27 21 21 38m17-17-6 17M14 29h32', 'none', 'stroke="#a9e4f1" stroke-width="2"') + p('M24 42v11h19v4H15v-4h5V42z', '#afbec0') + circle(52, 10, 5, '#ffe289') + p('M52 1v2m8 7h3m-5-6 2-2', 'none', 'stroke="#e6cf83" stroke-width="2"'));
 add('lamp', 'Luce', p('m22 18 10-8 10 8v24H22z', '#e0b868') + rect(25, 22, 14, 16, '#fff6b4') + p('M18 43h28v9H18z', '#9aabb2') + p('M12 27H6m52 0h-6M16 13l-5-5m37 5 5-5M32 4V1', 'none', 'stroke="#e6cf83"'));
 add('pump', 'Pompa acqua', p('M7 35h12v15H7zM45 18h12v15H45z', '#78bdcc') + rect(18, 20, 28, 30, '#91acb4') + circle(32, 35, 10, '#285463') + p('M32 27v15m-6-6 6 6 6-6', 'none', 'stroke="#8de4e0" stroke-width="3"') + line('M15 54h35M22 14h20'));
 add('fan', 'Ventilatore gas', rect(10, 10, 44, 44, '#afc6b3') + circle(32, 32, 17, '#29464c') + p('M32 29q-15-25-17-7-1 11 14 10m6 0q27-7 13-17-9-6-16 15m-2 5q-10 26 7 19 10-5-3-21z', '#d1e5bd') + circle(32, 32, 5, '#b0d0d1'));
@@ -69,7 +70,7 @@ add('resonator', 'Risonatore', p('m8 22 29-8 9 9v14l-16 1-11 19-10-7 8-18z', '#a
 add('plasma', 'Plasma', p('m8 21 32-7 12 9v13l-22 1-10 20-11-7 9-19z', '#b7adb0') + rect(36, 22, 13, 15, '#3c4c59') + p('m48 20 10 9-10 10z', '#ee956f') + p('M22 22h9v8h-9z', '#f6cb8c') + line('M14 45l8 4'));
 
 const aliases = { ship_energy: 'module_battery', local_energy: 'gas_converter', stored_water: 'water', hull_integrity: 'module_hull', repaired_ship_workshop: 'laboratory' };
-for (const id of ['laboratory', 'lamp', 'pump', 'fan', 'furnace', 'gas_converter', 'greenhouse', 'water_tank']) aliases[`repaired_${id}`] = id;
+for (const id of ['laboratory', 'solar_panel', 'lamp', 'pump', 'fan', 'furnace', 'gas_converter', 'greenhouse', 'water_tank']) aliases[`repaired_${id}`] = id;
 for (const level of [2, 3]) {
   aliases[`laboratory_level_${level}`] = 'laboratory';
   for (const id of ['hull', 'engine', 'cargo', 'battery', 'drill', 'landing_gear', 'habitat', 'drone']) aliases[`module_${id}_${level}`] = `module_${id}`;

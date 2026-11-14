@@ -71,11 +71,11 @@ func _ready() -> void:
 	column.add_child(feedback)
 	var buttons := HBoxContainer.new()
 	column.add_child(buttons)
-	remove_button = UI.button(buttons, "Smonta", func():
+	remove_button = UI.button(buttons, "Rimuovi valvola", func():
 		if outpost.hydraulics.remove(selected, outpost):
 			reset()
 		else:
-			feedback.text = "Smontaggio non disponibile")
+			feedback.text = "Rimozione non disponibile")
 	UI.button(buttons, "Chiudi", window.hide)
 
 func begin(kind: String) -> void:

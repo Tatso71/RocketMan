@@ -10,6 +10,7 @@
   },
   "assembly": {
     "laboratory": {"structural_component": 4, "electronic_component": 2},
+    "solar_panel": {"structural_component": 2, "electronic_component": 1},
     "lamp": {"electronic_component": 1},
     "pump": {"structural_component": 2, "electronic_component": 2},
     "fan": {"structural_component": 1, "electronic_component": 2},

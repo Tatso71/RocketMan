@@ -2,7 +2,7 @@ extends CanvasLayer
 
 const UI = preload("res://scripts/ui/field_inventory_ui.gd")
 const Buildings = preload("res://scripts/systems/outpost_buildings.gd")
-const SHORT_NAMES := {"laboratory": "Banco", "lamp": "Luci", "pump": "Pompe", "fan": "Vent.", "furnace": "Fornaci", "gas_converter": "Conv.", "greenhouse": "Serre", "water_tank": "Serbatoi"}
+const SHORT_NAMES := {"laboratory": "Banco", "lamp": "Luci", "pump": "Pompe", "fan": "Vent.", "furnace": "Fornaci", "gas_converter": "Conv.", "greenhouse": "Serre", "water_tank": "Serbatoi", "solar_panel": "Solari"}
 
 class LoadMeter extends Control:
 	var report: Dictionary = {}
@@ -22,6 +22,7 @@ var heading: Label
 var charge_label: Label
 var battery: ProgressBar
 var load_label: Label
+var generation_label: Label
 var load_meter: LoadMeter
 var legend: GridContainer
 var legend_labels: Dictionary = {}
@@ -59,6 +60,8 @@ func _ready() -> void:
 	column.add_child(battery)
 	load_label = UI.label("", 13)
 	column.add_child(load_label)
+	generation_label = UI.label("", 13, Color("a7e5b4"))
+	column.add_child(generation_label)
 	load_meter = LoadMeter.new()
 	load_meter.custom_minimum_size.y = 10
 	load_meter.tooltip_text = "Consumi attuali delle strutture installate; i segmenti scuri sono utenze non alimentate"
@@ -98,15 +101,19 @@ func refresh() -> void:
 	battery.value = last_report.charge
 	battery.modulate = Color.WHITE if float(last_report.charge) > float(last_report.capacity) * 0.2 else Color("ef876d")
 	load_label.text = "%s: %.2f kWh/min" % ["Consumo rete" if lab.is_empty() else "Questo laboratorio", float(last_report.load) * 60]
+	generation_label.text = "Solare +%.2f / Saldo rete %+.2f kWh/min" % [float(last_report.generation) * 60, float(last_report.net) * 60]
+	generation_label.modulate = Color.WHITE if last_report.net >= 0 else Color("efb188")
 	load_meter.report = last_report
 	load_meter.queue_redraw()
 	for id: String in Buildings.CUBE_IDS:
-		legend_labels[id].get_parent().visible = int(last_report.counts[id]) > 0
+		legend_labels[id].get_parent().visible = int(last_report.counts[id]) > 0 and id != "solar_panel"
 		legend_labels[id].text = "%s x%d: %.2f" % [SHORT_NAMES[id], last_report.counts[id], float(last_report.groups[id]) * 60]
 		legend_labels[id].tooltip_text = "%d %s / %.2f kWh al minuto" % [last_report.counts[id], Buildings.NAMES[id].to_lower(), float(last_report.groups[id]) * 60]
 		legend_labels[id].modulate = Color.WHITE if float(last_report.groups[id]) > 0 else Color("8a9c9a")
-	var network: float = last_report.network
-	autonomy.text = "Autonomia rete: %.1f min" % (float(last_report.charge) / network / 60) if network > 0 else "Rete ferma / nessun consumo"
+	var deficit: float = -last_report.net
+	autonomy.text = "Autonomia rete: %.1f min" % (float(last_report.charge) / deficit / 60) if deficit > 0 else ("Batteria in carica" if last_report.charge < last_report.capacity and last_report.generation > 0 else "Bilancio energetico stabile")
+	if last_report.brownout:
+		autonomy.text = "Energia insufficiente / carichi intermittenti"
 	if not lab.is_empty() and not outpost.operational(lab):
 		autonomy.text = "Laboratorio non alimentato"
 	var viewport := outpost.get_viewport().get_visible_rect().size

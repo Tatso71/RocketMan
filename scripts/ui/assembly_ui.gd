@@ -172,7 +172,7 @@ func open_picker(cell: Vector2i, point: Vector2) -> void:
 	heading.text = "Montaggio"
 	for index in range(Components.STRUCTURE_IDS.size()):
 		var id: String = Components.STRUCTURE_IDS[index]
-		if id != "laboratory" and not outpost.laboratory_unlocked():
+		if not outpost.recipe_visible(id):
 			continue
 		_add_row(index, id, Components.assembly_cost(id))
 	column.add_child(HSeparator.new())
