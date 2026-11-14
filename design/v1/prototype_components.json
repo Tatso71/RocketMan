@@ -15,6 +15,7 @@
     "fan": {"structural_component": 1, "electronic_component": 2},
     "furnace": {"structural_component": 3, "electronic_component": 1},
     "gas_converter": {"structural_component": 2, "electronic_component": 2},
-    "greenhouse": {"structural_component": 4, "electronic_component": 2}
+    "greenhouse": {"structural_component": 4, "electronic_component": 2},
+    "water_tank": {"structural_component": 2, "electronic_component": 1}
   }
 }

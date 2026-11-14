@@ -36,6 +36,7 @@ add('fan', 'Ventilatore gas', rect(10, 10, 44, 44, '#afc6b3') + circle(32, 32, 1
 add('furnace', 'Fornace', rect(11, 14, 42, 40, '#98a7ae') + rect(40, 5, 10, 12, '#667a87') + rect(18, 26, 28, 22, '#533d49') + p('M23 45c-8-9 6-12 5-23 10 6 4 12 11 10 12 17-13 23-16 13z', '#eea45e') + p('M29 46q-4-5 4-12 8 12-4 12z', '#ffe3a0') + line('M17 20h15M10 56h44'));
 add('gas_converter', 'Convertitore gas', rect(9, 18, 46, 36, '#759f92') + rect(14, 11, 12, 36, '#c7d68c') + rect(38, 11, 12, 36, '#c7d68c') + rect(24, 23, 17, 25, '#29464c') + p('m34 25-7 12h8l-4 9 10-14h-8z', '#ffe289') + line('M13 15h14m10 0h14M15 56h34'));
 add('greenhouse', 'Serra', p('M8 26 32 8l24 18v29H8z', '#8bbcb5') + p('m13 28 19-15 19 15v21H13z', '#d5ece0') + line('M32 13v36M13 28h38') + p('M31 48V34q-15-11-16-1 1 10 16 6m1 1q18-17 17-4-1 7-17 9', '#79ac64') + rect(10, 49, 44, 7, '#ab9778'));
+add('water_tank', 'Contenitore acqua', rect(13, 13, 38, 40, '#a8c8cd') + p('m13 13 8-6h23l7 6z', '#d9e9e7') + rect(19, 20, 26, 27, '#24484f') + rect(22, 31, 20, 13, '#55b8ff') + line('M22 28h20M26 35h12M26 40h12') + rect(7, 39, 6, 9, '#76b9d2') + rect(51, 39, 6, 9, '#76b9d2') + line('M15 56h34'));
 add('ladder', 'Scala', p('M18 7v50m28-50v50M18 14h28M18 26h28M18 38h28M18 50h28', 'none', 'stroke="#dbbf78" stroke-width="6"') + p('M18 9v46m28-46v46', 'none', 'stroke="#f5dfa6" stroke-width="2"'));
 for (const [id, name, color] of [['water_conduit', 'Tubo acqua', '#65bccf'], ['gas_conduit', 'Tubo gas', '#c4ce80']]) {
   add(id, name, p('M12 12h20v20h20v20H20V32h-8z', color) + line('M8 11h28M51 28v28M12 17h15v21h19') + (id === 'water_conduit' ? p('M43 38q-10 12 0 12t0-12z', '#bfeff0') : circle(41, 43, 4, '#eff1c4') + circle(28, 21, 3, '#eff1c4')));
@@ -68,13 +69,12 @@ add('resonator', 'Risonatore', p('m8 22 29-8 9 9v14l-16 1-11 19-10-7 8-18z', '#a
 add('plasma', 'Plasma', p('m8 21 32-7 12 9v13l-22 1-10 20-11-7 9-19z', '#b7adb0') + rect(36, 22, 13, 15, '#3c4c59') + p('m48 20 10 9-10 10z', '#ee956f') + p('M22 22h9v8h-9z', '#f6cb8c') + line('M14 45l8 4'));
 
 const aliases = { ship_energy: 'module_battery', local_energy: 'gas_converter', stored_water: 'water', hull_integrity: 'module_hull', repaired_ship_workshop: 'laboratory' };
-for (const id of ['laboratory', 'lamp', 'pump', 'fan', 'furnace', 'gas_converter', 'greenhouse']) aliases[`repaired_${id}`] = id;
+for (const id of ['laboratory', 'lamp', 'pump', 'fan', 'furnace', 'gas_converter', 'greenhouse', 'water_tank']) aliases[`repaired_${id}`] = id;
 for (const level of [2, 3]) {
   aliases[`laboratory_level_${level}`] = 'laboratory';
   for (const id of ['hull', 'engine', 'cargo', 'battery', 'drill', 'landing_gear', 'habitat', 'drone']) aliases[`module_${id}_${level}`] = `module_${id}`;
 }
-add('valve', 'Presa stagna', rect(9, 24, 39, 16, '#9dbfbd') + rect(46, 14, 8, 36, '#d5ded4') + rect(13, 20, 8, 24, '#6d9398') + circle(30, 20, 11, '#dfc57d') + line('M30 9v22M19 20h22M30 31v9') + circle(30, 20, 4, '#456875'));
-add('outlet', 'Terminale di scarico', p('M12 11h23v20h15v16H21V25h-9z', '#89c8d4') + rect(8, 8, 31, 8, '#c8dfde') + p('M42 47q-10 14 0 14t0-14z', '#7edbe0') + line('M15 23h16m0 15h15'));
+add('valve', 'Valvola blu', p('m10 20 22-12 22 12v25L32 57 10 45z', '#329fe8') + p('m10 20 22 12 22-12L32 8z', '#8ad8ff') + p('M32 32v25l22-12V20z', '#1672bd') + circle(23, 34, 7, '#c6f1ff') + circle(23, 34, 3, '#24484f') + line('M16 34h14M23 27v14'));
 const directory = 'assets/ui/items';
 const outputs = {};
 for (const [id, entry] of Object.entries(entries)) {

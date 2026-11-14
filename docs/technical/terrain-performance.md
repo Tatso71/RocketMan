@@ -28,4 +28,12 @@ The current reference shares the visible-water rule: sealed water is visible, wh
 
 ## Limits
 
+The 14 November vein-art update adds deterministic deposit-wide ribbons and
+inclusions, clipped once into metric cells and cached separately from the host
+rock atlas. Only exposed, lit, retained pure-ore cells enter the visible batch;
+dynamic vertex lighting is applied in one additional colored-triangle submission.
+There is no per-frame polygon clipping and no new collider or emissive material.
+The timings above predate this decoration; see the focused vein-surface smoke
+measurements under ignored `reports/` for its incremental CPU cost.
+
 This is a substantial improvement, not a 60 FPS guarantee. Native frame times still exceed the 16.7 ms target in these frozen views; active-gameplay, cold cache rebuild spikes, other GPUs/backends and larger developed outposts require further profiling. Other running applications may affect wall-clock measurements. The benchmark does not close an already open user game.

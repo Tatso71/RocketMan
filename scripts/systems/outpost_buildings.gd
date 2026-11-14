@@ -8,17 +8,17 @@ static var LAB_COST: Dictionary = Components.assembly_cost("laboratory")
 const CACHE_CAPACITY := 32
 static var LAMP_RECIPE: Dictionary = Components.assembly_cost("lamp")
 static var PUMP_COST: Dictionary = Components.assembly_cost("pump")
-const PUMP_SIZE := Vector2i(2, 2)
+const PUMP_SIZE := Vector2i.ONE
 static var FAN_COST: Dictionary = Components.assembly_cost("fan")
 const FAN_RATE := 0.35
 const FAN_RADIUS := 3
-const CUBE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse"]
+const CUBE_IDS := ["laboratory", "lamp", "pump", "fan", "furnace", "gas_converter", "greenhouse", "water_tank"]
 const DEVICE_IDS := ["lamp", "pump", "fan"]
-const INDUSTRIAL_IDS := ["furnace", "gas_converter", "greenhouse"]
+const INDUSTRIAL_IDS := ["furnace", "gas_converter", "greenhouse", "water_tank"]
 const IndustryCatalog = preload("res://scripts/data/industry_catalog.gd")
-const NAMES := {"laboratory": "Laboratorio", "lamp": "Luce", "pump": "Pompa acqua", "fan": "Ventilatore gas", "furnace": "Fornace", "gas_converter": "Convertitore gas", "greenhouse": "Serra"}
-const CUBE_COLORS := {"laboratory": Color("8be7df"), "lamp": Color("f6d683"), "pump": Color("7cc6ee"), "fan": Color("b9e8a0"), "furnace": Color("ee9c75"), "gas_converter": Color("d4d774"), "greenhouse": Color("9cdb8c")}
-const SIZES := {"laboratory": Vector2i(4, 3), "pump": Vector2i(2, 2), "fan": Vector2i(2, 2), "furnace": Vector2i(3, 2), "gas_converter": Vector2i(2, 2), "greenhouse": Vector2i(4, 3)}
+const NAMES := {"laboratory": "Laboratorio", "lamp": "Luce", "pump": "Pompa acqua", "fan": "Ventilatore gas", "furnace": "Fornace", "gas_converter": "Convertitore gas", "greenhouse": "Serra", "water_tank": "Contenitore acqua"}
+const CUBE_COLORS := {"laboratory": Color("8be7df"), "lamp": Color("f6d683"), "pump": Color("7cc6ee"), "fan": Color("b9e8a0"), "furnace": Color("ee9c75"), "gas_converter": Color("d4d774"), "greenhouse": Color("9cdb8c"), "water_tank": Color("6dc7e0")}
+const SIZES := {"laboratory": Vector2i(4, 3), "pump": Vector2i.ONE, "fan": Vector2i(2, 2), "furnace": Vector2i(3, 2), "gas_converter": Vector2i(2, 2), "greenhouse": Vector2i(4, 3), "water_tank": Vector2i(2, 2)}
 const MAX_LAB_LEVEL := 3
 var structures: Array = []
 
@@ -90,7 +90,7 @@ func blocker(id: String, origin: Vector2i, site: RefCounted, field: RefCounted, 
 				return "Spazio non libero: scava l'ingombro del progetto"
 			if not environment_safe(id, float(field.water.get(cell, 0)), float(field.gas.get(cell, 0)), float(field.oil.get(cell, 0)), float(field.acid.get(cell, 0))):
 				return "Area non sicura: presenza di acqua, gas, petrolio o acido"
-	for x in range(rect.position.x, rect.end.x) if id != "ladder" else []:
+	for x in range(rect.position.x, rect.end.x) if id not in ["ladder", "pump"] else []:
 		var support := Vector2i(x, rect.end.y)
 		if not site.contains(support) or site.material(support).is_empty():
 			return "Serve un pavimento stabile sotto tutta la struttura"
@@ -138,7 +138,7 @@ func restore(data: Variant, site: RefCounted) -> bool:
 		for placed: Dictionary in next:
 			if rect.intersects(footprint(placed.id, placed.origin)):
 				return false
-		for x in range(rect.position.x, rect.end.x) if item.id != "ladder" else []:
+		for x in range(rect.position.x, rect.end.x) if item.id not in ["ladder", "pump"] else []:
 			var support := Vector2i(x, rect.end.y)
 			if not site.contains(support) or site.material(support).is_empty():
 				return false

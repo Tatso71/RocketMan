@@ -1,7 +1,7 @@
 extends RefCounted
 
 const PATH := "res://design/v1/prototype_industry.json"
-const MACHINE_IDS := ["furnace", "gas_converter", "greenhouse"]
+const MACHINE_IDS := ["furnace", "gas_converter", "greenhouse", "water_tank"]
 const CROP_IDS := ["potato", "ochre_tuber", "verdant_leaf", "frost_berry"]
 const FOOD_NAMES := {"copper_ingot": "Lingotto rame", "glass": "Vetro", "potato": "Patata", "ochre_tuber": "Tubero ocra", "verdant_leaf": "Verdura viridia", "frost_berry": "Bacca brina"}
 const ITEM_COLORS := {"copper_ingot": Color("e8a76c"), "glass": Color("a0dce4"), "potato": Color("e6d28b"), "ochre_tuber": Color("e4a57f"), "verdant_leaf": Color("a8db86"), "frost_berry": Color("c7acf0")}
@@ -50,7 +50,17 @@ static func validate(data: Variant) -> Dictionary:
 	for key: String in ["gas_per_second", "kwh_per_gas", "capacity"]:
 		if not positive(data.converter.get(key)):
 			return {}
-	return data.duplicate(true) if positive(data.get("pump_capacity")) and cost_valid(data.get("conduit_cost")) else {}
+	for capacity: String in ["pump_capacity", "water_tank_capacity", "greenhouse_capacity"]:
+		if not positive(data.get(capacity)):
+			return {}
+	var costs = data.get("conduit_cost")
+	if not costs is Dictionary or costs.size() != 3 or not costs.get("water") is Dictionary or not costs.water.is_empty():
+		return {}
+	for kind: String in ["gas", "energy"]:
+		var component := "structural_component" if kind == "gas" else "electronic_component"
+		if not cost_valid(costs.get(kind)) or costs[kind].size() != 1 or costs[kind].get(component) != 1:
+			return {}
+	return data.duplicate(true)
 
 static func load_data() -> Dictionary:
 	if cached.is_empty():
@@ -61,8 +71,9 @@ static func load_data() -> Dictionary:
 			for recipe: Dictionary in cached.recipes.values() + cached.smelting.values():
 				for id: String in recipe.cost:
 					recipe.cost[id] = int(recipe.cost[id])
-			for id: String in cached.conduit_cost:
-				cached.conduit_cost[id] = int(cached.conduit_cost[id])
+			for cost: Dictionary in cached.conduit_cost.values():
+				for id: String in cost:
+					cost[id] = int(cost[id])
 	return cached
 
 static func initial_seeds() -> Dictionary:

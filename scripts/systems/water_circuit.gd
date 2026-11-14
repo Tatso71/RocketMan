@@ -2,368 +2,378 @@ extends RefCounted
 
 const Grid = preload("res://scripts/world/world_grid.gd")
 const Network = preload("res://scripts/systems/utility_network.gd")
-const Components = preload("res://scripts/data/component_catalog.gd")
+const Layout = preload("res://scripts/data/hazard_layout.gd")
 const IndustryCatalog = preload("res://scripts/data/industry_catalog.gd")
-const VALVE_COST := {"structural_component": 2, "electronic_component": 1}
 const PASSIVE_RATE := 0.35
 const PUMP_RATE := 0.7
 const MAX_LIFT := 6.0
 const EPS := 0.000001
+const SHIP_CAPACITY := 40.0
 var valves: Array = []
-var outlets: Array = []
 var pumps: Dictionary = {}
 var rates: Dictionary = {}
-var delivery: Dictionary = {}
-var _barriers: Dictionary = {}
+var local_ship_water := {"left": 0.0, "right": 0.0}
+var _ship_ports: Array = [
+	{"kind": "ship", "cell": Vector2i(-6, -3), "opened": true, "total": 0.0, "id": "left"},
+	{"kind": "ship", "cell": Vector2i(5, -3), "opened": true, "total": 0.0, "id": "right"},
+]
+var _context: WeakRef
+var _nodes: Dictionary = {}
 var _blocked: Dictionary = {}
+var _cavities: Dictionary = {}
 
 static func capacity() -> float:
 	return float(IndustryCatalog.load_data().pump_capacity)
 
-func at(cell: Vector2i) -> Dictionary:
-	for entry: Dictionary in valves + outlets:
-		if entry.cell == cell:
-			return entry
-	return {}
-
 static func key(cell: Vector2i) -> String:
 	return "%d:%d" % [cell.x, cell.y]
 
-func placement_blocker(kind: String, cell: Vector2i, direction: Vector2i, outpost) -> String:
-	var site: RefCounted = outpost.world.site
-	if valves.size() + outlets.size() >= 200:
-		return "Limite di 200 dispositivi idraulici raggiunto"
-	if kind not in ["valve", "outlet"] or direction not in Network.OFFSETS:
-		return "Orientamento non valido"
-	if not outpost.laboratory_unlocked():
-		return "Attiva prima il primo laboratorio"
-	if not site.contains(cell) or not site.material(cell).is_empty() or not outpost.reachable_cell(cell):
-		return "Serve una cella libera e raggiungibile"
-	if not at(cell).is_empty():
-		return "Cella gia' occupata da una presa o uno scarico"
-	if kind == "outlet":
-		var target := cell + direction
-		if not outpost.network.cells.water.has(cell):
-			return "Posa prima il tubo acqua"
-		if not site.contains(target) or not site.material(target).is_empty() or outpost.network.cells.water.has(target):
-			return "Orienta lo scarico verso una cella libera senza tubo"
-		return ""
-	var anchor := cell + direction
-	if not site.contains(anchor) or site.material(anchor).is_empty() or site.indestructible(anchor):
-		return "Fissa la presa alla faccia di una roccia perforabile"
-	for building: Dictionary in outpost.buildings.structures:
-		if outpost.buildings.footprint(building.id, building.origin).has_point(cell):
-			return "Spazio occupato da un'installazione"
-	return "" if outpost.world.field_cargo.can_pay(VALVE_COST, outpost.world.drone_help_available()) else "Servono 2 strutturali + 1 elettronico nel carico accessibile"
+func ship_ports() -> Array:
+	return _ship_ports
 
-func place(kind: String, cell: Vector2i, direction: Vector2i, outpost) -> bool:
-	var reason := placement_blocker(kind, cell, direction, outpost)
-	if not reason.is_empty():
-		outpost.world._note(reason)
-		return false
-	if kind == "valve" and not outpost.world.field_cargo.pay(VALVE_COST, outpost.world.drone_help_available()):
-		return false
-	var entry := {"kind": kind, "cell": cell, "direction": direction, "opened": false, "total": 0.0}
-	if kind == "valve":
-		entry.drilled = false
-		valves.append(entry)
-	else:
-		entry.role = "outlet"
-		outlets.append(entry)
-	outpost.world.guide_event("water_" + kind + "_placed")
-	return true
+func at(cell: Vector2i) -> Dictionary:
+	for entry: Dictionary in valves + _ship_ports:
+		if entry.cell == cell: return entry
+	return {}
 
-func drill_blocker(entry: Dictionary, outpost) -> String:
-	if not valves.has(entry) or entry.drilled or not outpost.reachable_cell(entry.cell):
-		return "Presa non raggiungibile o gia' perforata"
-	var anchor: Vector2i = entry.cell + entry.direction
-	var material: String = outpost.world.site.material(anchor)
-	var tool: Resource = outpost.world.active_tool()
-	if tool == null or tool.mode != "mine" or material not in tool.materials or outpost.world.site.indestructible(anchor):
-		return "Seleziona un estrattore compatibile con la parete"
+func _bind(outpost) -> void:
+	_context = weakref(outpost)
+
+func _water_neighbors(cell: Vector2i, outpost) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for direction: Vector2i in Network.OFFSETS:
+		var neighbor := cell + direction
+		if outpost.world.site.contains(neighbor) and outpost.world.site.material(neighbor).is_empty() and float(outpost.world.environment.water.get(neighbor, 0)) > EPS:
+			result.append(neighbor)
+	return result
+
+func placement_blocker(kind: String, cell: Vector2i, outpost) -> String:
+	_bind(outpost)
+	if kind != "valve": return "Dispositivo acqua non valido"
+	if valves.size() >= 200: return "Limite di 200 valvole raggiunto"
+	if not at(cell).is_empty(): return "Cella gia' occupata da una valvola"
+	if not outpost.world.site.contains(cell) or outpost.world.site.material(cell).is_empty():
+		return "La valvola va su una cella di roccia"
+	if _water_neighbors(cell, outpost).is_empty(): return "Serve acqua reale in una cella adiacente"
 	return ""
 
-func drill(entry: Dictionary, outpost) -> bool:
-	var reason := drill_blocker(entry, outpost)
+func place(kind: String, cell: Vector2i, outpost) -> bool:
+	var reason := placement_blocker(kind, cell, outpost)
 	if not reason.is_empty():
 		outpost.world._note(reason)
 		return false
-	entry.drilled = true
-	outpost.world.guide_event("water_valve_drilled")
+	valves.append({"kind": "valve", "cell": cell, "opened": true, "total": 0.0})
+	for neighbor: Vector2i in _water_neighbors(cell, outpost): _cavities[neighbor] = true
+	outpost.world.guide_event("water_valve_placed")
 	return true
 
-func toggle(entry: Dictionary, outpost) -> bool:
-	if not (valves.has(entry) or outlets.has(entry)) or not outpost.reachable_cell(entry.cell):
-		return false
-	if not entry.opened and (not outpost.network.cells.water.has(entry.cell) or (entry.kind == "valve" and not entry.drilled)):
-		outpost.world._note("Collega il tubo e completa la perforazione prima di aprire")
-		return false
+func toggle(entry: Dictionary, _outpost) -> bool:
+	if not valves.has(entry) and not _ship_ports.has(entry): return false
 	entry.opened = not entry.opened
 	return true
 
-func set_role(entry: Dictionary, role: String, outpost) -> bool:
-	if not outlets.has(entry) or role not in ["outlet", "intake"] or not outpost.reachable_cell(entry.cell): return false
-	entry.role = role
-	entry.opened = false
-	rates.erase("outlet:" + key(entry.cell))
+func remove(entry: Dictionary, _outpost) -> bool:
+	if not valves.has(entry): return false
+	valves.erase(entry)
 	return true
 
-func remove(entry: Dictionary, outpost) -> bool:
-	if not outpost.reachable_cell(entry.cell):
-		return false
-	if valves.has(entry):
-		valves.erase(entry)
-		return true
-	if outlets.has(entry):
-		outlets.erase(entry)
-		return true
-	return false
+func _neighbors(cell: Vector2i, outpost) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for direction: Vector2i in Network.OFFSETS:
+		var neighbor := cell + direction
+		if outpost.network.cells.water.has(neighbor) or not at(neighbor).is_empty(): result.append(direction)
+	return result
+
+func pump_placement_blocker(cell: Vector2i, outpost) -> String:
+	_bind(outpost)
+	if not outpost.network.cells.water.has(cell) or not outpost.world.site.material(cell).is_empty(): return "Posa prima un tubo acqua nella cella della pompa"
+	var neighbors := _neighbors(cell, outpost)
+	if neighbors.is_empty(): return "Collega almeno un tubo o una valvola accanto alla pompa"
+	if neighbors.size() > 2 or (neighbors.size() == 2 and neighbors[0] != -neighbors[1]): return "Serve un tubo diritto o terminale, non una curva o un incrocio"
+	return ""
+
+func pump_direction(building: Dictionary) -> Vector2i:
+	var id := key(building.origin)
+	if pumps.has(id): return pumps[id]
+	var outpost = _context.get_ref() if _context != null else null
+	if outpost != null:
+		var neighbors := _neighbors(building.origin, outpost)
+		if not neighbors.is_empty(): return Vector2i.DOWN if neighbors[0].x == 0 else Vector2i.RIGHT
+		if int(outpost.network.water_axes.get(building.origin, 0)) == 1: return Vector2i.DOWN
+	return Vector2i.RIGHT
 
 func pump_ports(building: Dictionary) -> Dictionary:
-	var left: Vector2i = building.origin + Vector2i(0, 1)
-	var right := left + Vector2i.RIGHT
-	var reverse: bool = pumps.get(key(building.origin), false)
-	return {"input": right if reverse else left, "output": left if reverse else right}
+	var direction := pump_direction(building)
+	return {"input": building.origin - direction, "output": building.origin + direction, "direction": direction}
 
-func reverse_pump(building: Dictionary, outpost) -> bool:
-	if building.id != "pump" or not outpost.buildings.structures.has(building) or not outpost.site_reachable(building):
-		return false
-	var id := key(building.origin)
-	pumps[id] = not pumps.get(id, false)
+func set_pump_direction(building: Dictionary, direction: Vector2i, outpost) -> bool:
+	_bind(outpost)
+	if building.get("id") != "pump" or direction not in Network.OFFSETS or not outpost.buildings.structures.has(building) or not outpost.site_reachable(building): return false
+	if not pump_placement_blocker(building.origin, outpost).is_empty(): return false
+	for neighbor: Vector2i in _neighbors(building.origin, outpost):
+		if neighbor != direction and neighbor != -direction: return false
+	pumps[key(building.origin)] = direction
 	return true
 
-func _topology(outpost) -> void:
-	_barriers.clear()
-	_blocked.clear()
-	for pump: Dictionary in outpost.buildings.structures:
-		if pump.id != "pump" or pump.get("state", "active") == "planned": continue
-		var ports := pump_ports(pump)
-		_barriers[Vector4i(ports.input.x, ports.input.y, ports.output.x, ports.output.y)] = true
-		_barriers[Vector4i(ports.output.x, ports.output.y, ports.input.x, ports.input.y)] = true
-		_blocked[pump.origin] = true
-		_blocked[pump.origin + Vector2i.RIGHT] = true
+func reverse_pump(building: Dictionary, outpost) -> bool:
+	_bind(outpost)
+	return set_pump_direction(building, -pump_direction(building), outpost)
 
-func _route(start: Vector2i, end: Vector2i, network: RefCounted, ceiling: float = -INF) -> bool:
-	if not network.cells.water.has(start) or not network.cells.water.has(end) or start.y + 0.5 < ceiling:
-		return false
+func toggle_pump(building: Dictionary, outpost) -> bool:
+	if building.get("id") != "pump" or not outpost.buildings.structures.has(building) or not outpost.site_reachable(building): return false
+	building.enabled = not building.get("enabled", true)
+	return true
+
+func synchronize(outpost) -> void:
+	_bind(outpost)
+	for entry: Dictionary in valves.duplicate():
+		if outpost.world.site.material(entry.cell).is_empty(): valves.erase(entry)
+	for id: String in pumps.keys():
+		if not outpost.buildings.structures.any(func(b: Dictionary): return b.id == "pump" and key(b.origin) == id): pumps.erase(id)
+
+func _topology(outpost) -> void:
+	synchronize(outpost)
+	_nodes.clear()
+	_blocked.clear()
+	for b: Dictionary in outpost.buildings.structures:
+		if b.id == "pump" and b.get("state", "active") != "planned": _blocked[b.origin] = true
+	for cell: Vector2i in outpost.network.cells.water:
+		if Network.valid_cell(cell, outpost.world.site) and not _blocked.has(cell): _nodes[cell] = true
+	for entry: Dictionary in valves + _ship_ports:
+		if entry.opened and not _blocked.has(entry.cell): _nodes[entry.cell] = true
+	for pocket: Dictionary in outpost.world.site.pockets():
+		if pocket.kind == "water":
+			for cell: Vector2i in Layout.cells(pocket): _cavities[cell] = true
+
+func _route(start: Vector2i, end: Vector2i, ceiling: float) -> bool:
+	if not _nodes.has(start) or not _nodes.has(end) or start.y + 0.5 < ceiling - EPS: return false
 	var queue: Array[Vector2i] = [start]
 	var seen := {start: true}
-	var head := 0
-	while head < queue.size():
-		var cell := queue[head]
-		head += 1
+	var index := 0
+	while index < queue.size():
+		var cell := queue[index]
+		index += 1
 		if cell == end: return true
 		for direction: Vector2i in Network.OFFSETS:
 			var next := cell + direction
-			if seen.has(next) or _blocked.has(next) or next.y + 0.5 < ceiling or not network.cells.water.has(next): continue
-			if _barriers.has(Vector4i(cell.x, cell.y, next.x, next.y)): continue
+			if seen.has(next) or not _nodes.has(next) or next.y + 0.5 < ceiling - EPS: continue
 			seen[next] = true
 			queue.append(next)
 	return false
 
-func _source(entry: Dictionary) -> Vector2i:
-	return entry.cell + entry.direction * (2 if entry.kind == "valve" else 1)
+func _ship_water(outpost) -> Dictionary:
+	var ship = outpost.world.get("ship_state")
+	return ship.water_tanks if ship != null else local_ship_water
 
-func _head(entry: Dictionary, field: RefCounted) -> float:
-	var source := _source(entry)
-	return source.y + 1.0 - float(field.water.get(source, 0))
-
-func _take(entry: Dictionary, field: RefCounted, budget: float) -> float:
-	var source := _source(entry)
-	var volume: float = field.water.get(source, 0)
-	var taken := minf(volume, maxf(0, budget))
-	if taken <= 0: return 0
-	if volume - taken <= EPS: field.water.erase(source)
-	else: field.water[source] = volume - taken
-	entry.total += taken
-	return taken
-
-func _target(entry: Dictionary, outpost) -> Vector2i:
-	return entry.cell + entry.direction
-
-func _room(entry: Dictionary, outpost) -> float:
-	var target := _target(entry, outpost)
-	var field: RefCounted = outpost.world.environment
-	if not outpost.world.site.contains(target) or not outpost.world.site.material(target).is_empty() or outpost.network.cells.water.has(target): return 0
-	if float(field.oil.get(target, 0)) > EPS or float(field.acid.get(target, 0)) > EPS: return 0
-	return maxf(0, 1.0 - field.liquid_volume(target))
-
-func _release(entry: Dictionary, outpost, volume: float) -> void:
-	if volume <= 0: return
-	var cell := _target(entry, outpost)
-	var field: RefCounted = outpost.world.environment
-	field.water[cell] = float(field.water.get(cell, 0)) + volume
-	entry.total += volume
-	rates["outlet:" + key(entry.cell)] = float(rates.get("outlet:" + key(entry.cell), 0)) + volume
-
-func _valid_sources(outpost) -> Array:
+func _endpoints(outpost, powered: float) -> Array:
 	var result: Array = []
-	for entry: Dictionary in valves.duplicate():
-		if outpost.world.site.material(entry.cell + entry.direction).is_empty():
-			valves.erase(entry)
-			continue
-		if not outpost.network.cells.water.has(entry.cell): entry.opened = false
-		if entry.opened and entry.drilled and float(outpost.world.environment.water.get(_source(entry), 0)) > EPS:
-			result.append(entry)
-	for entry: Dictionary in outlets:
-		if not outpost.network.cells.water.has(entry.cell): entry.opened = false
-		if entry.opened and entry.role == "intake" and float(outpost.world.environment.water.get(_source(entry), 0)) > EPS:
-			result.append(entry)
+	for entry: Dictionary in valves:
+		if not entry.opened: continue
+		for direction: Vector2i in Network.OFFSETS:
+			var cell: Vector2i = entry.cell + direction
+			var water := float(outpost.world.environment.water.get(cell, 0))
+			if water > EPS: _cavities[cell] = true
+			if not _cavities.has(cell) or not outpost.world.site.contains(cell) or not outpost.world.site.material(cell).is_empty(): continue
+			if float(outpost.world.environment.oil.get(cell, 0)) > EPS or float(outpost.world.environment.acid.get(cell, 0)) > EPS: continue
+			result.append({"id": "water:" + key(cell), "owner": "valve:" + key(entry.cell), "kind": "water", "cell": cell, "input": entry.cell, "output": entry.cell, "entry": entry, "storage": outpost.world.environment.water, "slot": cell, "capacity": 1.0, "powered": false})
+	for entry: Dictionary in _ship_ports:
+		if not entry.opened: continue
+		result.append({"id": "ship:" + entry.id, "owner": "ship:" + key(entry.cell), "kind": "ship", "cell": entry.cell, "input": entry.cell, "output": entry.cell, "entry": entry, "storage": _ship_water(outpost), "slot": entry.id, "capacity": SHIP_CAPACITY, "powered": false})
+	for b: Dictionary in outpost.buildings.structures:
+		if b.id not in ["pump", "greenhouse", "water_tank"] or b.get("state", "active") != "active" or b.get("damaged", false): continue
+		var port := Network.port(b, "water")
+		var input := port
+		var output := port
+		var active := false
+		if b.id == "pump":
+			if powered <= 0 or not b.get("enabled", true) or not outpost.device_powered(b) or not pump_placement_blocker(b.origin, outpost).is_empty(): continue
+			var ports := pump_ports(b)
+			var aligned := true
+			for neighbor: Vector2i in _neighbors(b.origin, outpost):
+				if neighbor != ports.direction and neighbor != -ports.direction: aligned = false
+			if not aligned: continue
+			input = ports.input
+			output = ports.output
+			port = b.origin
+			active = true
+		var id: String = b.id + ":" + key(b.origin)
+		var storage_capacity := float(IndustryCatalog.load_data()[b.id + "_capacity"])
+		result.append({"id": id, "owner": id, "kind": b.id, "cell": port, "input": input, "output": output, "building": b, "storage": outpost.industry.state(b), "slot": "water", "capacity": storage_capacity, "powered": active})
 	return result
 
-func synchronize(outpost) -> void:
-	_valid_sources(outpost)
-	for id: String in pumps.keys():
-		if not outpost.buildings.structures.any(func(building: Dictionary): return building.id == "pump" and key(building.origin) == id):
-			pumps.erase(id)
+func _volume(endpoint: Dictionary) -> float:
+	return maxf(0, float(endpoint.storage.get(endpoint.slot, 0)))
+
+func _head(endpoint: Dictionary) -> float:
+	return endpoint.cell.y + 1.0 - _volume(endpoint) if endpoint.kind == "water" else endpoint.cell.y + 0.5
+
+func _record(endpoint: Dictionary, volume: float, intake: bool) -> void:
+	if endpoint.has("entry"): endpoint.entry.total = float(endpoint.entry.total) + volume
+	if endpoint.kind == "pump" and intake: endpoint.building.drained = float(endpoint.building.get("drained", 0)) + volume
+	if endpoint.kind != "pump" or intake:
+		rates[endpoint.owner] = float(rates.get(endpoint.owner, 0)) + volume
 
 func advance(delta: float, outpost, powered_seconds: float) -> void:
 	if not is_finite(delta) or delta <= 0 or not is_finite(powered_seconds): return
 	_topology(outpost)
 	rates.clear()
-	delivery.clear()
-	var duration := minf(delta, 60)
-	var power_fraction := clampf(powered_seconds / delta, 0, 1)
+	var duration := minf(delta, 60.0)
+	var fraction := clampf(powered_seconds / delta, 0, 1)
 	var remaining := duration
 	while remaining > EPS:
 		var step := minf(remaining, 0.2)
-		_step(step, outpost, step * power_fraction)
+		_step(step, outpost, step * fraction)
 		remaining -= step
 	for id: String in rates: rates[id] = float(rates[id]) / duration
 
 func _step(delta: float, outpost, powered: float) -> void:
-	var field: RefCounted = outpost.world.environment
-	var sources := _valid_sources(outpost)
-	var budgets := {}
-	for entry: Dictionary in sources: budgets[key(entry.cell)] = PUMP_RATE * delta
-	for pump: Dictionary in outpost.buildings.structures:
-		if pump.id != "pump" or powered <= 0 or not outpost.device_powered(pump): continue
-		var ports := pump_ports(pump)
-		var storage: Dictionary = outpost.industry.state(pump)
-		var budget := minf(PUMP_RATE * powered, maxf(0, capacity() - float(storage.water)))
-		for entry: Dictionary in sources:
-			var head := _head(entry, field)
-			if ports.input.y + 0.5 < head - MAX_LIFT or not _route(entry.cell, ports.input, outpost.network, head - MAX_LIFT): continue
-			var volume := _take(entry, field, minf(budget, budgets[key(entry.cell)]))
-			storage.water += volume
-			budget -= volume
-			budgets[key(entry.cell)] -= volume
-			var rate_key: String = entry.kind + ":" + key(entry.cell)
-			rates[rate_key] = float(rates.get(rate_key, 0)) + volume
-			rates["pump:" + key(pump.origin)] = float(rates.get("pump:" + key(pump.origin), 0)) + volume
-			pump.drained = float(pump.get("drained", 0)) + volume
-		var output_budget := minf(PUMP_RATE * powered, float(storage.water))
-		for outlet: Dictionary in outlets:
-			if outlet.role != "outlet" or not outlet.opened or _target(outlet, outpost).y + 0.5 < ports.output.y + 0.5 - MAX_LIFT or not _route(ports.output, outlet.cell, outpost.network, ports.output.y + 0.5 - MAX_LIFT): continue
-			var volume := minf(output_budget, _room(outlet, outpost))
-			_release(outlet, outpost, volume)
-			storage.water = maxf(0, float(storage.water) - volume)
-			output_budget = maxf(0, output_budget - volume)
-		delivery[key(pump.origin)] = float(delivery.get(key(pump.origin), 0)) + output_budget
-	for entry: Dictionary in sources:
-		var budget := minf(PASSIVE_RATE * delta, budgets[key(entry.cell)])
-		var head := _head(entry, field)
-		for outlet: Dictionary in outlets:
-			if outlet.role != "outlet" or not outlet.opened or _target(outlet, outpost).y + 0.5 <= head or not _route(entry.cell, outlet.cell, outpost.network, head): continue
-			var volume := _take(entry, field, minf(budget, _room(outlet, outpost)))
-			_release(outlet, outpost, volume)
-			budget -= volume
-			var rate_key: String = entry.kind + ":" + key(entry.cell)
-			rates[rate_key] = float(rates.get(rate_key, 0)) + volume
+	var endpoints := _endpoints(outpost, powered)
+	var available := {}
+	var outgoing := {}
+	var passive := {}
+	var incoming := {}
+	for endpoint: Dictionary in endpoints:
+		available[endpoint.id] = _volume(endpoint)
+		outgoing[endpoint.owner] = PUMP_RATE * (powered if endpoint.powered else delta)
+		passive[endpoint.owner] = PASSIVE_RATE * delta
+		incoming[endpoint.id] = PUMP_RATE * powered if endpoint.powered else INF
+	# Only water present at the start of this substep can leave an endpoint.
+	# Shared cell/valve and pump budgets prevent branch multiplication and recycling.
+	for source: Dictionary in endpoints:
+		if source.kind == "greenhouse": continue
+		for target: Dictionary in endpoints:
+			if source.id == target.id or source.owner == target.owner: continue
+			var active: bool = source.powered or target.powered
+			var source_head := _head(source)
+			var ceiling := source_head - (MAX_LIFT if active else 0.0)
+			if _head(target) < ceiling - EPS: continue
+			if not active and _head(target) <= source_head + EPS: continue
+			var direct_handoff: bool = source.kind == "pump" and target.kind == "pump" and source.output == target.building.origin and target.input == source.building.origin
+			if not direct_handoff and not _route(source.output, target.input, ceiling): continue
+			var room := maxf(0, float(target.capacity) - _volume(target))
+			if target.kind == "water": room = minf(room, maxf(0, target.cell.y + 1.0 - ceiling - _volume(target)))
+			var budget := minf(float(available[source.id]), float(outgoing[source.owner]))
+			budget = minf(budget, float(incoming[target.id]))
+			if not active: budget = minf(budget, float(passive[source.owner]))
+			var volume := minf(budget, room)
+			if volume <= 0: continue
+			source.storage[source.slot] = _volume(source) - volume
+			target.storage[target.slot] = _volume(target) + volume
+			available[source.id] = maxf(0, float(available[source.id]) - volume)
+			outgoing[source.owner] = maxf(0, float(outgoing[source.owner]) - volume)
+			incoming[target.id] = maxf(0, float(incoming[target.id]) - volume)
+			if not active: passive[source.owner] = maxf(0, float(passive[source.owner]) - volume)
+			_record(source, volume, false)
+			_record(target, volume, true)
 
 func pumps_for(building: Dictionary, outpost) -> Array:
 	_topology(outpost)
 	var target := Network.port(building, "water")
-	return outpost.buildings.structures.filter(func(pump: Dictionary): return pump.id == "pump" and outpost.device_powered(pump) and target.y >= pump_ports(pump).output.y - MAX_LIFT and _route(pump_ports(pump).output, target, outpost.network, pump_ports(pump).output.y + 0.5 - MAX_LIFT))
+	return outpost.buildings.structures.filter(func(pump: Dictionary): return pump.id == "pump" and outpost.device_powered(pump) and _route(pump_ports(pump).output, target, pump.origin.y + 0.5 - MAX_LIFT))
 
 func deliverable(building: Dictionary, outpost) -> float:
-	var result := 0.0
-	for pump: Dictionary in pumps_for(building, outpost):
-		result += minf(float(outpost.industry.state(pump).water), float(delivery.get(key(pump.origin), 0)))
-	return result
+	if building.get("id") != "greenhouse" or building.get("state", "active") != "active" or building.get("damaged", false): return 0.0
+	return maxf(0, float(outpost.industry.state(building).get("water", 0)))
 
 func withdraw(building: Dictionary, requested: float, outpost) -> float:
-	if not is_finite(requested) or requested <= 0: return 0
-	var remaining := requested
-	for pump: Dictionary in pumps_for(building, outpost):
-		var storage: Dictionary = outpost.industry.state(pump)
-		var id := key(pump.origin)
-		var taken := maxf(0, minf(remaining, minf(float(storage.water), float(delivery.get(id, 0)))))
-		storage.water = maxf(0, float(storage.water) - taken)
-		delivery[id] = maxf(0, float(delivery.get(id, 0)) - taken)
-		remaining -= taken
-	return requested - remaining
+	if not is_finite(requested) or requested <= 0: return 0.0
+	var volume := minf(requested, deliverable(building, outpost))
+	if volume > 0:
+		var storage: Dictionary = outpost.industry.state(building)
+		storage.water = maxf(0, float(storage.water) - volume)
+	return volume
 
 func report(entry: Dictionary, outpost) -> Dictionary:
-	var rate: float = rates.get(entry.get("kind", "") + ":" + key(entry.cell), 0)
-	var status := "Flusso attivo" if rate > EPS else "In attesa di un percorso e di una destinazione libera"
-	if not outpost.network.cells.water.has(entry.cell): status = "Tubo acqua scollegato / chiusura di sicurezza"
-	elif entry.kind == "valve" and not entry.drilled: status = "Da perforare / parete ancora integra"
-	elif not entry.opened: status = "Chiusa" if entry.kind == "valve" else "Scarico chiuso"
-	elif entry.kind == "valve" and float(outpost.world.environment.water.get(_source(entry), 0)) <= EPS: status = "Nessuna acqua all'altezza della presa"
-	elif entry.kind == "outlet" and entry.role == "intake" and float(outpost.world.environment.water.get(_source(entry), 0)) <= EPS: status = "Bocca di aspirazione asciutta"
-	elif entry.kind == "outlet" and entry.role == "outlet" and _room(entry, outpost) <= EPS: status = "Uscita piena, ostruita o contaminata"
-	return {"status": status, "rate": rate, "total": float(entry.get("total", 0)), "kind": entry.kind}
+	_bind(outpost)
+	var rate := float(rates.get(entry.kind + ":" + key(entry.cell), 0))
+	var status := "Flusso attivo" if rate > EPS else "In attesa di un percorso e di un ricevente libero"
+	var connected: bool = outpost.network.cells.water.has(entry.cell)
+	for direction: Vector2i in Network.OFFSETS:
+		if outpost.network.cells.water.has(entry.cell + direction): connected = true
+	if not entry.opened: status = "Valvola chiusa"
+	elif not connected: status = "Tubo acqua scollegato"
+	elif entry.kind == "valve" and _water_neighbors(entry.cell, outpost).is_empty(): status = "Nessuna acqua adiacente / disponibile come ricevente"
+	var water := float(_ship_water(outpost).get(entry.get("id", ""), 0)) if entry.kind == "ship" else 0.0
+	return {"status": status, "rate": rate, "total": float(entry.total), "kind": entry.kind, "water": water, "capacity": SHIP_CAPACITY if entry.kind == "ship" else 0.0}
 
 func pump_report(building: Dictionary, outpost) -> Dictionary:
+	_bind(outpost)
 	var ports := pump_ports(building)
-	var rate: float = rates.get("pump:" + key(building.origin), 0)
-	var status := "Aspirazione attiva" if rate > EPS else "In attesa di acqua o ricevente"
-	if not building.get("enabled", true): status = "Spenta"
+	var rate := float(rates.get("pump:" + key(building.origin), 0))
+	var status := "Aspirazione attiva" if rate > EPS else "In attesa di acqua o ricevente entro 6 m"
+	var water := float(outpost.industry.state(building).get("water", 0))
+	if building.get("state", "active") != "active": status = "Montaggio in corso"
+	elif not building.get("enabled", true): status = "Spenta"
 	elif not outpost.device_powered(building): status = "Nessuna alimentazione o collegamento al laboratorio"
-	elif not outpost.network.cells.water.has(ports.input): status = "Ingresso acqua scollegato"
-	elif not outpost.network.cells.water.has(ports.output): status = "Uscita acqua scollegata"
-	elif float(outpost.industry.state(building).water) >= capacity() - EPS: status = "Buffer pieno / verifica il ricevente e il dislivello"
-	return {"status": status, "rate": rate, "total": float(building.get("drained", 0)), "kind": "pump"}
+	elif not pump_placement_blocker(building.origin, outpost).is_empty(): status = "Tubo scollegato, curva o incrocio presso la pompa"
+	elif not outpost.network.cells.water.has(ports.input) and at(ports.input).is_empty(): status = "Ingresso acqua scollegato"
+	elif not outpost.network.cells.water.has(ports.output) and at(ports.output).is_empty(): status = "Uscita acqua scollegata / accumulo nel buffer"
+	elif water >= capacity() - EPS: status = "Buffer pieno / verifica ricevente e dislivello"
+	return {"status": status, "rate": rate, "total": float(building.get("drained", 0)), "kind": "pump", "water": water, "capacity": capacity(), "direction": ports.direction}
 
 func snapshot() -> Dictionary:
-	var data := {"version": 1, "valves": [], "outlets": [], "pumps": pumps.duplicate()}
-	for kind: String in ["valves", "outlets"]:
-		for entry: Dictionary in get(kind):
-			var saved := entry.duplicate()
-			saved.cell = [entry.cell.x, entry.cell.y]
-			saved.direction = [entry.direction.x, entry.direction.y]
-			data[kind].append(saved)
+	var data := {"version": 2, "valves": [], "pumps": {}, "local_ship_water": local_ship_water.duplicate(), "cavities": [], "ship_opened": {}}
+	for entry: Dictionary in valves:
+		data.valves.append({"kind": "valve", "cell": [entry.cell.x, entry.cell.y], "opened": entry.opened, "total": entry.total})
+	for id: String in pumps:
+		var direction: Vector2i = pumps[id]
+		data.pumps[id] = [direction.x, direction.y]
+	for cell: Vector2i in _cavities:
+		if valves.any(func(entry: Dictionary): return cell - entry.cell in Network.OFFSETS): data.cavities.append([cell.x, cell.y])
+	for entry: Dictionary in _ship_ports: data.ship_opened[entry.id] = entry.opened
 	return data
+
+static func _fields(data: Dictionary, fields: Array) -> bool:
+	return data.size() == fields.size() and data.keys().all(func(property): return property in fields)
+
+static func _number(value: Variant, maximum: float = INF) -> bool:
+	return (value is int or value is float) and is_finite(float(value)) and value >= 0 and value <= maximum
 
 func restore(data: Variant, site: RefCounted, buildings: RefCounted) -> bool:
 	if not data is Dictionary: return false
 	if data.is_empty():
-		valves.clear()
-		outlets.clear()
-		pumps.clear()
+		valves = []
+		pumps = {}
+		local_ship_water = {"left": 0.0, "right": 0.0}
 		rates.clear()
-		delivery.clear()
+		_cavities.clear()
+		for entry: Dictionary in _ship_ports:
+			entry.opened = true
+			entry.total = 0.0
 		return true
-	if data.get("version") != 1 or not data.get("valves") is Array or not data.get("outlets") is Array or not data.get("pumps") is Dictionary or data.valves.size() + data.outlets.size() > 200 or data.pumps.size() > 200: return false
-	var parsed := {"valves": [], "outlets": []}
+	if not _fields(data, ["version", "valves", "pumps", "local_ship_water", "cavities", "ship_opened"]) or data.get("version") != 2 or not data.get("valves") is Array or not data.get("pumps") is Dictionary or not data.get("local_ship_water") is Dictionary or not data.get("cavities") is Array or not data.get("ship_opened") is Dictionary: return false
+	if data.valves.size() > 200 or data.pumps.size() > 200 or not _fields(data.local_ship_water, ["left", "right"]): return false
+	if data.cavities.size() > 800 or not _fields(data.ship_opened, ["left", "right"]) or not data.ship_opened.left is bool or not data.ship_opened.right is bool: return false
+	for value in data.local_ship_water.values():
+		if not _number(value, SHIP_CAPACITY): return false
+	var parsed: Array = []
 	var seen := {}
-	for group: String in parsed:
-		for saved in data[group]:
-			if not saved is Dictionary: return false
-			var fields := ["kind", "cell", "direction", "opened", "total", "drilled"] if group == "valves" else ["kind", "cell", "direction", "opened", "total", "role"]
-			if saved.size() != fields.size() or saved.keys().any(func(property): return property not in fields): return false
-			var cell = Grid.decode_cell(saved.get("cell"))
-			var direction = Grid.decode_cell(saved.get("direction"))
-			if not cell is Vector2i or not direction is Vector2i or direction not in Network.OFFSETS or not site.contains(cell) or not site.material(cell).is_empty() or seen.has(cell): return false
-			if saved.get("kind") != ("valve" if group == "valves" else "outlet") or not saved.get("opened") is bool or not (saved.get("total") is int or saved.get("total") is float) or not is_finite(float(saved.total)) or saved.total < 0: return false
-			if group == "valves":
-				if not saved.get("drilled") is bool or (saved.opened and not saved.drilled) or not site.contains(cell + direction) or site.material(cell + direction).is_empty() or site.indestructible(cell + direction): return false
-				if buildings.structures.any(func(building: Dictionary): return buildings.footprint(building.id, building.origin).has_point(cell)): return false
-			elif saved.get("role") not in ["outlet", "intake"] or not site.contains(cell + direction) or not site.material(cell + direction).is_empty(): return false
-			var entry: Dictionary = saved.duplicate(true)
-			entry.cell = cell
-			entry.direction = direction
-			entry.total = float(entry.total)
-			parsed[group].append(entry)
-			seen[cell] = true
+	for saved in data.valves:
+		if not saved is Dictionary or not _fields(saved, ["kind", "cell", "opened", "total"]): return false
+		var cell = Grid.decode_cell(saved.cell)
+		if not cell is Vector2i or not site.contains(cell) or site.material(cell).is_empty() or seen.has(cell): return false
+		if saved.kind != "valve" or not saved.opened is bool or not _number(saved.total): return false
+		if buildings.structures.any(func(b: Dictionary): return buildings.footprint(b.id, b.origin).has_point(cell)): return false
+		parsed.append({"kind": "valve", "cell": cell, "opened": saved.opened, "total": float(saved.total)})
+		seen[cell] = true
+	var next_cavities := {}
+	for saved in data.cavities:
+		var cell = Grid.decode_cell(saved)
+		if not cell is Vector2i or not site.contains(cell) or not site.material(cell).is_empty() or next_cavities.has(cell): return false
+		if not parsed.any(func(entry: Dictionary): return cell - entry.cell in Network.OFFSETS): return false
+		next_cavities[cell] = true
 	var next_pumps := {}
 	for id in data.pumps:
-		if not id is String or not data.pumps[id] is bool or not buildings.structures.any(func(building: Dictionary): return building.id == "pump" and key(building.origin) == id): return false
-		next_pumps[id] = data.pumps[id]
-	valves = parsed.valves
-	outlets = parsed.outlets
+		var direction = Grid.decode_cell(data.pumps[id])
+		if not id is String or not direction is Vector2i or direction not in Network.OFFSETS: return false
+		if buildings.structures.filter(func(b: Dictionary): return b.id == "pump" and key(b.origin) == id).size() != 1: return false
+		next_pumps[id] = direction
+	valves = parsed
 	pumps = next_pumps
+	local_ship_water = {"left": float(data.local_ship_water.left), "right": float(data.local_ship_water.right)}
 	rates.clear()
-	delivery.clear()
+	_cavities = next_cavities
+	for entry: Dictionary in _ship_ports:
+		entry.opened = data.ship_opened[entry.id]
+		entry.total = 0.0
 	return true

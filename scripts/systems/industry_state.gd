@@ -5,16 +5,17 @@ const Network = preload("res://scripts/systems/utility_network.gd")
 const Grid = preload("res://scripts/world/world_grid.gd")
 var machines: Dictionary = {}
 var collected_pods: Array[String] = []
+var irrigated: Dictionary = {}
 
 static func key(building: Dictionary) -> String:
 	return "%s:%d:%d" % [building.id, building.origin.x, building.origin.y]
 
 static func defaults(id: String) -> Dictionary:
 	match id:
-		"pump": return {"water": 0.0}
+		"pump", "water_tank": return {"water": 0.0}
 		"gas_converter": return {"energy": 0.0, "produced": 0.0}
 		"furnace": return {"recipe": "", "elapsed": 0.0, "output": ""}
-		"greenhouse": return {"crop": "", "elapsed": 0.0}
+		"greenhouse": return {"crop": "", "elapsed": 0.0, "water": 0.0}
 	return {}
 
 func state(building: Dictionary) -> Dictionary:
@@ -24,7 +25,7 @@ func state(building: Dictionary) -> Dictionary:
 	return machines[identity]
 
 func healthy(building: Dictionary, outpost: Node2D) -> bool:
-	if building.get("id") not in ["pump", "gas_converter", "furnace", "greenhouse"]:
+	if building.get("id") not in ["pump"] + Catalog.MACHINE_IDS:
 		return false
 	if not outpost.Buildings.is_active(building) or not building.get("enabled", true):
 		return false
@@ -34,20 +35,25 @@ func linked(building: Dictionary, kind: String, supplier: String, outpost: Node2
 	return outpost.buildings.structures.filter(func(item: Dictionary): return item.id == supplier and healthy(item, outpost) and outpost.network.connected(kind, Network.port(building, kind), Network.port(item, kind)))
 
 func energy_available(building: Dictionary, outpost: Node2D) -> float:
+	if building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+		return outpost.world.ship_energy()
 	var result := 0.0
 	for converter: Dictionary in linked(building, "energy", "gas_converter", outpost):
 		result += float(state(converter).energy)
 	return result
 
 func water_available(building: Dictionary, outpost: Node2D) -> float:
-	var result := 0.0
-	for pump: Dictionary in outpost.hydraulics.pumps_for(building, outpost):
-		result += float(state(pump).water)
-	return result
+	return float(state(building).water)
+
+func is_irrigating(building: Dictionary) -> bool:
+	return irrigated.has(key(building))
 
 func _consume(building: Dictionary, kind: String, amount: float, outpost: Node2D) -> void:
 	if kind == "water":
 		outpost.hydraulics.withdraw(building, amount, outpost)
+		return
+	if kind == "energy" and building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+		outpost.world._set_ship_energy(maxf(0.0, outpost.world.ship_energy() - amount))
 		return
 	var supplier := "gas_converter" if kind == "energy" else "pump"
 	var sources: Array = linked(building, kind, supplier, outpost)
@@ -67,8 +73,9 @@ func status(building: Dictionary, outpost: Node2D) -> String:
 	if not outpost.environment_safe(building):
 		return "Area contaminata: acqua, gas, petrolio o acido"
 	var storage := state(building)
-	if building.id == "pump":
-		return "Serbatoio %.2f / %.0f u" % [storage.water, Catalog.load_data().pump_capacity]
+	if building.id in ["pump", "water_tank"]:
+		var capacity: float = Catalog.load_data().pump_capacity if building.id == "pump" else Catalog.load_data().water_tank_capacity
+		return "Serbatoio %.2f / %.0f u" % [storage.water, capacity]
 	if building.id == "gas_converter":
 		if float(storage.energy) >= float(Catalog.load_data().converter.capacity) - 0.00001:
 			return "Accumulatore pieno"
@@ -85,12 +92,13 @@ func status(building: Dictionary, outpost: Node2D) -> String:
 		return "Coltura matura"
 	if (building.id == "furnace" and storage.recipe.is_empty()) or (building.id == "greenhouse" and storage.crop.is_empty()):
 		return "In attesa di un ordine" if building.id == "furnace" else "In attesa di semina"
-	if outpost.network.component("energy", Network.port(building, "energy")).is_empty():
+	var lab_power: bool = building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty()
+	if not lab_power and outpost.network.component("energy", Network.port(building, "energy")).is_empty():
 		return "Cavo energia scollegato"
 	if energy_available(building, outpost) <= 0.000001:
-		return "Nessuna energia dal convertitore"
+		return "Nessuna energia: serve un laboratorio alimentato o un convertitore" if building.id == "greenhouse" else "Nessuna energia dal convertitore"
 	if building.id == "greenhouse" and water_available(building, outpost) <= 0.000001:
-		return "Manca acqua: collega una pompa con i tubi"
+		return "Manca acqua nel buffer della serra: collega i tubi"
 	return "Fusione in corso" if building.id == "furnace" else "Coltivazione in corso"
 
 func start_smelting(building: Dictionary, recipe: String, outpost: Node2D) -> bool:
@@ -152,6 +160,7 @@ func collect_seed(pod: Dictionary, outpost: Node2D) -> bool:
 	return true
 
 func advance(delta: float, outpost: Node2D, active: Array) -> void:
+	irrigated.clear()
 	if not is_finite(delta) or delta <= 0:
 		return
 	var remaining := minf(delta, 60)
@@ -188,12 +197,16 @@ func _step(delta: float, outpost: Node2D, active: Array) -> void:
 		var duration := minf(delta, maxf(0, float(definition.seconds) - float(storage.elapsed)))
 		duration = minf(duration, energy_available(building, outpost) / float(definition.power))
 		if building.id == "greenhouse":
-			duration = minf(duration, outpost.hydraulics.deliverable(building, outpost) * float(definition.seconds) / float(definition.water))
+			duration = minf(duration, water_available(building, outpost) * float(definition.seconds) / float(definition.water))
 		if duration <= 0.000001:
 			continue
-		_consume(building, "energy", duration * float(definition.power), outpost)
 		if building.id == "greenhouse":
-			_consume(building, "water", duration * float(definition.water) / float(definition.seconds), outpost)
+			var consumed: float = outpost.hydraulics.withdraw(building, duration * float(definition.water) / float(definition.seconds), outpost)
+			duration = minf(duration, consumed * float(definition.seconds) / float(definition.water))
+			if duration <= 0.000001:
+				continue
+			irrigated[key(building)] = true
+		_consume(building, "energy", duration * float(definition.power), outpost)
 		storage.elapsed = minf(float(definition.seconds), float(storage.elapsed) + duration)
 		if float(definition.seconds) - float(storage.elapsed) < 0.000001:
 			storage.elapsed = float(definition.seconds)
@@ -211,12 +224,13 @@ func restore(data: Variant, buildings: RefCounted, site: RefCounted) -> bool:
 	if data.is_empty():
 		machines.clear()
 		collected_pods.clear()
+		irrigated.clear()
 		return true
 	if data.get("version") != 1 or not data.get("machines") is Dictionary or not data.get("collected_pods") is Array or data.machines.size() > 200:
 		return false
 	var next := {}
 	for identity in data.machines:
-		var matches: Array = buildings.structures.filter(func(item: Dictionary): return key(item) == identity and item.id in ["pump", "furnace", "greenhouse", "gas_converter"])
+		var matches: Array = buildings.structures.filter(func(item: Dictionary): return key(item) == identity and item.id in ["pump"] + Catalog.MACHINE_IDS)
 		if matches.size() != 1 or not data.machines[identity] is Dictionary:
 			return false
 		var id: String = matches[0].id
@@ -233,6 +247,10 @@ func restore(data: Variant, buildings: RefCounted, site: RefCounted) -> bool:
 		if matches[0].get("state", "active") != "active" and entry != shape:
 			return false
 		if id == "pump" and entry.water > Catalog.load_data().pump_capacity:
+			return false
+		if id == "water_tank" and entry.water > Catalog.load_data().water_tank_capacity:
+			return false
+		if id == "greenhouse" and entry.water > Catalog.load_data().greenhouse_capacity:
 			return false
 		if id == "gas_converter" and (entry.energy > Catalog.load_data().converter.capacity or entry.energy > entry.produced + 0.00001):
 			return false
@@ -258,4 +276,5 @@ func restore(data: Variant, buildings: RefCounted, site: RefCounted) -> bool:
 		pods.append(id)
 	machines = next
 	collected_pods = pods
+	irrigated.clear()
 	return true

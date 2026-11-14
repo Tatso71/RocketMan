@@ -23,6 +23,8 @@ const ReservoirView = preload("res://scripts/ui/reservoir_view.gd")
 const CryoCrewView = preload("res://scripts/ui/cryo_crew_view.gd")
 const TerrainRenderer = preload("res://scripts/ui/terrain_renderer.gd")
 const VitalsMeters = preload("res://scripts/ui/vitals_meters.gd")
+const MiningFeedback = preload("res://scripts/ui/mining_feedback.gd")
+const LadderLayer = preload("res://scripts/ui/ladder_layer.gd")
 @export_enum("explorer", "robbie") var variant := "explorer"
 @export var organic_terrain := true
 const MATERIAL_NAMES := {"soil": "Terra", "stone": "Pietra", "copper": "Rame", "iron": "Ferro", "crystal": "Cristallo", "silica": "Quarzo", "cobalt": "Cobalto", "bedrock": "Roccia compatta", "anchor": "Nucleo indistruttibile", "water": "Acqua", "gas": "Gas", "oil": "Petrolio", "acid": "Acido"}
@@ -35,6 +37,7 @@ var camera: Camera2D
 var terrain := Node2D.new()
 var blocks: Dictionary = {}
 var ladders: Dictionary = {}
+var ladder_layer: Node2D
 var hatch: StaticBody2D
 var hatch_open := false
 var show_grid := false
@@ -83,6 +86,7 @@ var jetpack_meter: ProgressBar
 var scanner_view: Node2D
 var debug_scanner: Resource
 var reservoir_view: Node2D
+var mining_feedback: PanelContainer
 
 func is_robbie() -> bool:
 	return variant == "robbie"
@@ -221,6 +225,7 @@ func equip_tool(slot: int) -> bool:
 	beam_time = 0.0
 	beam_tool = null
 	mouse_mining = false
+	if is_instance_valid(mining_feedback): mining_feedback.clear()
 	if player != null:
 		player.animation.stop_firing()
 	_note(active_tool().display_name)
@@ -271,6 +276,10 @@ func _ready() -> void:
 	outpost = Outpost.new()
 	outpost.world = self
 	add_child(outpost)
+	ladder_layer = LadderLayer.new()
+	ladder_layer.world = self
+	ladder_layer.z_index = 2
+	add_child(ladder_layer)
 	gear = Gear.new()
 	gear.world = self
 	add_child(gear)
@@ -393,6 +402,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if controls_blocked():
 		return
+	if outpost.industry_ui.mode == "water" and outpost.industry_ui.handle_input(event):
+		get_viewport().set_input_as_handled()
+		return
 	if _scanner_level_shortcut(event):
 		get_viewport().set_input_as_handled()
 		return
@@ -501,13 +513,31 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func can_reach(cell: Vector2i) -> bool:
+	return _reachable_target_point(cell) != null
+
+func _reachable_target_point(cell: Vector2i) -> Variant:
 	var hand := player_center()
-	if hand.distance_to(Grid.center(cell)) > Grid.metres(active_tool().effective_reach_metres()):
-		return false
-	# Cast against the same physics rectangles used by movement: no mining through walls.
-	var query := PhysicsRayQueryParameters2D.create(hand, Grid.center(cell), 1, [player.get_rid()])
-	var hit := get_world_2d().direct_space_state.intersect_ray(query)
-	return not hit.is_empty() and blocks.get(cell) == hit.collider
+	var center := Grid.center(cell)
+	if not blocks.has(cell) or hand.distance_to(center) > Grid.metres(active_tool().effective_reach_metres()):
+		return null
+	var points := PackedVector2Array([center])
+	# A ledge can hide a cell's centre while leaving its near face exposed.
+	for normal: Vector2 in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
+		if (hand - center).dot(normal) < Grid.CELL_SIZE * 0.5:
+			continue
+		var face := center + normal * (Grid.CELL_SIZE * 0.5 - 0.01)
+		var tangent := Vector2(-normal.y, normal.x)
+		var half := Grid.CELL_SIZE * 0.5 - 0.5
+		points.append(face + tangent * clampf((hand - face).dot(tangent), -half, half))
+		points.append(face)
+		points.append(face - tangent * half)
+		points.append(face + tangent * half)
+	for point: Vector2 in points:
+		var query := PhysicsRayQueryParameters2D.create(hand, point, 1, [player.get_rid()])
+		var hit := get_world_2d().direct_space_state.intersect_ray(query)
+		if not hit.is_empty() and blocks[cell] == hit.collider:
+			return point
+	return null
 
 func target_blocker(cell: Vector2i) -> String:
 	if active_tool().mode == "bomb":
@@ -526,9 +556,13 @@ func target_blocker(cell: Vector2i) -> String:
 	if tool.mode == "mine" and is_instance_valid(outpost) and not outpost.mining_blocker(cell).is_empty():
 		return outpost.mining_blocker(cell)
 	if tool.mode == "mine" and site.material(cell) == "anchor":
-		return "Indistruttibile: devi aggirare questo nucleo"
+		return "Indistruttibile: non si rompe con utensili o bombe"
 	if tool.mode == "mine" and site.material(cell) not in tool.materials:
-		return "Materiale incompatibile: serve un altro strumento"
+		var required: Resource
+		for candidate: Resource in Tools.all():
+			if candidate.mode == "mine" and site.material(cell) in candidate.materials and (required == null or candidate.required_level < required.required_level):
+				required = candidate
+		return "Strumento non adatto: serve " + required.display_name if required != null else "Non hai lo strumento giusto per questo blocco"
 	if ship_energy() < tool.energy_per_pulse:
 		return "Energia esaurita: ricarica in officina"
 	return ""
@@ -562,10 +596,16 @@ func _mine_target() -> void:
 	var blocker := target_blocker(target_cell)
 	if not blocker.is_empty():
 		_note(blocker)
+		beam_time = 0.0
+		if not site.material(target_cell).is_empty(): mining_feedback.show_reason(target_cell, blocker)
+		return
+	mining_feedback.clear()
+	var aim_point = _reachable_target_point(target_cell)
+	if aim_point == null:
 		return
 	beam_time = 0.24
 	_set_crew_energy(crew_energy() - 1.0)
-	beam_target = Grid.center(target_cell)
+	beam_target = aim_point
 	beam_tool = tool
 	player.facing = 1 if beam_target.x >= player.position.x else -1
 	if tool.mode == "mine":
@@ -655,6 +695,7 @@ func return_home() -> void:
 	beam_time = 0.0
 	beam_tool = null
 	mouse_mining = false
+	if is_instance_valid(mining_feedback): mining_feedback.clear()
 	player.position = Vector2(-60, -80)
 	player.velocity = Vector2.ZERO
 	player.climbing = false
@@ -723,10 +764,15 @@ func restore_state(data: Dictionary, restore_inventory: bool = true) -> bool:
 		return false
 	var next_network := Outpost.Network.new()
 	var next_industry := Outpost.Industry.new()
-	if not next_network.restore(data.get("network", {}), next_site) or not next_industry.restore(data.get("industry", {}), next_buildings, next_site):
+	if not next_network.restore(data.get("network", {}), next_site):
+		_note("Condotti non compatibili: avvia una nuova partita")
+		return false
+	if not next_industry.restore(data.get("industry", {}), next_buildings, next_site):
+		_note("Dati degli impianti non validi")
 		return false
 	var next_hydraulics := Outpost.WaterCircuit.new()
 	if not next_hydraulics.restore(data.get("hydraulics", {}), next_site, next_buildings):
+		_note("Circuito acqua non compatibile: avvia una nuova partita")
 		return false
 	if not Gear.valid(data.get("gear", {}), next_site, next_buildings) or data.get("drone_mission", "follow") not in outpost.logistics.MISSIONS:
 		return false
@@ -1006,6 +1052,9 @@ func _build_hud() -> void:
 	reset_dialog.dialog_text = "Abbandonare le modifiche non salvate? Il salvataggio esistente non verra cancellato."
 	reset_dialog.confirmed.connect(func(): get_tree().reload_current_scene())
 	root.add_child(reset_dialog)
+	mining_feedback = MiningFeedback.new()
+	mining_feedback.world = self
+	root.add_child(mining_feedback)
 
 func _button(parent: Node, text: String, tip: String, callback: Callable) -> void:
 	var button := Button.new()
@@ -1088,8 +1137,6 @@ func _draw() -> void:
 		_draw_metric_overlay()
 		if is_instance_valid(player) and active_tool().mode == "mine":
 			draw_arc(player_center(), Grid.metres(active_tool().effective_reach_metres()), 0, TAU, 72, Color(active_tool().beam_color, 0.22), 1, true)
-	for cell: Vector2i in ladders:
-		_ladder(Grid.to_world(cell) + Vector2(20, 0), 40)
 	if active_tool().mode == "mine" and site.contains(target_cell) and (not site.material(target_cell).is_empty() or ladders.has(target_cell)):
 		var available := target_blocker(target_cell).is_empty() if is_instance_valid(player) else false
 		draw_rect(Grid.rect(target_cell).grow(-1), active_tool().beam_color if available else Color("ff6265"), false, 2.5)

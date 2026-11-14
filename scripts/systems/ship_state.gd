@@ -25,6 +25,8 @@ var active_tool_slot := 0
 var jetpack_charge := 100.0
 var bomb_ammo := 4
 var workshop_damaged := false
+const WATER_TANK_CAPACITY := 40.0
+var water_tanks := {"left": 0.0, "right": 0.0}
 
 func _init() -> void:
 	for id: String in RESOURCE_IDS:
@@ -134,13 +136,18 @@ func recharge() -> bool:
 	return true
 
 func snapshot() -> Dictionary:
-	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "seed_bank": seed_bank.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot, "jetpack_charge": jetpack_charge, "workshop_damaged": workshop_damaged, "bomb_ammo": bomb_ammo}
+	return {"modules": modules.duplicate(), "resources": resources.duplicate(), "seed_bank": seed_bank.duplicate(), "field_cargo": field_cargo.snapshot(), "drone_guide": drone_guide.snapshot(), "lab_research_unlocked": lab_research_unlocked, "laboratory_level": laboratory_level, "fabrication": fabrication.snapshot(), "hull": hull, "fuel": fuel, "energy": energy, "suit_integrity": suit_integrity, "crew_energy": crew_energy, "tool_slots": tool_slots.duplicate(), "active_tool_slot": active_tool_slot, "jetpack_charge": jetpack_charge, "workshop_damaged": workshop_damaged, "bomb_ammo": bomb_ammo, "water_tanks": water_tanks.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Validate completely before replacing state, including references held by inventory.
 	if not data.get("modules") is Dictionary or not data.get("resources") is Dictionary:
 		return false
 	var next: RefCounted = get_script().new()
+	if not data.get("water_tanks") is Dictionary or data.water_tanks.size() != 2: return false
+	for id: String in ["left", "right"]:
+		var volume = data.water_tanks.get(id)
+		if not (volume is int or volume is float) or not is_finite(float(volume)) or volume < 0 or volume > WATER_TANK_CAPACITY: return false
+		next.water_tanks[id] = float(volume)
 	if not IndustryCatalog.seeds_valid(data.get("seed_bank", IndustryCatalog.initial_seeds())):
 		return false
 	if data.has("seed_bank"):
@@ -194,6 +201,7 @@ func restore(data: Dictionary) -> bool:
 		if float(value) > maximum:
 			return false
 	modules = next.modules.duplicate()
+	water_tanks = next.water_tanks.duplicate()
 	resources.clear()
 	resources.merge(next.resources)
 	field_cargo.drone_capacity = next.drone_capacity()
