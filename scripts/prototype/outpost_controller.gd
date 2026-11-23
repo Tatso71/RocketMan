@@ -20,6 +20,7 @@ const WaterCircuit = preload("res://scripts/systems/water_circuit.gd")
 const HydraulicUI = preload("res://scripts/ui/hydraulics_ui.gd")
 const LampNetwork = preload("res://scripts/systems/lamp_power_network.gd")
 const SHIP_LAB_RECT := Rect2(-156, -194, 312, 114)
+const SHIP_ENERGY_PORTS := Network.SHIP_ENERGY_PORTS
 const ITEM_NAMES := Cargo.NAMES
 var world: Node2D
 var buildings := Buildings.new()
@@ -59,6 +60,8 @@ func placement_origin(id: String, anchor: Vector2i) -> Vector2i:
 	return anchor - Vector2i(size.x / 2, size.y - 1)
 
 func _ready() -> void:
+	# Terrain is z0, background utilities z1, installations and ladders z2.
+	z_index = 2
 	logistics.world = world
 	logistics.worker = world.drone
 	_build_interface()
@@ -73,6 +76,7 @@ func _ready() -> void:
 	add_child(assembly)
 	var cube_view := CubeView.new()
 	cube_view.outpost = self
+	cube_view.z_as_relative = false
 	cube_view.z_index = 7
 	add_child(cube_view)
 	energy_ui = EnergyUI.new()
@@ -189,7 +193,7 @@ func reachable_cell(cell: Vector2i, reach: float = 3.0) -> bool:
 	return get_world_2d().direct_space_state.intersect_ray(ray).is_empty()
 
 func conduit_blocker(kind: String, cell: Vector2i) -> String:
-	if kind not in Network.KINDS or not (Network.valid_cell(cell, world.site) if kind == "water" else world.site.contains(cell) and world.site.material(cell).is_empty()):
+	if kind not in Network.KINDS or not (Network.valid_cell(cell, world.site) if kind in ["water", "energy"] else world.site.contains(cell) and world.site.material(cell).is_empty()):
 		return "Serve una cella scavata"
 	if network.cells[kind].has(cell):
 		return "Condotto gia presente"
@@ -767,7 +771,30 @@ func construction_connected(building: Dictionary) -> bool:
 		return environment_safe(building) and not supplying_lab(building).is_empty()
 	return environment_safe(building) if building.id in Buildings.INDUSTRIAL_IDS else safe_link(building)
 
+func greenhouse_ship_source(building: Dictionary, powered_only: bool = true) -> Dictionary:
+	if building.id != "greenhouse" or (powered_only and world.ship_energy() <= 0):
+		return {}
+	var port := Network.port(building, "energy")
+	for socket: Vector2i in SHIP_ENERGY_PORTS:
+		if network.connected("energy", port, socket):
+			return {"kind": "ship", "port": socket, "wired": true}
+	var local_lab: Dictionary = {}
+	var nearest := INF
+	for lab: Dictionary in buildings.labs():
+		if not lab.get("enabled", true) or not safe_link(lab): continue
+		var socket := Network.port(lab, "energy")
+		if network.connected("energy", port, socket):
+			return {"kind": "laboratory", "port": socket, "lab": lab, "wired": true}
+		var distance := buildings.world_rect(lab).get_center().distance_to(buildings.world_rect(building).get_center())
+		if distance <= Grid.metres(Buildings.light_range(lab)) and distance < nearest:
+			local_lab = lab
+			nearest = distance
+	# Preserve the existing local automatic supply while adding explicit cables.
+	return {} if local_lab.is_empty() else {"kind": "laboratory", "port": Network.port(local_lab, "energy"), "lab": local_lab, "wired": false}
+
 func supplying_lab(building: Dictionary, powered_only: bool = true) -> Dictionary:
+	if building.id == "greenhouse":
+		return greenhouse_ship_source(building, powered_only).get("lab", {})
 	if building.id == "lamp":
 		return _lamp_route(building, powered_only).get("lab", {})
 	var nearest: Dictionary = {}
@@ -1204,8 +1231,8 @@ func _draw_automatic_power_links() -> void:
 		var colors := PackedColorArray()
 		for point: Vector2 in link.points:
 			var cell := Grid.to_cell(point)
-			var light: float = world._illumination(point)
-			var point_visible: bool = light > 0.04 and (not world.site.contains(cell) or world.site.material(cell).is_empty())
+			var light: float = maxf(0.35, world._illumination(point))
+			var point_visible: bool = not world.site.contains(cell) or world.site.material(cell).is_empty()
 			if not point_visible:
 				_draw_power_lead_run(run, colors)
 				run.clear()

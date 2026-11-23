@@ -8,6 +8,8 @@ const ItemIcons = preload("res://scripts/data/item_icon_catalog.gd")
 const DIRECTIONS := [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 const DIRECTION_NAMES := ["Alto", "Destra", "Basso", "Sinistra"]
 const BUILD_TOOLS := {12: "pump", 13: "greenhouse", 14: "water_tank"}
+const ENERGY_OFFSET := Vector2(0, 6)
+const UTILITY_LIGHT_FLOOR := 0.35
 
 class PipeRenderer extends Node2D:
 	var ui: Node2D
@@ -43,7 +45,8 @@ func _ready() -> void:
 	pipe_renderer = PipeRenderer.new()
 	pipe_renderer.name = "BackgroundPipes"
 	pipe_renderer.ui = self
-	# World backgrounds are z0; the separate world ladder layer is z2.
+	# Stay below installations even when their parent moves to a foreground plane.
+	pipe_renderer.z_as_relative = false
 	pipe_renderer.z_index = 1
 	add_child(pipe_renderer)
 	var layer := CanvasLayer.new()
@@ -63,14 +66,14 @@ func _ready() -> void:
 	root.add_child(pipe_button)
 	menu = PopupMenu.new()
 	menu.prefer_native_menu = false
-	for entry: Array in [[10, "valve", "Valvola blu"], [0, "water_conduit", "Tubo acqua (gratuito / P)"], [12, "pump", "Pompa"], [13, "greenhouse", "Serra"], [14, "water_tank", "Contenitore acqua"]]:
+	for entry: Array in [[10, "valve", "Valvola blu"], [0, "water_conduit", "Tubo acqua (gratuito / P)"], [12, "pump", "Pompa"], [13, "greenhouse", "Serra"], [14, "water_tank", "Contenitore acqua"], [2, "energy_conduit", "Cavo energia / 1 elettronico/m"]]:
 		menu.add_icon_item(ItemIcons.texture(entry[1]), entry[2], entry[0])
 		menu.set_item_icon_max_width(menu.item_count - 1, 24)
 	var utilities := PopupMenu.new()
 	utilities.name = "Utilities"
 	utilities.prefer_native_menu = false
 	menu.add_child(utilities)
-	for kind: String in ["gas", "energy"]:
+	for kind: String in ["gas"]:
 		utilities.add_icon_item(ItemIcons.texture(kind + "_conduit"), Network.NAMES[kind] + (" / 1 strutturale/m" if kind == "gas" else " / 1 elettronico/m"), Network.KINDS.find(kind))
 		utilities.set_item_icon_max_width(utilities.item_count - 1, 24)
 	utilities.add_item("Smonta scale e condotti", 3)
@@ -272,6 +275,21 @@ func refresh() -> void:
 		if selected.id == "greenhouse":
 			var port := Network.port(selected, "water")
 			reserves.text += "  |  Acqua %.2f / %.0f u\nPorta acqua [%d, %d]" % [float(storage.water), float(data.greenhouse_capacity), port.x, port.y]
+			var energy_port := Network.port(selected, "energy")
+			reserves.text += "  /  Porta energia [%d, %d]" % [energy_port.x, energy_port.y]
+			var source: Dictionary = outpost.greenhouse_ship_source(selected)
+			var converters: Array = outpost.industry.linked(selected, "energy", "gas_converter", outpost).filter(func(item: Dictionary): return float(outpost.industry.state(item).energy) > 0.000001)
+			if source.is_empty() and converters.is_empty():
+				source = outpost.greenhouse_ship_source(selected, false)
+			if not source.is_empty():
+				var source_port: Vector2i = source.port
+				reserves.text += "\nFonte: %s [%d, %d] / %s" % ["Nave" if source.kind == "ship" else "Laboratorio", source_port.x, source_port.y, "cavo collegato" if source.wired else "collegamento locale automatico"]
+			else:
+				if not converters.is_empty():
+					var source_port := Network.port(converters[0], "energy")
+					reserves.text += "\nFonte: Convertitore [%d, %d] / cavo collegato" % [source_port.x, source_port.y]
+				else:
+					reserves.text += "\nFonte: nessuna / collega nave, laboratorio o convertitore"
 		var current: String = storage.recipe if selected.id == "furnace" else storage.crop
 		var definitions: Dictionary = data.smelting if selected.id == "furnace" else data.crops
 		if not current.is_empty():
@@ -351,28 +369,31 @@ static func stroke_cells(first: Vector2i, last: Vector2i) -> Array[Vector2i]:
 		cells.append(cell)
 	return cells
 
-func _paint_water_to(cell: Vector2i, removing: bool) -> void:
+func _paint_conduit_to(cell: Vector2i, removing: bool) -> void:
 	drag_remove = removing
 	var cells: Array[Vector2i] = [cell]
 	if stroke_started: cells = stroke_cells(last_cell, cell)
 	if cells.is_empty():
-		outpost.world._note("Tubo fuori portata")
+		outpost.world._note("Condotto fuori portata")
 		return
 	for index in range(1 if stroke_started else 0, cells.size()):
 		var current: Vector2i = cells[index]
 		if removing:
 			if not outpost.reachable_cell(current):
-				outpost.world._note("Tubo fuori portata o dietro una parete")
+				outpost.world._note("Condotto fuori portata o dietro una parete")
 				if not stroke_started: dragging = false
 				break
-			if outpost.network.cells.water.has(current): outpost.remove_conduit("water", current)
-		elif not outpost.network.cells.water.has(current):
-			var reason: String = outpost.conduit_blocker("water", current)
+			if outpost.network.cells[mode].has(current) and not outpost.remove_conduit(mode, current):
+				break
+		elif not outpost.network.cells[mode].has(current):
+			var reason: String = outpost.conduit_blocker(mode, current)
 			if not reason.is_empty():
 				outpost.world._note(reason)
 				if not stroke_started: dragging = false
 				break
-			outpost.place_conduit("water", current)
+			if not outpost.place_conduit(mode, current):
+				if not stroke_started: dragging = false
+				break
 		last_cell = current
 		stroke_started = true
 	pipe_renderer.queue_redraw()
@@ -392,17 +413,17 @@ func handle_input(event: InputEvent) -> bool:
 		mode = ""
 		_stop_drag()
 		return true
-	if mode == "water" and event is InputEventMouseMotion and dragging:
+	if mode in ["water", "energy"] and event is InputEventMouseMotion and dragging:
 		if event.button_mask & MOUSE_BUTTON_MASK_LEFT:
 			var point: Vector2 = outpost.world.get_global_transform_with_canvas().affine_inverse() * event.position
-			_paint_water_to(Grid.to_cell(point), event.shift_pressed)
+			_paint_conduit_to(Grid.to_cell(point), event.shift_pressed)
 		else:
 			_stop_drag()
 		return true
-	if mode == "water" and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+	if mode in ["water", "energy"] and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		if dragging:
 			var point: Vector2 = outpost.world.get_global_transform_with_canvas().affine_inverse() * event.position
-			_paint_water_to(Grid.to_cell(point), drag_remove)
+			_paint_conduit_to(Grid.to_cell(point), drag_remove)
 		_stop_drag()
 		return true
 	if not event is InputEventMouseButton or not event.pressed:
@@ -415,10 +436,10 @@ func handle_input(event: InputEvent) -> bool:
 			_stop_drag()
 			return true
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if mode == "water":
+			if mode in ["water", "energy"]:
 				_stop_drag()
 				dragging = true
-				_paint_water_to(cell, event.shift_pressed)
+				_paint_conduit_to(cell, event.shift_pressed)
 			elif mode == "remove":
 				_remove_menu(cell, event.position)
 			else:
@@ -447,8 +468,8 @@ func _process(delta: float) -> void:
 		_stop_drag()
 	var cell := Grid.to_cell(outpost.world.get_global_mouse_position())
 	if dragging and mode in Network.KINDS and not outpost.world.controls_blocked() and cell != last_cell:
-		if mode == "water":
-			_paint_water_to(cell, Input.is_key_pressed(KEY_SHIFT))
+		if mode in ["water", "energy"]:
+			_paint_conduit_to(cell, Input.is_key_pressed(KEY_SHIFT))
 		else:
 			outpost.place_conduit(mode, cell)
 			last_cell = cell
@@ -457,7 +478,7 @@ func _process(delta: float) -> void:
 		refresh_timer = 0.1
 		refresh()
 	pipe_button.modulate = Network.COLORS.get(mode, Color("f1b298") if mode == "remove" else Color.WHITE)
-	pipe_button.tooltip_text = "Tubi acqua (P) / Clic e trascina / Maiusc: rimuovi / Destro: esci" if mode == "water" else "Impianti (T)"
+	pipe_button.tooltip_text = Network.NAMES[mode] + " / Clic e trascina / Maiusc: rimuovi / Destro: esci" if mode in ["water", "energy"] else "Impianti (T)"
 	if not outpost.world.guide_state.facts.get("seed_pod_seen", false):
 		for pod: Dictionary in Catalog.seed_sites(outpost.world.site.terrain_seed):
 			if pod.id not in outpost.industry.collected_pods and outpost.world.site.material(pod.cell).is_empty() and outpost.reachable_cell(pod.cell):
@@ -478,22 +499,47 @@ func pipe_connections(cell: Vector2i, kind: String) -> Array[Vector2i]:
 
 func _draw_pipes(renderer: Node2D) -> void:
 	for kind: String in Network.KINDS:
-		var shift := Vector2(0, 6 if kind == "energy" else 0)
+		var shift := ENERGY_OFFSET if kind == "energy" else Vector2.ZERO
 		for cell: Vector2i in outpost.network.cells[kind]:
-			var point := Grid.center(cell)
-			var light: float = outpost.world._illumination(point)
-			if tool_active():
-				light = maxf(light, 0.35)
-			if light < 0.08:
-				continue
+			var point := Grid.center(cell) + shift
+			var light := maxf(outpost.world._illumination(point), UTILITY_LIGHT_FLOOR)
 			var ink := Color("131b20").lerp(Network.COLORS[kind], light)
 			var connections := pipe_connections(cell, kind)
-			if kind == "water" and connections.is_empty():
-				var axis := Vector2.RIGHT if int(outpost.network.water_axes.get(cell, 0)) == 0 else Vector2.DOWN
-				renderer.draw_line(point - axis * 14, point + axis * 14, ink, 4)
-			for offset: Vector2i in connections:
-				renderer.draw_line(point + shift, point + Vector2(offset) * Grid.CELL_SIZE * 0.5 + shift, ink, 4 if kind != "energy" else 2)
-			renderer.draw_circle(point + shift, 4, ink)
+			if kind == "water":
+				# Draw each bore after its casing so elbows and junctions stay open.
+				for width: float in [10.0, 6.0]:
+					var color := ink if width == 6 else Color("34424b").lerp(Color("82929c"), light)
+					if connections.is_empty():
+						var axis := Vector2.RIGHT if int(outpost.network.water_axes.get(cell, 0)) == 0 else Vector2.DOWN
+						renderer.draw_line(point - axis * 14, point + axis * 14, color, width)
+						renderer.draw_circle(point - axis * 14, width * 0.5, color)
+						renderer.draw_circle(point + axis * 14, width * 0.5, color)
+					for offset: Vector2i in connections:
+						renderer.draw_line(point, point + Vector2(offset) * Grid.CELL_SIZE * 0.5, color, width)
+					renderer.draw_circle(point, width * 0.5, color)
+				for offset: Vector2i in connections:
+					_draw_water_flow(renderer, cell, offset, light)
+			else:
+				for offset: Vector2i in connections:
+					renderer.draw_line(point, point + Vector2(offset) * Grid.CELL_SIZE * 0.5, ink, 2 if kind == "energy" else 4)
+				renderer.draw_circle(point, 2 if kind == "energy" else 3, ink)
+
+func _draw_water_flow(renderer: Node2D, cell: Vector2i, offset: Vector2i, light: float) -> void:
+	var rate: float = outpost.hydraulics.flow_between(cell, cell + offset)
+	if is_zero_approx(rate): return
+	var axis := Vector2(offset)
+	var direction := axis * signf(rate)
+	var speed := clampf(absf(rate) * 40, 12, 48)
+	var point := Grid.center(cell)
+	# A world-anchored phase keeps adjacent half-segments continuous.
+	var phase := fposmod(outpost.world.ambient_time * speed * signf(rate) - point.dot(axis), 16)
+	var ink := Color("86aeb6").lerp(Color("e0fbf6"), light)
+	for distance: float in [phase, phase + 16]:
+		if distance > Grid.CELL_SIZE * 0.5: continue
+		var tip := point + axis * distance
+		var side := direction.orthogonal()
+		renderer.draw_line(tip - direction * 3 + side * 2, tip, ink, 1)
+		renderer.draw_line(tip - direction * 3 - side * 2, tip, ink, 1)
 
 func _draw() -> void:
 	for building: Dictionary in outpost.buildings.structures:
@@ -510,17 +556,20 @@ func _draw() -> void:
 		_draw_machine(building, rect)
 		draw_set_transform(Vector2.ZERO)
 	for building: Dictionary in outpost.buildings.structures:
+		if building.get("state") == "planned": continue
 		if building.id == "pump" and building.get("state") != "planned":
 			_draw_pump_ports(building)
-		var kinds: Array = ["gas", "energy"] if building.id == "gas_converter" else (["water", "energy"] if building.id == "greenhouse" else (["energy"] if building.id == "furnace" else (["water"] if building.id == "water_tank" else [])))
+		var kinds: Array = ["gas"] if building.id == "gas_converter" else (["water"] if building.id in ["greenhouse", "water_tank"] else [])
 		for kind: String in kinds:
-			var point := Grid.center(Network.port(building, kind)) + Vector2(6 if kind == "energy" else 0, 0)
-			if outpost.world._illumination(point) > 0.1:
-				if kind == "water":
-					for offset: Vector2i in Network.OFFSETS:
-						draw_line(point + Vector2(offset) * 9, point + Vector2(offset) * 16, Network.COLORS.water, 2)
-				draw_circle(point, 6, Color("162a30"))
-				draw_arc(point, 5, 0, TAU, 16, Network.COLORS[kind], 2)
+			var point := Grid.center(Network.port(building, kind))
+			var light := maxf(outpost.world._illumination(point), UTILITY_LIGHT_FLOOR)
+			var ink := Color("131b20").lerp(Network.COLORS[kind], light)
+			if kind == "water":
+				for offset: Vector2i in Network.OFFSETS:
+					draw_line(point + Vector2(offset) * 9, point + Vector2(offset) * 16, ink, 2)
+			draw_circle(point, 6, Color("162a30"))
+			draw_arc(point, 5, 0, TAU, 16, ink, 2)
+	_draw_energy_ports(self)
 	for pod: Dictionary in Catalog.seed_sites(outpost.world.site.terrain_seed):
 		if pod.id not in outpost.industry.collected_pods and outpost.world.site.material(pod.cell).is_empty():
 			var point := Grid.center(pod.cell)
@@ -531,15 +580,15 @@ func _draw() -> void:
 				draw_string(ThemeDB.fallback_font, point + Vector2(-26, -18), "Capsula semi", HORIZONTAL_ALIGNMENT_LEFT, 80, 10, Color("c7e7a4"))
 	if tool_active():
 		var cell := Grid.to_cell(outpost.world.get_global_mouse_position())
-		var removing := mode == "water" and Input.is_key_pressed(KEY_SHIFT)
+		var removing := mode in ["water", "energy"] and Input.is_key_pressed(KEY_SHIFT)
 		var valid: bool
 		if mode == "remove" or removing:
 			valid = outpost.reachable_cell(cell)
-		elif mode == "water" and outpost.network.cells.water.has(cell):
+		elif mode in Network.KINDS and outpost.network.cells[mode].has(cell):
 			valid = true
 		else:
 			valid = outpost.conduit_blocker(mode, cell).is_empty()
-		var ink := (Color("eabf7e") if removing else Network.COLORS.water) if mode == "water" else Color("8fe3b6")
+		var ink: Color = Color("eabf7e") if removing else Network.COLORS.get(mode, Color("8fe3b6"))
 		if not valid: ink = Color("f37e80")
 		draw_rect(Grid.rect(cell).grow(-2), Color(ink, 0.12))
 		draw_rect(Grid.rect(cell).grow(-2), ink, false, 2)
@@ -547,14 +596,26 @@ func _draw() -> void:
 			draw_line(Grid.center(cell) - Vector2(9, 9), Grid.center(cell) + Vector2(9, 9), ink, 2)
 			draw_line(Grid.center(cell) - Vector2(9, -9), Grid.center(cell) + Vector2(9, -9), ink, 2)
 
+func _draw_energy_ports(renderer: Node2D) -> void:
+	for cell: Vector2i in outpost.SHIP_ENERGY_PORTS:
+		_draw_energy_socket(renderer, cell, 1.0)
+	for building: Dictionary in outpost.buildings.structures:
+		if building.id in ["laboratory", "gas_converter", "greenhouse", "furnace"] and building.get("state") != "planned":
+			var cell := Network.port(building, "energy")
+			_draw_energy_socket(renderer, cell, maxf(outpost.world._illumination(Grid.center(cell)), UTILITY_LIGHT_FLOOR))
+
+func _draw_energy_socket(renderer: Node2D, cell: Vector2i, light: float) -> void:
+	var point := Grid.center(cell) + ENERGY_OFFSET
+	var ink := Color("131b20").lerp(Network.COLORS.energy, light)
+	renderer.draw_circle(point, 6, Color("162a30"))
+	renderer.draw_arc(point, 5, 0, TAU, 20, ink, 2)
+
 func _draw_pump_ports(building: Dictionary) -> void:
 	var ports: Dictionary = outpost.hydraulics.pump_ports(building)
-	var report: Dictionary = outpost.hydraulics.pump_report(building, outpost)
 	for role: String in ["input", "output"]:
 		var point := Grid.center(ports[role])
-		if outpost.world._illumination(point) <= 0.1:
-			continue
-		var ink := Color("8fd8f1") if role == "input" else Color("f2cd81")
+		var light := maxf(outpost.world._illumination(point), UTILITY_LIGHT_FLOOR)
+		var ink := Color("131b20").lerp(Color("8fd8f1") if role == "input" else Color("f2cd81"), light)
 		draw_circle(point, 8, Color("162a30"))
 		draw_arc(point, 7, 0, TAU, 16, ink, 2)
 		var direction := Vector2(outpost.hydraulics.pump_direction(building))
@@ -563,9 +624,6 @@ func _draw_pump_ports(building: Dictionary) -> void:
 		draw_line(point - direction * 5, tip, ink, 2)
 		draw_line(tip, tip - direction * 4 + side * 3, ink, 2)
 		draw_line(tip, tip - direction * 4 - side * 3, ink, 2)
-		if float(report.get("rate", 0)) > 0:
-			var phase := fposmod(outpost.world.ambient_time * 1.8, 1.0)
-			draw_circle(point + direction * lerpf(-12, 12, phase), 2, Color("e0fbf6"))
 
 func _draw_machine(building: Dictionary, rect: Rect2) -> void:
 	var storage: Dictionary = outpost.industry.state(building)

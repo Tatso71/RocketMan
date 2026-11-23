@@ -4,6 +4,15 @@ const MAP_PATH := "res://design/generated/production-map.json"
 const Components = preload("res://scripts/data/component_catalog.gd")
 const Industry = preload("res://scripts/data/industry_catalog.gd")
 
+func test_map_documents_manual_greenhouse_power_from_ship_and_labs() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MAP_PATH))
+	assert_str(data.runtime_flags.greenhouse_supply).is_equal("ship_or_lab_cable_unlimited_else_local_lab_or_converter")
+	assert_bool(data.has("greenhouse_cabling")).is_true()
+	if data.has("greenhouse_cabling"):
+		assert_array(data.greenhouse_cabling.ship_ports).is_equal([[-6.0, -2.0], [5.0, -2.0]])
+		assert_bool(data.greenhouse_cabling.distance_limit).is_false()
+		assert_dict(data.greenhouse_cabling.cost_per_cell).is_equal({"electronic_component": 1.0})
+
 func test_map_includes_early_solar_assembly_and_shared_battery_generation() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MAP_PATH))
 	assert_bool(data.nodes.has("solar_panel")).is_true()

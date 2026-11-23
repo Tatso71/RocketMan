@@ -9,6 +9,7 @@ const PUMP_RATE := 0.7
 const MAX_LIFT := 6.0
 const EPS := 0.000001
 const SHIP_CAPACITY := 40.0
+const ROUTE_CACHE_LIMIT := 128
 var valves: Array = []
 var pumps: Dictionary = {}
 var rates: Dictionary = {}
@@ -21,6 +22,28 @@ var _context: WeakRef
 var _nodes: Dictionary = {}
 var _blocked: Dictionary = {}
 var _cavities: Dictionary = {}
+var _route_cache: Dictionary = {}
+var _edge_volumes: Dictionary = {}
+var _flow_duration := 0.0
+
+func _clear_flow() -> void:
+	_edge_volumes.clear()
+	_flow_duration = 0.0
+	_route_cache.clear()
+
+func flow_between(first: Vector2i, second: Vector2i) -> float:
+	if second - first not in Network.OFFSETS or _flow_duration <= 0: return 0.0
+	var forward := second.x > first.x or second.y > first.y
+	var origin := first if forward else second
+	var edge := Vector3i(origin.x, origin.y, 0 if first.y == second.y else 1)
+	return float(_edge_volumes.get(edge, 0)) * (1.0 if forward else -1.0) / _flow_duration
+
+func _record_edge(first: Vector2i, second: Vector2i, volume: float) -> void:
+	if second - first not in Network.OFFSETS or not is_finite(volume) or volume <= 0: return
+	var forward := second.x > first.x or second.y > first.y
+	var origin := first if forward else second
+	var edge := Vector3i(origin.x, origin.y, 0 if first.y == second.y else 1)
+	_edge_volumes[edge] = float(_edge_volumes.get(edge, 0)) + (volume if forward else -volume)
 
 static func capacity() -> float:
 	return float(IndustryCatalog.load_data().pump_capacity)
@@ -63,6 +86,7 @@ func place(kind: String, cell: Vector2i, outpost) -> bool:
 		outpost.world._note(reason)
 		return false
 	valves.append({"kind": "valve", "cell": cell, "opened": true, "total": 0.0})
+	_clear_flow()
 	for neighbor: Vector2i in _water_neighbors(cell, outpost): _cavities[neighbor] = true
 	outpost.world.guide_event("water_valve_placed")
 	return true
@@ -70,11 +94,13 @@ func place(kind: String, cell: Vector2i, outpost) -> bool:
 func toggle(entry: Dictionary, _outpost) -> bool:
 	if not valves.has(entry) and not _ship_ports.has(entry): return false
 	entry.opened = not entry.opened
+	_clear_flow()
 	return true
 
 func remove(entry: Dictionary, _outpost) -> bool:
 	if not valves.has(entry): return false
 	valves.erase(entry)
+	_clear_flow()
 	return true
 
 func _neighbors(cell: Vector2i, outpost) -> Array[Vector2i]:
@@ -113,6 +139,7 @@ func set_pump_direction(building: Dictionary, direction: Vector2i, outpost) -> b
 	for neighbor: Vector2i in _neighbors(building.origin, outpost):
 		if neighbor != direction and neighbor != -direction: return false
 	pumps[key(building.origin)] = direction
+	_clear_flow()
 	return true
 
 func reverse_pump(building: Dictionary, outpost) -> bool:
@@ -122,44 +149,70 @@ func reverse_pump(building: Dictionary, outpost) -> bool:
 func toggle_pump(building: Dictionary, outpost) -> bool:
 	if building.get("id") != "pump" or not outpost.buildings.structures.has(building) or not outpost.site_reachable(building): return false
 	building.enabled = not building.get("enabled", true)
+	_clear_flow()
 	return true
 
 func synchronize(outpost) -> void:
 	_bind(outpost)
 	for entry: Dictionary in valves.duplicate():
-		if outpost.world.site.material(entry.cell).is_empty(): valves.erase(entry)
+		if outpost.world.site.material(entry.cell).is_empty():
+			valves.erase(entry)
+			_clear_flow()
 	for id: String in pumps.keys():
-		if not outpost.buildings.structures.any(func(b: Dictionary): return b.id == "pump" and key(b.origin) == id): pumps.erase(id)
+		if not outpost.buildings.structures.any(func(b: Dictionary): return b.id == "pump" and key(b.origin) == id):
+			pumps.erase(id)
+			_clear_flow()
 
 func _topology(outpost) -> void:
 	synchronize(outpost)
-	_nodes.clear()
-	_blocked.clear()
+	var previous_nodes := _nodes
+	var previous_blocked := _blocked
+	_nodes = {}
+	_blocked = {}
+	_route_cache.clear()
 	for b: Dictionary in outpost.buildings.structures:
 		if b.id == "pump" and b.get("state", "active") != "planned": _blocked[b.origin] = true
 	for cell: Vector2i in outpost.network.cells.water:
 		if Network.valid_cell(cell, outpost.world.site) and not _blocked.has(cell): _nodes[cell] = true
 	for entry: Dictionary in valves + _ship_ports:
 		if entry.opened and not _blocked.has(entry.cell): _nodes[entry.cell] = true
+	if _nodes != previous_nodes or _blocked != previous_blocked: _clear_flow()
 	for pocket: Dictionary in outpost.world.site.pockets():
 		if pocket.kind == "water":
 			for cell: Vector2i in Layout.cells(pocket): _cavities[cell] = true
 
 func _route(start: Vector2i, end: Vector2i, ceiling: float) -> bool:
-	if not _nodes.has(start) or not _nodes.has(end) or start.y + 0.5 < ceiling - EPS: return false
+	return not _route_path(start, end, ceiling).is_empty()
+
+func _route_path(start: Vector2i, end: Vector2i, ceiling: float) -> Array[Vector2i]:
+	var path: Array[Vector2i] = []
+	var minimum_y := ceili(ceiling - EPS - 0.5)
+	if not _nodes.has(start) or not _nodes.has(end) or start.y < minimum_y: return path
+	# Heights only affect which integer rows are traversable. Bound cached paths
+	# to this topology; render queries never search the network.
+	var route_key := [start, end, minimum_y]
+	if _route_cache.has(route_key): return _route_cache[route_key]
+	if _route_cache.size() >= ROUTE_CACHE_LIMIT: _route_cache.clear()
 	var queue: Array[Vector2i] = [start]
-	var seen := {start: true}
+	var parents := {start: start}
 	var index := 0
 	while index < queue.size():
 		var cell := queue[index]
 		index += 1
-		if cell == end: return true
+		if cell == end:
+			path.append(cell)
+			while cell != start:
+				cell = parents[cell]
+				path.append(cell)
+			path.reverse()
+			break
 		for direction: Vector2i in Network.OFFSETS:
 			var next := cell + direction
-			if seen.has(next) or not _nodes.has(next) or next.y + 0.5 < ceiling - EPS: continue
-			seen[next] = true
+			if parents.has(next) or not _nodes.has(next) or next.y < minimum_y: continue
+			parents[next] = cell
 			queue.append(next)
-	return false
+	_route_cache[route_key] = path
+	return path
 
 func _ship_water(outpost) -> Dictionary:
 	var ship = outpost.world.get("ship_state")
@@ -217,7 +270,9 @@ func advance(delta: float, outpost, powered_seconds: float) -> void:
 	if not is_finite(delta) or delta <= 0 or not is_finite(powered_seconds): return
 	_topology(outpost)
 	rates.clear()
+	_clear_flow()
 	var duration := minf(delta, 60.0)
+	_flow_duration = delta
 	var fraction := clampf(powered_seconds / delta, 0, 1)
 	var remaining := duration
 	while remaining > EPS:
@@ -249,7 +304,6 @@ func _step(delta: float, outpost, powered: float) -> void:
 			if _head(target) < ceiling - EPS: continue
 			if not active and _head(target) <= source_head + EPS: continue
 			var direct_handoff: bool = source.kind == "pump" and target.kind == "pump" and source.output == target.building.origin and target.input == source.building.origin
-			if not direct_handoff and not _route(source.output, target.input, ceiling): continue
 			var room := maxf(0, float(target.capacity) - _volume(target))
 			if target.kind == "water": room = minf(room, maxf(0, target.cell.y + 1.0 - ceiling - _volume(target)))
 			var budget := minf(float(available[source.id]), float(outgoing[source.owner]))
@@ -257,6 +311,10 @@ func _step(delta: float, outpost, powered: float) -> void:
 			if not active: budget = minf(budget, float(passive[source.owner]))
 			var volume := minf(budget, room)
 			if volume <= 0: continue
+			var path: Array[Vector2i] = []
+			if not direct_handoff:
+				path = _route_path(source.output, target.input, ceiling)
+				if path.is_empty(): continue
 			source.storage[source.slot] = _volume(source) - volume
 			target.storage[target.slot] = _volume(target) + volume
 			available[source.id] = maxf(0, float(available[source.id]) - volume)
@@ -265,6 +323,12 @@ func _step(delta: float, outpost, powered: float) -> void:
 			if not active: passive[source.owner] = maxf(0, float(passive[source.owner]) - volume)
 			_record(source, volume, false)
 			_record(target, volume, true)
+			if direct_handoff:
+				_record_edge(source.cell, target.cell, volume)
+			else:
+				_record_edge(source.cell, path[0], volume)
+				for index in range(1, path.size()): _record_edge(path[index - 1], path[index], volume)
+				_record_edge(path[-1], target.cell, volume)
 
 func pumps_for(building: Dictionary, outpost) -> Array:
 	_topology(outpost)
@@ -336,6 +400,7 @@ func restore(data: Variant, site: RefCounted, buildings: RefCounted) -> bool:
 		pumps = {}
 		local_ship_water = {"left": 0.0, "right": 0.0}
 		rates.clear()
+		_clear_flow()
 		_cavities.clear()
 		for entry: Dictionary in _ship_ports:
 			entry.opened = true
@@ -372,6 +437,7 @@ func restore(data: Variant, site: RefCounted, buildings: RefCounted) -> bool:
 	pumps = next_pumps
 	local_ship_water = {"left": float(data.local_ship_water.left), "right": float(data.local_ship_water.right)}
 	rates.clear()
+	_clear_flow()
 	_cavities = next_cavities
 	for entry: Dictionary in _ship_ports:
 		entry.opened = data.ship_opened[entry.id]

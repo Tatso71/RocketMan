@@ -35,7 +35,7 @@ func linked(building: Dictionary, kind: String, supplier: String, outpost: Node2
 	return outpost.buildings.structures.filter(func(item: Dictionary): return item.id == supplier and healthy(item, outpost) and outpost.network.connected(kind, Network.port(building, kind), Network.port(item, kind)))
 
 func energy_available(building: Dictionary, outpost: Node2D) -> float:
-	if building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+	if building.id == "greenhouse" and not outpost.greenhouse_ship_source(building).is_empty():
 		return outpost.world.ship_energy()
 	var result := 0.0
 	for converter: Dictionary in linked(building, "energy", "gas_converter", outpost):
@@ -49,7 +49,7 @@ func is_irrigating(building: Dictionary) -> bool:
 	return irrigated.has(key(building))
 
 func ship_power_draw(building: Dictionary, outpost: Node2D) -> float:
-	if building.id != "greenhouse" or not healthy(building, outpost) or outpost.supplying_lab(building).is_empty():
+	if building.id != "greenhouse" or not healthy(building, outpost) or outpost.greenhouse_ship_source(building).is_empty():
 		return 0.0
 	var storage := state(building)
 	if storage.crop.is_empty() or storage.water <= 0.000001:
@@ -61,7 +61,7 @@ func _consume(building: Dictionary, kind: String, amount: float, outpost: Node2D
 	if kind == "water":
 		outpost.hydraulics.withdraw(building, amount, outpost)
 		return
-	if kind == "energy" and building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+	if kind == "energy" and building.id == "greenhouse" and not outpost.greenhouse_ship_source(building).is_empty():
 		var remaining := maxf(0.0, float(ship_budget.get("remaining", outpost.world.ship_energy())) - amount)
 		if ship_budget.has("remaining"): ship_budget.remaining = remaining
 		outpost.world._set_ship_energy(remaining)
@@ -103,11 +103,13 @@ func status(building: Dictionary, outpost: Node2D) -> String:
 		return "Coltura matura"
 	if (building.id == "furnace" and storage.recipe.is_empty()) or (building.id == "greenhouse" and storage.crop.is_empty()):
 		return "In attesa di un ordine" if building.id == "furnace" else "In attesa di semina"
-	var lab_power: bool = building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty()
-	if not lab_power and outpost.network.component("energy", Network.port(building, "energy")).is_empty():
+	var ship_source: Dictionary = outpost.greenhouse_ship_source(building, false) if building.id == "greenhouse" else {}
+	if ship_source.is_empty() and outpost.network.component("energy", Network.port(building, "energy")).is_empty():
 		return "Cavo energia scollegato"
 	if energy_available(building, outpost) <= 0.000001:
-		return "Nessuna energia: serve un laboratorio alimentato o un convertitore" if building.id == "greenhouse" else "Nessuna energia dal convertitore"
+		if building.id == "greenhouse":
+			return "Batteria della nave scarica" if not ship_source.is_empty() else "Cavo senza fonte alimentata: collega nave, laboratorio o convertitore"
+		return "Nessuna energia dal convertitore"
 	if building.id == "greenhouse" and water_available(building, outpost) <= 0.000001:
 		return "Manca acqua nel buffer della serra: collega i tubi"
 	return "Fusione in corso" if building.id == "furnace" else "Coltivazione in corso"
@@ -207,7 +209,7 @@ func _step(delta: float, outpost: Node2D, active: Array, ship_budget: Dictionary
 		var definition: Dictionary = data.smelting[id] if building.id == "furnace" else data.crops[id]
 		var duration := minf(delta, maxf(0, float(definition.seconds) - float(storage.elapsed)))
 		var available := energy_available(building, outpost)
-		if building.id == "greenhouse" and not outpost.supplying_lab(building).is_empty():
+		if building.id == "greenhouse" and not outpost.greenhouse_ship_source(building).is_empty():
 			available = float(ship_budget.get("remaining", available))
 		duration = minf(duration, available / float(definition.power))
 		if building.id == "greenhouse":

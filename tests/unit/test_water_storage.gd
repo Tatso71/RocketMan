@@ -31,6 +31,8 @@ class TestOutpost extends Node2D:
 	var safe := true
 	func supplying_lab(_building: Dictionary) -> Dictionary:
 		return lab if safe and world.energy > 0 else {}
+	func greenhouse_ship_source(_building: Dictionary, powered_only: bool = true) -> Dictionary:
+		return {"kind": "laboratory", "lab": lab, "wired": false} if not lab.is_empty() and safe and (not powered_only or world.energy > 0) else {}
 	func environment_safe(_building: Dictionary) -> bool: return safe
 
 func test_water_container_catalog_and_building_contract() -> void:
