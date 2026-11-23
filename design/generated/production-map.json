@@ -26,9 +26,29 @@
 		"speculative_production": false,
 		"variant": "explorer"
 	},
+	"greenhouse_cabling": {
+		"aboveground": true,
+		"cost_per_cell": {
+			"electronic_component": 1
+		},
+		"distance_limit": false,
+		"lab_port": "bottom_left",
+		"placement": "mouse_cardinal_drag",
+		"ship_ports": [
+			[
+				-6,
+				-2
+			],
+			[
+				5,
+				-2
+			]
+		],
+		"storage": "shared_ship_battery"
+	},
 	"hydraulics": {
 		"greenhouse_capacity": 4.0,
-		"greenhouse_power": "operational_local_lab_ship_battery_else_cabled_converter",
+		"greenhouse_power": "ship_or_lab_cable_unlimited_else_local_lab_or_converter",
 		"open_ends_spill": false,
 		"ship_tank_capacity_each": 40,
 		"ship_tanks": 2,
@@ -1155,7 +1175,7 @@
 				"stored_water": 2.0
 			},
 			"name": "Patata",
-			"notes": "Nave: 3 semi di patata iniziali. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
+			"notes": "Nave: 3 semi di patata iniziali. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Cavo rosso continuo verso nave o laboratorio operativo, senza limite di distanza: addebito alla batteria condivisa. Restano il laboratorio locale automatico e il convertitore cablato come alternative, mai doppio addebito.",
 			"outputs": {
 				"potato": 3.0,
 				"seed_potato": 2.0
@@ -1176,7 +1196,7 @@
 				"stored_water": 2.5
 			},
 			"name": "Tubero ocra",
-			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Cavo rosso continuo verso nave o laboratorio operativo, senza limite di distanza: addebito alla batteria condivisa. Restano il laboratorio locale automatico e il convertitore cablato come alternative, mai doppio addebito.",
 			"outputs": {
 				"ochre_tuber": 3.0,
 				"seed_ochre_tuber": 2.0
@@ -1197,7 +1217,7 @@
 				"stored_water": 3.0
 			},
 			"name": "Verdura viridia",
-			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Cavo rosso continuo verso nave o laboratorio operativo, senza limite di distanza: addebito alla batteria condivisa. Restano il laboratorio locale automatico e il convertitore cablato come alternative, mai doppio addebito.",
 			"outputs": {
 				"seed_verdant_leaf": 2.0,
 				"verdant_leaf": 3.0
@@ -1218,7 +1238,7 @@
 				"stored_water": 1.5
 			},
 			"name": "Bacca brina",
-			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.",
+			"notes": "Semi trovati nelle capsule dei pianeti. Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Cavo rosso continuo verso nave o laboratorio operativo, senza limite di distanza: addebito alla batteria condivisa. Restano il laboratorio locale automatico e il convertitore cablato come alternative, mai doppio addebito.",
 			"outputs": {
 				"frost_berry": 3.0,
 				"seed_frost_berry": 2.0
@@ -1668,7 +1688,7 @@
 	],
 	"runtime_flags": {
 		"gas_industry_supply": "paused_without_natural_gas",
-		"greenhouse_supply": "local_lab_ship_battery_else_cabled_converter",
+		"greenhouse_supply": "ship_or_lab_cable_unlimited_else_local_lab_or_converter",
 		"natural_gas_pockets": false
 	},
 	"scope": "current_playable_prototype",

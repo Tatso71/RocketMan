@@ -20,6 +20,7 @@ var hover: PanelContainer
 var hover_label: Label
 
 func _ready() -> void:
+	z_as_relative = false
 	z_index = 8
 	var layer := CanvasLayer.new()
 	add_child(layer)

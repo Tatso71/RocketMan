@@ -5,6 +5,7 @@ const KINDS := ["water", "gas", "energy"]
 const NAMES := {"water": "Tubo acqua", "gas": "Tubo gas", "energy": "Cavo energia"}
 const COLORS := {"water": Color("55b8ff"), "gas": Color("68d879"), "energy": Color("ef6268")}
 const OFFSETS := [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
+const SHIP_ENERGY_PORTS := [Vector2i(-6, -2), Vector2i(5, -2)]
 var cells := {"water": {}, "gas": {}, "energy": {}}
 var water_axes: Dictionary = {}
 var dirty := true
@@ -103,7 +104,7 @@ func restore(data: Variant, site: RefCounted) -> bool:
 		if not entry is Array or entry.size() != 3 or entry[0] not in KINDS:
 			return false
 		var cell = Grid.decode_cell(entry.slice(1))
-		if not cell is Vector2i or not (valid_cell(cell, site) if entry[0] == "water" else site.contains(cell) and site.material(cell).is_empty()) or next[entry[0]].has(cell):
+		if not cell is Vector2i or not (valid_cell(cell, site) if entry[0] in ["water", "energy"] else site.contains(cell) and site.material(cell).is_empty()) or next[entry[0]].has(cell):
 			return false
 		next[entry[0]][cell] = true
 	if data.water_axes.size() != next.water.size(): return false

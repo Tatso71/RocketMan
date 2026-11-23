@@ -11,6 +11,7 @@ const Ship = preload("res://scripts/systems/ship_state.gd")
 const Gear = preload("res://scripts/prototype/expedition_gear.gd")
 const Icons = preload("res://scripts/data/item_icon_catalog.gd")
 const WaterCircuit = preload("res://scripts/systems/water_circuit.gd")
+const Network = preload("res://scripts/systems/utility_network.gd")
 const JSON_PATH := "res://design/generated/production-map.json"
 const DOC_PATH := "res://docs/design/mappa-produzione.md"
 const GROUPS := {"refining": "Semilavorati", "production": "Componenti e consumabili", "assembly": "Montaggio delle strutture", "infrastructure": "Scale tubi e cavi", "utilities": "Acqua gas ed energia", "agriculture": "Coltivazione", "upgrade": "Potenziamenti", "repair": "Riparazioni", "service": "Servizi provvisori della nave"}
@@ -34,7 +35,8 @@ func recipe(id: String, title: String, group: String, station: String, inputs: D
 	data.recipes.append({"id": id, "name": title, "group": group, "station": station, "status": "implemented", "icon": Icons.path(icon_id).trim_prefix("res://"), "inputs": inputs.duplicate(), "outputs": outputs.duplicate(), "seconds": seconds, "energy": energy.duplicate(), "notes": notes})
 
 func build() -> void:
-	data.runtime_flags = {"natural_gas_pockets": Site.HazardLayout.gas_pockets_enabled, "gas_industry_supply": "natural_gas" if Site.HazardLayout.gas_pockets_enabled else "paused_without_natural_gas", "greenhouse_supply": "local_lab_ship_battery_else_cabled_converter"}
+	data.runtime_flags = {"natural_gas_pockets": Site.HazardLayout.gas_pockets_enabled, "gas_industry_supply": "natural_gas" if Site.HazardLayout.gas_pockets_enabled else "paused_without_natural_gas", "greenhouse_supply": "ship_or_lab_cable_unlimited_else_local_lab_or_converter"}
+	data.greenhouse_cabling = {"ship_ports": Network.SHIP_ENERGY_PORTS.map(func(cell: Vector2i): return [cell.x, cell.y]), "distance_limit": false, "cost_per_cell": Industry.load_data().conduit_cost.energy.duplicate(), "lab_port": "bottom_left", "storage": "shared_ship_battery", "placement": "mouse_cardinal_drag", "aboveground": true}
 	data.solar_generation = {
 		"available_before_first_lab": true, "footprint_metres": [Buildings.SIZES.solar_panel.x, Buildings.SIZES.solar_panel.y],
 		"placement": "outdoor_supported", "kwh_per_second_per_panel": Buildings.Solar.RATE,
@@ -72,7 +74,7 @@ func build() -> void:
 	node("stored_water", "Acqua nel serbatoio", "utility")
 	node("ladder", "Scala", "infrastructure")
 	var industry := Industry.load_data()
-	data.hydraulics = {"water_only": true, "water_tank_capacity": industry.water_tank_capacity, "greenhouse_capacity": industry.greenhouse_capacity, "ship_tank_capacity_each": 40, "ship_tanks": 2, "open_ends_spill": false, "greenhouse_power": "operational_local_lab_ship_battery_else_cabled_converter"}
+	data.hydraulics = {"water_only": true, "water_tank_capacity": industry.water_tank_capacity, "greenhouse_capacity": industry.greenhouse_capacity, "ship_tank_capacity_each": 40, "ship_tanks": 2, "open_ends_spill": false, "greenhouse_power": data.runtime_flags.greenhouse_supply}
 	for id: String in industry.smelting:
 		var entry: Dictionary = industry.smelting[id]
 		node(id, Cargo.NAMES[id], "semifinished")
@@ -109,7 +111,7 @@ func build() -> void:
 		var crop: Dictionary = industry.crops[id]
 		node(id, crop.name_it, "food")
 		node("seed_" + id, "Semi di " + crop.name_it.to_lower(), "seed")
-		recipe("grow_" + id, crop.name_it, "agriculture", "Serra", {"seed_" + id: 1, "stored_water": crop.water}, {id: crop["yield"], "seed_" + id: crop.seeds}, crop.seconds, {"ship_energy": float(crop.power) * float(crop.seconds)}, ("Nave: 3 semi di patata iniziali. " if id == "potato" else "Semi trovati nelle capsule dei pianeti. ") + "Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Energia dal laboratorio operativo piu' vicino entro il suo raggio; in assenza, stessa quantita' dal convertitore collegato via cavi, non entrambe le fonti.")
+		recipe("grow_" + id, crop.name_it, "agriculture", "Serra", {"seed_" + id: 1, "stored_water": crop.water}, {id: crop["yield"], "seed_" + id: crop.seeds}, crop.seconds, {"ship_energy": float(crop.power) * float(crop.seconds)}, ("Nave: 3 semi di patata iniziali. " if id == "potato" else "Semi trovati nelle capsule dei pianeti. ") + "Acqua dal buffer locale di 4 u; crescita e pioggia soltanto con consumo reale. Cavo rosso continuo verso nave o laboratorio operativo, senza limite di distanza: addebito alla batteria condivisa. Restano il laboratorio locale automatico e il convertitore cablato come alternative, mai doppio addebito.")
 	var ship := Ship.new()
 	for module: Resource in Modules.all():
 		for level in range(1, module.max_level):
@@ -192,7 +194,8 @@ func markdown() -> String:
 	lines.append_array(["", "## Vincoli importanti", "",
 		"- Il tempo dei lotti e' riferito a un laboratorio L1; i livelli superiori accelerano la produzione. Ingredienti ed energia del lotto si pagano all'avvio; output e avanzamento non si perdono chiudendo il menu.",
 		"- Il montaggio consuma i componenti reali consegnati sul posto. Il totale informativo del deposito non e' un pagamento a distanza. Robbie deve raggiungere fisicamente il cantiere e rimanere presente durante il proprio lavoro; sicurezza ed energia restano obbligatorie. Le strutture richiedono pavimento, tranne le pompe montate su tubi.",
-		"- La fornace usa energia locale del convertitore, non direttamente la batteria della nave. La serra usa il laboratorio operativo locale, oppure il convertitore via cavo: si addebita la fonte effettiva. Il buffer della serra contiene fino a 4 u; pioggia e crescita richiedono acqua realmente consumata.",
+		"- La fornace usa energia locale del convertitore, non direttamente la batteria della nave. La serra puo' collegarsi con cavi rossi alla nave o a un laboratorio operativo, senza limite di lunghezza. Le due prese nave sono sotto le valvole blu; la presa laboratorio/serra e' in basso a sinistra. Ogni metro di cavo costa 1 elettronico. Restano alimentazione locale automatica e convertitore cablato: si addebita una sola fonte effettiva. Il buffer della serra contiene fino a 4 u; pioggia e crescita richiedono acqua realmente consumata.",
+		"- Tubi e cavi costruiti restano visibili in penombra, senza illuminare rocce e minerali. I tubi acqua hanno un bordo piu' spesso; il movimento interno indica soltanto trasferimenti effettivi, non il solo rotore acceso della pompa.",
 		"- I contenitori conservano fino a 32 u e non richiedono energia operativa. I due serbatoi acqua della nave hanno porte blu permanenti, capienza di 40 u ciascuno e conservano l'acqua durante viaggi e salvataggi. Togliere un tubo interrompe il flusso senza perdere acqua; non esistono scarichi liberi.",
 		"- Il laboratorio e i dispositivi alimentati dalla nave continuano a consumare durante l'uso: l'energia di montaggio non e' il loro intero costo di vita.",
 		"- I pannelli solari generano energia soltanto dopo il montaggio, se attivi, abilitati e integri. Non sono macchine del convertitore gas: alimentano direttamente la batteria nave, con produzione additiva e accumulo limitato alla capienza. Il loro cavo automatico e' gratuito, senza limite di distanza; i cavi industriali posati a mano mantengono il costo per segmento.",
